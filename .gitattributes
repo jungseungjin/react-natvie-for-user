@@ -1,0 +1,2 @@
+*.pbxproj -text
+[[:space:]]*.psd[[:space:]] filter=lfs diff=lfs merge=lfs -text
