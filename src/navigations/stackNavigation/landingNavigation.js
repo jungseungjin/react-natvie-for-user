@@ -16,11 +16,7 @@ const landingNavigator = (props) => {
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}>
-      <Stack.Screen
-        name="Landing"
-        component={LandingScreen}
-        initialParams={{naviChange: props.naviChange.naviChange}}
-      />
+      <Stack.Screen name="Landing" component={LandingScreen} />
       <Stack.Screen name="Landing2" component={LandingScreen2} />
     </Stack.Navigator>
   );

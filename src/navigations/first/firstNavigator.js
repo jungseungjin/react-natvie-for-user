@@ -5,20 +5,23 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {enableScreens} from 'react-native-screens';
 import TabNavigator from '../tabNavigation/tabNavigation';
 import LandingNavigator from '../stackNavigation/landingNavigation';
+import {useSelector} from 'react-redux';
 enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 const FirstNavigator = (props) => {
-  const [navi, setNavi] = React.useState(false);
-  const naviChange = React.useCallback(() => {
-    setNavi(!navi);
-  }, []);
+  const reduexState = useSelector((state) => state);
+  const [landingCheck, setLandingCheck] = React.useState(false);
+  React.useEffect(() => {
+    setLandingCheck(reduexState.landingCheck.landingCheck);
+  }, [reduexState.landingCheck.landingCheck]);
+  console.log(landingCheck);
   return (
     <NavigationContainer>
-      {navi ? (
+      {landingCheck ? (
         <TabNavigator></TabNavigator>
       ) : (
-        <LandingNavigator naviChange={{naviChange}}></LandingNavigator>
+        <LandingNavigator></LandingNavigator>
       )}
     </NavigationContainer>
   );

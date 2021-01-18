@@ -34,6 +34,11 @@ import {
   requestNotifications,
 } from 'react-native-permissions';
 import FirstNavigator from './src/navigations/first/firstNavigator.js';
+import {Provider} from 'react-redux';
+import initStore from './src/store';
+
+const store = initStore();
+
 function App() {
   const [locationGranted, setLocationGranted] = React.useState(false);
   //알림에 대한 퍼미션
@@ -112,9 +117,11 @@ function App() {
   ) :null} }*/
   return (
     <>
-      <View style={{flex: 1}}>
-        <FirstNavigator></FirstNavigator>
-      </View>
+      <Provider store={store}>
+        <View style={{flex: 1}}>
+          <FirstNavigator></FirstNavigator>
+        </View>
+      </Provider>
     </>
   );
 }
