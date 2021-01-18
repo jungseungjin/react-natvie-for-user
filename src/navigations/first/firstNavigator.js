@@ -7,6 +7,7 @@ import TabNavigator from '../tabNavigation/tabNavigation';
 import LandingNavigator from '../stackNavigation/landingNavigation';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
+import IsLoading from '../../components/ActivityIndicator';
 enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -52,6 +53,7 @@ const FirstNavigator = (props) => {
       ) : (
         <LandingNavigator></LandingNavigator>
       )}
+      {isLoading ? <IsLoading></IsLoading> : null}
     </NavigationContainer>
   );
 };

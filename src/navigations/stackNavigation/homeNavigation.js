@@ -1,5 +1,5 @@
 import React from 'react';
-import Home from '../../screens/main/homeScreen.js';
+import Home from '../../screens/main/home/homeScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -15,7 +15,12 @@ const HomeNavigator = (props) => {
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}>
-      <Stack.Screen name="Home" component={Home} initialParams={{}} />
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        initialParams={{}}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
