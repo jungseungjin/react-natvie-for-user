@@ -6,16 +6,45 @@ import {enableScreens} from 'react-native-screens';
 import TabNavigator from '../tabNavigation/tabNavigation';
 import LandingNavigator from '../stackNavigation/landingNavigation';
 import {useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage';
 enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 const FirstNavigator = (props) => {
   const reduexState = useSelector((state) => state);
+  const setData = async (value) => {
+    try {
+      await AsyncStorage.setItem('landingCheck', value.toString());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getData = async function () {
+    try {
+      let value = await AsyncStorage.getItem('landingCheck');
+      if (value == null) {
+      } else {
+        setLandingCheck(value);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const [landingCheck, setLandingCheck] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   React.useEffect(() => {
-    setLandingCheck(reduexState.landingCheck.landingCheck);
+    setIsLoading(true);
+    getData();
+    setIsLoading(false);
+  }, []);
+  React.useEffect(() => {
+    setIsLoading(true);
+    if (reduexState.landingCheck.landingCheck == true) {
+      setLandingCheck(reduexState.landingCheck.landingCheck);
+      setData(reduexState.landingCheck.landingCheck);
+    }
+    setIsLoading(false);
   }, [reduexState.landingCheck.landingCheck]);
-  console.log(landingCheck);
   return (
     <NavigationContainer>
       {landingCheck ? (
