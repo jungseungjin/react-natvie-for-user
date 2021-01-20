@@ -39,7 +39,7 @@ import initStore from './src/store';
 import SplashScreen from 'react-native-splash-screen';
 const store = initStore();
 
-function App() {
+function App(props) {
   const [locationGranted, setLocationGranted] = React.useState(false);
   //알림에 대한 퍼미션
   const handleNotificationPermission = async (Type) => {
@@ -116,15 +116,18 @@ function App() {
     </>
   ) :null} }*/
 
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     SplashScreen.hide();
-  //   }, 1000);
-  // }, []);
+  React.useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1000);
+  }, []);
   return (
     <>
       <Provider store={store}>
         <View style={{flex: 1}}>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="#FFFFFF"></StatusBar>
           <FirstNavigator></FirstNavigator>
         </View>
       </Provider>
