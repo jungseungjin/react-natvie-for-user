@@ -4,10 +4,7 @@ import PropTypes from 'prop-types';
 
 const Title = ({title, titleStyle}) => {
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-      }}>
+    <View style={{}}>
       {title === 'none' ? null : <Text style={titleStyle}>{title}</Text>}
     </View>
   );

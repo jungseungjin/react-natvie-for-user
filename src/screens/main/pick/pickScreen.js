@@ -1,19 +1,17 @@
 import React from 'react';
+import IsLoading from '../../../components/ActivityIndicator';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
-  Platform,
-  Dimensions,
   StatusBar,
   ToastAndroid,
   BackHandler,
   Image,
   View,
 } from 'react-native';
-import IsLoading from '../../../components/ActivityIndicator';
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import Height from '../../../components/Height.js';
+import Width from '../../../components/Width.js';
 const HomeScreen = ({navigation, route}) => {
   /*
 <StatusBar barStyle="dark-content" />
@@ -23,9 +21,7 @@ Default status bar style (dark for iOS, light for Android)
   const [isLoading, setIsLoading] = React.useState(false);
   return (
     <>
-      <SafeAreaView>
-        <Text>vlrvlrvlrlvr</Text>
-      </SafeAreaView>
+      <SafeAreaView></SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

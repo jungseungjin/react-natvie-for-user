@@ -1,6 +1,6 @@
 import React from 'react';
 //import {Button, LogoTitle} from 'react-native';
-import Home from '../../screens/main/home/homeScreen.js';
+import More from '../../screens/main/more/moreScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -22,8 +22,8 @@ const HomeNavigator = (props) => {
         },
       }}>
       <Stack.Screen
-        name="Home"
-        component={Home}
+        name="More"
+        component={More}
         initialParams={{}}
         options={{
           headerShown: false,

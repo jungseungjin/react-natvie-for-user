@@ -1,51 +1,47 @@
 import React from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
+  Platform,
+  Dimensions,
   StatusBar,
   ToastAndroid,
   BackHandler,
   Image,
   View,
-  ScrollView,
-  NativeModules,
 } from 'react-native';
-import Height from '../../../components/Height.js';
-import Width from '../../../components/Width.js';
-import Height_convert from '../../../components/Height_convert.js';
-import {Fonts} from '../../../components/Fonts.js';
+import {ScrollView} from 'react-native-gesture-handler';
+import IsLoading from '../../../components/ActivityIndicator';
+//import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
+import Height_convert from '../../../components/Height_convert.js';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {NativeModules} from 'react-native';
 const {StatusBarManager} = NativeModules;
-const convertStatusBar = StatusBar.currentHeight || 0;
-if (Platform.OS === 'ios') {
-  StatusBarManager.getHeight((response) => {});
-} else {
-  StatusBar.currentHeight;
-}
-const HomeScreen = ({navigation, route}) => {
+
+// React.useEffect(() => {
+//   const convertStatusBar = async () => {
+//     let getValue;
+//     if (Platform.OS === 'ios') {
+//       await StatusBarManager.getHeight((response) => {
+//         getValue = response.height;
+//         console.log(getValue);
+//         return getValue;
+//       });
+//       return getValue;
+//     } else {
+//       return StatusBar.currentHeight;
+//     }
+//   };
+// }, []);
+const HomeScreen = async ({navigation, route}) => {
   /*
 <StatusBar barStyle="dark-content" />
 <StatusBar barStyle="light-content" />
 Default status bar style (dark for iOS, light for Android)
-*/
+*/ // - convertStatusBar() 4차이남
   const [isLoading, setIsLoading] = React.useState(false);
-  const [statusBar, setStatusBar] = React.useState(0);
-
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   return (
     <>
       <StatusBar
@@ -55,12 +51,12 @@ Default status bar style (dark for iOS, light for Android)
         <ScrollView>
           <View
             style={{
-              height: Height_convert(94) - statusBar,
+              height: Height_convert(94),
               justifyContent: 'center',
             }}>
             <Text
               style={{
-                fontFamily: Fonts?.Swagger || null,
+                //fontFamily: Fonts.Swagger,
                 fontSize: Font_normalize(24),
                 color: 'black',
                 textAlign: 'center',

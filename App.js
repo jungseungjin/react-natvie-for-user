@@ -36,7 +36,6 @@ import {
 import FirstNavigator from './src/navigations/first/firstNavigator.js';
 import {Provider} from 'react-redux';
 import initStore from './src/store';
-import SplashScreen from 'react-native-splash-screen';
 const store = initStore();
 
 function App(props) {
@@ -116,11 +115,6 @@ function App(props) {
     </>
   ) :null} }*/
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000);
-  }, []);
   return (
     <>
       <Provider store={store}>

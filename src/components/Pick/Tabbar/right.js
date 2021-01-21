@@ -4,20 +4,9 @@ import PropTypes from 'prop-types';
 
 const Right = ({right, rightStyle}) => {
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-      }}>
-      {right === 'none' ? null : (
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            console.log('gd');
-          }}>
-          <Text style={rightStyle}>{right}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <TouchableOpacity activeOpacity={1}>
+      <Text style={rightStyle}>{right}</Text>
+    </TouchableOpacity>
   );
 };
 Right.propTypes = {
