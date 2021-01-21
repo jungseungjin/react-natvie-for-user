@@ -12,7 +12,6 @@ import {
   View,
 } from 'react-native';
 import IsLoading from '../../../components/ActivityIndicator';
-import Home_active from '../../../../assets/nav/2222.svg';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const HomeScreen = ({navigation, route}) => {

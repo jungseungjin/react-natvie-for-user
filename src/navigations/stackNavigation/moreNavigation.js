@@ -1,4 +1,5 @@
 import React from 'react';
+//import {Button, LogoTitle} from 'react-native';
 import Home from '../../screens/main/home/homeScreen.js';
 import {
   createStackNavigator,
@@ -14,12 +15,20 @@ const HomeNavigator = (props) => {
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerStyle: {
+          backgroundColor: 'white',
+          borderBottomColor: 'white',
+          shadowColor: 'white',
+        },
       }}>
       <Stack.Screen
         name="Home"
         component={Home}
         initialParams={{}}
-        options={{headerShown: false}}
+        options={{
+          headerShown: false,
+        }}
+        //headerShown: false
       />
     </Stack.Navigator>
   );

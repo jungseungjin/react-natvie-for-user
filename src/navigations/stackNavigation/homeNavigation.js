@@ -14,6 +14,11 @@ const HomeNavigator = (props) => {
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerStyle: {
+          backgroundColor: 'white',
+          borderBottomColor: 'white',
+          shadowColor: 'white',
+        },
       }}>
       <Stack.Screen
         name="Home"
