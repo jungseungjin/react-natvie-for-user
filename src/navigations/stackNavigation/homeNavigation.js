@@ -1,6 +1,5 @@
 import React from 'react';
 import Home from '../../screens/main/home/homeScreen.js';
-import Home2 from '../../screens/main/home/home2Screen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
