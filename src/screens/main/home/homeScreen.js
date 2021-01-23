@@ -48,8 +48,8 @@ Default status bar style (dark for iOS, light for Android)
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <SafeAreaView style={{backgroundColor: 'white'}}>
-        <ScrollView>
+      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View
             style={{
               height: Height_convert(94) - statusBar,
@@ -486,6 +486,63 @@ Default status bar style (dark for iOS, light for Android)
                   </Text>
                 </TouchableOpacity>
               </View>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                marginLeft: Width_convert(19),
+                marginTop: Height_convert(16),
+              }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View
+                  style={{
+                    width: Width_convert(304),
+                    height: Height_convert(232),
+                    borderBottomWidth: 1,
+                    borderTopWidth: 1,
+                    borderRightWidth: 1,
+                    borderLeftWidth: 1,
+                    marginRight: Width_convert(9),
+                  }}>
+                  <Text>dggdg</Text>
+                </View>
+                <View
+                  style={{
+                    width: Width_convert(304),
+                    height: Height_convert(232),
+                    borderBottomWidth: 1,
+                    borderTopWidth: 1,
+                    borderRightWidth: 1,
+                    borderLeftWidth: 1,
+                    marginRight: Width_convert(9),
+                  }}>
+                  <Text>dggdg</Text>
+                </View>
+                <View
+                  style={{
+                    width: Width_convert(304),
+                    height: Height_convert(232),
+                    borderBottomWidth: 1,
+                    borderTopWidth: 1,
+                    borderRightWidth: 1,
+                    borderLeftWidth: 1,
+                    marginRight: Width_convert(9),
+                  }}>
+                  <Text>dggdg</Text>
+                </View>
+                <View
+                  style={{
+                    width: Width_convert(304),
+                    height: Height_convert(232),
+                    borderBottomWidth: 1,
+                    borderTopWidth: 1,
+                    borderRightWidth: 1,
+                    borderLeftWidth: 1,
+                    marginRight: Width_convert(9),
+                  }}>
+                  <Text>dggdg</Text>
+                </View>
+              </ScrollView>
             </View>
           </View>
           <View
