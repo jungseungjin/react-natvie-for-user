@@ -5,7 +5,7 @@ const Width_convert = (size) => {
   const scale = parseInt(parseFloat(size / 375) * Width);
   return scale;
 };
-Width_convert.PropTypes = {
+Width_convert.propTypes = {
   size: PropTypes.number.isRequired,
 };
 export default Width_convert;

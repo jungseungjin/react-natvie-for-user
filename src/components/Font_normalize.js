@@ -11,7 +11,7 @@ const Font_normalize = (size) => {
     return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1;
   }
 };
-Font_normalize.PropTypes = {
+Font_normalize.propTypes = {
   size: PropTypes.number.isRequired,
 };
 export default Font_normalize;

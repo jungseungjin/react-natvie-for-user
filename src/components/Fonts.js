@@ -28,7 +28,7 @@ if (Platform.OS == 'ios') {
   NanumSquareLight = 'NanumSquareLight';
   NanumSqureRegular = 'NanumSqureRegular';
 }
-// Fonts.PropTypes = {
+// Fonts.propTypes = {
 //   Swagger: PropTypes.string.isRequired,
 //   NanumGothicRegular: PropTypes.string.isRequired,
 //   NanumGothicBold: PropTypes.string.isRequired,
@@ -38,7 +38,7 @@ if (Platform.OS == 'ios') {
 //   NanumSquareLight: PropTypes.string.isRequired,
 //   NanumSqureRegular: PropTypes.string.isRequired,
 // };
-export const Fonts = {
+export default Fonts = {
   Swagger,
   NanumGothicRegular,
   NanumGothicBold,

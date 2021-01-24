@@ -9,7 +9,7 @@ import {enableScreens} from 'react-native-screens';
 import Title from '../../components/Pick/Tabbar/title.js';
 import Left from '../../components/Pick/Tabbar/left.js';
 import Right from '../../components/Pick/Tabbar/right.js';
-import {Fonts} from '../../components/Fonts.js';
+import Fonts from '../../components/Fonts.js';
 import Height from '../../components/Height.js';
 import Width from '../../components/Width.js';
 import {StatusBar} from 'react-native';
@@ -48,7 +48,7 @@ const PickNavigator = (props) => {
             <Title
               title={'찜한 작업'}
               titleStyle={{
-                fontFamily: Fonts.NanumSqureRegular,
+                fontFamily: Fonts?.NanumSqureRegular || null,
                 fontWeight: '700',
                 fontSize: Font_normalize(16),
                 color: 'black',
@@ -59,7 +59,7 @@ const PickNavigator = (props) => {
             <Right
               right={'편집'}
               rightStyle={{
-                fontFamily: Fonts.NanumSqureRegular,
+                fontFamily: Fonts?.NanumSqureRegular || null,
                 fontWeight: '700',
                 color: '#946AEF',
                 fontSize: Font_normalize(14),

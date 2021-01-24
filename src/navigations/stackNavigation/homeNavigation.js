@@ -1,5 +1,6 @@
 import React from 'react';
 import Home from '../../screens/main/home/homeScreen.js';
+import Search from '../../screens/main/home/searchScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -9,7 +10,7 @@ import {enableScreens} from 'react-native-screens';
 import Title from '../../components/Pick/Tabbar/title.js';
 import Left from '../../components/Pick/Tabbar/left.js';
 import Right from '../../components/Pick/Tabbar/right.js';
-import {Fonts} from '../../components/Fonts.js';
+import Fonts from '../../components/Fonts.js';
 import Height from '../../components/Height.js';
 import Width from '../../components/Width.js';
 import {StatusBar} from 'react-native';
@@ -22,11 +23,10 @@ enableScreens();
 const Stack = createStackNavigator();
 import {View, Text} from 'react-native';
 const HomeNavigator = (props) => {
-  console.log(props);
   return (
     <Stack.Navigator
       screenOptions={{
-        //cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         headerStyle: {
           backgroundColor: 'white',
           borderBottomColor: 'white',
@@ -55,6 +55,29 @@ const HomeNavigator = (props) => {
           headerTitleAlign: 'center',
         }}
         //headerShown: false
+      />
+      <Stack.Screen
+        name="Search"
+        component={Search}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+          headerStyle: {
+            //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
+            height: Height_convert(94) - convertStatusBar,
+          },
+          headerTitle: (props) => (
+            <Title
+              title={'투닝'}
+              titleStyle={{
+                fontFamily: Fonts.Swagger,
+                fontSize: Font_normalize(24),
+                color: 'black',
+              }}></Title>
+          ),
+          headerTitleAlign: 'center',
+        }}
+        //headerShown: false Search
       />
     </Stack.Navigator>
   );

@@ -13,7 +13,7 @@ enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 const FirstNavigator = (props) => {
-  const [landingCheck, setLandingCheck] = React.useState(true);
+  const [landingCheck, setLandingCheck] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const reduexState = useSelector((state) => state);
   const setData = async (value) => {
