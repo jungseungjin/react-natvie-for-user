@@ -6,9 +6,9 @@ const scale = Width / 375;
 const Font_normalize = (size) => {
   const newSize = size * scale;
   if (Platform.OS === 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1;
   } else {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1;
   }
 };
 Font_normalize.PropTypes = {
