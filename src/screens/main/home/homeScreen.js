@@ -156,7 +156,7 @@ Default status bar style (dark for iOS, light for Android)
                   SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}></SettingButton>
               </View>
             </View>
-            <Search navigation={navigation}></Search>
+            <Search navigation={navigation} route={route}></Search>
           </View>
 
           <View

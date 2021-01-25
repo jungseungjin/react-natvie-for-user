@@ -11,34 +11,25 @@ import Pick_non_active from '../../../assets/nav/Pick_non_active.svg';
 import Pick_active from '../../../assets/nav/Pick_active.svg';
 import More_non_active from '../../../assets/nav/More_non_active.svg';
 import More_active from '../../../assets/nav/More_active.svg';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 enableScreens();
 const Tabs = createBottomTabNavigator();
-/* <Tabs.Navigator>
-  <Tabs.Screen name="main" component={mainStack} />
-</Tabs.Navigator> */
-
-// const mainStack = () => {
-//   //screenOptions={baseHeaderOptions} //options={homeScreenOptions}
-//   //Import the other screens you use!
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen name="Other" component={OtherScreen} />
-//       <Stack.Screen name="Diff" component={DiffScreen} />
-//     </Stack.Navigator>
-//   );
-// };
-// /*
-//   initialParams={''}
-//   options={(navigation) => ({
-//     tabBarVisible: false,
-//   })}
-// */
+const setTabBarVisible = (route) => {
+  //특정스크린 바텀네비게이션 숨기기
+  const routeName = getFocusedRouteNameFromRoute(route);
+  const hideOnScreens = ['Search'];
+  if (hideOnScreens.indexOf(routeName) > -1) return false;
+  return true;
+};
 const TabNavigator = (props) => {
   return (
     <Tabs.Navigator
       tabBarOptions={{
         showLabel: false,
-      }}>
+      }}
+      screenOptions={({route}) => ({
+        tabBarVisible: setTabBarVisible(route),
+      })}>
       <Tabs.Screen
         name="Home"
         component={HomeNavigator}

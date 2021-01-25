@@ -1,6 +1,7 @@
 import React from 'react';
 import Home from '../../screens/main/home/homeScreen.js';
 import Search from '../../screens/main/home/searchScreen.js';
+import SearchDetail from '../../screens/main/home/searchDetailScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -59,6 +60,29 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="Search"
         component={Search}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+          headerStyle: {
+            //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
+            height: Height_convert(94) - convertStatusBar,
+          },
+          headerTitle: (props) => (
+            <Title
+              title={'투닝'}
+              titleStyle={{
+                fontFamily: Fonts.Swagger,
+                fontSize: Font_normalize(24),
+                color: 'black',
+              }}></Title>
+          ),
+          headerTitleAlign: 'center',
+        }}
+        //headerShown: false Search
+      />
+      <Stack.Screen
+        name="SearchDetail"
+        component={SearchDetail}
         initialParams={{}}
         options={{
           headerShown: false,

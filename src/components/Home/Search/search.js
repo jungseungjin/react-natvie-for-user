@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 
-const Search = ({navigation}) => {
+const Search = ({navigation, route}) => {
   return (
     <TouchableOpacity
       onPress={() => {
