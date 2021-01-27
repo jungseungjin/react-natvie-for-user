@@ -20,7 +20,6 @@ import {Fonts} from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Swiper from 'react-native-swiper';
 import Width_convert from '../../../components/Width_convert';
-import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import BraketUp from '../../../../assets/home/braket_up.svg';
 import BraketDown from '../../../../assets/home/braket_down.svg';
