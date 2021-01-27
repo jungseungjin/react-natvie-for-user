@@ -2,6 +2,8 @@ import React from 'react';
 import Home from '../../screens/main/home/homeScreen.js';
 import Search from '../../screens/main/home/searchScreen.js';
 import SearchDetail from '../../screens/main/home/searchDetailScreen.js';
+import Setting from '../../screens/main/home/settingScreen.js';
+import Category from '../../screens/main/home/categoryScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -63,20 +65,6 @@ const HomeNavigator = (props) => {
         initialParams={{}}
         options={{
           headerShown: false,
-          headerStyle: {
-            //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
-            height: Height_convert(94) - convertStatusBar,
-          },
-          headerTitle: (props) => (
-            <Title
-              title={'투닝'}
-              titleStyle={{
-                fontFamily: Fonts.Swagger,
-                fontSize: Font_normalize(24),
-                color: 'black',
-              }}></Title>
-          ),
-          headerTitleAlign: 'center',
         }}
         //headerShown: false Search
       />
@@ -86,22 +74,58 @@ const HomeNavigator = (props) => {
         initialParams={{}}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Setting"
+        component={Setting}
+        initialParams={{}}
+        options={{
+          headerShown: false,
           headerStyle: {
             //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
             height: Height_convert(94) - convertStatusBar,
           },
+          // headerLeft: ({props}) => (
+          //   <Left
+          //     navigation={props}
+          //     left={'goBack'}
+          //     leftStyle={{
+          //       marginLeft: Width_convert(22),
+          //     }}></Left>
+          // ),
           headerTitle: (props) => (
             <Title
-              title={'투닝'}
+              title={'설정'}
               titleStyle={{
-                fontFamily: Fonts.Swagger,
-                fontSize: Font_normalize(24),
+                fontFamily: Fonts?.NanumGothicRegular || null,
+                fontSize: Font_normalize(16),
                 color: 'black',
+                fontWeight: '700',
               }}></Title>
           ),
           headerTitleAlign: 'center',
+          headerRight: (props) => (
+            <Right
+              right={'완료'}
+              rightStyle={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                color: '#946AEF',
+                fontSize: Font_normalize(14),
+                marginRight: Width_convert(22),
+              }}></Right>
+          ),
         }}
         //headerShown: false Search
+      />
+      <Stack.Screen
+        name="Category"
+        component={Category}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );

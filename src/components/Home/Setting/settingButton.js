@@ -5,7 +5,7 @@ import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
-const SettingButton = ({Title, SubTitle, Type}) => {
+const SettingButton = ({navigation, Title, SubTitle, Type}) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -19,7 +19,13 @@ const SettingButton = ({Title, SubTitle, Type}) => {
           : null
       }
       onPress={() => {
-        alert('gd');
+        if (Type == 'work') {
+          navigation.navigate('Setting');
+        } else if (Type == 'car') {
+          navigation.navigate('Category');
+        } else if (Type == 'workDetail') {
+          navigation.navigate('Category'); //다른거
+        }
       }}>
       <Text
         style={

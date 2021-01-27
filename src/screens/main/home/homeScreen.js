@@ -37,6 +37,7 @@ import TabMore from '../../../components/Home/TabMore/tabMore.js';
 import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
+
 const HomeScreen = ({navigation, route}) => {
   /*
 <StatusBar barStyle="dark-content" />
@@ -97,10 +98,14 @@ Default status bar style (dark for iOS, light for Android)
                   justifyContent: 'flex-start',
                   alignItems: 'center',
                 }}>
-                <SettingButton Title={'설정'} Type={'work'}></SettingButton>
+                <SettingButton
+                  Title={'설정'}
+                  Type={'work'}
+                  navigation={navigation}></SettingButton>
                 <SettingButton
                   Title={'차량선택 / 지역설정'}
-                  Type={'car'}></SettingButton>
+                  Type={'car'}
+                  navigation={navigation}></SettingButton>
               </View>
             </View>
 
@@ -123,11 +128,13 @@ Default status bar style (dark for iOS, light for Android)
                 <SettingButton
                   Title={'드레스업'}
                   Type={'workDetail'}
-                  SubTitle={'내 차의 외장을 꾸미고 싶을 때'}></SettingButton>
+                  SubTitle={'내 차의 외장을 꾸미고 싶을 때'}
+                  navigation={navigation}></SettingButton>
                 <SettingButton
                   Title={'퍼포먼스'}
                   Type={'workDetail'}
-                  SubTitle={'내 차의 성능을 높이고 싶을 때'}></SettingButton>
+                  SubTitle={'내 차의 성능을 높이고 싶을 때'}
+                  navigation={navigation}></SettingButton>
               </View>
             </View>
             <View
@@ -149,11 +156,13 @@ Default status bar style (dark for iOS, light for Android)
                 <SettingButton
                   Title={'편의장치'}
                   Type={'workDetail'}
-                  SubTitle={'내 차의 풍부한 옵션이 필요할 때'}></SettingButton>
+                  SubTitle={'내 차의 풍부한 옵션이 필요할 때'}
+                  navigation={navigation}></SettingButton>
                 <SettingButton
                   Title={'캠핑카 튜닝'}
                   Type={'workDetail'}
-                  SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}></SettingButton>
+                  SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}
+                  navigation={navigation}></SettingButton>
               </View>
             </View>
             <Search navigation={navigation} route={route}></Search>
