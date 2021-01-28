@@ -47,9 +47,7 @@ const MapScreen = ({navigation, route}) => {
   React.useEffect(() => {
     getValue();
   }, []);
-
   const [searchText, setSearchText] = React.useState('');
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
       <View
@@ -137,16 +135,21 @@ const MapScreen = ({navigation, route}) => {
           <Search></Search>
         </TouchableOpacity>
       </View>
-      <View style={{flex: 1, alignItems: 'center'}}>
+      <View
+        style={{
+          width: Width_convert(375),
+          height: Height_convert(642) + 2 * statusBar,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
         <Text
           style={{
-            marginTop: Height_convert(160),
             fontFamily: Fonts?.Swagger || null,
-            fontSize: Font_normalize(24),
+            fontSize: Font_normalize(20),
             color: '#B4B4B4',
             textAlign: 'center',
           }}>
-          고객님이 튜닝작업 받기 원하시는 지역을 {'\n'}검색해주세요
+          고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요
         </Text>
       </View>
       <ScrollView style={{flex: 1}}>

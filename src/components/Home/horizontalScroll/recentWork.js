@@ -17,9 +17,15 @@ const RecentWork = ({
   Address,
   Price,
   Index,
+  navigation,
 }) => {
   return (
-    <View style={Index == 0 ? styles.view_index0 : styles.view}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => {
+        navigation.navigate('WorkDetail');
+      }}
+      style={Index == 0 ? styles.view_index0 : styles.view}>
       <FastImage
         style={styles.fastImage}
         source={{
@@ -39,7 +45,7 @@ const RecentWork = ({
       <View style={styles.view3}>
         <Text style={styles.text5}>{Price}원</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({

@@ -17,7 +17,14 @@ const Tabs = createBottomTabNavigator();
 const setTabBarVisible = (route) => {
   //특정스크린 바텀네비게이션 숨기기
   const routeName = getFocusedRouteNameFromRoute(route);
-  const hideOnScreens = ['Search', 'Setting', 'Category', 'Map', 'MapSearch'];
+  const hideOnScreens = [
+    'Search',
+    'Setting',
+    'Category',
+    'Map',
+    'MapSearch',
+    'WorkDetail',
+  ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;
 };

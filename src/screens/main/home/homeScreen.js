@@ -68,10 +68,13 @@ Default status bar style (dark for iOS, light for Android)
             dot={<Dot></Dot>}
             activeDot={<ActiveDot></ActiveDot>}>
             <SwiperImage
+              from={'home'}
               image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
             <SwiperImage
+              from={'home'}
               image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
             <SwiperImage
+              from={'home'}
               image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
           </Swiper>
           <View
@@ -102,7 +105,7 @@ Default status bar style (dark for iOS, light for Android)
                   Type={'work'}
                   navigation={navigation}></SettingButton>
                 <SettingButton
-                  Title={'차량선택 / 지역설정'}
+                  Title={'차종 / 지역'}
                   Type={'car'}
                   navigation={navigation}></SettingButton>
               </View>
@@ -250,7 +253,8 @@ Default status bar style (dark for iOS, light for Android)
                 Review={10}
                 Address={'서울특별시 강남구 청담동'}
                 Price={300}
-                Index={0}></RecentWork>
+                Index={0}
+                navigation={navigation}></RecentWork>
               <RecentWork
                 Title={'아우디 Q7 ABTLINE 바디킷'}
                 ImageUrl={'https://unsplash.it/400/400?image=1'}

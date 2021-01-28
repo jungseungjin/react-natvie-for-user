@@ -16,7 +16,8 @@ import PropTypes from 'prop-types';
 import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x_black.svg';
 const {StatusBarManager} = NativeModules;
-const TabBar = ({navigation, Title}) => {
+const TabBar = ({navigation, Title, Page}) => {
+  console.log(Page);
   const [statusBar, setStatusBar] = React.useState(0);
   const getValue = () => {
     if (Platform.OS === 'ios') {
@@ -38,6 +39,11 @@ const TabBar = ({navigation, Title}) => {
           ? styles.view
           : Title == '설정' || Title == '작업종류'
           ? styles.view2
+          : Title == '드레스업' ||
+            Title == '퍼포먼스' ||
+            Title == '편의장치' ||
+            Title == '캠핑카'
+          ? styles.view2
           : null,
       ]}>
       {Title == '투닝' ? null : Title == '설정' || Title == '작업종류' ? (
@@ -52,6 +58,18 @@ const TabBar = ({navigation, Title}) => {
             <X style={{marginLeft: Width_convert(22)}}></X>
           )}
         </TouchableOpacity>
+      ) : Title == '드레스업' ||
+        Title == '퍼포먼스' ||
+        Title == '편의장치' ||
+        Title == '캠핑카' ? (
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{}}
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
+        </TouchableOpacity>
       ) : null}
       <Text
         style={
@@ -59,12 +77,23 @@ const TabBar = ({navigation, Title}) => {
             ? styles.text
             : Title == '설정' || Title == '작업종류'
             ? styles.text2
+            : Title == '드레스업' ||
+              Title == '퍼포먼스' ||
+              Title == '편의장치' ||
+              Title == '캠핑카'
+            ? styles.text2
             : null
         }>
         {Title}
       </Text>
       {Title == '투닝' ? null : Title == '설정' || Title == '작업종류' ? (
-        <TouchableOpacity activeOpacity={1}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            if (Title == '작업종류') {
+              navigation.navigate('CategoryDetail', {Page: Page});
+            }
+          }}>
           <Text
             style={{
               marginRight: Width_convert(22),
@@ -76,6 +105,22 @@ const TabBar = ({navigation, Title}) => {
             완료
           </Text>
         </TouchableOpacity>
+      ) : Title == '드레스업' ||
+        Title == '퍼포먼스' ||
+        Title == '편의장치' ||
+        Title == '캠핑카' ? (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <Text
+            style={{
+              marginRight: Width_convert(22),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '700',
+              fontSize: Font_normalize(14),
+              color: '#FFFFFF',
+            }}>
+            완료
+          </Text>
+        </View>
       ) : null}
     </View>
   );

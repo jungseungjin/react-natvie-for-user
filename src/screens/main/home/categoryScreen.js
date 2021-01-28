@@ -22,8 +22,9 @@ const CategoryScreen = ({navigation}) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'작업종류'} navigation={navigation}></Tabbar>
+        <Tabbar Title={'작업종류'} navigation={navigation} Page={page}></Tabbar>
         <TabBarBottom
+          from={'category'}
           Title={[
             {title: '드레스업', value: 'dressup'},
             {title: '퍼포먼스', value: 'perfomance'},

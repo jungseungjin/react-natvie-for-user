@@ -4,8 +4,10 @@ import Search from '../../screens/main/home/searchScreen.js';
 import SearchDetail from '../../screens/main/home/searchDetailScreen.js';
 import Setting from '../../screens/main/home/settingScreen.js';
 import Category from '../../screens/main/home/categoryScreen.js';
+import CategoryDetail from '../../screens/main/home/categoryDetailScreen.js';
 import Map from '../../screens/main/home/mapScreen.js';
 import MapSearch from '../../screens/main/home/mapSeachScreen.js';
+import WorkDetail from '../../screens/main/home/workDetailScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -130,6 +132,14 @@ const HomeNavigator = (props) => {
         }}
       />
       <Stack.Screen
+        name="CategoryDetail"
+        component={CategoryDetail}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="Map"
         component={Map}
         initialParams={{}}
@@ -140,6 +150,14 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="MapSearch"
         component={MapSearch}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="WorkDetail"
+        component={WorkDetail}
         initialParams={{}}
         options={{
           headerShown: false,
