@@ -129,7 +129,10 @@ const SearchWork = ({navigation, route}) => {
             }}>
             MOTION튜닝샵
           </Text>
-          <Star style={{marginRight: Width_convert(3)}}></Star>
+          <Star
+            width={Width_convert(12)}
+            height={Width_convert(12)}
+            style={{marginRight: Width_convert(3)}}></Star>
           <Text
             style={{
               fontFamily: Fonts?.NanumSqureRegular || null,
