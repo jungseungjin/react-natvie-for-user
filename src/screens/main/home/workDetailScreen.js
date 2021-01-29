@@ -245,86 +245,101 @@ const WorkDetailScreen = ({navigation}) => {
             </View>
             {/*작업 이름부터 가격까지 끝 */}
           </View>
+
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Width_convert(48),
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              //key={item.value}
-              activeOpacity={1}
-              onPress={() => {
-                //PageChangeValue(item.value);
-              }}
+          {scrollValue >=
+          (Platform.OS == 'ios'
+            ? Width_convert(240 + 171) - Height_convert(94)
+            : Width_convert(240 + 171) - Height_convert(94)) ? (
+            <View
               style={{
-                width: Width_convert(375 / 3),
+                width: Width_convert(375),
                 height: Width_convert(48),
-                borderBottomWidth: 3,
-                justifyContent: 'center',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}></View>
+          ) : (
+            <View
+              style={{
+                width: Width_convert(375),
+                height: Width_convert(48),
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              <Text
+              <TouchableOpacity
+                //key={item.value}
+                activeOpacity={1}
+                onPress={() => {
+                  //PageChangeValue(item.value);
+                }}
                 style={{
-                  fontFamily: Fonts?.NanumSquareRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(15),
+                  width: Width_convert(375 / 3),
+                  height: Width_convert(48),
+                  borderBottomWidth: 3,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                작업설명
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              //key={item.value}
-              activeOpacity={1}
-              onPress={() => {
-                //PageChangeValue(item.value);
-              }}
-              style={{
-                width: Width_convert(375 / 3),
-                height: Width_convert(48),
-                borderBottomWidth: 3,
-                borderBottomColor: '#AAAAAA',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSquareRegular || null,
+                    fontWeight: '700',
+                    fontSize: Font_normalize(15),
+                  }}>
+                  작업설명
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                //key={item.value}
+                activeOpacity={1}
+                onPress={() => {
+                  //PageChangeValue(item.value);
+                }}
                 style={{
-                  fontFamily: Fonts?.NanumSquareRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(11),
-                  color: '#AAAAAA',
+                  width: Width_convert(375 / 3),
+                  height: Width_convert(48),
+                  borderBottomWidth: 3,
+                  borderBottomColor: '#AAAAAA',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                사장님 가게소개
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              //key={item.value}
-              activeOpacity={1}
-              onPress={() => {
-                //PageChangeValue(item.value);
-              }}
-              style={{
-                width: Width_convert(375 / 3),
-                height: Width_convert(48),
-                borderBottomWidth: 3,
-                borderBottomColor: '#AAAAAA',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSquareRegular || null,
+                    fontWeight: '700',
+                    fontSize: Font_normalize(11),
+                    color: '#AAAAAA',
+                  }}>
+                  사장님 가게소개
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                //key={item.value}
+                activeOpacity={1}
+                onPress={() => {
+                  //PageChangeValue(item.value);
+                }}
                 style={{
-                  fontFamily: Fonts?.NanumSquareRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(11),
-                  color: '#AAAAAA',
+                  width: Width_convert(375 / 3),
+                  height: Width_convert(48),
+                  borderBottomWidth: 3,
+                  borderBottomColor: '#AAAAAA',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                우리가게공임표
-              </Text>
-            </TouchableOpacity>
-          </View>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSquareRegular || null,
+                    fontWeight: '700',
+                    fontSize: Font_normalize(11),
+                    color: '#AAAAAA',
+                  }}>
+                  우리가게공임표
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*작업설명 -> HTML로 불러오기 */}
