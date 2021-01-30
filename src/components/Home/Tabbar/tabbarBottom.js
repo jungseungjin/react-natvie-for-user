@@ -91,12 +91,13 @@ const TabBarBottom = ({
             }}>
             <View
               style={{
-                height: Height_convert(48),
+                height: Height_convert(51),
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {/*바디파츠 휠타이어캘리퍼 하단의 보라색 라인 */}
                 <View
                   style={{
                     marginLeft: Width_convert(20),
@@ -130,7 +131,7 @@ const TabBarBottom = ({
                     height: Height_convert(48),
                     justifyContent: 'center',
                     borderBottomWidth: 2,
-                    borderBottomColor: '#DBDBDB',
+                    borderBottomColor: '#946AEF',
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
@@ -139,10 +140,37 @@ const TabBarBottom = ({
                     }}>
                     <Text
                       style={{
-                        fontFamily: Fonts?.NanumSqureRegular,
+                        textAlign: 'center',
+                        fontFamily: Fonts?.NanumSqureRegular || null,
                         fontWeight: '700',
                         fontSize: Font_normalize(12),
-                        color: '#000000',
+                        color: '#946AEF',
+                      }}>
+                      바디파츠
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    marginLeft: Width_convert(10),
+                    marginRight: Width_convert(10),
+                    height: Height_convert(48),
+                    justifyContent: 'center',
+                    borderBottomWidth: 2,
+                    borderBottomColor: 'rgba(0,0,0,0)',
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      alert('gdgd');
+                    }}>
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontWeight: '700',
+                        fontSize: Font_normalize(12),
+                        color: '#DBDBDB',
                       }}>
                       휠/타이어/캘리퍼
                     </Text>

@@ -108,10 +108,11 @@ const WorkDetailScreen = ({navigation}) => {
               style={{
                 width: Width_convert(375),
                 height: Width_convert(171),
+                justifyContent: 'center',
               }}>
               <View
                 style={{
-                  marginTop: Height_convert(20),
+                  marginTop: Height_convert(13),
                   marginLeft: Width_convert(19),
                 }}>
                 <Text
@@ -142,7 +143,11 @@ const WorkDetailScreen = ({navigation}) => {
                   </Text>
                   <VerticalBar
                     style={{marginRight: Width_convert(5)}}></VerticalBar>
-                  <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      navigation.navigate('StoreDetail');
+                    }}>
                     <StoreSVG></StoreSVG>
                   </TouchableOpacity>
                 </View>
@@ -285,7 +290,8 @@ const WorkDetailScreen = ({navigation}) => {
                   style={{
                     fontFamily: Fonts?.NanumSquareRegular || null,
                     fontWeight: '700',
-                    fontSize: Font_normalize(15),
+                    fontSize: Font_normalize(11),
+                    color: '#000000',
                   }}>
                   작업설명
                 </Text>
@@ -340,7 +346,6 @@ const WorkDetailScreen = ({navigation}) => {
               </TouchableOpacity>
             </View>
           )}
-
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*작업설명 -> HTML로 불러오기 */}
           {/*사장님 가게소개 시작*/}
@@ -805,7 +810,8 @@ const WorkDetailScreen = ({navigation}) => {
                 style={{
                   fontFamily: Fonts?.NanumSquareRegular || null,
                   fontWeight: '700',
-                  fontSize: Font_normalize(15),
+                  fontSize: Font_normalize(11),
+                  color: '#000000',
                 }}>
                 작업설명
               </Text>

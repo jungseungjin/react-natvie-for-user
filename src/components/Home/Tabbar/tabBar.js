@@ -44,7 +44,7 @@ const TabBar = ({navigation, Title, Page}) => {
             Title == '편의장치' ||
             Title == '캠핑카'
           ? styles.view2
-          : null,
+          : styles.view2,
       ]}>
       {Title == '투닝' ? null : Title == '설정' || Title == '작업종류' ? (
         <TouchableOpacity
@@ -70,7 +70,16 @@ const TabBar = ({navigation, Title, Page}) => {
           }}>
           <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>
-      ) : null}
+      ) : (
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{}}
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
+        </TouchableOpacity>
+      )}
       <Text
         style={
           Title == '투닝'
@@ -82,7 +91,7 @@ const TabBar = ({navigation, Title, Page}) => {
               Title == '편의장치' ||
               Title == '캠핑카'
             ? styles.text2
-            : null
+            : styles.text2
         }>
         {Title}
       </Text>
@@ -121,7 +130,20 @@ const TabBar = ({navigation, Title, Page}) => {
             완료
           </Text>
         </View>
-      ) : null}
+      ) : (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <Text
+            style={{
+              marginRight: Width_convert(22),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '700',
+              fontSize: Font_normalize(14),
+              color: '#FFFFFF',
+            }}>
+            완료
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

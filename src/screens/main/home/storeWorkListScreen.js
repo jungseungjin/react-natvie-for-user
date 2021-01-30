@@ -81,7 +81,7 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
               ? '편의장치'
               : page == 'camping'
               ? '캠핑카'
-              : null
+              : page
           }
           navigation={navigation}></Tabbar>
         <TabBarBottom

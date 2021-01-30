@@ -9,6 +9,8 @@ import Map from '../../screens/main/home/mapScreen.js';
 import MapSearch from '../../screens/main/home/mapSeachScreen.js';
 import WorkDetail from '../../screens/main/home/workDetailScreen.js';
 import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
+import StoreDetail from '../../screens/main/home/storeDetailScreen.js';
+import StoreWorkList from '../../screens/main/home/storeWorkListScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -159,6 +161,22 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="WorkDetail"
         component={WorkDetail}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="StoreDetail"
+        component={StoreDetail}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="StoreWorkList"
+        component={StoreWorkList}
         initialParams={{}}
         options={{
           headerShown: false,

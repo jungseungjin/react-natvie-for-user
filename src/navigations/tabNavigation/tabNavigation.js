@@ -25,6 +25,7 @@ const setTabBarVisible = (route) => {
     'MapSearch',
     'WorkDetail',
     'StoreLocation',
+    'StoreDetail',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;
