@@ -32,7 +32,7 @@ import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 const {StatusBarManager} = NativeModules;
 import AnimatedHeader from './AnimatedHeader';
-const WorkDetailScreen = ({navigation}) => {
+const WorkDetailScreen = ({navigation, Page}) => {
   const offset = useRef(new Animated.Value(0)).current;
   const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);

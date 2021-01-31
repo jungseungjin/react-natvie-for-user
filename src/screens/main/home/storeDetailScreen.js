@@ -33,7 +33,7 @@ import CallLogo from '../../../../assets/home/CallLogo.svg';
 import WorkMenu from '../../../../assets/home/work_menu.svg';
 const {StatusBarManager} = NativeModules;
 import AnimatedHeader from './AnimatedHeader';
-const StoreDetailScreen = ({navigation}) => {
+const StoreDetailScreen = ({navigation, Page}) => {
   const offset = useRef(new Animated.Value(0)).current;
   const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
@@ -177,7 +177,9 @@ const StoreDetailScreen = ({navigation}) => {
                     </Text>
                     <TouchableOpacity
                       activeOpacity={1}
-                      onPress={() => {}}
+                      onPress={() => {
+                        navigation.navigate('ReviewView', {Page: Page});
+                      }}
                       style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text
                         style={{
@@ -713,7 +715,7 @@ const StoreDetailScreen = ({navigation}) => {
           navigation={navigation}
           animatedValue={offset}
           scrollValue={scrollValue}></AnimatedHeader>
-        {/*하단 카카오채팅 전화예약버튼 시작*/}
+        {/*스크롤 내리면 버튼 달라붙기 시작*/}
         {scrollValue >=
         (Platform.OS == 'ios'
           ? Width_convert(240 + 89) - Height_convert(94)
@@ -778,6 +780,8 @@ const StoreDetailScreen = ({navigation}) => {
             </TouchableOpacity>
           </View>
         ) : null}
+        {/*스크롤 내리면 버튼 달라붙기 끝*/}
+        {/*하단 카카오채팅 전화예약버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         <View
           style={{

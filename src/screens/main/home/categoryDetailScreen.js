@@ -100,7 +100,7 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
             style={[
               {
                 width: Width_convert(375),
-                height: Height_convert(818),
+                height: Height_convert(812),
                 position: 'absolute',
                 zIndex: 1,
               },
@@ -162,19 +162,34 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(818 - 184),
+              height: Height_convert(812 - 184),
             }}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(31),
+                }}></View>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(31),
+                }}></View>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(50),
+                }}></View>
             </ScrollView>
           </View>
         ) : (
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(818 - 184),
+              height: Height_convert(812 - 184),
               justifyContent: 'center',
               alignItems: 'center',
             }}>

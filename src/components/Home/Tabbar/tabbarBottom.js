@@ -102,8 +102,8 @@ const TabBarBottom = ({
                   style={{
                     marginLeft: Width_convert(20),
                     marginRight: Width_convert(10),
-                    height: Height_convert(48),
                     justifyContent: 'center',
+                    height: Height_convert(48),
                     borderBottomWidth: 2,
                     borderBottomColor: '#946AEF',
                   }}>
@@ -114,7 +114,7 @@ const TabBarBottom = ({
                     }}>
                     <Text
                       style={{
-                        textAlign: 'center',
+                        marginTop: Height_convert(20),
                         fontFamily: Fonts?.NanumSqureRegular || null,
                         fontWeight: '700',
                         fontSize: Font_normalize(12),
@@ -140,7 +140,7 @@ const TabBarBottom = ({
                     }}>
                     <Text
                       style={{
-                        textAlign: 'center',
+                        marginTop: Height_convert(20),
                         fontFamily: Fonts?.NanumSqureRegular || null,
                         fontWeight: '700',
                         fontSize: Font_normalize(12),
@@ -166,7 +166,7 @@ const TabBarBottom = ({
                     }}>
                     <Text
                       style={{
-                        textAlign: 'center',
+                        marginTop: Height_convert(20),
                         fontFamily: Fonts?.NanumSqureRegular || null,
                         fontWeight: '700',
                         fontSize: Font_normalize(12),
@@ -180,7 +180,7 @@ const TabBarBottom = ({
             </View>
             <View
               style={{
-                height: Height_convert(48),
+                height: Height_convert(45),
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',

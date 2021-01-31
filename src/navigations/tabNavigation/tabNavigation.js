@@ -26,6 +26,9 @@ const setTabBarVisible = (route) => {
     'WorkDetail',
     'StoreLocation',
     'StoreDetail',
+    'ReviewView',
+    'ReviewRegister',
+    'PickEdit',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

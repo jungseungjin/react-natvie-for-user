@@ -11,15 +11,13 @@ import WorkDetail from '../../screens/main/home/workDetailScreen.js';
 import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
 import StoreDetail from '../../screens/main/home/storeDetailScreen.js';
 import StoreWorkList from '../../screens/main/home/storeWorkListScreen.js';
+import ReviewView from '../../screens/main/home/reviewViewScreen.js';
+import ReviewRegister from '../../screens/main/home/reviewRegisterScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 import {enableScreens} from 'react-native-screens';
-
-import Title from '../../components/Pick/Tabbar/title.js';
-import Left from '../../components/Pick/Tabbar/left.js';
-import Right from '../../components/Pick/Tabbar/right.js';
 import Fonts from '../../components/Fonts.js';
 import Height from '../../components/Height.js';
 import Width from '../../components/Width.js';
@@ -49,20 +47,6 @@ const HomeNavigator = (props) => {
         initialParams={{}}
         options={{
           headerShown: false,
-          headerStyle: {
-            //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
-            height: Height_convert(94) - convertStatusBar,
-          },
-          headerTitle: (props) => (
-            <Title
-              title={'투닝'}
-              titleStyle={{
-                fontFamily: Fonts.Swagger,
-                fontSize: Font_normalize(24),
-                color: 'black',
-              }}></Title>
-          ),
-          headerTitleAlign: 'center',
         }}
         //headerShown: false
       />
@@ -89,40 +73,6 @@ const HomeNavigator = (props) => {
         initialParams={{}}
         options={{
           headerShown: false,
-          headerStyle: {
-            //안드로이드는 헤더에 스테이터스바 포함안됨 아이폰은 포함됨
-            height: Height_convert(94) - convertStatusBar,
-          },
-          // headerLeft: ({props}) => (
-          //   <Left
-          //     navigation={props}
-          //     left={'goBack'}
-          //     leftStyle={{
-          //       marginLeft: Width_convert(22),
-          //     }}></Left>
-          // ),
-          headerTitle: (props) => (
-            <Title
-              title={'설정'}
-              titleStyle={{
-                fontFamily: Fonts?.NanumGothicRegular || null,
-                fontSize: Font_normalize(16),
-                color: 'black',
-                fontWeight: '700',
-              }}></Title>
-          ),
-          headerTitleAlign: 'center',
-          headerRight: (props) => (
-            <Right
-              right={'완료'}
-              rightStyle={{
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontWeight: '700',
-                color: '#946AEF',
-                fontSize: Font_normalize(14),
-                marginRight: Width_convert(22),
-              }}></Right>
-          ),
         }}
         //headerShown: false Search
       />
@@ -185,6 +135,22 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="StoreLocation"
         component={StoreLocation}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReviewView"
+        component={ReviewView}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ReviewRegister"
+        component={ReviewRegister}
         initialParams={{}}
         options={{
           headerShown: false,

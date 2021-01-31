@@ -34,7 +34,9 @@ const TabBar = ({navigation, Title, Page}) => {
   return (
     <View
       style={[
-        {height: Height_convert(94) - statusBar},
+        {
+          height: Height_convert(94) - statusBar,
+        },
         Title == '투닝'
           ? styles.view
           : Title == '설정' || Title == '작업종류'

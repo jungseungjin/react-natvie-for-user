@@ -19,7 +19,7 @@ import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import LocationSettingModal from '../../../components/Home/Modal/locationSettingModal.js';
 const {StatusBarManager} = NativeModules;
-const CategoryDetailScreen = ({navigation, Page, route}) => {
+const StoreWorkList = ({navigation, Page, route}) => {
   const [page, setPage] = React.useState(route.params.Page || null);
   console.log(page);
   const PageChangeValue = (text) => setPage(text);
@@ -57,6 +57,9 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+        {Platform.OS == 'android' ? (
+          <View style={{width: Width_convert(375), height: statusBar}}></View>
+        ) : null}
         <View
           style={[
             {
@@ -66,9 +69,17 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
               borderTopColor: '#DBDBDB',
             },
             Platform.OS == 'ios'
-              ? {top: Height_convert(94) + Height_convert(48)}
+              ? {
+                  top:
+                    Height_convert(94) +
+                    Height_convert(48) +
+                    Height_convert(41),
+                }
               : {
-                  top: Height_convert(94) - statusBar + Height_convert(48),
+                  top:
+                    Height_convert(94) +
+                    Height_convert(48) +
+                    Height_convert(41),
                 },
           ]}></View>
         <Tabbar
@@ -84,6 +95,131 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
               : page
           }
           navigation={navigation}></Tabbar>
+        <View
+          style={{
+            width: Width_convert(375),
+            height: Height_convert(41),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View
+            style={{
+              width: Width_convert(375) / 4,
+              height: Height_convert(41),
+              marginTop: Height_convert(23),
+              borderBottomWidth: 3,
+              borderBottomColor: '#946AEF',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                alignItems: 'center',
+                marginBottom: Height_convert(10),
+              }}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(13),
+                  fontWeight: '700',
+                  color: '#946AEF',
+                }}>
+                드레스업
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              width: Width_convert(375) / 4,
+              height: Height_convert(41),
+              marginTop: Height_convert(23),
+              borderBottomWidth: 3,
+              borderBottomColor: '#AAAAAA',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                alignItems: 'center',
+                marginBottom: Height_convert(10),
+              }}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(13),
+                  fontWeight: '700',
+                  color: '#AAAAAA',
+                }}>
+                퍼포먼스
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              width: Width_convert(375) / 4,
+              height: Height_convert(41),
+              marginTop: Height_convert(23),
+              borderBottomWidth: 3,
+              borderBottomColor: '#AAAAAA',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                alignItems: 'center',
+                marginBottom: Height_convert(10),
+              }}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(13),
+                  fontWeight: '700',
+                  color: '#AAAAAA',
+                }}>
+                편의장치
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              width: Width_convert(375) / 4,
+              height: Height_convert(41),
+              marginTop: Height_convert(23),
+              borderBottomWidth: 3,
+              borderBottomColor: '#AAAAAA',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={{
+                alignItems: 'center',
+                marginBottom: Height_convert(10),
+              }}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(13),
+                  fontWeight: '700',
+                  color: '#AAAAAA',
+                }}>
+                캠핑카
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <TabBarBottom
           from={'categoryDetail'}
           Title={[
@@ -100,14 +236,14 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
             style={[
               {
                 width: Width_convert(375),
-                height: Height_convert(818),
+                height: Height_convert(812),
                 position: 'absolute',
                 zIndex: 1,
               },
               Platform.OS == 'ios'
-                ? {top: Height_convert(140 + 48)}
+                ? {top: Height_convert(140 + 48) + Height_convert(25)}
                 : {
-                    top: Height_convert(139 + 48) - statusBar,
+                    top: Height_convert(139 + 48) + Height_convert(25),
                   },
             ]}>
             <View
@@ -162,19 +298,34 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(818 - 184),
+              height: Height_convert(812 - 184),
             }}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(31),
+                }}></View>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(31),
+                }}></View>
               <SearchWork></SearchWork>
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(50),
+                }}></View>
             </ScrollView>
           </View>
         ) : (
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(818 - 184),
+              height: Height_convert(812 - 184),
               justifyContent: 'center',
               alignItems: 'center',
             }}>
@@ -195,4 +346,4 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
     </>
   );
 };
-export default CategoryDetailScreen;
+export default StoreWorkList;
