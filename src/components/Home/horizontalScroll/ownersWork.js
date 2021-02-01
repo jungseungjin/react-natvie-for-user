@@ -7,11 +7,36 @@ import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import FastImage from 'react-native-fast-image';
 
-const OwnersWork = ({Title, ImageUrl, OwnersImage, OwnersStore, Index}) => {
+const OwnersWork = ({
+  From,
+  Title,
+  ImageUrl,
+  OwnersImage,
+  OwnersStore,
+  Index,
+  navigation,
+}) => {
   return (
-    <View style={Index == 0 ? styles.view_index0 : styles.view}>
+    <TouchableOpacity
+      activeOpacity={1}
+      style={
+        From == 'home'
+          ? Index == 0
+            ? styles.home_view_index0
+            : styles.home_view
+          : Index == 0
+          ? styles.workVideo_view_index0
+          : styles.workVideo_view
+      }
+      onPress={() => {
+        if (From == 'home') {
+          navigation.navigate('WorkVideo');
+        }
+      }}>
       <FastImage
-        style={styles.fastImage}
+        style={
+          From == 'home' ? styles.home_fastImage : styles.workVideo_fastImage
+        }
         source={{
           uri: ImageUrl,
           headers: {Authorization: 'someAuthToken'},
@@ -42,7 +67,11 @@ const OwnersWork = ({Title, ImageUrl, OwnersImage, OwnersStore, Index}) => {
           alignItems: 'center',
         }}>
         <FastImage
-          style={styles.fastImage2}
+          style={
+            From == 'home'
+              ? styles.home_fastImage2
+              : styles.workVideo_fastImage2
+          }
           source={{
             uri: OwnersImage,
             headers: {Authorization: 'someAuthToken'},
@@ -59,30 +88,57 @@ const OwnersWork = ({Title, ImageUrl, OwnersImage, OwnersStore, Index}) => {
           {OwnersStore}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
-  view: {
+  home_view: {
     width: Width_convert(304),
     height: Height_convert(266),
     marginRight: Width_convert(9),
   },
-  view_index0: {
+  home_view_index0: {
     width: Width_convert(304),
     height: Height_convert(266),
     marginLeft: Width_convert(19),
     marginRight: Width_convert(9),
   },
-  fastImage: {
+  home_fastImage: {
     width: Width_convert(304),
     height: Height_convert(171),
-    borderRadius: 6,
+    borderRadius: Font_normalize(6),
   },
-  fastImage2: {
+  home_fastImage2: {
     width: Width_convert(16),
     height: Width_convert(16),
-    borderRadius: 16,
+    borderRadius: Font_normalize(16),
+    marginRight: Width_convert(3),
+  },
+
+  workVideo_view: {
+    width: Width_convert(348),
+    height: Height_convert(264),
+    marginRight: Width_convert(13),
+    marginLeft: Width_convert(13),
+    marginBottom: Height_convert(32),
+  },
+  workVideo_view_index0: {
+    width: Width_convert(348),
+    height: Height_convert(264),
+    marginTop: Height_convert(13),
+    marginLeft: Width_convert(13),
+    marginRight: Width_convert(13),
+    marginBottom: Height_convert(32),
+  },
+  workVideo_fastImage: {
+    width: Width_convert(349),
+    height: Height_convert(195),
+    borderRadius: Font_normalize(6),
+  },
+  workVideo_fastImage2: {
+    width: Width_convert(16),
+    height: Width_convert(16),
+    borderRadius: Font_normalize(16),
     marginRight: Width_convert(3),
   },
 });

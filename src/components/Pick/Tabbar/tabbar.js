@@ -15,9 +15,12 @@ import Font_normalize from '../../Font_normalize.js';
 import PropTypes from 'prop-types';
 import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x_black.svg';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import {useSelector} from 'react-redux';
 const {StatusBarManager} = NativeModules;
-const TabBar = ({navigation, Title, Page, EditMode, EditModeChangeValue}) => {
-  console.log(Page);
+const TabBar = (props) => {
+  const reduexState = useSelector((state) => state);
   const [statusBar, setStatusBar] = React.useState(0);
   const getValue = () => {
     if (Platform.OS === 'ios') {
@@ -37,9 +40,9 @@ const TabBar = ({navigation, Title, Page, EditMode, EditModeChangeValue}) => {
         {
           height: Height_convert(94) - statusBar,
         },
-        Title == '찜한작업' ? styles.view2 : null,
+        props.Title == '찜한작업' ? styles.view2 : null,
       ]}>
-      {Title == '찜한작업' ? (
+      {props.Title == '찜한작업' ? (
         <View>
           <View style={{}}>
             <GoBack
@@ -57,8 +60,10 @@ const TabBar = ({navigation, Title, Page, EditMode, EditModeChangeValue}) => {
           <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>
       )}
-      <Text style={Title == '찜한작업' ? styles.text2 : null}>{Title}</Text>
-      {Title == '투닝' ? (
+      <Text style={props.Title == '찜한작업' ? styles.text2 : null}>
+        {props.Title}
+      </Text>
+      {props.Title == '투닝' ? (
         <View style={{backgroundColor: '#FFFFFF'}}>
           <Text
             style={{
@@ -71,24 +76,21 @@ const TabBar = ({navigation, Title, Page, EditMode, EditModeChangeValue}) => {
             완료
           </Text>
         </View>
-      ) : Title == '찜한작업' ? (
+      ) : props.Title == '찜한작업' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            if (EditMode) {
-            } else {
-              EditModeChangeValue(!EditMode);
-            }
+            props.updateEditMode(!reduexState.editModeCheck.editMode);
           }}>
           <Text
             style={
-              EditMode
+              reduexState.editModeCheck.editMode
                 ? {
                     marginRight: Width_convert(22),
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '700',
                     fontSize: Font_normalize(14),
-                    color: '#FFFFFF',
+                    color: 'red',
                   }
                 : {
                     marginRight: Width_convert(22),
@@ -98,7 +100,7 @@ const TabBar = ({navigation, Title, Page, EditMode, EditModeChangeValue}) => {
                     color: '#946AEF',
                   }
             }>
-            편집
+            {reduexState.editModeCheck.editMode ? '취소' : '편집'}
           </Text>
         </TouchableOpacity>
       ) : null}
@@ -132,4 +134,27 @@ const styles = StyleSheet.create({
 TabBar.propTypes = {
   Title: PropTypes.string.isRequired,
 };
-export default TabBar;
+
+function mapStateToProps(state) {
+  return {
+    editMode: state.editMode,
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateEditMode: (boo) => {
+      dispatch(ActionCreator.editModeCheck(boo));
+    },
+    // updateFirst:(num) => {
+    //     dispatch(ActionCreator.updateSumValueFirst(num));
+
+    // },
+    // updateSecond:(num) => {
+    //     dispatch(ActionCreator.updateSumValueSecond(num));
+    // }
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TabBar);

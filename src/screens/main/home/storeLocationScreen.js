@@ -20,8 +20,10 @@ import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
+import IsLoading from '../../../components/ActivityIndicator';
 const {StatusBarManager} = NativeModules;
 const StoreLocationScreen = ({navigation}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [statusBar, setStatusBar] = React.useState(0);
   const getValue = () => {
     if (Platform.OS === 'ios') {
@@ -61,6 +63,9 @@ const StoreLocationScreen = ({navigation}) => {
   }
   return (
     <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <StatusBar
           translucent
@@ -114,6 +119,7 @@ const StoreLocationScreen = ({navigation}) => {
                 flexDirection: 'row',
               }}
               onPress={() => {}}>
+              <Text style={{color: '#ffffff'}}>완료</Text>
               {/* <HeartWhite
           fill={'#000000'}></HeartWhite>
         <Text
@@ -178,6 +184,7 @@ const StoreLocationScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

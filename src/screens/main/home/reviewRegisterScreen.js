@@ -20,9 +20,11 @@ import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import PicktureNestedPlus from '../../../../assets/home/pickture_nestedPlus.svg';
+import IsLoading from '../../../components/ActivityIndicator';
 import {TextInput} from 'react-native-gesture-handler';
 const {StatusBarManager} = NativeModules;
 const ReviewRegister = ({navigation, Page}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState('MOTION튜닝샵');
   const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);

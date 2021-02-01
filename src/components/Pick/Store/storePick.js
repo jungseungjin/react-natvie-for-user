@@ -22,8 +22,10 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import CheckedBox from '../../../../assets/home/checked_box.svg';
+import CheckBox from '../../../../assets/home/check_box.svg';
 
-const SearchStore = ({navigation, route}) => {
+const SearchStore = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -162,28 +164,56 @@ const SearchStore = ({navigation, route}) => {
           marginLeft: Width_convert(13),
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'space-between',
         }}>
-        <Star style={{marginRight: Width_convert(2)}}></Star>
-        <Text
-          style={{
-            marginRight: Width_convert(5),
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontWeight: '700',
-            fontSize: Font_normalize(12),
-            color: '#000000',
-          }}>
-          4.8
-        </Text>
-        <Text
-          style={{
-            marginRight: Width_convert(5),
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontWeight: '700',
-            fontSize: Font_normalize(12),
-            color: '#000000',
-          }}>
-          후기 100
-        </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Star
+            width={Width_convert(12)}
+            height={Width_convert(12)}
+            style={{marginRight: Width_convert(2)}}></Star>
+          <Text
+            style={{
+              marginRight: Width_convert(5),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '700',
+              fontSize: Font_normalize(12),
+              color: '#000000',
+            }}>
+            4.8
+          </Text>
+          <Text
+            style={{
+              marginRight: Width_convert(5),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '700',
+              fontSize: Font_normalize(12),
+              color: '#000000',
+            }}>
+            후기 100
+          </Text>
+        </View>
+        {props.editMode ? (
+          <TouchableOpacity
+            activeOpacit={1}
+            onPress={() => {
+              alert('gd');
+            }}>
+            <CheckBox
+              width={Width_convert(15)}
+              height={Width_convert(15)}></CheckBox>
+          </TouchableOpacity>
+        ) : null}
+        {props.editMode ? (
+          <TouchableOpacity
+            activeOpacit={1}
+            onPress={() => {
+              alert('gd');
+            }}>
+            <CheckedBox
+              width={Width_convert(15)}
+              height={Width_convert(15)}></CheckedBox>
+          </TouchableOpacity>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

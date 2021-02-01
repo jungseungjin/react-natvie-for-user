@@ -5,42 +5,42 @@ import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
-const SettingButton = ({navigation, Title, SubTitle, Type}) => {
+const SettingButton = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
       style={
-        Type == 'work'
+        props.Type == 'car/location'
           ? styles.touchableOpacity
-          : Type == 'car'
+          : props.Type == 'car'
           ? styles.carTouchableOpacity
-          : Type == 'workDetail'
+          : props.Type == 'workDetail'
           ? styles.workDetailTouchableOpacity
           : null
       }
       onPress={() => {
-        if (Type == 'work') {
-          navigation.navigate('Setting');
-        } else if (Type == 'car') {
-          navigation.navigate('Category');
-        } else if (Type == 'workDetail') {
-          navigation.navigate('Category'); //다른거
+        if (props.Type == 'car/location') {
+          props.navigation.navigate('Setting');
+        } else if (props.Type == 'car') {
+          return false;
+        } else if (props.Type == 'workDetail') {
+          props.navigation.navigate('Category', {Title: props.Title});
         }
       }}>
       <Text
         style={
-          Type == 'work'
+          props.Type == 'car/location'
             ? styles.text
-            : Type == 'car'
+            : props.Type == 'car'
             ? styles.carText
-            : Type == 'workDetail'
+            : props.Type == 'workDetail'
             ? styles.workDetailText
             : null
         }>
-        {Title}
+        {props.Title}
       </Text>
-      {SubTitle ? (
-        <Text style={styles.workDetailSubText}>{SubTitle}</Text>
+      {props.SubTitle ? (
+        <Text style={styles.workDetailSubText}>{props.SubTitle}</Text>
       ) : null}
     </TouchableOpacity>
   );
@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRightWidth: 1,
     borderLeftWidth: 1,
-    borderRadius: 3,
+    overflow: 'hidden',
+    borderRadius: Font_normalize(3),
     marginRight: Width_convert(8),
     alignItems: 'center',
     justifyContent: 'center',
@@ -76,7 +77,8 @@ const styles = StyleSheet.create({
     height: Height_convert(18),
     backgroundColor: '#A3A3A3',
     borderColor: '#A3A3A3',
-    borderRadius: 3,
+    overflow: 'hidden',
+    borderRadius: Font_normalize(3),
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
@@ -95,7 +97,8 @@ const styles = StyleSheet.create({
     width: Width_convert(160),
     height: Height_convert(74),
     borderColor: '#F0F0F0',
-    borderRadius: 5,
+    overflow: 'hidden',
+    borderRadius: Font_normalize(5),
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderRightWidth: 1,

@@ -10,6 +10,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -23,12 +24,14 @@ import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-const PickScreen = ({navigation, route}) => {
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import {useSelector} from 'react-redux';
+const PickScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState('work');
-  const [editMode, setEditMode] = React.useState(route.params.editMode);
-  console.log(editMode);
   const [workList, setWorkList] = React.useState([
     {tt: '1'},
     {tt: '2'},
@@ -44,19 +47,13 @@ const PickScreen = ({navigation, route}) => {
   const PageChangeValue = (text) => {
     setPage(text);
   };
-  const EditModeChangeValue = (text) => {
-    setEditMode(text);
-  };
   return (
     <>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar
-          Title={'찜한작업'}
-          EditMode={editMode}
-          EditModeChangeValue={EditModeChangeValue}></Tabbar>
+        <Tabbar Title={'찜한작업'}></Tabbar>
         <TabBarBottom
           from={'category'}
           Title={[
@@ -68,84 +65,129 @@ const PickScreen = ({navigation, route}) => {
         <ScrollView>
           {page == 'work'
             ? workList.length > 0
-              ? workList.map((item) => <WorkPick key={item.tt}></WorkPick>)
+              ? workList.map((item) => (
+                  <WorkPick
+                    key={item.tt}
+                    editMode={reduexState.editModeCheck.editMode}></WorkPick>
+                ))
               : null
             : page == 'store'
             ? storeList.length > 0
-              ? storeList.map((item) => <StorePick key={item.tt}></StorePick>)
+              ? storeList.map((item) => (
+                  <StorePick
+                    key={item.tt}
+                    editMode={reduexState.editModeCheck.editMode}></StorePick>
+                ))
               : null
             : null}
+          {reduexState.editModeCheck.editMode ? (
+            <View
+              style={{
+                width: Width_convert(375),
+                height: Width_convert(55) + Height_convert(insets.bottom),
+              }}></View>
+          ) : null}
         </ScrollView>
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
-        {editMode ? (
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Width_convert(55) + Height_convert(insets.bottom),
-              position: 'absolute',
-              bottom: 0,
-            }}>
+        {reduexState.editModeCheck.editMode ? (
+          <>
             <View
               style={{
-                height: Width_convert(55),
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                width: Width_convert(375),
+                height: Width_convert(55) + Height_convert(insets.bottom),
+                position: 'absolute',
+                bottom: 0,
               }}>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => {}}
+              <View
                 style={{
                   height: Width_convert(55),
-                  width: Width_convert(375) / 2,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#818181',
                   flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}>
-                <Text
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {}}
                   style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(15),
-                    fontWeight: '700',
-                    color: '#FFFFFF',
+                    height: Width_convert(55),
+                    width: Width_convert(375) / 2,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#818181',
+                    flexDirection: 'row',
                   }}>
-                  초기화
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => {}}
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(15),
+                      fontWeight: '700',
+                      color: '#FFFFFF',
+                    }}>
+                    초기화
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    if (reduexState.editModeCheck.editMode) {
+                      props.updateEditMode(!reduexState.editModeCheck.editMode);
+                    }
+                  }}
+                  style={{
+                    height: Width_convert(55),
+                    width: Width_convert(375) / 2,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#946AEF',
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(15),
+                      fontWeight: '700',
+                      color: '#EEEEEE',
+                    }}>
+                    삭제하기
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View
                 style={{
-                  height: Width_convert(55),
-                  width: Width_convert(375) / 2,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#946AEF',
-                  flexDirection: 'row',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(15),
-                    fontWeight: '700',
-                    color: '#EEEEEE',
-                  }}>
-                  삭제하기
-                </Text>
-              </TouchableOpacity>
+                  height: Height_convert(insets.bottom),
+                  backgroundColor: '#FFFFFF',
+                }}></View>
             </View>
-            <View
-              style={{
-                height: Height_convert(insets.bottom),
-                backgroundColor: '#FFFFFF',
-              }}></View>
-          </View>
+          </>
         ) : null}
         {/*하단 초기화 삭제하기버튼 끝*/}
       </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };
-export default PickScreen;
+
+function mapStateToProps(state) {
+  return {
+    editMode: state.editMode,
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateEditMode: (boo) => {
+      dispatch(ActionCreator.editModeCheck(boo));
+    },
+    // updateFirst:(num) => {
+    //     dispatch(ActionCreator.updateSumValueFirst(num));
+
+    // },
+    // updateSecond:(num) => {
+    //     dispatch(ActionCreator.updateSumValueSecond(num));
+    // }
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(PickScreen);

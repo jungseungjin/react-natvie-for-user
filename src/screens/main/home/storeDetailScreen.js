@@ -31,9 +31,11 @@ import PurpleTag from '../../../../assets/home/purple_tag.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 import WorkMenu from '../../../../assets/home/work_menu.svg';
+import IsLoading from '../../../components/ActivityIndicator';
 const {StatusBarManager} = NativeModules;
 import AnimatedHeader from './AnimatedHeader';
 const StoreDetailScreen = ({navigation, Page}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const offset = useRef(new Animated.Value(0)).current;
   const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
@@ -55,6 +57,9 @@ const StoreDetailScreen = ({navigation, Page}) => {
   const ChangeScrollValue = (text) => setScrollValue(text);
   return (
     <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={'#FFFFFF'}></StatusBar>
       <View style={{backgroundColor: '#FFFFFF'}}>
         {scrollValue > Width_convert(240) - 2 * statusBar ? (
           <StatusBar
@@ -809,7 +814,9 @@ const StoreDetailScreen = ({navigation, Page}) => {
                 flexDirection: 'row',
               }}>
               <KakaoTalkLogo
-                style={{marginRight: Width_convert(8.5)}}></KakaoTalkLogo>
+                width={Width_convert(23)}
+                height={Width_convert(23)}
+                style={{marginRight: Width_convert(6)}}></KakaoTalkLogo>
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSqureRegular || null,
@@ -851,6 +858,7 @@ const StoreDetailScreen = ({navigation, Page}) => {
         </View>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

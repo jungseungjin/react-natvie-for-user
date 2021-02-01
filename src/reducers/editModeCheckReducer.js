@@ -1,21 +1,21 @@
 import types from '../actions/types';
 const defaultState = {
-  landingCheck: false,
+  editMode: false,
   //   sumInfo: {
   //       frist : 0,
   //       second : 0,
   //   },
 };
 
-export default landingCheck = (state = defaultState, action) => {
+export default editModeCheck = (state = defaultState, action) => {
   // For Debugger
   // console.log('payload:' + action.payload);
-
   switch (action.type) {
-    case types.LANDING_CHECK:
+    case types.EDIT_MODE:
       return {
         //...state,
-        landingCheck: !state.landingCheck,
+        //landingCheck: !state.landingCheck,
+        editMode: !state.editMode,
         // sumInfo: {
         //     frist:action.payload,
         //     second:state.sumInfo.second

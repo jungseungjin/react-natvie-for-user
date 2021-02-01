@@ -5,18 +5,15 @@ import {
   StyleSheet,
   Text,
   StatusBar,
-  ToastAndroid,
-  BackHandler,
   Image,
   View,
   ScrollView,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
 import Height_convert from '../../../components/Width_convert.js';
-import {Fonts} from '../../../components/Fonts.js';
+import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Swiper from 'react-native-swiper';
 import Width_convert from '../../../components/Width_convert';
@@ -37,15 +34,66 @@ import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
 
-const HomeScreen = ({navigation, route}) => {
-  /*
-<StatusBar barStyle="dark-content" />
-<StatusBar barStyle="light-content" />
-Default status bar style (dark for iOS, light for Android)
-*/
+const HomeScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [topSliderImageList, setTopSliderImageList] = React.useState([
+    {URL: 'https://unsplash.it/400/400?image=1'},
+    {URL: 'https://unsplash.it/400/400?image=2'},
+    {URL: 'https://unsplash.it/400/400?image=3'},
+  ]);
+  const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([
+    {
+      URL: 'https://unsplash.it/400/400?image=1',
+      Title:
+        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
+      OwnersStore: '모토리 튜닝샵',
+      OwnersImage: 'https://unsplash.it/400/400?image=1',
+    },
+    {
+      URL: 'https://unsplash.it/400/400?image=2',
+      Title:
+        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
+      OwnersStore: '모토리 튜닝샵',
+      OwnersImage: 'https://unsplash.it/400/400?image=2',
+    },
+    {
+      URL: 'https://unsplash.it/400/400?image=3',
+      Title:
+        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
+      OwnersStore: '모토리 튜닝샵',
+      OwnersImage: 'https://unsplash.it/400/400?image=3',
+    },
+  ]);
+  const [recentWorkList, setRecentWorkList] = React.useState([
+    {
+      URL: 'https://unsplash.it/400/400?image=4',
+      Title: '아우디 Q7 ABTLINE 바디킷',
+      OwnersStore: '모토리 튜닝샵',
+      Average: 4.8,
+      Review: 343,
+      Address: '서울특별시 강남구 청담동',
+      Price: 30000,
+    },
+    {
+      URL: 'https://unsplash.it/400/400?image=5',
+      Title: '아우디 Q7 ABTLINE 바디킷',
+      OwnersStore: '모토리 튜닝샵2',
+      Average: 4,
+      Review: 2,
+      Address: '서울특별시 강남구 청동',
+      Price: 1000000,
+    },
+    {
+      URL: 'https://unsplash.it/400/400?image=6',
+      Title: '아우디 Q7 ABTLINE 바디킷',
+      OwnersStore: '모토리 튜닝샵3',
+      Average: 4.2,
+      Review: 214,
+      Address: '서울특별시 강남구 담동',
+      Price: 70000000,
+    },
+  ]);
   const [showInformation, setShowInformation] = React.useState(false);
-
   const scrollRef = useRef();
   const handleClick = () => {
     scrollRef.current.scrollToEnd({
@@ -61,22 +109,24 @@ Default status bar style (dark for iOS, light for Android)
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef}>
           <Tabbar Title={'투닝'}></Tabbar>
+          {/*상단 슬라이드 이미지 시작 */}
           <Swiper
             style={{height: Height_convert(211)}}
             autoplay={true}
             autoplayTimeout={4.5}
             dot={<Dot></Dot>}
             activeDot={<ActiveDot></ActiveDot>}>
-            <SwiperImage
-              from={'home'}
-              image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-            <SwiperImage
-              from={'home'}
-              image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-            <SwiperImage
-              from={'home'}
-              image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
+            {topSliderImageList.length > 0
+              ? topSliderImageList.map((item) => (
+                  <SwiperImage
+                    key={item.URL}
+                    from={'home'}
+                    image={item.URL}></SwiperImage>
+                ))
+              : null}
           </Swiper>
+          {/*상단 슬라이드 이미지 끝 */}
+          {/*슬라이드 이미지 아래부터 튜닝샵검색까지 시작 */}
           <View
             style={{
               width: Width_convert(375),
@@ -84,6 +134,7 @@ Default status bar style (dark for iOS, light for Android)
               borderBottomColor: 'rgba(219,219,219,0.35)',
               borderBottomWidth: 1,
             }}>
+            {/*슬라이드 이미지 밑 설정버튼 차종/지역 시작 */}
             <View
               style={{
                 width: Width_convert(375),
@@ -102,15 +153,16 @@ Default status bar style (dark for iOS, light for Android)
                 }}>
                 <SettingButton
                   Title={'설정'}
-                  Type={'work'}
-                  navigation={navigation}></SettingButton>
+                  Type={'car/location'}
+                  navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={'차종 / 지역'}
                   Type={'car'}
-                  navigation={navigation}></SettingButton>
+                  navigation={props.navigation}></SettingButton>
               </View>
             </View>
-
+            {/*슬라이드 이미지 밑 설정버튼 차종/지역 끝 */}
+            {/*드레스업 퍼포먼스 버튼 시작 */}
             <View
               style={{
                 width: Width_convert(375),
@@ -131,14 +183,16 @@ Default status bar style (dark for iOS, light for Android)
                   Title={'드레스업'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 외장을 꾸미고 싶을 때'}
-                  navigation={navigation}></SettingButton>
+                  navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={'퍼포먼스'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 성능을 높이고 싶을 때'}
-                  navigation={navigation}></SettingButton>
+                  navigation={props.navigation}></SettingButton>
               </View>
             </View>
+            {/*드레스업 퍼포먼스 버튼 끝 */}
+            {/*편의장치 캠핑카 튜닝 버튼 시작 */}
             <View
               style={{
                 width: Width_convert(375),
@@ -159,17 +213,21 @@ Default status bar style (dark for iOS, light for Android)
                   Title={'편의장치'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 풍부한 옵션이 필요할 때'}
-                  navigation={navigation}></SettingButton>
+                  navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={'캠핑카 튜닝'}
                   Type={'workDetail'}
                   SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}
-                  navigation={navigation}></SettingButton>
+                  navigation={props.navigation}></SettingButton>
               </View>
             </View>
-            <Search navigation={navigation} route={route}></Search>
+            {/*편의장치 캠핑카 튜닝 버튼 끝 */}
+            {/*튜닝부품 or 작업, 튜닝샵 검색 버튼 시작 */}
+            <Search navigation={props.navigation} route={props.route}></Search>
+            {/*튜닝부품 or 작업, 튜닝샵 검색 버튼 끝 */}
           </View>
-
+          {/*슬라이드 이미지 아래부터 튜닝샵검색까지 끝 */}
+          {/*사장님의 작업영상 시작 */}
           <View
             style={{
               width: Width_convert(375),
@@ -185,7 +243,9 @@ Default status bar style (dark for iOS, light for Android)
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TabMore Title={'사장님의 작업영상'}></TabMore>
+              <TabMore
+                Title={'사장님의 작업영상'}
+                navigation={props.navigation}></TabMore>
             </View>
             <View
               style={{
@@ -193,33 +253,24 @@ Default status bar style (dark for iOS, light for Android)
                 marginTop: Height_convert(16),
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <OwnersWork
-                  Title={
-                    '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈'
-                  }
-                  ImageUrl={'https://unsplash.it/400/400?image=1'}
-                  OwnersImage={'https://unsplash.it/400/400?image=1'}
-                  OwnersStore={'모토리 튜닝샵'}
-                  Index={0}></OwnersWork>
-                <OwnersWork
-                  Title={
-                    '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈'
-                  }
-                  ImageUrl={'https://unsplash.it/400/400?image=1'}
-                  OwnersImage={'https://unsplash.it/400/400?image=1'}
-                  OwnersStore={'모토리 튜닝샵'}
-                  Index={1}></OwnersWork>
-                <OwnersWork
-                  Title={
-                    '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈'
-                  }
-                  ImageUrl={'https://unsplash.it/400/400?image=1'}
-                  OwnersImage={'https://unsplash.it/400/400?image=1'}
-                  OwnersStore={'모토리 튜닝샵'}
-                  Index={2}></OwnersWork>
+                {ownersWokrVideoList.length > 0
+                  ? ownersWokrVideoList.map((item) => (
+                      <OwnersWork
+                        key={item.URL}
+                        From={'home'}
+                        Title={item.Title}
+                        ImageUrl={item.URL}
+                        OwnersImage={item.OwnersImage}
+                        OwnersStore={item.OwnersStore}
+                        navigation={props.navigation}
+                        Index={ownersWokrVideoList.indexOf(item)}></OwnersWork>
+                    ))
+                  : null}
               </ScrollView>
             </View>
           </View>
+          {/*사장님의 작업영상 끝 */}
+          {/*최근 본 작업 시작 */}
           <View
             style={{
               width: Width_convert(375),
@@ -235,7 +286,9 @@ Default status bar style (dark for iOS, light for Android)
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TabMore Title={'최근 본 작업'}></TabMore>
+              <TabMore
+                Title={'최근 본 작업'}
+                navigation={props.navigation}></TabMore>
             </View>
             <ScrollView
               horizontal
@@ -245,52 +298,38 @@ Default status bar style (dark for iOS, light for Android)
                 height: Height_convert(185),
                 marginTop: Height_convert(16),
               }}>
-              <RecentWork
-                Title={'아우디 Q7 ABTLINE 바디킷'}
-                ImageUrl={'https://unsplash.it/400/400?image=1'}
-                OwnersStore={'모토리 튜닝샵'}
-                Average={4.8}
-                Review={10}
-                Address={'서울특별시 강남구 청담동'}
-                Price={300}
-                Index={0}
-                navigation={navigation}></RecentWork>
-              <RecentWork
-                Title={'아우디 Q7 ABTLINE 바디킷'}
-                ImageUrl={'https://unsplash.it/400/400?image=1'}
-                OwnersStore={'모토리 튜닝샵'}
-                Average={4.8}
-                Review={10}
-                Address={'서울특별시 강남구 청담동'}
-                Price={300}
-                Index={1}></RecentWork>
-              <RecentWork
-                Title={'아우디 Q7 ABTLINE 바디킷'}
-                ImageUrl={'https://unsplash.it/400/400?image=1'}
-                OwnersStore={'모토리 튜닝샵'}
-                Average={4.8}
-                Review={10}
-                Address={'서울특별시 강남구 청담동'}
-                Price={300}
-                Index={2}></RecentWork>
+              {recentWorkList.length > 0
+                ? recentWorkList.map((item) => (
+                    <RecentWork
+                      key={item.URL}
+                      Title={item.Title}
+                      ImageUrl={item.URL}
+                      OwnersStore={item.OwnersStore}
+                      Average={item.Average}
+                      Review={item.Review}
+                      Address={item.Address}
+                      Price={item.Price}
+                      Index={recentWorkList.indexOf(item)}
+                      navigation={props.navigation}></RecentWork>
+                  ))
+                : null}
             </ScrollView>
           </View>
+          {/*최근 본 작업 끝 */}
+          {/*투닝 정보 시작 */}
           <View
             style={{
               width: Width_convert(375),
               height: Height_convert(155),
               borderBottomColor: 'rgba(219,219,219,0.35)',
               borderBottomWidth: 1,
-            }}
-            //{showInformation ? {height : Height_convert(216)} : {height :Height_convert(155)}}
-          >
+            }}>
             <View
               style={{
                 marginLeft: Width_convert(12),
                 marginTop: Height_convert(11),
                 width: Width_convert(351),
                 height: Height_convert(144),
-                //{showInformation ? {height : Height_convert(205)} : {height :Height_convert(144)}}
               }}>
               <TouchableOpacity
                 activeOpacity={1}
@@ -326,6 +365,7 @@ Default status bar style (dark for iOS, light for Android)
               <BottomInformationDefault></BottomInformationDefault>
             </View>
           </View>
+          {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}

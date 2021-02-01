@@ -16,8 +16,7 @@ import PropTypes from 'prop-types';
 import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x_black.svg';
 const {StatusBarManager} = NativeModules;
-const TabBar = ({navigation, Title, Page}) => {
-  console.log(Page);
+const TabBar = (props) => {
   const [statusBar, setStatusBar] = React.useState(0);
   const getValue = () => {
     if (Platform.OS === 'ios') {
@@ -37,38 +36,42 @@ const TabBar = ({navigation, Title, Page}) => {
         {
           height: Height_convert(94) - statusBar,
         },
-        Title == '투닝'
+        props.Title == '투닝'
           ? styles.view
-          : Title == '설정' || Title == '작업종류'
+          : props.Title == '설정' || props.Title == '작업종류'
           ? styles.view2
-          : Title == '드레스업' ||
-            Title == '퍼포먼스' ||
-            Title == '편의장치' ||
-            Title == '캠핑카'
+          : props.Title == '드레스업' ||
+            props.Title == '퍼포먼스' ||
+            props.Title == '편의장치' ||
+            props.Title == '캠핑카'
           ? styles.view2
           : styles.view2,
       ]}>
-      {Title == '투닝' ? null : Title == '설정' || Title == '작업종류' ? (
+      {/*왼쪽덩어리 시작 */}
+      {props.Title == '투닝' ? null : props.Title == '설정' ||
+        props.Title == '작업종류' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            navigation.goBack();
+            props.navigation.goBack();
           }}>
-          {Title == '설정' ? (
-            <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
+          {props.Title == '설정' ? (
+            <GoBack
+              fill={'#000000'}
+              style={{marginLeft: Width_convert(22)}}></GoBack>
           ) : (
-            <X style={{marginLeft: Width_convert(22)}}></X>
+            <X fill={'#000000'} style={{marginLeft: Width_convert(22)}}></X>
           )}
         </TouchableOpacity>
-      ) : Title == '드레스업' ||
-        Title == '퍼포먼스' ||
-        Title == '편의장치' ||
-        Title == '캠핑카' ? (
+      ) : props.Title == '드레스업' ||
+        props.Title == '퍼포먼스' ||
+        props.Title == '편의장치' ||
+        props.Title == '캠핑카' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{}}
           onPress={() => {
-            navigation.goBack();
+            props.navigation.goBack();
           }}>
           <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>
@@ -77,32 +80,39 @@ const TabBar = ({navigation, Title, Page}) => {
           activeOpacity={1}
           style={{}}
           onPress={() => {
-            navigation.goBack();
+            props.navigation.goBack();
           }}>
-          <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
+          <GoBack
+            fill={'#000000'}
+            style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>
       )}
+      {/*왼쪽덩어리 끝 */}
+      {/*가운데덩어리 시작 */}
       <Text
         style={
-          Title == '투닝'
+          props.Title == '투닝'
             ? styles.text
-            : Title == '설정' || Title == '작업종류'
+            : props.Title == '설정' || props.Title == '작업종류'
             ? styles.text2
-            : Title == '드레스업' ||
-              Title == '퍼포먼스' ||
-              Title == '편의장치' ||
-              Title == '캠핑카'
+            : props.Title == '드레스업' ||
+              props.Title == '퍼포먼스' ||
+              props.Title == '편의장치' ||
+              props.Title == '캠핑카'
             ? styles.text2
             : styles.text2
         }>
-        {Title}
+        {props.Title}
       </Text>
-      {Title == '투닝' ? null : Title == '설정' || Title == '작업종류' ? (
+      {/*가운데덩어리 끝 */}
+      {/*오른쪽덩어리 시작 */}
+      {props.Title == '투닝' ? null : props.Title == '설정' ||
+        props.Title == '작업종류' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            if (Title == '작업종류') {
-              navigation.navigate('CategoryDetail', {Page: Page});
+            if (props.Title == '작업종류') {
+              props.navigation.navigate('CategoryDetail', {Page: props.Page});
             }
           }}>
           <Text
@@ -116,10 +126,10 @@ const TabBar = ({navigation, Title, Page}) => {
             완료
           </Text>
         </TouchableOpacity>
-      ) : Title == '드레스업' ||
-        Title == '퍼포먼스' ||
-        Title == '편의장치' ||
-        Title == '캠핑카' ? (
+      ) : props.Title == '드레스업' ||
+        props.Title == '퍼포먼스' ||
+        props.Title == '편의장치' ||
+        props.Title == '캠핑카' ? (
         <View style={{backgroundColor: '#FFFFFF'}}>
           <Text
             style={{

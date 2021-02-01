@@ -4,22 +4,26 @@ import Height_convert from '../../Width_convert.js';
 import Width_convert from '../../Width_convert.js';
 import FastImage from 'react-native-fast-image';
 import PropTypes from 'prop-types';
-const SwiperImage = ({image, from}) => {
+const SwiperImage = (props) => {
   return (
     <View
       style={
-        from == 'home' ? styles.view : from == 'work' ? styles.view_work : null
+        props.from == 'home'
+          ? styles.view
+          : props.from == 'work'
+          ? styles.view_work
+          : null
       }>
       <FastImage
         style={
-          from == 'home'
+          props.from == 'home'
             ? styles.fastImage
-            : from == 'work'
+            : props.from == 'work'
             ? styles.fastImage_work
             : null
         }
         source={{
-          uri: image,
+          uri: props.image,
           headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9DD6EB',
+    backgroundColor: '#FFFFFF',
     width: Width_convert(375),
     height: Width_convert(211),
   },
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9DD6EB',
+    backgroundColor: '#FFFFFF',
     width: Width_convert(375),
     height: Width_convert(240),
   },
@@ -55,5 +59,6 @@ const styles = StyleSheet.create({
 });
 SwiperImage.propTypes = {
   image: PropTypes.string.isRequired,
+  from: PropTypes.string.isRequired,
 };
 export default SwiperImage;

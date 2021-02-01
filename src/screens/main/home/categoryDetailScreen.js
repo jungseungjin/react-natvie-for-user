@@ -18,10 +18,11 @@ import Height_convert from '../../../components/Height_convert.js';
 import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import LocationSettingModal from '../../../components/Home/Modal/locationSettingModal.js';
+import IsLoading from '../../../components/ActivityIndicator';
 const {StatusBarManager} = NativeModules;
 const CategoryDetailScreen = ({navigation, Page, route}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState(route.params.Page || null);
-  console.log(page);
   const PageChangeValue = (text) => setPage(text);
 
   const [statusBar, setStatusBar] = React.useState(0);
@@ -207,6 +208,7 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
         )}
         {showModal ? <LocationSettingModal></LocationSettingModal> : null}
       </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

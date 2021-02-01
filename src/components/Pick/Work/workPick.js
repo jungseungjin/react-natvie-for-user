@@ -22,8 +22,9 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
-
-const WorkPick = ({navigation, route}) => {
+import CheckedBox from '../../../../assets/home/checked_box.svg';
+import CheckBox from '../../../../assets/home/check_box.svg';
+const WorkPick = (props) => {
   return (
     <View
       style={{
@@ -156,8 +157,10 @@ const WorkPick = ({navigation, route}) => {
         <View
           style={{
             height: Height_convert(14),
-            justifyContent: 'center',
             marginTop: Height_convert(6),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}>
           <Text
             style={{
@@ -168,6 +171,28 @@ const WorkPick = ({navigation, route}) => {
             }}>
             서울특별시 강남구 청담동 12-3
           </Text>
+          {props.editMode ? (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <CheckBox
+                width={Width_convert(15)}
+                height={Width_convert(15)}></CheckBox>
+            </TouchableOpacity>
+          ) : null}
+          {props.editMode ? (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                alert('gd');
+              }}>
+              <CheckedBox
+                width={Width_convert(15)}
+                height={Width_convert(15)}></CheckedBox>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <View
           style={{

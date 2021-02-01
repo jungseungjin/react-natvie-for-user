@@ -8,42 +8,32 @@ import Font_normalize from '../../Font_normalize.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 
-const RecentWork = ({
-  Title,
-  ImageUrl,
-  OwnersStore,
-  Average,
-  Review,
-  Address,
-  Price,
-  Index,
-  navigation,
-}) => {
+const RecentWork = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        navigation.navigate('WorkDetail');
+        props.navigation.navigate('WorkDetail');
       }}
-      style={Index == 0 ? styles.view_index0 : styles.view}>
+      style={props.Index == 0 ? styles.view_index0 : styles.view}>
       <FastImage
         style={styles.fastImage}
         source={{
-          uri: ImageUrl,
+          uri: props.ImageUrl,
           headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
-      <Text style={styles.text}>{Title}</Text>
+      <Text style={styles.text}>{props.Title}</Text>
       <View style={styles.view2}>
-        <Text style={styles.text2}>{OwnersStore}</Text>
+        <Text style={styles.text2}>{props.OwnersStore}</Text>
         <Star style={styles.star}></Star>
-        <Text style={styles.text3}>{Average}</Text>
-        <Text style={styles.text3}>후기 {Review}</Text>
+        <Text style={styles.text3}>{props.Average}</Text>
+        <Text style={styles.text3}>후기 {props.Review}</Text>
       </View>
-      <Text style={styles.text4}>주소 : {Address}</Text>
+      <Text style={styles.text4}>주소 : {props.Address}</Text>
       <View style={styles.view3}>
-        <Text style={styles.text5}>{Price}원</Text>
+        <Text style={styles.text5}>{props.Price}원</Text>
       </View>
     </TouchableOpacity>
   );

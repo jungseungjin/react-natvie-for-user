@@ -40,6 +40,7 @@ import FilterView from '../../../components/Home/Search/filterView.js';
 import PickButton from '../../../components/Home/Search/pickButton.js';
 const {StatusBarManager} = NativeModules;
 const SearchScreenDetail = ({navigation, route}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   //기본으로 데이터받아오는 검색부터 진행해야됨.
   //데이터 받아와야하니까 로딩걸린다잉
   const [searchText, setSearchText] = React.useState(
@@ -94,178 +95,184 @@ const SearchScreenDetail = ({navigation, route}) => {
     textInputRef.current.focus();
   };
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-      <View
-        style={{
-          height: Height_convert(88) - statusBar,
-          width: Width_convert(375),
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottomColor: 'rgba(219,219,219,0.35)',
-          borderBottomWidth: 1,
-        }}>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            navigation.goBack();
-          }}
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={'#FFFFFF'}></StatusBar>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+        <View
           style={{
-            marginLeft: Width_convert(22),
-            marginRight: Width_convert(15),
-            width: Width_convert(14),
-            height: Height_convert(16),
+            height: Height_convert(88) - statusBar,
+            width: Width_convert(375),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottomColor: 'rgba(219,219,219,0.35)',
+            borderBottomWidth: 1,
           }}>
-          <GoBack></GoBack>
-        </TouchableOpacity>
-        <TextInput
-          ref={textInputRef}
-          autoCapitalize={'none'}
-          autoCompleteType={'off'}
-          autoCorrect={false}
-          keyboardType="default"
-          onChangeText={(text) => {
-            setSearchText(text);
-          }}
-          defaultValue={searchText}
-          returnKeyType={'search'}
-          onSubmitEditing={() => {
-            if (searchText.trim()) {
-              //검색함수 ㄲ
-            }
-          }}
-          style={{
-            width: Width_convert(249),
-            fontSize: Font_normalize(16),
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontWeight: '400',
-            paddingTop: 0,
-            paddingBottom: 0,
-          }}
-          placeholderTextColor="#A1A1A1"
-          placeholder={'튜닝부품 or 작업, 튜닝샵 검색'}
-          //onKeyPress={this.handleKeyDown}
-          // /handleKeyDown: function(e) {
-          //   if(e.nativeEvent.key == "Enter"){
-          //     dismissKeyboard();
-          // }
-        ></TextInput>
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            setSearchText('');
-            handleClick();
-          }}
-          style={{
-            marginRight: Width_convert(15),
-            width: Width_convert(16),
-            height: Height_convert(16),
-          }}>
-          <X_grayRound></X_grayRound>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={{
-            marginRight: Width_convert(22),
-            width: Width_convert(20),
-            height: Height_convert(20),
-          }}
-          onPress={() => {
-            if (searchText.trim()) {
-              //검색함수 ㄲ
-              addData(searchText);
-            }
-          }}>
-          <Search></Search>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          width: Width_convert(375),
-          height: Height_convert(51),
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <PickButton
-          Title={'튜닝작업'}
-          Length={resultWorkList.length}
-          nowValue={pickButton}
-          ButtonChangeValue={ButtonChangeValue}></PickButton>
-        <PickButton
-          Title={'튜닝샵'}
-          Length={resultStoreList.length}
-          nowValue={pickButton}
-          ButtonChangeValue={ButtonChangeValue}></PickButton>
-        <FilterIcon
-          PickChangeValue={PickChangeValue}
-          nowValue={pickFilter}></FilterIcon>
-      </View>
-      {pickFilter ? (
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={{
+              marginLeft: Width_convert(22),
+              marginRight: Width_convert(15),
+              width: Width_convert(14),
+              height: Height_convert(16),
+            }}>
+            <GoBack></GoBack>
+          </TouchableOpacity>
+          <TextInput
+            ref={textInputRef}
+            autoCapitalize={'none'}
+            autoCompleteType={'off'}
+            autoCorrect={false}
+            keyboardType="default"
+            onChangeText={(text) => {
+              setSearchText(text);
+            }}
+            defaultValue={searchText}
+            returnKeyType={'search'}
+            onSubmitEditing={() => {
+              if (searchText.trim()) {
+                //검색함수 ㄲ
+              }
+            }}
+            style={{
+              width: Width_convert(249),
+              fontSize: Font_normalize(16),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '400',
+              paddingTop: 0,
+              paddingBottom: 0,
+            }}
+            placeholderTextColor="#A1A1A1"
+            placeholder={'튜닝부품 or 작업, 튜닝샵 검색'}
+            //onKeyPress={this.handleKeyDown}
+            // /handleKeyDown: function(e) {
+            //   if(e.nativeEvent.key == "Enter"){
+            //     dismissKeyboard();
+            // }
+          ></TextInput>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              setSearchText('');
+              handleClick();
+            }}
+            style={{
+              marginRight: Width_convert(15),
+              width: Width_convert(16),
+              height: Height_convert(16),
+            }}>
+            <X_grayRound></X_grayRound>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            style={{
+              marginRight: Width_convert(22),
+              width: Width_convert(20),
+              height: Height_convert(20),
+            }}
+            onPress={() => {
+              if (searchText.trim()) {
+                //검색함수 ㄲ
+                addData(searchText);
+              }
+            }}>
+            <Search></Search>
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             width: Width_convert(375),
-            height: Height_convert(818),
-            top: Height_convert(138) - statusBarSafeAreaView,
-            position: 'absolute',
-            zIndex: 1,
+            height: Height_convert(51),
+            flexDirection: 'row',
+            alignItems: 'center',
           }}>
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(162),
-              backgroundColor: '#FFFFFF',
-            }}>
-            <FilterView
-              index={0}
-              Title={'가까운 순 '}
-              nowValue={pickSort}
-              SortChangeValue={SortChangeValue}></FilterView>
-            <FilterView
-              index={1}
-              Title={'별점 순 '}
-              nowValue={pickSort}
-              SortChangeValue={SortChangeValue}></FilterView>
-            <FilterView
-              index={2}
-              Title={'후기많은 순 '}
-              nowValue={pickSort}
-              SortChangeValue={SortChangeValue}></FilterView>
-            <FilterView
-              index={3}
-              Title={'찜 많은 순 '}
-              nowValue={pickSort}
-              SortChangeValue={SortChangeValue}></FilterView>
-            <FilterView
-              index={4}
-              Title={'우리가게공임표 공개'}
-              nowValue={pickSort}
-              SortChangeValue={SortChangeValue}></FilterView>
-          </View>
-          <View
-            opacity={0.3}
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(656),
-              backgroundColor: '#202020',
-            }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{flex: 1}}
-              onPress={() => {
-                setPickFilter(false);
-              }}></TouchableOpacity>
-          </View>
+          <PickButton
+            Title={'튜닝작업'}
+            Length={resultWorkList.length}
+            nowValue={pickButton}
+            ButtonChangeValue={ButtonChangeValue}></PickButton>
+          <PickButton
+            Title={'튜닝샵'}
+            Length={resultStoreList.length}
+            nowValue={pickButton}
+            ButtonChangeValue={ButtonChangeValue}></PickButton>
+          <FilterIcon
+            PickChangeValue={PickChangeValue}
+            nowValue={pickFilter}></FilterIcon>
         </View>
-      ) : null}
-      {resultWorkList.length == 0 && resultStoreList.length == 0 ? (
-        <SearchNull></SearchNull>
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {resultStoreList ? <SearchStore></SearchStore> : null}
-          {resultWorkList ? <SearchWork></SearchWork> : null}
-        </ScrollView>
-      )}
-    </SafeAreaView>
+        {pickFilter ? (
+          <View
+            style={{
+              width: Width_convert(375),
+              height: Height_convert(818),
+              top: Height_convert(138) - statusBarSafeAreaView,
+              position: 'absolute',
+              zIndex: 1,
+            }}>
+            <View
+              style={{
+                width: Width_convert(375),
+                height: Height_convert(162),
+                backgroundColor: '#FFFFFF',
+              }}>
+              <FilterView
+                index={0}
+                Title={'가까운 순 '}
+                nowValue={pickSort}
+                SortChangeValue={SortChangeValue}></FilterView>
+              <FilterView
+                index={1}
+                Title={'별점 순 '}
+                nowValue={pickSort}
+                SortChangeValue={SortChangeValue}></FilterView>
+              <FilterView
+                index={2}
+                Title={'후기많은 순 '}
+                nowValue={pickSort}
+                SortChangeValue={SortChangeValue}></FilterView>
+              <FilterView
+                index={3}
+                Title={'찜 많은 순 '}
+                nowValue={pickSort}
+                SortChangeValue={SortChangeValue}></FilterView>
+              <FilterView
+                index={4}
+                Title={'우리가게공임표 공개'}
+                nowValue={pickSort}
+                SortChangeValue={SortChangeValue}></FilterView>
+            </View>
+            <View
+              opacity={0.3}
+              style={{
+                width: Width_convert(375),
+                height: Height_convert(656),
+                backgroundColor: '#202020',
+              }}>
+              <TouchableOpacity
+                activeOpacity={1}
+                style={{flex: 1}}
+                onPress={() => {
+                  setPickFilter(false);
+                }}></TouchableOpacity>
+            </View>
+          </View>
+        ) : null}
+        {resultWorkList.length == 0 && resultStoreList.length == 0 ? (
+          <SearchNull></SearchNull>
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {resultStoreList ? <SearchStore></SearchStore> : null}
+            {resultWorkList ? <SearchWork></SearchWork> : null}
+          </ScrollView>
+        )}
+      </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
+    </>
   );
 };
 const styles = StyleSheet.create({

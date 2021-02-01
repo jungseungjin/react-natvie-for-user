@@ -13,8 +13,21 @@ import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
-const CategoryScreen = ({navigation}) => {
-  const [page, setPage] = React.useState('dressup');
+import IsLoading from '../../../components/ActivityIndicator';
+const CategoryScreen = (props) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [page, setPage] = React.useState(
+    props.route.params.Title == '드레스업'
+      ? 'dressup'
+      : props.route.params.Title == '퍼포먼스'
+      ? 'perfomance'
+      : props.route.params.Title == '편의장치'
+      ? 'convenience'
+      : props.route.params.Title == '캠핑카 튜닝'
+      ? 'camping'
+      : 'dressup',
+  );
+  //props.route.params.Title 값으로 서버에서 작업데이터 가져오기.
   const PageChangeValue = (text) => setPage(text);
   return (
     <>
@@ -22,7 +35,10 @@ const CategoryScreen = ({navigation}) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'작업종류'} navigation={navigation} Page={page}></Tabbar>
+        <Tabbar
+          Title={'작업종류'}
+          navigation={props.navigation}
+          Page={page}></Tabbar>
         <TabBarBottom
           from={'category'}
           Title={[
@@ -146,6 +162,7 @@ const CategoryScreen = ({navigation}) => {
           </View>
         </View>
       </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

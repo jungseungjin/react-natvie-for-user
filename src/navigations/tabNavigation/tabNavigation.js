@@ -14,9 +14,16 @@ import More_active from '../../../assets/nav/More_active.svg';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 enableScreens();
 const Tabs = createBottomTabNavigator();
-const setTabBarVisible = (route) => {
+import {useSelector} from 'react-redux';
+
+const setTabBarVisible = (route, reduexState) => {
   //특정스크린 바텀네비게이션 숨기기
   const routeName = getFocusedRouteNameFromRoute(route);
+  if (reduexState.editModeCheck.editMode == true && route.name == 'Pick') {
+    //찜한작업 페이지에서만 걸리도록 해야하는데..?
+    return false;
+  }
+
   const hideOnScreens = [
     'Search',
     'Setting',
@@ -28,19 +35,19 @@ const setTabBarVisible = (route) => {
     'StoreDetail',
     'ReviewView',
     'ReviewRegister',
-    'PickEdit',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;
 };
 const TabNavigator = (props) => {
+  const reduexState = useSelector((state) => state);
   return (
     <Tabs.Navigator
       tabBarOptions={{
         showLabel: false,
       }}
       screenOptions={({route}) => ({
-        tabBarVisible: setTabBarVisible(route),
+        tabBarVisible: setTabBarVisible(route, reduexState),
       })}>
       <Tabs.Screen
         name="Home"

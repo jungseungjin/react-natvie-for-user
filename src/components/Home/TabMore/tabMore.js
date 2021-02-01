@@ -5,14 +5,18 @@ import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
-const TabMore = ({Title}) => {
+const TabMore = (props) => {
   return (
     <View style={styles.view}>
-      <Text style={styles.text}>{Title}</Text>
+      <Text style={styles.text}>{props.Title}</Text>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          alert('gd');
+          if (props.Title == '사장님의 작업영상') {
+            props.navigation.navigate('WorkVideo');
+          } else if (props.Title == '최근 본 작업') {
+            //props.navigation.navigate("WorkVideo")
+          }
         }}>
         <Text style={styles.touchText}>더보기</Text>
       </TouchableOpacity>

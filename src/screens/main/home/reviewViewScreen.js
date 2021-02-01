@@ -20,8 +20,10 @@ import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
+import IsLoading from '../../../components/ActivityIndicator';
 const {StatusBarManager} = NativeModules;
 const ReviewView = ({navigation, Page}) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState('MOTION튜닝샵');
   const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
@@ -767,6 +769,7 @@ const ReviewView = ({navigation, Page}) => {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

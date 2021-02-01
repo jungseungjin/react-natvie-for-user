@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacityBase,
+  FlatList,
 } from 'react-native';
 import Fonts from '../../Fonts';
 import Font_normalize from '../../Font_normalize.js';
@@ -17,10 +18,76 @@ import Purple_dot from '../../../../assets/home/purple_dot.svg';
 import Black_dot from '../../../../assets/home/black_dot.svg';
 import PropTypes from 'prop-types';
 import FastImage from 'react-native-fast-image';
+import axios from 'axios';
+import Domain from '../../../../key/Domain.js';
+import CarSettingBrand from './carSettingBrand.js';
+import CarSettingModel from './carSettingModel.js';
+const CarSetting = (props) => {
+  console.log(props.PickBrandValue);
+  const [brandList, setBrandList] = React.useState([]);
+  const [modelList, setModelList] = React.useState([]);
+  const get_data = async function (props) {
+    try {
+      let brandSeach;
+      if (props.nowValue == 'domestic') {
+        //국산차 브랜드 조회
+        brandSeach = '1';
+      } else if (props.nowValue == 'import') {
+        //수입차 브랜드 조회
+        brandSeach = '2';
+      } else {
+        //전체
+        setBrandList([]);
+        return false;
+      }
+      props.PickModelChangeValue('');
+      props.PickModelDetailChangeValue('');
+      let url = Domain + 'brand_list/' + brandSeach;
+      props.IsLoadingChangeValue(true);
+      let result = await axios.get(url);
+      if (result.data[0].type) {
+        //get에서 type이 있으면 잘못된거
+        alert(result.data[0].message);
+        props.IsLoadingChangeValue(false);
+      } else {
+        setBrandList(result.data);
+        props.IsLoadingChangeValue(false);
+      }
+    } catch (err) {
+      console.log(err);
+      alert('잠시 후에 다시해주세요');
+    }
+  };
+  const get_model_data = async function (props) {
+    try {
+      if (props.PickBrandValue) {
+        let url = Domain + 'model_list/' + props.PickBrandValue;
+        //props.IsLoadingChangeValue(true);
+        let result = await axios.get(url);
+        if (result.data[0].type) {
+          //get에서 type이 있으면 잘못된거
+          alert(result.data[0].message);
+          //props.IsLoadingChangeValue(false);
+        } else {
+          setModelList(result.data);
+          //props.IsLoadingChangeValue(false);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      alert('잠시 후에 다시해주세요');
+    }
+  };
+  React.useEffect(() => {
+    get_data(props);
+  }, [props.nowValue]);
+  React.useEffect(() => {
+    get_model_data(props);
+  }, [props.PickBrandValue]);
 
-const CarSetting = () => {
   return (
     <View style={{flex: 1, flexDirection: 'row'}}>
+      {/*왼쪽 뷰 시작 */}
       <View
         style={{
           width: Width_convert(99),
@@ -28,6 +95,7 @@ const CarSetting = () => {
           borderRightColor: '#DBDBDB',
           justifyContent: 'space-between',
         }}>
+        {/*국산 수입 전체 선택하기 시작*/}
         <View
           style={{
             height: Width_convert(99), //사이즈안맞아서 width로
@@ -36,6 +104,12 @@ const CarSetting = () => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            onPress={() => {
+              if (props.nowValue == 'domestic') {
+              } else {
+                props.CategoryChangeValue('domestic');
+              }
+            }}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -52,11 +126,22 @@ const CarSetting = () => {
               }}>
               국산
             </Text>
-            <Gray_checkBox
-              style={{marginRight: Width_convert(22)}}></Gray_checkBox>
+            {props.nowValue == 'domestic' ? (
+              <Purple_checkBox
+                style={{marginRight: Width_convert(22)}}></Purple_checkBox>
+            ) : (
+              <Gray_checkBox
+                style={{marginRight: Width_convert(22)}}></Gray_checkBox>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            onPress={() => {
+              if (props.nowValue == 'import') {
+              } else {
+                props.CategoryChangeValue('import');
+              }
+            }}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -73,11 +158,22 @@ const CarSetting = () => {
               }}>
               수입
             </Text>
-            <Gray_checkBox
-              style={{marginRight: Width_convert(22)}}></Gray_checkBox>
+            {props.nowValue == 'import' ? (
+              <Purple_checkBox
+                style={{marginRight: Width_convert(22)}}></Purple_checkBox>
+            ) : (
+              <Gray_checkBox
+                style={{marginRight: Width_convert(22)}}></Gray_checkBox>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            onPress={() => {
+              if (props.nowValue == 'all') {
+              } else {
+                props.CategoryChangeValue('all');
+              }
+            }}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -94,96 +190,58 @@ const CarSetting = () => {
               }}>
               전체
             </Text>
-            <Purple_checkBox
-              style={{marginRight: Width_convert(22)}}></Purple_checkBox>
+            {props.nowValue == 'all' ? (
+              <Purple_checkBox
+                style={{marginRight: Width_convert(22)}}></Purple_checkBox>
+            ) : (
+              <Gray_checkBox
+                style={{marginRight: Width_convert(22)}}></Gray_checkBox>
+            )}
           </TouchableOpacity>
         </View>
-        <ScrollView style={{flex: 1}}>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{
-              width: Width_convert(65),
-              height: Width_convert(51),
-              borderRadius: Font_normalize(4),
-              backgroundColor: '#ECECEC',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: Width_convert(16),
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <FastImage
-              style={{
-                width: Width_convert(30),
-                height: Width_convert(20),
-              }}
-              source={{
-                uri: 'https://unsplash.it/400/400?image=1',
-                headers: {Authorization: 'someAuthToken'},
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.stretch}></FastImage>
-            <Text
-              style={{
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontSize: Font_normalize(11),
-                fontWeight: '400',
-                color: '#000000',
-                marginTop: Height_convert(9),
-              }}>
-              제네시스
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
+        {/*국산 수입 전체 선택하기 끝*/}
+        {/*브랜드 나열 시작 */}
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{flex: 1}}
+          data={brandList}
+          windowSize={2}
+          initialNumToRender={10}
+          renderItem={({item}) => (
+            <CarSettingBrand
+              item={item}
+              PickBrandValue={props.PickBrandValue}
+              PickBrandChangeValue={
+                props.PickBrandChangeValue
+              }></CarSettingBrand>
+          )}
+          keyExtractor={(item) => String(item._id)}></FlatList>
+        {/*브랜드 나열 끝 */}
       </View>
-      <ScrollView style={{width: Width_convert(275)}}>
-        <View>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginLeft: Width_convert(31),
-              marginTop: Height_convert(28),
-            }}>
-            <Purple_dot style={{marginRight: Width_convert(9)}}></Purple_dot>
-            <Text
-              style={{
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontWeight: '700',
-                fontSize: Font_normalize(15),
-                color: '#946AEF',
-              }}>
-              G70
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              width: Width_convert(199),
-              borderRadius: Font_normalize(4),
-              backgroundColor: '#F2EEFA',
-              marginLeft: Width_convert(40),
-              marginTop: Height_convert(5),
-            }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{justifyContent: 'center'}}>
-              <Text
-                style={{
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(11),
-                  color: '#946AEF',
-                  paddingLeft: Width_convert(10),
-                  paddingTop: Height_convert(13),
-                  paddingBottom: Height_convert(13),
-                }}>
-                더 뉴 G70(20년~현재)
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
+      {/*왼쪽 뷰 끝 */}
+      {/*오른쪽 뷰 시작 */}
+      <FlatList
+        style={{width: Width_convert(275)}}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={{flex: 1}}
+        data={modelList}
+        windowSize={2}
+        initialNumToRender={10}
+        renderItem={({item}) => (
+          <CarSettingModel
+            index={brandList.indexOf(item)}
+            item={item}
+            PickBrandValue={props.PickBrandValue}
+            PickModelValue={props.PickModelValue}
+            PickModelChangeValue={props.PickModelChangeValue}
+            PickModelDetail={props.PickModelDetail}
+            PickModelDetailChangeValue={props.PickModelDetailChangeValue}
+            IsLoadingChangeValue={props.IsLoadingChangeValue}></CarSettingModel>
+        )}
+        keyExtractor={(item) => String(item._id)}></FlatList>
+      {/*오른쪽 뷰 끝 */}
     </View>
   );
 };
