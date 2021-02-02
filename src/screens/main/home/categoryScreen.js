@@ -7,14 +7,20 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import Font_normalize from '../../../components/Font_normalize.js';
-import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
-import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
+import Font_normalize from '../../../components/Font_normalize.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
+import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import axios from 'axios';
+import {FlatList} from 'react-native-gesture-handler';
+import Domain from '../../../../key/Domain.js';
+import MiddleCategory from '../../../components/Home/Category/middleCategory.js';
+import SmallCategory from '../../../components/Home/Category/smallCategory.js';
 const CategoryScreen = (props) => {
+  //완료버튼이 중분류 소분류까지 가능. 대분류는 말고!
   const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState(
     props.route.params.Title == '드레스업'
@@ -27,6 +33,82 @@ const CategoryScreen = (props) => {
       ? 'camping'
       : 'dressup',
   );
+  const [middleCategoryList, setMiddleCategoryList] = React.useState([]);
+  const [pickMiddleCategory, setPickMiddleCategory] = React.useState({});
+  const PickMiddleCategoryChangeValue = (object) =>
+    setPickMiddleCategory(object);
+  const get_middle_category_data = async (props) => {
+    try {
+      if (page) {
+        let work_type;
+        if (page == 'dressup') {
+          work_type = 1;
+        } else if (page == 'perfomance') {
+          work_type = 2;
+        } else if (page == 'convenience') {
+          work_type = 3;
+        } else if (page == 'camping') {
+          work_type = 4;
+        } else {
+          return false;
+        }
+        let url = Domain + 'work_findAll?work_type=' + work_type;
+        setIsLoading(true);
+        let result = await axios.get(url);
+        if (result.data[0].type) {
+          //get에서 type이 있으면 잘못된거
+          alert(result.data[0].message);
+          setIsLoading(false);
+        } else {
+          setMiddleCategoryList(result.data);
+          setPickMiddleCategory({});
+          setSmallCategoryList([]);
+          setPickSmallCategory({});
+          setIsLoading(false);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      setMiddleCategoryList([]);
+      alert('잠시 후에 다시해주세요');
+    }
+  };
+  const [smallCategoryList, setSmallCategoryList] = React.useState([]);
+  const [pickSmallCategory, setPickSmallCategory] = React.useState({});
+  const PickSmallCategoryChangeValue = (object) => setPickSmallCategory(object);
+  const get_small_category_data = async (props) => {
+    try {
+      let work_sub_type_name;
+      if (pickMiddleCategory?.work_sub_type_name) {
+        work_sub_type_name = pickMiddleCategory.work_sub_type_name;
+      } else {
+        return false;
+      }
+      let url =
+        Domain + 'work_findAll?work_sub_type_name=' + work_sub_type_name;
+      setIsLoading(true);
+      let result = await axios.get(url);
+      if (result.data[0].type) {
+        //get에서 type이 있으면 잘못된거
+        alert(result.data[0].message);
+        setIsLoading(false);
+      } else {
+        setSmallCategoryList(result.data);
+        setPickSmallCategory({});
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setSmallCategoryList([]);
+      alert('잠시 후에 다시해주세요');
+    }
+  };
+  React.useEffect(() => {
+    get_middle_category_data(props);
+  }, [page]);
+  React.useEffect(() => {
+    get_small_category_data(props);
+  }, [pickMiddleCategory]);
   //props.route.params.Title 값으로 서버에서 작업데이터 가져오기.
   const PageChangeValue = (text) => setPage(text);
   return (
@@ -50,116 +132,50 @@ const CategoryScreen = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <View style={{flex: 1, flexDirection: 'row'}}>
-          <View style={{width: Width_convert(125)}}>
-            <ScrollView style={{backgroundColor: '#F1F1F1'}}>
-              <TouchableOpacity
-                activeOpacity={1}
-                style={{
-                  width: Width_convert(125),
-                  height: Width_convert(52),
-                  backgroundColor: '#DBDBDB',
-                  borderBottomColor: '#FFFFFF',
-                  borderBottomWidth: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(14),
-                    color: '#000000',
-                    textAlign: 'center',
-                  }}>
-                  바디파츠
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={1}
-                style={{
-                  width: Width_convert(125),
-                  height: Width_convert(52),
-                  backgroundColor: '#F1F1F1',
-                  borderBottomColor: '#FFFFFF',
-                  borderBottomWidth: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(14),
-                    color: '#000000',
-                    textAlign: 'center',
-                  }}>
-                  휠/타이어/캘리퍼
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={1}
-                style={{
-                  width: Width_convert(125),
-                  height: Width_convert(52),
-                  backgroundColor: '#F1F1F1',
-                  borderBottomColor: '#FFFFFF',
-                  borderBottomWidth: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(14),
-                    color: '#000000',
-                    textAlign: 'center',
-                  }}>
-                  LED/램프류
-                </Text>
-              </TouchableOpacity>
-            </ScrollView>
+          {/*카테고리 - 중분류 리스트 및 선택 시작 */}
+          <View style={{width: Width_convert(125), backgroundColor: '#F1F1F1'}}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              style={{flex: 1}}
+              data={middleCategoryList}
+              windowSize={2}
+              initialNumToRender={10}
+              renderItem={({item}) => (
+                <MiddleCategory
+                  item={item}
+                  PickMiddleCategory={
+                    pickMiddleCategory == item ? pickMiddleCategory : null
+                  }
+                  PickMiddleCategoryChangeValue={
+                    PickMiddleCategoryChangeValue
+                  }></MiddleCategory>
+              )}
+              keyExtractor={(item) => String(item._id)}></FlatList>
           </View>
-          <View style={{width: Width_convert(250)}}>
-            <ScrollView style={{backgroundColor: '#FFFFFF'}}>
-              <View style={{marginLeft: Width_convert(28)}}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  style={{
-                    marginTop: Height_convert(20),
-                    marginBottom: Height_convert(5),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(14),
-                      color: '#946AEF',
-                    }}>
-                    바디킷 및 패키지
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{marginLeft: Width_convert(28)}}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  style={{
-                    marginTop: Height_convert(10),
-                    marginBottom: Height_convert(5),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(14),
-                      color: '#000000',
-                    }}>
-                    프론트범퍼
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+          {/*카테고리 - 중분류 리스트 및 선택 끝 */}
+          {/*카테고리 - 소분류 리스트 및 선택 시작 */}
+          <View style={{width: Width_convert(250), backgroundColor: '#FFFFFF'}}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              style={{flex: 1}}
+              data={smallCategoryList}
+              windowSize={2}
+              initialNumToRender={10}
+              renderItem={({item}) => (
+                <SmallCategory
+                  item={item}
+                  PickSmallCategory={
+                    pickSmallCategory == item ? pickSmallCategory : null
+                  }
+                  PickSmallCategoryChangeValue={
+                    PickSmallCategoryChangeValue
+                  }></SmallCategory>
+              )}
+              keyExtractor={(item) => String(item._id)}></FlatList>
           </View>
+          {/*카테고리 - 소분류 리스트 및 선택 끝 */}
         </View>
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}

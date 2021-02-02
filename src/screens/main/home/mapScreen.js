@@ -31,7 +31,7 @@ import NaverMapView, {
   Polygon,
 } from 'react-native-nmap';
 const {StatusBarManager} = NativeModules;
-const MapScreen = ({navigation, route}) => {
+const MapScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [statusBar, setStatusBar] = React.useState(0);
   const getValue = () => {
@@ -91,7 +91,7 @@ const MapScreen = ({navigation, route}) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              navigation.goBack();
+              props.navigation.goBack();
             }}
             style={{
               marginLeft: Width_convert(22),
@@ -99,36 +99,43 @@ const MapScreen = ({navigation, route}) => {
               width: Width_convert(14),
               height: Height_convert(16),
             }}>
-            <GoBack></GoBack>
+            <GoBack fill={'#000000'}></GoBack>
           </TouchableOpacity>
-          <TextInput
-            autoCapitalize={'none'}
-            autoCompleteType={'off'}
-            autoCorrect={false}
-            keyboardType="default"
-            onChangeText={() => {}}
-            returnKeyType={'search'}
-            onSubmitEditing={() => {}}
-            style={{
-              width: Width_convert(280),
-              fontSize: Font_normalize(16),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontWeight: '400',
-              paddingTop: 0,
-              paddingBottom: 0,
-            }}
-            placeholderTextColor="#A1A1A1"
-            placeholder={'주소검색'}
-            //onKeyPress={this.handleKeyDown}
-            // /handleKeyDown: function(e) {
-            //   if(e.nativeEvent.key == "Enter"){
-            //     dismissKeyboard();
-            // }
-          ></TextInput>
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              navigation.navigate('MapSearch');
+              props.navigation.navigate('MapSearch');
+            }}>
+            <TextInput
+              autoCapitalize={'none'}
+              autoCompleteType={'off'}
+              autoCorrect={false}
+              editable={false}
+              keyboardType="default"
+              onChangeText={() => {}}
+              returnKeyType={'search'}
+              onSubmitEditing={() => {}}
+              style={{
+                width: Width_convert(280),
+                fontSize: Font_normalize(16),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '400',
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+              placeholderTextColor="#A1A1A1"
+              placeholder={'주소검색'}
+              //onKeyPress={this.handleKeyDown}
+              // /handleKeyDown: function(e) {
+              //   if(e.nativeEvent.key == "Enter"){
+              //     dismissKeyboard();
+              // }
+            ></TextInput>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('MapSearch');
             }}
             style={{
               marginRight: Width_convert(22),

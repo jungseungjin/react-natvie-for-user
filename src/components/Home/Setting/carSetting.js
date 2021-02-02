@@ -23,10 +23,9 @@ import Domain from '../../../../key/Domain.js';
 import CarSettingBrand from './carSettingBrand.js';
 import CarSettingModel from './carSettingModel.js';
 const CarSetting = (props) => {
-  console.log(props.PickBrandValue);
   const [brandList, setBrandList] = React.useState([]);
   const [modelList, setModelList] = React.useState([]);
-  const get_data = async function (props) {
+  const get_brand_data = async function (props) {
     try {
       let brandSeach;
       if (props.nowValue == 'domestic') {
@@ -40,8 +39,9 @@ const CarSetting = (props) => {
         setBrandList([]);
         return false;
       }
-      props.PickModelChangeValue('');
-      props.PickModelDetailChangeValue('');
+      props.PickModelChangeValue({});
+      props.PickModelDetailChangeValue({});
+      setModelList([]);
       let url = Domain + 'brand_list/' + brandSeach;
       props.IsLoadingChangeValue(true);
       let result = await axios.get(url);
@@ -79,7 +79,7 @@ const CarSetting = (props) => {
     }
   };
   React.useEffect(() => {
-    get_data(props);
+    get_brand_data(props);
   }, [props.nowValue]);
   React.useEffect(() => {
     get_model_data(props);
@@ -211,7 +211,9 @@ const CarSetting = (props) => {
           renderItem={({item}) => (
             <CarSettingBrand
               item={item}
-              PickBrandValue={props.PickBrandValue}
+              PickBrandValue={
+                props.PickBrandValue == item ? props.PickBrandValue : null
+              }
               PickBrandChangeValue={
                 props.PickBrandChangeValue
               }></CarSettingBrand>

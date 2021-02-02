@@ -9,7 +9,7 @@ const CarSettingModelDetail = (props) => {
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        props.PickModelDetailChangeValue(props.item.model_detail);
+        props.PickModelDetailChangeValue(props.item);
       }}
       style={{justifyContent: 'center'}}>
       <Text

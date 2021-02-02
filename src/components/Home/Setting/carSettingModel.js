@@ -49,7 +49,7 @@ const CarSettingModel = (props) => {
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          props.PickModelChangeValue(props.item.model);
+          props.PickModelChangeValue(props.item);
         }}
         style={[
           {
@@ -103,7 +103,9 @@ const CarSettingModel = (props) => {
             renderItem={({item}) => (
               <CarSettingModelDetail
                 item={item}
-                PickModelDetail={props.PickModelDetail}
+                PickModelDetail={
+                  props.PickModelDetail == item ? props.PickModelDetail : null
+                }
                 PickModelDetailChangeValue={
                   props.PickModelDetailChangeValue
                 }></CarSettingModelDetail>

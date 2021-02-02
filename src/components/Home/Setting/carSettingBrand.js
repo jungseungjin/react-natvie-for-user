@@ -10,7 +10,7 @@ const CarSettingBrand = (props) => {
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        props.PickBrandChangeValue(props.item.brand);
+        props.PickBrandChangeValue(props.item);
       }}
       style={[
         {

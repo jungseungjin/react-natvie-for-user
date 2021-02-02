@@ -14,12 +14,12 @@ const SettingScreen = (props) => {
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState('domestic');
   const CategoryChangeValue = (text) => setCategory(text);
-  const [pickBrand, setPickBrand] = React.useState('');
-  const PickBrandChangeValue = (text) => setPickBrand(text);
-  const [pickModel, setPickModel] = React.useState('');
-  const PickModelChangeValue = (text) => setPickModel(text);
-  const [pickModelDetail, setPickModelDetail] = React.useState('');
-  const PickModelDetailChangeValue = (text) => setPickModelDetail(text);
+  const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
+  const PickBrandChangeValue = (object) => setPickBrand(object);
+  const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
+  const PickModelChangeValue = (object) => setPickModel(object);
+  const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
+  const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
   {
     /*선택하면 여기에서는 국산인지 수입인지 // 선택한 브랜드가 무엇인지 // 선택한 모델이 무엇인지 // 선택한 디테일모델이 무엇인지까지 가져옴. */
   }
