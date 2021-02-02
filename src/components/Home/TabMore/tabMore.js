@@ -13,7 +13,7 @@ const TabMore = (props) => {
         activeOpacity={1}
         onPress={() => {
           if (props.Title == '사장님의 작업영상') {
-            props.navigation.navigate('WorkVideo');
+            props.navigation.navigate('WorkVideoList');
           } else if (props.Title == '최근 본 작업') {
             //props.navigation.navigate("WorkVideo")
           }

@@ -20,6 +20,9 @@ const SettingScreen = (props) => {
   const PickModelChangeValue = (object) => setPickModel(object);
   const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
   const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
+  console.log('pickBrand' + pickBrand?.brand);
+  console.log('pickModel' + pickModel?.model);
+  console.log('pickModelDetail' + pickModelDetail?.model_detail);
   {
     /*선택하면 여기에서는 국산인지 수입인지 // 선택한 브랜드가 무엇인지 // 선택한 모델이 무엇인지 // 선택한 디테일모델이 무엇인지까지 가져옴. */
   }

@@ -15,14 +15,14 @@ const CarSettingModel = (props) => {
   const [modelDetailList, setModelDetailList] = React.useState([]);
   const get_model_detail_data = async (props) => {
     try {
-      if (props.PickBrandValue && props.PickModelValue) {
+      if (props?.PickBrandValue?.brand && props?.PickModelValue?.model) {
         //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
         let url =
           Domain +
           'model_detail_list/' +
-          props.PickBrandValue +
+          props?.PickBrandValue?.brand +
           '/' +
-          props.PickModelValue;
+          props?.PickModelValue?.model;
         //props.IsLoadingChangeValue(true);
         let result = await axios.get(url);
         if (result.data[0].type) {
@@ -40,16 +40,17 @@ const CarSettingModel = (props) => {
     }
   };
   React.useEffect(() => {
-    if (props.PickModelValue == props.item.model) {
+    if (props?.PickModelValue?.model == props?.item?.model) {
       get_model_detail_data(props);
     }
-  }, [props.PickModelValue]);
+  }, [props?.PickModelValue]);
   return (
     <View>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
           props.PickModelChangeValue(props.item);
+          props.PickModelDetailChangeValue({});
         }}
         style={[
           {
@@ -61,7 +62,7 @@ const CarSettingModel = (props) => {
             ? {marginTop: Height_convert(28)}
             : {marginTop: Height_convert(19)},
         ]}>
-        {props.PickModelValue == props.item.model ? (
+        {props?.PickModelValue?.model == props.item.model ? (
           <Purple_dot style={{marginRight: Width_convert(9)}}></Purple_dot>
         ) : (
           <Black_dot style={{marginRight: Width_convert(9)}}></Black_dot>
@@ -73,7 +74,7 @@ const CarSettingModel = (props) => {
               fontWeight: '700',
               fontSize: Font_normalize(15),
             },
-            props.PickModelValue == props.item.model
+            props?.PickModelValue?.model == props.item.model
               ? {
                   color: '#946AEF',
                 }
@@ -84,7 +85,7 @@ const CarSettingModel = (props) => {
           {props.item.model}
         </Text>
       </TouchableOpacity>
-      {props.PickModelValue == props.item.model ? (
+      {props?.PickModelValue?.model == props.item.model ? (
         <View
           style={{
             width: Width_convert(199),

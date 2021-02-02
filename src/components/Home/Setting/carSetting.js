@@ -39,8 +39,6 @@ const CarSetting = (props) => {
         setBrandList([]);
         return false;
       }
-      props.PickModelChangeValue({});
-      props.PickModelDetailChangeValue({});
       setModelList([]);
       let url = Domain + 'brand_list/' + brandSeach;
       props.IsLoadingChangeValue(true);
@@ -60,8 +58,8 @@ const CarSetting = (props) => {
   };
   const get_model_data = async function (props) {
     try {
-      if (props.PickBrandValue) {
-        let url = Domain + 'model_list/' + props.PickBrandValue;
+      if (props?.PickBrandValue?.brand) {
+        let url = Domain + 'model_list/' + props.PickBrandValue.brand;
         //props.IsLoadingChangeValue(true);
         let result = await axios.get(url);
         if (result.data[0].type) {
@@ -214,8 +212,10 @@ const CarSetting = (props) => {
               PickBrandValue={
                 props.PickBrandValue == item ? props.PickBrandValue : null
               }
-              PickBrandChangeValue={
-                props.PickBrandChangeValue
+              PickBrandChangeValue={props.PickBrandChangeValue}
+              PickModelChangeValue={props.PickModelChangeValue}
+              PickModelDetailChangeValue={
+                props.PickModelDetailChangeValue
               }></CarSettingBrand>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
@@ -236,7 +236,9 @@ const CarSetting = (props) => {
             index={brandList.indexOf(item)}
             item={item}
             PickBrandValue={props.PickBrandValue}
-            PickModelValue={props.PickModelValue}
+            PickModelValue={
+              props.PickModelValue == item ? props.PickModelValue : null
+            }
             PickModelChangeValue={props.PickModelChangeValue}
             PickModelDetail={props.PickModelDetail}
             PickModelDetailChangeValue={props.PickModelDetailChangeValue}

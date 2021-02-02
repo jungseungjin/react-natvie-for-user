@@ -35,6 +35,7 @@ const setTabBarVisible = (route, reduexState) => {
     'StoreDetail',
     'ReviewView',
     'ReviewRegister',
+    'WorkVideo',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

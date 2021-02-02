@@ -11,6 +11,8 @@ const CarSettingBrand = (props) => {
       activeOpacity={1}
       onPress={() => {
         props.PickBrandChangeValue(props.item);
+        props.PickModelChangeValue({});
+        props.PickModelDetailChangeValue({});
       }}
       style={[
         {
@@ -23,7 +25,7 @@ const CarSettingBrand = (props) => {
           justifyContent: 'center',
           alignItems: 'center',
         },
-        props.PickBrandValue == props.item.brand
+        props.PickBrandValue == props.item
           ? {backgroundColor: '#ECECEC'}
           : null,
       ]}>
