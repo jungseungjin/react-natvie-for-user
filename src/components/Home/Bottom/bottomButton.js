@@ -73,7 +73,9 @@ const BottomButton = () => {
             backgroundColor: '#9B6FAB',
             flexDirection: 'row',
           }}>
-          <CallLogo style={{marginRight: Width_convert(4.8)}}></CallLogo>
+          <CallLogo
+            fill={'#EEEEEE'}
+            style={{marginRight: Width_convert(4.8)}}></CallLogo>
           <Text
             style={{
               fontFamily: Fonts?.NanumSqureRegular || null,

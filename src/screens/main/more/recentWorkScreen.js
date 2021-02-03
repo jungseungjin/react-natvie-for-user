@@ -18,7 +18,7 @@ import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import Tabbar from '../../../components/Pick/Tabbar/tabbar.js';
+import Tabbar from '../../../components/More/Tab/tabbar.js';
 import TabBarBottom from '../../../components/Pick/Tabbar/tabbarBottom.js';
 import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';
@@ -28,7 +28,8 @@ import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import {FlatList} from 'react-native-gesture-handler';
-const PickScreen = (props) => {
+import AsyncStorage from '@react-native-community/async-storage';
+const RecentWork = (props) => {
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -40,11 +41,33 @@ const PickScreen = (props) => {
     {tt: '4', _id: '4'},
   ]);
   const [storeList, setStoreList] = React.useState([
-    {tt: '1'},
-    {tt: '2'},
-    {tt: '3'},
-    {tt: '4'},
+    {tt: '11', _id: '11'},
+    {tt: '22', _id: '22'},
+    {tt: '33', _id: '33'},
+    {tt: '44', _id: '44'},
   ]);
+
+  const setData = async (value) => {
+    try {
+      //JSON.stringify
+      await AsyncStorage.setItem('landingCheck', value.toString());
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getData = async function () {
+    try {
+      //JSON.parse()
+      let value = await AsyncStorage.getItem('landingCheck');
+      if (value == null) {
+      } else {
+        setLandingCheck(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const PageChangeValue = (text) => {
     setPage(text);
   };
@@ -54,7 +77,7 @@ const PickScreen = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'찜한작업'}></Tabbar>
+        <Tabbar Title={'최근 본 작업'} navigation={props.navigation}></Tabbar>
         <TabBarBottom
           from={'category'}
           Title={[
@@ -82,13 +105,6 @@ const PickScreen = (props) => {
             ) : null
           }
           keyExtractor={(item) => String(item._id)}></FlatList>
-        {reduexState.editModeCheck.editMode ? (
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Width_convert(55) + Height_convert(insets.bottom),
-            }}></View>
-        ) : null}
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         {reduexState.editModeCheck.editMode ? (
@@ -191,4 +207,4 @@ function mapDispatchToProps(dispatch) {
     // }
   };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(PickScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(RecentWork);
