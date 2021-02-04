@@ -20,7 +20,7 @@ const Menu = (props) => {
         activeOpacity={1}
         onPress={() => {
           if (props.Title == '내정보') {
-            //props.navagation.navigate()
+            props.navigation.navigate('Info');
           } else if (props.Title == '로그인하기') {
             props.navigation.navigate('Login');
           } else if (props.Title == '후기관리') {
@@ -32,7 +32,9 @@ const Menu = (props) => {
           } else if (props.Title == '고객센터') {
             props.navigation.navigate('Customer');
           } else if (props.Title == '설정') {
+            props.navigation.navigate('Setting');
           } else if (props.Title == '투닝 가게 입점 문의') {
+            props.navigation.navigate('Entry');
           } else {
             return false;
           }

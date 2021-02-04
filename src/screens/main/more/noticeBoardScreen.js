@@ -12,71 +12,83 @@ import {
 } from 'react-native-gesture-handler';
 
 const NoticeBoardScreen = (props) => {
-  const [boardList, setBoardList] = React.useState([{_id: '1'}, {_id: '2'}]);
+  const [boardList, setBoardList] = React.useState([
+    {_id: '1'},
+    {_id: '2'},
+    {_id: '3'},
+    {_id: '4'},
+    {_id: '5'},
+    {_id: '6'},
+    {_id: '7'},
+    {_id: '8'},
+    {_id: '9'},
+    {_id: '10'},
+  ]);
   return (
     <>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}></SafeAreaView>
-      <Tabbar
-        Title={'공지사항 및 이벤트'}
-        navigation={props.navigation}></Tabbar>
-      <View
-        style={{
-          width: Width_convert(375),
-          height: Height_convert(812),
-          backgroundColor: '#FFFFFF',
-        }}>
-        <FlatList
-          style={{minHeight: Height_convert(812)}}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{flex: 1}}
-          data={boardList}
-          windowSize={2}
-          initialNumToRender={10}
-          renderItem={({item}) => (
-            <View
-              key={item._id}
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(93),
-                borderBottomWidth: 1,
-                borderBottomColor: '#EEEEEE',
-                justifyContent: 'center',
-              }}>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => {
-                  props.navigation.navigate('NoticeBoardView');
-                }}
+      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+        <Tabbar
+          Title={'공지사항 및 이벤트'}
+          navigation={props.navigation}></Tabbar>
+        <View
+          style={{
+            width: Width_convert(375),
+            height: Height_convert(812),
+            backgroundColor: '#FFFFFF',
+          }}>
+          <FlatList
+            style={{minHeight: Height_convert(812)}}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{flex: 1}}
+            data={boardList}
+            windowSize={2}
+            initialNumToRender={10}
+            renderItem={({item}) => (
+              <View
+                key={item._id}
                 style={{
-                  marginLeft: Width_convert(17),
+                  width: Width_convert(375),
+                  height: Height_convert(93),
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#EEEEEE',
+                  justifyContent: 'center',
                 }}>
-                <Text
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    props.navigation.navigate('NoticeBoardView');
+                  }}
                   style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#000000',
+                    marginLeft: Width_convert(17),
                   }}>
-                  2020년 7월 31일 업데이트 내용공지
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(10),
-                    fontWeight: '400',
-                    color: '#000000',
-                  }}>
-                  2020년 7월 31일
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          keyExtractor={(item) => String(item._id)}></FlatList>
-      </View>
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(16),
+                      fontWeight: '700',
+                      color: '#000000',
+                    }}>
+                    2020년 7월 31일 업데이트 내용공지
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(10),
+                      fontWeight: '400',
+                      color: '#000000',
+                    }}>
+                    2020년 7월 31일
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            keyExtractor={(item) => String(item._id)}></FlatList>
+        </View>
+      </SafeAreaView>
     </>
   );
 };

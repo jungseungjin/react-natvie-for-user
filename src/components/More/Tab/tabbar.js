@@ -48,7 +48,9 @@ const TabBar = (props) => {
       ]}>
       {/*왼쪽덩어리 시작 */}
       {props.Title == '투닝' ? null : props.Title == '설정' ||
-        props.Title == '작업종류' ? (
+        props.Title == '작업종류' ||
+        props.Title == '1:1문의' ||
+        props.Title == '피드백주기' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -65,7 +67,12 @@ const TabBar = (props) => {
       ) : props.Title == '최근 본 작업' ||
         props.Title == '공지사항 및 이벤트' ||
         props.Title == '공지사항 및 이벤트 보기' ||
-        props.Title == '고객센터' ? (
+        props.Title == '고객센터' ||
+        props.Title == '자주 묻는 질문' ||
+        props.Title == '문의내역' ||
+        props.Title == '문의확인' ||
+        props.Title == '투닝 입점문의' ||
+        props.Title == '내정보' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{}}
@@ -91,16 +98,21 @@ const TabBar = (props) => {
       )}
       {/*왼쪽덩어리 끝 */}
       {/*가운데덩어리 시작 */}
-      <Text
-        style={
-          props.Title == '투닝'
-            ? styles.text
-            : props.Title == '설정' || props.Title == '작업종류'
-            ? styles.text2
-            : styles.text2
-        }>
-        {props.Title != '공지사항 및 이벤트 보기' ? props.Title : null}
-      </Text>
+      <View>
+        <Text
+          style={[
+            (props.Title == '문의내역'
+              ? {marginRight: -Width_convert(50)}
+              : null,
+            props.Title == '투닝'
+              ? styles.text
+              : props.Title == '설정' || props.Title == '작업종류'
+              ? styles.text2
+              : styles.text2),
+          ]}>
+          {props.Title != '공지사항 및 이벤트 보기' ? props.Title : null}
+        </Text>
+      </View>
       {/*가운데덩어리 끝 */}
       {/*오른쪽덩어리 시작 */}
       {props.Title == '투닝' ? null : props.Title == '최근 본 작업' ? (
@@ -129,6 +141,44 @@ const TabBar = (props) => {
                     }
               }>
               {reduexState.editModeCheck.editMode ? '취소' : '편집'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : props.Title == '문의내역' ? (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              //props.navigation.navigate()
+            }}>
+            <Text
+              style={{
+                marginRight: Width_convert(22),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                fontSize: Font_normalize(14),
+                color: '#946AEF',
+              }}>
+              문의
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : props.Title == '내정보' ? (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              //props.navigation.navigate()
+            }}>
+            <Text
+              style={{
+                marginRight: Width_convert(22),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                fontSize: Font_normalize(14),
+                color: '#946AEF',
+              }}>
+              저장
             </Text>
           </TouchableOpacity>
         </View>

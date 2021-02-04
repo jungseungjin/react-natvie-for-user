@@ -16,6 +16,8 @@ import {
   StatusBar,
   TouchableOpacity,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {
   Header,
@@ -38,6 +40,17 @@ import {Provider} from 'react-redux';
 import initStore from './src/store';
 const store = initStore();
 
+const DismissKeyboard = ({children}) => {
+  //textinput있는데서만 쓰기
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}>
+      {children}
+    </TouchableWithoutFeedback>
+  );
+};
 function App(props) {
   const [locationGranted, setLocationGranted] = React.useState(false);
   //알림에 대한 퍼미션
@@ -116,16 +129,14 @@ function App(props) {
   ) :null} }*/
 
   return (
-    <>
-      <Provider store={store}>
-        <View style={{flex: 1}}>
-          <StatusBar
-            barStyle="dark-content"
-            backgroundColor="#FFFFFF"></StatusBar>
-          <FirstNavigator></FirstNavigator>
-        </View>
-      </Provider>
-    </>
+    <Provider store={store}>
+      <View style={{flex: 1}}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="#FFFFFF"></StatusBar>
+        <FirstNavigator></FirstNavigator>
+      </View>
+    </Provider>
   );
 }
 

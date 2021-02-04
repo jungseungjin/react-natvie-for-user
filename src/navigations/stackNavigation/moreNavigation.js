@@ -12,6 +12,11 @@ import Customer from '../../screens/main/more/customerServiceScreen.js';
 import RecentWork from '../../screens/main/more/recentWorkScreen.js';
 import ReviewManage from '../../screens/main/more/reviewManageScreen.js';
 import ReviewRevise from '../../screens/main/more/reviewReviseScreen.js';
+import FrequentlyQuestion from '../../screens/main/more/frequentlyQuestionScreen.js';
+import OneOnOne from '../../screens/main/more/oneOnOneScreen.js';
+import OneOnOneView from '../../screens/main/more/oneOnOneViewScreen.js';
+import OneOnOneRegister from '../../screens/main/more/oneOnOneRegisterScreen.js';
+import Feedback from '../../screens/main/more/feedbackScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -123,6 +128,46 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="ReviewRevise"
         component={ReviewRevise}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="FrequentlyQuestion"
+        component={FrequentlyQuestion}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OneOnOne"
+        component={OneOnOne}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OneOnOneView"
+        component={OneOnOneView}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OneOnOneRegister"
+        component={OneOnOneRegister}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Feedback"
+        component={Feedback}
         initialParams={{}}
         options={{
           headerShown: false,

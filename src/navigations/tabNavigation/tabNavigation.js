@@ -43,6 +43,14 @@ const setTabBarVisible = (route, reduexState) => {
     'NoticeBoard',
     'NoticeBoardView',
     'Customer',
+    'FrequentlyQuestion',
+    'OneOnOne',
+    'OneOnOneView',
+    'OneOnOneRegister',
+    'Feedback',
+    'Entry',
+    'Setting',
+    'Info',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;
