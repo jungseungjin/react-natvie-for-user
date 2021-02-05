@@ -25,12 +25,10 @@ const InfoScreen = (props) => {
         style={{
           flexGrow: 1,
           width: Width_convert(375),
-          minHeight: Height_convert(812),
         }}>
         <View
           style={{
             width: Width_convert(375),
-            minHeight: Height_convert(812),
           }}>
           <View
             style={{
@@ -306,7 +304,9 @@ const InfoScreen = (props) => {
               </Text>
               <TouchableOpacity
                 activeOpacity={1}
-                onPress={() => {}}
+                onPress={() => {
+                  props.navigation.navigate('InfoCar');
+                }}
                 style={{
                   marginRight: Width_convert(5),
                   width: Width_convert(35),
@@ -622,44 +622,46 @@ const InfoScreen = (props) => {
               backgroundColor: '#F0F0F0',
               flexDirection: 'row',
             }}>
-            <View
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {}}
               style={{
                 width: Width_convert(375) / 2,
                 height: Height_convert(50),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(9),
-                    color: '#797979',
-                  }}>
-                  로그아웃
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontWeight: '400',
+                  fontSize: Font_normalize(9),
+                  color: '#797979',
+                }}>
+                로그아웃
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                props.navigation.navigate('Withdrawal');
+              }}
               style={{
                 width: Width_convert(375) / 2,
                 height: Height_convert(50),
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(9),
-                    color: '#797979',
-                  }}>
-                  회원탈퇴
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontWeight: '400',
+                  fontSize: Font_normalize(9),
+                  color: '#797979',
+                }}>
+                회원탈퇴
+              </Text>
+            </TouchableOpacity>
           </View>
           {/**로그아웃 회원탈퇴버튼 끝 */}
         </View>

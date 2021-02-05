@@ -44,6 +44,7 @@ const SettingScreen = (props) => {
           PageChangeValue={PageChangeValue}></TabBarBottom>
         {page == 'car' ? (
           <CarSetting
+            from={props?.route?.name}
             nowValue={category}
             CategoryChangeValue={CategoryChangeValue}
             PickBrandValue={pickBrand}

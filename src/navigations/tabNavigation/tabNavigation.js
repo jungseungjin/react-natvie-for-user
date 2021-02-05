@@ -51,6 +51,8 @@ const setTabBarVisible = (route, reduexState) => {
     'Entry',
     'Setting',
     'Info',
+    'Withdrawal',
+    'InfoCar',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

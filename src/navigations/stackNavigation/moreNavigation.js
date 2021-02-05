@@ -2,6 +2,7 @@ import React from 'react';
 //import {Button, LogoTitle} from 'react-native';
 import More from '../../screens/main/more/moreScreen.js';
 import Info from '../../screens/main/more/infoScreen.js';
+import InfoCar from '../../screens/main/more/infoCarScreen.js';
 import SignUp from '../../screens/main/more/signUpScreen.js';
 import Login from '../../screens/main/more/loginScreen.js';
 import Setting from '../../screens/main/more/settingScreen.js';
@@ -17,6 +18,7 @@ import OneOnOne from '../../screens/main/more/oneOnOneScreen.js';
 import OneOnOneView from '../../screens/main/more/oneOnOneViewScreen.js';
 import OneOnOneRegister from '../../screens/main/more/oneOnOneRegisterScreen.js';
 import Feedback from '../../screens/main/more/feedbackScreen.js';
+import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -168,6 +170,22 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="Feedback"
         component={Feedback}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Withdrawal"
+        component={Withdrawal}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="InfoCar"
+        component={InfoCar}
         initialParams={{}}
         options={{
           headerShown: false,

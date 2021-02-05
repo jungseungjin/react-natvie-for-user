@@ -50,7 +50,8 @@ const TabBar = (props) => {
       {props.Title == '투닝' ? null : props.Title == '설정' ||
         props.Title == '작업종류' ||
         props.Title == '1:1문의' ||
-        props.Title == '피드백주기' ? (
+        props.Title == '피드백주기' ||
+        props.Title == '차량선택' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -72,7 +73,8 @@ const TabBar = (props) => {
         props.Title == '문의내역' ||
         props.Title == '문의확인' ||
         props.Title == '투닝 입점문의' ||
-        props.Title == '내정보' ? (
+        props.Title == '내정보' ||
+        props.Title == '회원탈퇴' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{}}
@@ -179,6 +181,25 @@ const TabBar = (props) => {
                 color: '#946AEF',
               }}>
               저장
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : props.Title == '차량선택' ? (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              //props.navigation.navigate()
+            }}>
+            <Text
+              style={{
+                marginRight: Width_convert(22),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                fontSize: Font_normalize(14),
+                color: '#946AEF',
+              }}>
+              완료
             </Text>
           </TouchableOpacity>
         </View>
