@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Platform,
-  NativeModules,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
@@ -18,27 +17,14 @@ import X from '../../../../assets/home/x_black.svg';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../StatusBarHeight';
 const TabBar = (props) => {
   const reduexState = useSelector((state) => state);
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   return (
     <View
       style={[
         {
-          height: Height_convert(94) - statusBar,
+          height: Height_convert(94) - StatusBarHeight,
         },
         props.Title == '찜한작업' ? styles.view2 : null,
       ]}>

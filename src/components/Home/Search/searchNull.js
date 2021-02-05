@@ -26,42 +26,34 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  NativeModules,
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import SearchStore from '../../../components/Home/Search/searchStore.js';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../StatusBarHeight';
 
 const SearchNull = ({navigation, route}) => {
-  const [statusBar, setStatusBar] = React.useState(0);
-  const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-      setStatusBarSafeAreaView(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   return (
     <View
-      style={{
-        width: Width_convert(375),
-        height:
-          Height_convert_real(818) -
-          Height_convert(139) -
-          statusBarSafeAreaView,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+      style={[
+        Platform.OS == 'android'
+          ? {
+              height:
+                Height_convert_real(818) -
+                Height_convert(139) -
+                StatusBarHeight,
+            }
+          : {
+              height: Height_convert_real(818) - Height_convert(139),
+            },
+        {
+          width: Width_convert(375),
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+      ]}>
       <View
         style={{
           width: Width_convert(245),

@@ -21,7 +21,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  NativeModules,
 } from 'react-native';
 
 import NaverMapView, {
@@ -31,23 +30,9 @@ import NaverMapView, {
   Polyline,
   Polygon,
 } from 'react-native-nmap';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const MapScreen = ({navigation, route}) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  const [resentSearch, setResentSearch] = React.useState([]);
-  React.useEffect(() => {
-    getValue();
-  }, []);
   const [searchText, setSearchText] = React.useState('');
   return (
     <>
@@ -57,7 +42,7 @@ const MapScreen = ({navigation, route}) => {
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <View
           style={{
-            height: Height_convert(88) - statusBar,
+            height: Height_convert(88) - StatusBarHeight,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',

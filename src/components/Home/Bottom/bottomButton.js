@@ -1,16 +1,13 @@
 import React from 'react';
 import {
-  StatusBar,
   View,
   Platform,
   ScrollView,
-  NativeModules,
   SafeAreaView,
   Text,
   TouchableOpacity,
   Animated,
   Dimensions,
-  LayoutAnimation,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Height_convert from '../../../components/Height_convert.js';

@@ -4,7 +4,6 @@ import {
   View,
   Platform,
   ScrollView,
-  NativeModules,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -21,25 +20,12 @@ import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
-const {StatusBarManager} = NativeModules;
+
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const ReviewView = ({navigation, Page}) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState('MOTION튜닝샵');
-  const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
-
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
 
   return (
     <>
@@ -48,7 +34,8 @@ const ReviewView = ({navigation, Page}) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         {Platform.OS == 'android' ? (
-          <View style={{width: Width_convert(375), height: statusBar}}></View>
+          <View
+            style={{width: Width_convert(375), height: StatusBarHeight}}></View>
         ) : null}
         <Tabbar
           Title={

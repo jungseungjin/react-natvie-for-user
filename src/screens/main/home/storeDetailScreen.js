@@ -4,7 +4,6 @@ import {
   View,
   Platform,
   ScrollView,
-  NativeModules,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -32,32 +31,18 @@ import PurpleTag from '../../../../assets/home/purple_tag.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 import WorkMenu from '../../../../assets/home/work_menu.svg';
-import IsLoading from '../../../components/ActivityIndicator';
-const {StatusBarManager} = NativeModules;
 import AnimatedHeader from '../../../components/Home/Animate/animatedHeader.js';
 import StoreInformation from '../../../components/Home/Infomation/storeInformation.js';
 import LaborInformation from '../../../components/Home/Infomation/laborInformation.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const StoreDetailScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const offset = useRef(new Animated.Value(0)).current;
-  const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
   const [page, setPage] = React.useState('store');
 
   const insets = useSafeAreaInsets();
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   const scrollRef = useRef();
   const handleClick = () => {
     scrollRef.current.scrollTo({
@@ -73,7 +58,7 @@ const StoreDetailScreen = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <View style={{backgroundColor: '#FFFFFF'}}>
-        {scrollValue > Width_convert(240) - 2 * statusBar ? (
+        {scrollValue > Width_convert(240) - 2 * StatusBarHeight ? (
           <StatusBar
             translucent
             backgroundColor="transparent"

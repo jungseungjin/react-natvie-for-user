@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Platform,
-  NativeModules,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
@@ -17,7 +16,7 @@ import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x_black.svg';
 import {ScrollView} from 'react-native-gesture-handler';
 import Filter from '../../../../assets/home/filter.svg';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../StatusBarHeight';
 const TabBarBottom = ({
   navigation,
   Title,
@@ -27,21 +26,6 @@ const TabBarBottom = ({
   FilterValue,
   FtilerChangeValue,
 }) => {
-  const [statusBar, setStatusBar] = React.useState(0);
-  const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-      setStatusBarSafeAreaView(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   return (
     <>
       <View

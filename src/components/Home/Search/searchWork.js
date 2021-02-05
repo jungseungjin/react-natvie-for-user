@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  StatusBar,
   ToastAndroid,
   BackHandler,
   Image,

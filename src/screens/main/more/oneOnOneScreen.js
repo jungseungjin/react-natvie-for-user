@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text, NativeModules} from 'react-native';
+import {View, StatusBar, SafeAreaView, Text} from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
@@ -10,26 +10,12 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FrequentlyQuestionMenu from '../../../components/More/Menu/frequentlyQuestionMenu.js';
 import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
 const OneOnOne = (props) => {
   const [page, setPage] = React.useState('TOP5');
   const PageChangeValue = (text) => setPage(text);
   const [dataList, setDataList] = React.useState([]);
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
-
   return (
     <>
       <StatusBar
@@ -40,7 +26,7 @@ const OneOnOne = (props) => {
         {/*탑바 대체 시작 */}
         <View
           style={{
-            height: Height_convert(94) - statusBar,
+            height: Height_convert(94) - StatusBarHeight,
             flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: '#FFFFFF',

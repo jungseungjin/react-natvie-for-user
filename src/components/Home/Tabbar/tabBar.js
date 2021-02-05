@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Platform,
-  NativeModules,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
@@ -15,26 +14,13 @@ import Font_normalize from '../../Font_normalize.js';
 import PropTypes from 'prop-types';
 import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x_black.svg';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../StatusBarHeight';
 const TabBar = (props) => {
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   return (
     <View
       style={[
         {
-          height: Height_convert(94) - statusBar,
+          height: Height_convert(94) - StatusBarHeight,
         },
         props.Title == '투닝'
           ? styles.view

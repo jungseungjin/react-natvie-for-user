@@ -4,7 +4,6 @@ import {
   View,
   Platform,
   ScrollView,
-  NativeModules,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -23,26 +22,10 @@ import Star from '../../../../assets/home/star.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
 import Review from '../../../components/More/Review/review.js';
-const {StatusBarManager} = NativeModules;
 const ReviewManage = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [statusBar, setStatusBar] = React.useState(0);
   const [scrollValue, setScrollValue] = React.useState(0);
   const [reviewList, setReviewList] = React.useState([{_id: 'dfdfd'}]);
-
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
-
   return (
     <>
       <StatusBar

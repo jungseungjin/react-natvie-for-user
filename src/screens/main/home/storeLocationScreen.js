@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  NativeModules,
   StatusBar,
   TouchableOpacity,
   Text,
@@ -21,22 +20,9 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
 import IsLoading from '../../../components/ActivityIndicator';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const StoreLocationScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
 
   const P0 = {latitude: 37.564362, longitude: 126.977011};
   const P1 = {latitude: 37.565051, longitude: 126.978567};
@@ -75,10 +61,10 @@ const StoreLocationScreen = ({navigation}) => {
         <View
           style={{
             width: Width_convert(375),
-            height: Height_convert(94) - statusBar,
+            height: Height_convert(94) - StatusBarHeight,
             position: 'absolute',
             flexDirection: 'row',
-            top: statusBar,
+            top: StatusBarHeight,
             justifyContent: 'space-between',
             alignItems: 'center',
             backgroundColor: '#FFFFFF',
@@ -131,7 +117,7 @@ const StoreLocationScreen = ({navigation}) => {
               fontWeight: '700',
               fontSize: Font_normalize(6),
             },
-            scrollValue > Width_convert(240) - statusBar
+            scrollValue > Width_convert(240) - StatusBarHeight
               ? {color: '#000000'}
               : {color: '#FFFFFF'},
           ]}>
@@ -143,7 +129,8 @@ const StoreLocationScreen = ({navigation}) => {
         <View
           style={{
             width: Width_convert(375),
-            height: Height_convert(812) - (Height_convert(94) - statusBar),
+            height:
+              Height_convert(812) - (Height_convert(94) - StatusBarHeight),
             position: 'absolute',
             top: Height_convert(94),
           }}>

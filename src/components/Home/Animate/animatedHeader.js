@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Text,
   NativeModules,
-  StatusBar,
   Platform,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -16,30 +15,17 @@ import Font_normalize from '../../Font_normalize.js';
 import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
 import HeartRed from '../../../../assets/home/HeartRed.svg';
 import HeartWhite from '../../../../assets/home/HeartWhite.svg';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../StatusBarHeight';
 const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
   const insets = useSafeAreaInsets();
-  const [statusBar, setStatusBar] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
 
   const background = animatedValue.interpolate({
-    inputRange: [100, Width_convert(240) - statusBar],
+    inputRange: [100, Width_convert(240) - StatusBarHeight],
     outputRange: ['rgba( 255, 255, 255, 0)', 'rgba( 255, 255, 255, 1)'],
     extrapolate: 'clamp',
   });
   const centerText = animatedValue.interpolate({
-    inputRange: [100, Width_convert(240) - statusBar],
+    inputRange: [100, Width_convert(240) - StatusBarHeight],
     outputRange: ['rgba( 0, 0, 0, 0)', 'rgba( 0, 0, 0, 1)'],
     extrapolate: 'clamp',
   });
@@ -49,17 +35,17 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
         <Animated.View
           style={{
             width: Width_convert(375),
-            height: statusBar,
+            height: StatusBarHeight,
             position: 'absolute',
             backgroundColor: background,
           }}></Animated.View>
         <Animated.View
           style={{
             width: Width_convert(375),
-            height: Height_convert(94) - statusBar,
+            height: Height_convert(94) - StatusBarHeight,
             position: 'absolute',
             flexDirection: 'row',
-            top: statusBar,
+            top: StatusBarHeight,
             justifyContent: 'space-between',
             alignItems: 'center',
             backgroundColor: background,
@@ -73,7 +59,7 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
               }}>
               <GoBackWhite
                 fill={
-                  scrollValue > Width_convert(240) - 2 * statusBar
+                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
                     ? '#000000'
                     : '#FFFFFF'
                 }
@@ -106,7 +92,7 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
               onPress={() => {}}>
               <HeartWhite
                 fill={
-                  scrollValue > Width_convert(240) - 2 * statusBar
+                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
                     ? '#000000'
                     : '#FFFFFF'
                 }></HeartWhite>
@@ -119,7 +105,7 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
                     fontWeight: '700',
                     fontSize: Font_normalize(6),
                   },
-                  scrollValue > Width_convert(240) - 2 * statusBar
+                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
                     ? {color: '#000000'}
                     : {color: '#FFFFFF'},
                 ]}>

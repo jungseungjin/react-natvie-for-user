@@ -40,10 +40,10 @@ const PickScreen = (props) => {
     {tt: '4', _id: '4'},
   ]);
   const [storeList, setStoreList] = React.useState([
-    {tt: '1'},
-    {tt: '2'},
-    {tt: '3'},
-    {tt: '4'},
+    {tt: '1', _id: '11'},
+    {tt: '2', _id: '22'},
+    {tt: '3', _id: '33'},
+    {tt: '4', _id: '44'},
   ]);
   const PageChangeValue = (text) => {
     setPage(text);

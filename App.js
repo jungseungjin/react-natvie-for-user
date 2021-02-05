@@ -16,8 +16,6 @@ import {
   StatusBar,
   TouchableOpacity,
   Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from 'react-native';
 import {
   Header,
@@ -40,17 +38,6 @@ import {Provider} from 'react-redux';
 import initStore from './src/store';
 const store = initStore();
 
-const DismissKeyboard = ({children}) => {
-  //textinput있는데서만 쓰기
-  return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}>
-      {children}
-    </TouchableWithoutFeedback>
-  );
-};
 function App(props) {
   const [locationGranted, setLocationGranted] = React.useState(false);
   //알림에 대한 퍼미션
@@ -109,24 +96,6 @@ function App(props) {
   }, []);
   Text.defaultProps = Text.defaultProps || {};
   Text.defaultProps.allowFontScaling = false;
-  // const [chk, setChk] = React.useState(false);
-  /*{ {chk ? (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  ) :null} }*/
 
   return (
     <Provider store={store}>

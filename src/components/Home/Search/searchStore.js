@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  StatusBar,
   ToastAndroid,
   BackHandler,
   Image,
@@ -17,7 +16,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  NativeModules,
   Platform,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';

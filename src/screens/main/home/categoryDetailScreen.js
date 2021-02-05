@@ -5,7 +5,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  NativeModules,
   Text,
   Platform,
 } from 'react-native';
@@ -19,27 +18,12 @@ import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import LocationSettingModal from '../../../components/Home/Modal/locationSettingModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
-const {StatusBarManager} = NativeModules;
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const CategoryDetailScreen = ({navigation, Page, route}) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState(route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
 
-  const [statusBar, setStatusBar] = React.useState(0);
-  const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
-  const getValue = () => {
-    if (Platform.OS === 'ios') {
-      StatusBarManager.getHeight((response) => {
-        setStatusBar(response.height);
-      });
-    } else {
-      setStatusBar(StatusBar.currentHeight);
-      setStatusBarSafeAreaView(StatusBar.currentHeight);
-    }
-  };
-  React.useEffect(() => {
-    getValue();
-  }, []);
   const [resultWorkList, setresultWorkList] = React.useState([
     {tt: 'tt'},
     {tt: 'tt'},
@@ -69,7 +53,8 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
             Platform.OS == 'ios'
               ? {top: Height_convert(94) + Height_convert(48)}
               : {
-                  top: Height_convert(94) - statusBar + Height_convert(48),
+                  top:
+                    Height_convert(94) - StatusBarHeight + Height_convert(48),
                 },
           ]}></View>
         <Tabbar
@@ -108,7 +93,7 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
               Platform.OS == 'ios'
                 ? {top: Height_convert(140 + 48)}
                 : {
-                    top: Height_convert(139 + 48) - statusBar,
+                    top: Height_convert(139 + 48) - StatusBarHeight,
                   },
             ]}>
             <View
