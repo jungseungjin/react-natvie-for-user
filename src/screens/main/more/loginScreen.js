@@ -200,7 +200,8 @@ const LoginScreen = (props) => {
             </View>
             {/*하단 회원가입 안내 버튼 시작 */}
             <View style={{position: 'absolute', top: Height_convert(550)}}>
-              <BottomSignUpButton></BottomSignUpButton>
+              <BottomSignUpButton
+                navigation={props.navigation}></BottomSignUpButton>
               <View
                 style={{
                   width: Width_convert(375),

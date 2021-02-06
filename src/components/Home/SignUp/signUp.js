@@ -6,7 +6,7 @@ import Height_convert from '../../Height_convert.js';
 import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 
-const SignUp = ({navigaton}) => {
+const SignUp = (props) => {
   return (
     <View style={styles.view}>
       <Text style={styles.text}>
@@ -15,7 +15,9 @@ const SignUp = ({navigaton}) => {
       </Text>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() => {}}
+        onPress={() => {
+          props.navigation.navigate('SignUp');
+        }}
         style={styles.touchableOpacity}>
         <Text style={styles.text2}>회원가입</Text>
       </TouchableOpacity>

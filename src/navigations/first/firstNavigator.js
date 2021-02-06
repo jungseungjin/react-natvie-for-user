@@ -13,7 +13,7 @@ enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 const FirstNavigator = (props) => {
-  const [landingCheck, setLandingCheck] = React.useState(false);
+  const [landingCheck, setLandingCheck] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const reduexState = useSelector((state) => state);
   const setData = async (value) => {
@@ -52,13 +52,12 @@ const FirstNavigator = (props) => {
     setIsLoading(false);
   }, [reduexState.landingCheck.landingCheck]);
 
+  // {landingCheck ? (      ) : (
+  //   <LandingNavigator></LandingNavigator>
+  // )}
   return (
     <NavigationContainer>
-      {landingCheck ? (
-        <TabNavigator></TabNavigator>
-      ) : (
-        <LandingNavigator></LandingNavigator>
-      )}
+      <TabNavigator></TabNavigator>
       {isLoading ? <IsLoading></IsLoading> : null}
     </NavigationContainer>
   );

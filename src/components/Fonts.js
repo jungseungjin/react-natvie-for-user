@@ -9,6 +9,7 @@ let NanumSquareExtraBold;
 let NanumSquareBold;
 let NanumSquareLight;
 let NanumSqureRegular;
+let NanumBrushScript;
 if (Platform.OS == 'ios') {
   NanumGothicRegular = 'NanumGothic';
   NanumGothicBold = 'NanumGothicBold';
@@ -18,6 +19,7 @@ if (Platform.OS == 'ios') {
   NanumSquareBold = 'NanumSquareB';
   NanumSquareLight = 'NanumSquareL';
   NanumSqureRegular = 'NanumSquareR';
+  NanumBrushScript = 'NanumBrush';
 } else {
   NanumGothicRegular = 'NanumGothic-Regular';
   NanumGothicBold = 'NanumGothic-Bold';
@@ -27,6 +29,7 @@ if (Platform.OS == 'ios') {
   NanumSquareBold = 'NanumSquareBold';
   NanumSquareLight = 'NanumSquareLight';
   NanumSqureRegular = 'NanumSqureRegular';
+  NanumBrushScript = 'NanumBrushScript-Regular';
 }
 // Fonts.propTypes = {
 //   Swagger: PropTypes.string.isRequired,
@@ -47,4 +50,5 @@ export default Fonts = {
   NanumSquareBold,
   NanumSquareLight,
   NanumSqureRegular,
+  NanumBrushScript,
 };

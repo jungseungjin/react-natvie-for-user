@@ -17,7 +17,7 @@ const CarSettingBrand = (props) => {
       style={[
         {
           width: Width_convert(65),
-          height: Width_convert(51),
+          height: Width_convert(65),
           borderRadius: Font_normalize(4),
           marginLeft: 'auto',
           marginRight: 'auto',
@@ -31,22 +31,26 @@ const CarSettingBrand = (props) => {
       ]}>
       <FastImage
         style={{
-          width: Width_convert(50),
-          height: Width_convert(30),
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          width: Width_convert(64),
+          height: Width_convert(40),
         }}
         source={{
           uri: props.item.brand_image,
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
-        resizeMode={FastImage.resizeMode.stretch}></FastImage>
+        resizeMode={FastImage.resizeMode.contain} // {FastImage.resizeMode.stretch}
+      ></FastImage>
       <Text
         style={{
           fontFamily: Fonts?.NanumSqureRegular || null,
           fontSize: Font_normalize(11),
           fontWeight: '400',
           color: '#000000',
-          marginTop: Height_convert(9),
         }}>
         {props.item.brand}
       </Text>

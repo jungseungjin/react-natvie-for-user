@@ -14,7 +14,9 @@ const BottomSignUpButton = (props) => {
       </Text>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() => {}}
+        onPress={() => {
+          props.navigation.navigate('SignUp');
+        }}
         style={styles.touchableOpacity}>
         <Text style={styles.text2}>회원가입</Text>
       </TouchableOpacity>

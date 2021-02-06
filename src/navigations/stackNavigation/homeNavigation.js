@@ -15,6 +15,7 @@ import ReviewView from '../../screens/main/home/reviewViewScreen.js';
 import ReviewRegister from '../../screens/main/home/reviewRegisterScreen.js';
 import WorkVideo from '../../screens/main/home/workVideoScreen.js';
 import WorkVideoList from '../../screens/main/home/workVideoListScreen.js';
+import SignUp from '../../screens/main/more/signUpScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -123,6 +124,12 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="WorkVideoList"
         component={WorkVideoList}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="SignUp"
+        component={SignUp}
         initialParams={{}}
         options={{}}
       />

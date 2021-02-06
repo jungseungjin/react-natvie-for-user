@@ -4,6 +4,12 @@ import More from '../../screens/main/more/moreScreen.js';
 import Info from '../../screens/main/more/infoScreen.js';
 import InfoCar from '../../screens/main/more/infoCarScreen.js';
 import SignUp from '../../screens/main/more/signUpScreen.js';
+import SignUpTerms from '../../screens/main/more/signUpTerms.js';
+import SignUpInformation from '../../screens/main/more/signUpInformation.js';
+import SignUpInformation2 from '../../screens/main/more/signUpInformation2.js';
+import SignUpInformation3 from '../../screens/main/more/signUpInformation3.js';
+import SignUpInformation4 from '../../screens/main/more/signUpInformation4.js';
+import SignUpComplete from '../../screens/main/more/signUpComplete.js';
 import Login from '../../screens/main/more/loginScreen.js';
 import Setting from '../../screens/main/more/settingScreen.js';
 import NoticeBoard from '../../screens/main/more/noticeBoardScreen.js';
@@ -58,6 +64,54 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="SignUp"
         component={SignUp}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpTerms"
+        component={SignUpTerms}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation"
+        component={SignUpInformation}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation2"
+        component={SignUpInformation2}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation3"
+        component={SignUpInformation3}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation4"
+        component={SignUpInformation4}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpComplete"
+        component={SignUpComplete}
         initialParams={{}}
         options={{
           headerShown: false,

@@ -85,6 +85,44 @@ const CarSetting = (props) => {
     get_model_data(props);
   }, [props.PickBrandValue]);
 
+  const [tt, setTT] = React.useState([
+    {
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%92%E1%85%A7%E1%86%AB%E1%84%83%E1%85%A2-07.png',
+      brand: '현대',
+      _id: '1',
+    },
+    {
+      _id: '2',
+      brand: '제네시스',
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%8C%E1%85%A6%E1%84%82%E1%85%A6%E1%84%89%E1%85%B5%E1%84%89%E1%85%B3-09.png',
+    },
+    {
+      _id: '3',
+      brand: '쌍용',
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%8A%E1%85%A1%E1%86%BC%E1%84%8B%E1%85%AD%E1%86%BC-11.png',
+    },
+    {
+      _id: '4',
+      brand: '쉐보레',
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%89%E1%85%B0%E1%84%87%E1%85%A9%E1%84%85%E1%85%A6-12.png',
+    },
+    {
+      _id: '5',
+      brand: '르노',
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%85%E1%85%B3%E1%84%82%E1%85%A9%E1%84%89%E1%85%A1%E1%86%B7%E1%84%89%E1%85%A5%E1%86%BC-10.png',
+    },
+    {
+      _id: '6',
+      brand: '기아',
+      brand_image:
+        'https://motory.s3.ap-northeast-2.amazonaws.com/brand_img/%E1%84%80%E1%85%B5%E1%84%8B%E1%85%A1-08.png',
+    },
+  ]);
   return (
     <>
       <View style={{flex: 1, flexDirection: 'row'}}>
@@ -216,7 +254,8 @@ const CarSetting = (props) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             style={{flex: 1}}
-            data={brandList}
+            //data={brandList}
+            data={tt}
             windowSize={2}
             initialNumToRender={10}
             renderItem={({item}) => (

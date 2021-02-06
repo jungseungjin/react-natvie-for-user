@@ -59,7 +59,7 @@ const SettingScreen = (props) => {
         ) : (
           <LocationSetting navigation={props.navigation}></LocationSetting>
         )}
-        <SignUp></SignUp>
+        <SignUp navigation={props.navigation}></SignUp>
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

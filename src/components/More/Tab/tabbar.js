@@ -38,7 +38,8 @@ const TabBar = (props) => {
         props.Title == '작업종류' ||
         props.Title == '1:1문의' ||
         props.Title == '피드백주기' ||
-        props.Title == '차량선택' ? (
+        props.Title == '차량선택' ||
+        props.Title == '회원가입' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -61,7 +62,12 @@ const TabBar = (props) => {
         props.Title == '문의확인' ||
         props.Title == '투닝 입점문의' ||
         props.Title == '내정보' ||
-        props.Title == '회원탈퇴' ? (
+        props.Title == '회원탈퇴' ||
+        props.Title == '회원가입1' ||
+        props.Title == '회원가입2' ||
+        props.Title == '회원가입3' ||
+        props.Title == '회원가입4' ||
+        props.Title == '회원가입5' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{}}
@@ -99,7 +105,11 @@ const TabBar = (props) => {
               ? styles.text2
               : styles.text2),
           ]}>
-          {props.Title != '공지사항 및 이벤트 보기' ? props.Title : null}
+          {props.Title.indexOf('회원가입') != -1
+            ? '회원가입'
+            : props.Title != '공지사항 및 이벤트 보기'
+            ? props.Title
+            : null}
         </Text>
       </View>
       {/*가운데덩어리 끝 */}
@@ -187,6 +197,42 @@ const TabBar = (props) => {
                 color: '#946AEF',
               }}>
               완료
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : props.Title.indexOf('회원가입') != -1 ? (
+        <View style={{backgroundColor: '#FFFFFF'}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              if (props.Title == '회원가입1') {
+                props.navigation.navigate('SignUpInformation2');
+              } else if (props.Title == '회원가입2') {
+                props.navigation.navigate('SignUpInformation3');
+              } else if (props.Title == '회원가입3') {
+                props.navigation.navigate('SignUpInformation4');
+              } else if (props.Title == '회원가입4') {
+                props.navigation.navigate('SignUpComplete');
+              }
+              //props.navigation.navigate()
+            }}>
+            <Text
+              style={[
+                {
+                  marginRight: Width_convert(22),
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontWeight: '700',
+                  fontSize: Font_normalize(14),
+                },
+                props.Title == '회원가입'
+                  ? {
+                      color: '#FFFFFF',
+                    }
+                  : {
+                      color: '#946AEF',
+                    },
+              ]}>
+              {props.Title == '회원가입4' ? '완료' : '다음'}
             </Text>
           </TouchableOpacity>
         </View>
