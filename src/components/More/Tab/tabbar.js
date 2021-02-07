@@ -39,7 +39,10 @@ const TabBar = (props) => {
         props.Title == '1:1문의' ||
         props.Title == '피드백주기' ||
         props.Title == '차량선택' ||
-        props.Title == '회원가입' ? (
+        props.Title == '회원가입' ||
+        props.Title == '아이디 찾기2' ||
+        props.Title == '비밀번호 찾기1' ||
+        props.Title == '비밀번호 찾기2' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -67,7 +70,8 @@ const TabBar = (props) => {
         props.Title == '회원가입2' ||
         props.Title == '회원가입3' ||
         props.Title == '회원가입4' ||
-        props.Title == '회원가입5' ? (
+        props.Title == '회원가입5' ||
+        props.Title == '아이디 찾기1' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{}}
@@ -107,6 +111,10 @@ const TabBar = (props) => {
           ]}>
           {props.Title.indexOf('회원가입') != -1
             ? '회원가입'
+            : props.Title.indexOf('아이디 찾기') != -1
+            ? '아이디 찾기'
+            : props.Title.indexOf('비밀번호 찾기') != -1
+            ? '비밀번호 찾기'
             : props.Title != '공지사항 및 이벤트 보기'
             ? props.Title
             : null}
@@ -200,7 +208,9 @@ const TabBar = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
-      ) : props.Title.indexOf('회원가입') != -1 ? (
+      ) : props.Title.indexOf('회원가입') != -1 ||
+        props.Title.indexOf('아이디 찾기1') != -1 ||
+        props.Title.indexOf('비밀번호 찾기') != -1 ? (
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
@@ -213,6 +223,12 @@ const TabBar = (props) => {
                 props.navigation.navigate('SignUpInformation4');
               } else if (props.Title == '회원가입4') {
                 props.navigation.navigate('SignUpComplete');
+              } else if (props.Title == '아이디 찾기1') {
+                props.navigation.navigate('IdFindComplete');
+              } else if (props.Title == '비밀번호 찾기1') {
+                props.navigation.navigate('PasswordFind2');
+              } else if (props.Title == '비밀번호 찾기2') {
+                props.navigation.navigate('Login');
               }
               //props.navigation.navigate()
             }}>
@@ -232,7 +248,9 @@ const TabBar = (props) => {
                       color: '#946AEF',
                     },
               ]}>
-              {props.Title == '회원가입4' ? '완료' : '다음'}
+              {props.Title == '회원가입4' || props.Title == '비밀번호 찾기2'
+                ? '완료'
+                : '다음'}
             </Text>
           </TouchableOpacity>
         </View>

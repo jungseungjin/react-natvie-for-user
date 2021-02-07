@@ -9,6 +9,10 @@ import SignUpInformation from '../../screens/main/more/signUpInformation.js';
 import SignUpInformation2 from '../../screens/main/more/signUpInformation2.js';
 import SignUpInformation3 from '../../screens/main/more/signUpInformation3.js';
 import SignUpInformation4 from '../../screens/main/more/signUpInformation4.js';
+import IdFind from '../../screens/main/more/idFindScreen.js';
+import IdFindComplete from '../../screens/main/more/idFindCompleteScreen.js';
+import PasswordFind from '../../screens/main/more/passwordFindScreen.js';
+import PasswordFind2 from '../../screens/main/more/passworkFindScreen2.js';
 import SignUpComplete from '../../screens/main/more/signUpComplete.js';
 import Login from '../../screens/main/more/loginScreen.js';
 import Setting from '../../screens/main/more/settingScreen.js';
@@ -112,6 +116,38 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="SignUpComplete"
         component={SignUpComplete}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="IdFind"
+        component={IdFind}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="IdFindComplete"
+        component={IdFindComplete}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PasswordFind"
+        component={PasswordFind}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PasswordFind2"
+        component={PasswordFind2}
         initialParams={{}}
         options={{
           headerShown: false,

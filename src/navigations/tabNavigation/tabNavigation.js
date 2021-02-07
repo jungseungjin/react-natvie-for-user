@@ -60,6 +60,10 @@ const setTabBarVisible = (route, reduexState) => {
     'SignUpInformation3',
     'SignUpInformation4',
     'SignUpComplete',
+    'IdFind',
+    'IdFindComplete',
+    'PasswordFind',
+    'PasswordFind2',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

@@ -171,7 +171,12 @@ const LoginScreen = (props) => {
                     flexDirection: 'row',
                     justifyContent: 'center',
                   }}>
-                  <TouchableOpacity style={{marginRight: Width_convert(15)}}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('IdFind');
+                    }}
+                    style={{marginRight: Width_convert(15)}}>
                     <Text
                       style={{
                         fontFamily: Fonts?.NanumGothicRegular || null,
@@ -184,7 +189,11 @@ const LoginScreen = (props) => {
                   </TouchableOpacity>
                   <VirticalBar
                     style={{marginRight: Width_convert(15)}}></VirticalBar>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('PassworkFind');
+                    }}>
                     <Text
                       style={{
                         fontFamily: Fonts?.NanumGothicRegular || null,
