@@ -16,12 +16,12 @@ import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
 import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
-import LocationSettingModal from '../../../components/Home/Modal/locationSettingModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-const CategoryDetailScreen = ({navigation, Page, route}) => {
+import ButtonOneModal from '../../../components/Modal/ButtonOneModel.js';
+const CategoryDetailScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [page, setPage] = React.useState(route.params.Page || null);
+  const [page, setPage] = React.useState(props.route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
 
   const [resultWorkList, setresultWorkList] = React.useState([
@@ -69,7 +69,7 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
               ? '캠핑카'
               : null
           }
-          navigation={navigation}></Tabbar>
+          navigation={props.navigation}></Tabbar>
         <TabBarBottom
           from={'categoryDetail'}
           Title={[
@@ -191,7 +191,16 @@ const CategoryDetailScreen = ({navigation, Page, route}) => {
             </Text>
           </View>
         )}
-        {showModal ? <LocationSettingModal></LocationSettingModal> : null}
+        {showModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            navigation={props.navigation}
+            Title={
+              "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
+            }
+            BottomText={'설정하러가기'}
+            CenterButtonText={'확인'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

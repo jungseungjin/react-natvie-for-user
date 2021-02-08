@@ -36,8 +36,11 @@ import StoreInformation from '../../../components/Home/Infomation/storeInformati
 import LaborInformation from '../../../components/Home/Infomation/laborInformation.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import LoginModal from '../../../components/Modal/LoginModal.js';
 const StoreDetailScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   const offset = useRef(new Animated.Value(0)).current;
   const [scrollValue, setScrollValue] = React.useState(0);
   const [page, setPage] = React.useState('store');
@@ -381,6 +384,16 @@ const StoreDetailScreen = (props) => {
         <BottomButton></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      {showModal ? (
+        <LoginModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+          //BottomText={'설정하러가기'}
+          //LeftButtonTitle={'아니오'}
+          //RightButtonTitle={'네'}
+        ></LoginModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

@@ -17,8 +17,11 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Menu from '../../../components/More/Menu/Menu.js';
+import LoginModal from '../../../components/Modal/LoginModal.js';
 const MoreScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   return (
     <>
       <StatusBar
@@ -47,6 +50,16 @@ const MoreScreen = (props) => {
             navigation={props.navigation}></Menu>
         </View>
       </SafeAreaView>
+      {showModal ? (
+        <LoginModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+          //BottomText={'설정하러가기'}
+          //LeftButtonTitle={'아니오'}
+          //RightButtonTitle={'네'}
+        ></LoginModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

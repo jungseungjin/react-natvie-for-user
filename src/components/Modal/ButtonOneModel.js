@@ -1,13 +1,13 @@
 import React from 'react';
 import Modal from 'react-native-modal';
 import {SafeAreaView, View, Text} from 'react-native';
-import Width_convert from '../../Width_convert.js';
-import Height_convert from '../../Height_convert.js';
-import Fonts from '../../Fonts.js';
-import Font_normalize from '../../Font_normalize.js';
+import Width_convert from '../Width_convert.js';
+import Height_convert from '../Height_convert.js';
+import Fonts from '../Fonts.js';
+import Font_normalize from '../Font_normalize.js';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const LocationSettingModal = () => {
+const ButtonOneModal = (props) => {
   return (
     <SafeAreaView
       style={{
@@ -16,7 +16,7 @@ const LocationSettingModal = () => {
       }}>
       <Modal
         //isVisible Props에 State 값을 물려주어 On/off control
-        isVisible={false}
+        isVisible={true}
         //아이폰에서 모달창 동작시 깜박임이 있었는데, useNativeDriver Props를 True로 주니 해결되었다.
         useNativeDriver={true}
         hideModalContentWhileAnimating={true}
@@ -50,28 +50,29 @@ const LocationSettingModal = () => {
                   fontSize: Font_normalize(14),
                   color: '#000000',
                 }}>
-                '홈화면 > 설정' 에서 지역설정을 해주셔야 {'\n'}가까운 순 필터
-                사용이 가능합니다.{' '}
+                {props.Title}
               </Text>
             </View>
-            <TouchableOpacity
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: '#946AEF',
-                marginTop: Height_convert(6),
-                marginLeft: Width_convert(18),
-                marginRight: 'auto',
-              }}>
-              <Text
+            {props.BottomText ? (
+              <TouchableOpacity
                 style={{
-                  fontFamily: Fonts?.NanumGothicRegular || null,
-                  fontSize: Font_normalize(12),
-                  fontWeight: '400',
-                  color: '#946AEF',
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#946AEF',
+                  marginTop: Height_convert(6),
+                  marginLeft: Width_convert(18),
+                  marginRight: 'auto',
                 }}>
-                설정 하러가기
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumGothicRegular || null,
+                    fontSize: Font_normalize(12),
+                    fontWeight: '400',
+                    color: '#946AEF',
+                  }}>
+                  {props.BottomText}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
           <View
             style={{
@@ -84,7 +85,7 @@ const LocationSettingModal = () => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                alert('gd');
+                props.ShowModalChangeValue(false);
               }}>
               <Text
                 style={{
@@ -93,7 +94,7 @@ const LocationSettingModal = () => {
                   fontWeight: '700',
                   color: '#000000',
                 }}>
-                확인
+                {props.CenterButtonText}
               </Text>
             </TouchableOpacity>
           </View>
@@ -103,4 +104,4 @@ const LocationSettingModal = () => {
   );
 };
 
-export default LocationSettingModal;
+export default ButtonOneModal;

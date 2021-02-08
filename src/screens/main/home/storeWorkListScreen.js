@@ -16,7 +16,6 @@ import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
 import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
-import LocationSettingModal from '../../../components/Home/Modal/locationSettingModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const StoreWorkList = ({navigation, Page, route}) => {
@@ -327,7 +326,6 @@ const StoreWorkList = ({navigation, Page, route}) => {
             </Text>
           </View>
         )}
-        {showModal ? <LocationSettingModal></LocationSettingModal> : null}
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

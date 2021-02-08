@@ -9,6 +9,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  ShadowPropTypesIOS,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -33,9 +34,11 @@ import TabMore from '../../../components/Home/TabMore/tabMore.js';
 import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
-
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 const HomeScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([
     {URL: 'https://unsplash.it/400/400?image=1'},
     {URL: 'https://unsplash.it/400/400?image=2'},
@@ -368,6 +371,17 @@ const HomeScreen = (props) => {
           {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
+      {showModal ? (
+        <ButtonTwoModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            '차종과 지역설정을 하지 않은 경우에는 임의의 작업이 검색됩니다.'
+          }
+          BottomText={'설정하러가기'}
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}></ButtonTwoModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

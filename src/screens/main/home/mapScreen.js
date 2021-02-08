@@ -30,8 +30,11 @@ import NaverMapView, {
   Polygon,
 } from 'react-native-nmap';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 const MapScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   const [searchText, setSearchText] = React.useState('');
 
   const P0 = {latitude: 37.564362, longitude: 126.977011};
@@ -194,6 +197,17 @@ const MapScreen = (props) => {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      {showModal ? (
+        <ButtonTwoModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            '지역 설정을 위해 고객님의 권한이 필요합니다. 권한을 허용하시겠습니까?'
+          }
+          //BottomText={'설정하러가기'}
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}></ButtonTwoModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
