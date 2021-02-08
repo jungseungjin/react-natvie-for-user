@@ -15,6 +15,13 @@ import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 
 const SignUp = (props) => {
+  const [allAgree, setAllAgree] = React.useState(false);
+  const [agree1, setAgree1] = React.useState(false);
+  const [agree2, setAgree2] = React.useState(false);
+  const [agree3, setAgree3] = React.useState(false);
+  const [agree4, setAgree4] = React.useState(false);
+  const [agree5, setAgree5] = React.useState(false);
+  const [agree6, setAgree6] = React.useState(false);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
@@ -56,7 +63,15 @@ const SignUp = (props) => {
         }}>
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => {}}
+          onPress={() => {
+            setAllAgree(!allAgree);
+            setAgree1(!allAgree);
+            setAgree2(!allAgree);
+            setAgree3(!allAgree);
+            setAgree4(!allAgree);
+            setAgree5(!allAgree);
+            setAgree6(!allAgree);
+          }}
           style={{
             width: Width_convert(315),
             height: Width_convert(45),
@@ -76,11 +91,23 @@ const SignUp = (props) => {
             }}>
             전체동의
           </Text>
-          <CheckBox
-            style={{
-              marginRight: Width_convert(16),
-            }}></CheckBox>
+          {allAgree ? (
+            <CheckedBox
+              width={Width_convert(19)}
+              height={Width_convert(19)}
+              style={{
+                marginRight: Width_convert(16),
+              }}></CheckedBox>
+          ) : (
+            <CheckBox
+              width={Width_convert(19)}
+              height={Width_convert(19)}
+              style={{
+                marginRight: Width_convert(16),
+              }}></CheckBox>
+          )}
         </TouchableOpacity>
+        {/*이용약관 동의 */}
         <View
           style={{
             width: Width_convert(315),
@@ -105,13 +132,33 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree1 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree1(!agree1);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree1 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
+
+        {/*이용약관 동의 */}
         {/*만 14세 이상 확인 */}
         <View
           style={{
@@ -137,11 +184,29 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree2 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree2(!agree2);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree2 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -172,11 +237,29 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree3 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree3(!agree3);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree3 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -206,11 +289,29 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree4 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree4(!agree4);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree4 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -240,11 +341,29 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree5 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree5(!agree5);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree5 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -273,11 +392,29 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (agree6 == true) {
+                //false로 변경
+                if (allAgree == true) {
+                  setAllAgree(false);
+                }
+              }
+              setAgree6(!agree6);
+            }}
             style={{
               marginRight: Width_convert(16),
             }}>
-            <CheckBox></CheckBox>
+            {agree6 ? (
+              <CheckedBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(19)}
+                height={Width_convert(19)}
+                style={{}}></CheckBox>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -297,17 +434,25 @@ const SignUp = (props) => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            props.navigation.navigate('SignUpInformation');
+            if (agree1 && agree2 && agree3) {
+              props.navigation.navigate('SignUpInformation');
+            }
           }}
-          style={{
-            width: Width_convert(337),
-            height: Width_convert(45),
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: Font_normalize(5),
-            backgroundColor: 'rgba(196, 196, 196, 0.3)',
-          }}>
+          style={[
+            {
+              width: Width_convert(337),
+              height: Width_convert(45),
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: Font_normalize(5),
+            },
+            agree1 && agree2 && agree3
+              ? {backgroundColor: '#946AEF'}
+              : {
+                  backgroundColor: 'rgba(196, 196, 196, 0.3)',
+                },
+          ]}>
           <Text
             style={{
               fontFamily: Fonts?.NanumSqureRegular || null,
