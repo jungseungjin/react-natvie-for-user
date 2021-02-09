@@ -16,16 +16,45 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
+import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
+import auth from '@react-native-firebase/auth';
+
 const SignUpInformation = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [authButtonClick, setAuthButtonClick] = React.useState(false);
   const [authNumber, setAuthNumber] = React.useState('');
+  const [confirm, setConfirm] = React.useState(null);
+  const [next, setNext] = React.useState('');
+  async function signInWithPhoneNumber(text) {
+    //3분카운트 들어가야함
+    try {
+      var number = text.replace(/[^0-9]/g, '');
+      console.log(number);
+      const confirmation = await auth().signInWithPhoneNumber('+82' + number);
+      console.log(confirmation);
+      setConfirm(confirmation);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function confirmCode(code) {
+    try {
+      await confirm.confirm(code);
+      console.log(code + 'is valid');
+    } catch (error) {
+      console.log('Invalid code.');
+    }
+  }
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <Tabbar Title={'회원가입1'} navigation={props.navigation}></Tabbar>
+      <Tabbar
+        Title={'회원가입1'}
+        navigation={props.navigation}
+        next={next}></Tabbar>
       <View
         style={{
           marginLeft: Width_convert(24),
@@ -52,13 +81,19 @@ const SignUpInformation = (props) => {
                 },
           ]}>
           <TextInput
+            editable={authButtonClick ? false : true}
             placeholder="휴대폰번호"
             placeholderTextColor="#CCCCCC"
             value={phoneNumber}
             onChangeText={(value) => {
-              setPhoneNumber(value);
+              if (value.length > 13) {
+              } else {
+                let newValue = InputPhoneNumber(value);
+                setPhoneNumber(newValue);
+              }
             }}
             placeholderStyle={{
+              height: Width_convert(40),
               paddingLeft: Width_convert(10),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontSize: Font_normalize(14),
@@ -75,8 +110,16 @@ const SignUpInformation = (props) => {
               color: '#000000',
               lineHeight: Font_normalize(14),
             }}></TextInput>
-          {phoneNumber ? (
-            <XButton style={{marginRight: Width_convert(3)}}></XButton>
+          {phoneNumber && !authButtonClick ? (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                setPhoneNumber('');
+                setNext('');
+              }}
+              style={{}}>
+              <XButton style={{marginRight: Width_convert(3)}}></XButton>
+            </TouchableOpacity>
           ) : null}
         </View>
         {/*인증번호받기 버튼, 버튼누르면 변경되는 뷰  */}
@@ -219,29 +262,50 @@ const SignUpInformation = (props) => {
               activeOpacity={1}
               onPress={() => {
                 setAuthButtonClick(true);
+                //signInWithPhoneNumber(phoneNumber);
+                setNext(false);
               }}
-              style={{
-                width: Width_convert(327),
-                height: Width_convert(44),
-                borderRadius: Font_normalize(5),
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderRightWidth: 1,
-                borderLeftWidth: 1,
-                borderTopColor: '#CCCCCC',
-                borderBottomColor: '#CCCCCC',
-                borderRightColor: '#CCCCCC',
-                borderLeftColor: '#CCCCCC',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+              style={[
+                {
+                  width: Width_convert(327),
+                  height: Width_convert(44),
+                  borderRadius: Font_normalize(5),
+                  borderTopWidth: 1,
+                  borderBottomWidth: 1,
+                  borderRightWidth: 1,
+                  borderLeftWidth: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                },
+                phoneNumber.length == 13
+                  ? {
+                      borderTopColor: '#2989E2',
+                      borderBottomColor: '#2989E2',
+                      borderRightColor: '#2989E2',
+                      borderLeftColor: '#2989E2',
+                    }
+                  : {
+                      borderTopColor: '#CCCCCC',
+                      borderBottomColor: '#CCCCCC',
+                      borderRightColor: '#CCCCCC',
+                      borderLeftColor: '#CCCCCC',
+                    },
+              ]}>
               <Text
-                style={{
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '400',
-                  fontSize: Font_normalize(16),
-                  color: '#CCCCCC',
-                }}>
+                style={[
+                  {
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontWeight: '400',
+                    fontSize: Font_normalize(16),
+                  },
+                  phoneNumber.length == 13
+                    ? {
+                        color: '#2989E2',
+                      }
+                    : {
+                        color: '#CCCCCC',
+                      },
+                ]}>
                 인증번호 받기
               </Text>
             </TouchableOpacity>

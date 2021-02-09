@@ -216,7 +216,9 @@ const TabBar = (props) => {
             activeOpacity={1}
             onPress={() => {
               if (props.Title == '회원가입1') {
-                props.navigation.navigate('SignUpInformation2');
+                if (props.next == true) {
+                  props.navigation.navigate('SignUpInformation2');
+                }
               } else if (props.Title == '회원가입2') {
                 props.navigation.navigate('SignUpInformation3');
               } else if (props.Title == '회원가입3') {
@@ -243,6 +245,18 @@ const TabBar = (props) => {
                 props.Title == '회원가입'
                   ? {
                       color: '#FFFFFF',
+                    }
+                  : props.Title == '회원가입1' && props.next === ''
+                  ? {
+                      color: '#FFFFFF',
+                    }
+                  : props.Title == '회원가입1' && props.next === false
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '회원가입1' && props.next === true
+                  ? {
+                      color: '#946AEF',
                     }
                   : {
                       color: '#946AEF',
