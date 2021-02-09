@@ -18,7 +18,7 @@ import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModel.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 const CategoryDetailScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [page, setPage] = React.useState(props.route.params.Page || null);

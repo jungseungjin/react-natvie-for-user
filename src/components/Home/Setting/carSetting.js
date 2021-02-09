@@ -141,7 +141,7 @@ const CarSetting = (props) => {
                 borderBottomWidth: 1,
                 borderBottomColor: '#DBDBDB',
               },
-              props.from == 'InfoCar'
+              props.from == 'InfoCar' || props.from == 'SignUp'
                 ? {
                     height: Width_convert(71),
                   }
@@ -213,7 +213,7 @@ const CarSetting = (props) => {
                   style={{marginRight: Width_convert(22)}}></Gray_checkBox>
               )}
             </TouchableOpacity>
-            {props.from == 'InfoCar' ? null : (
+            {props.from == 'InfoCar' || props.from == 'SignUp' ? null : (
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => {
@@ -293,6 +293,8 @@ const CarSetting = (props) => {
               }
               PickModelChangeValue={props.PickModelChangeValue}
               PickModelDetail={props.PickModelDetail}
+              PageChangeValue={props.PageChangeValue}
+              from={props.from}
               PickModelDetailChangeValue={props.PickModelDetailChangeValue}
               IsLoadingChangeValue={
                 props.IsLoadingChangeValue

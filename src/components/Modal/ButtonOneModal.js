@@ -43,13 +43,23 @@ const ButtonOneModal = (props) => {
             }}>
             <View>
               <Text
-                style={{
-                  marginLeft: Width_convert(18),
-                  fontFamily: Fonts?.NanumGothicRegular || null,
-                  fontWeight: '400',
-                  fontSize: Font_normalize(14),
-                  color: '#000000',
-                }}>
+                style={[
+                  {
+                    marginLeft: Width_convert(18),
+                    fontFamily: Fonts?.NanumGothicRegular || null,
+                    fontWeight: '400',
+                    fontSize: Font_normalize(14),
+                    color: '#000000',
+                  },
+                  props.Title == '이미 가입된 중복 메일계정입니다'
+                    ? {
+                        marginLeft: 0,
+                        textAlign: 'center',
+                        fontWeight: '700',
+                        fontSize: Font_normalize(15),
+                      }
+                    : null,
+                ]}>
                 {props.Title}
               </Text>
             </View>
@@ -88,12 +98,20 @@ const ButtonOneModal = (props) => {
                 props.ShowModalChangeValue(false);
               }}>
               <Text
-                style={{
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontSize: Font_normalize(18),
-                  fontWeight: '700',
-                  color: '#000000',
-                }}>
+                style={[
+                  {
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(18),
+                    fontWeight: '700',
+                    color: '#000000',
+                  },
+                  props.Title == '이미 가입된 중복 메일계정입니다'
+                    ? {
+                        color: '#1976E3',
+                        fontSize: Font_normalize(16),
+                      }
+                    : null,
+                ]}>
                 {props.CenterButtonText}
               </Text>
             </TouchableOpacity>

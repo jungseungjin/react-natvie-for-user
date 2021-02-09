@@ -10,6 +10,9 @@ const CarSettingModelDetail = (props) => {
       activeOpacity={1}
       onPress={() => {
         props.PickModelDetailChangeValue(props.item);
+        if (props.from == 'SignUp') {
+          props.PageChangeValue('SignUp');
+        }
       }}
       style={{justifyContent: 'center'}}>
       <Text

@@ -20,6 +20,11 @@ import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
 const SignUpInformation = (props) => {
+  //props에서 받은 내용 모두 기본으로 입력시켜놓고
+  //닉네임 중복검사
+  //비밀번호 형식검사
+  //생년월일 찍기
+  //지역설정해서 위치권한 받아오기.  위치권한 ok면 지피에스 켜져있는지 확인 후 현재위치 받아오기 권한이 없으면 일단은 권한 한번 요청? 권한없으면
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [authButtonClick, setAuthButtonClick] = React.useState(false);
   const [authNumber, setAuthNumber] = React.useState('');

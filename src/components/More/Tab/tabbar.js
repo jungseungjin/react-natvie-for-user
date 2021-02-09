@@ -217,10 +217,17 @@ const TabBar = (props) => {
             onPress={() => {
               if (props.Title == '회원가입1') {
                 if (props.next == true) {
-                  props.navigation.navigate('SignUpInformation2');
+                  props.navigation.navigate('SignUpInformation2', {
+                    phoneNumber: props.phoneNumber,
+                  });
                 }
               } else if (props.Title == '회원가입2') {
-                props.navigation.navigate('SignUpInformation3');
+                props.navigation.navigate('SignUpInformation3', {
+                  phoneNumber: props.phoneNumber,
+                  pickBrand: props.pickBrand,
+                  pickModel: props.pickModel,
+                  pickModelDetail: props.pickModelDetail,
+                });
               } else if (props.Title == '회원가입3') {
                 props.navigation.navigate('SignUpInformation4');
               } else if (props.Title == '회원가입4') {
@@ -255,6 +262,23 @@ const TabBar = (props) => {
                       color: '#CCCCCC',
                     }
                   : props.Title == '회원가입1' && props.next === true
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '회원가입2' &&
+                    props.pickModelDetail?.brand == undefined
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '회원가입2' && props.pickModelDetail?.brand
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '회원가입3' && props.emailChk == false
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '회원가입3' && props.emailChk
                   ? {
                       color: '#946AEF',
                     }

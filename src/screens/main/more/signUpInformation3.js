@@ -16,16 +16,50 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+
 const SignUpInformation = (props) => {
-  const [phoneNumber, setPhoneNumber] = React.useState('');
-  const [authButtonClick, setAuthButtonClick] = React.useState(false);
-  const [authNumber, setAuthNumber] = React.useState('');
+  //이메일 입력하면 emailValid를 유효성검사로 넘김.(중복확인눌렀을 때??)
+  //중복확인을 눌렀을 때 emailValid가 true여야 아래 진행.  emailValid가 false면 하단에 빨간글씨 나오고 return.
+  //이름이랑 메일 뒷단으로 넘겨서 중복확인 시키고 중복이면 showModal을 true로 emailChk는 false
+  //중복이 아니면 showModal을 false emailChk는 true로
+  // emailChk는 true로 되면 이름,이메일 변경불가능하게 바꾸고 다음버튼 활성화. 다음버튼에서 폰번호 차량정보 이름 이메일 모두 가지고 다음으로
+  console.log(props);
+  const [phoneNumber, setPhoneNumber] = React.useState(
+    props?.route?.params?.phoneNumber,
+  );
+  const [pickBrand, setPickBrand] = React.useState(
+    props?.route?.params?.pickBrand,
+  ); //디비에서 가져온 브랜드값
+  const [pickModel, setPickModel] = React.useState(
+    props?.route?.params?.pickModel,
+  ); //디비에서 가져온 모델값
+  const [pickModelDetail, setPickModelDetail] = React.useState(
+    props?.route?.params?.pickModelDetail,
+  ); //디비에서 가져온 상세모델값
+
+  const [isLoading, setIsLoading] = React.useState(false);
+  const IsLoadingChangeValue = (text) => setIsLoading(text);
+
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [emailValid, setEmailValid] = React.useState('');
+  const [emailChk, setEmailChk] = React.useState(false);
+  const [showModal, setShowModel] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModel(text);
+  function isEmail(asValue) {
+    var regExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    return regExp.test(asValue); // 형식에 맞는 경우 true 리턴
+  }
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <Tabbar Title={'회원가입3'} navigation={props.navigation}></Tabbar>
+      <Tabbar
+        Title={'회원가입3'}
+        navigation={props.navigation}
+        emailChk={emailChk}></Tabbar>
       <View
         style={{
           marginLeft: Width_convert(24),
@@ -44,9 +78,12 @@ const SignUpInformation = (props) => {
           <TextInput
             placeholder="회원님의 성함을 적어주세요"
             placeholderTextColor="#CCCCCC"
-            value={phoneNumber}
+            value={name}
+            autoCapitalize={'none'}
+            autoCompleteType={'off'}
+            autoCorrect={false}
             onChangeText={(value) => {
-              setPhoneNumber(value);
+              setName(value);
             }}
             placeholderStyle={{
               paddingLeft: Width_convert(10),
@@ -86,9 +123,13 @@ const SignUpInformation = (props) => {
             <TextInput
               placeholder="이메일 주소를 입력해주세요"
               placeholderTextColor="#CCCCCC"
-              value={authNumber}
+              value={email}
+              autoCapitalize={'none'}
+              autoCompleteType={'off'}
+              autoCorrect={false}
+              keyboardType={'email-address'}
               onChangeText={(value) => {
-                setAuthNumber(value);
+                setEmail(value);
               }}
               placeholderStyle={{
                 paddingLeft: Width_convert(10),
@@ -110,7 +151,16 @@ const SignUpInformation = (props) => {
           </View>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (isEmail(email)) {
+                setEmailValid(isEmail(email));
+                if (!name) {
+                } else {
+                }
+              } else {
+                setEmailValid(isEmail(email));
+              }
+            }}
             style={{
               width: Width_convert(71),
               height: Width_convert(29),
@@ -137,7 +187,32 @@ const SignUpInformation = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
+        {emailValid === false ? (
+          <View
+            style={{
+              marginTop: Height_convert(7),
+              marginLeft: Width_convert(4),
+            }}>
+            <Text
+              style={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontSize: Font_normalize(11),
+                fontWeight: '400',
+                color: '#FF0000',
+              }}>
+              이메일 형식을 정확히 입력해주세요
+            </Text>
+          </View>
+        ) : null}
       </View>
+      {showModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={'이미 가입된 중복 메일계정입니다'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
     </SafeAreaView>
   );
 };
