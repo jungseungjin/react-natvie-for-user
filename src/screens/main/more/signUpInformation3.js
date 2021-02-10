@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -17,7 +18,9 @@ import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
-
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
 const SignUpInformation = (props) => {
   //이메일 입력하면 emailValid를 유효성검사로 넘김.(중복확인눌렀을 때??)
   //중복확인을 눌렀을 때 emailValid가 true여야 아래 진행.  emailValid가 false면 하단에 빨간글씨 나오고 return.
@@ -51,6 +54,35 @@ const SignUpInformation = (props) => {
     var regExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     return regExp.test(asValue); // 형식에 맞는 경우 true 리턴
   }
+  const EmailChk = async (text) => {
+    try {
+      let result;
+      let url = Domain2 + '';
+      NetInfo.addEventListener((state) => {
+        if (state.isConnected) {
+          {
+            /*
+          
+      let url = Domain + 'feedback_register/1';
+      let data = {
+        writer: route.params.user_id, //작성자 아이디
+        writer_name: route.params.user_name, //작성자 이름
+        title: title, //제목
+        contents: contents, //내용
+        key: Key,
+      };
+      let result = await axios.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+          */
+          }
+        } else {
+        }
+      });
+    } catch (err) {}
+  };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
@@ -153,12 +185,18 @@ const SignUpInformation = (props) => {
             activeOpacity={1}
             onPress={() => {
               if (isEmail(email)) {
+                //유효성검사 통과하면 다음 중복검사 진행
                 setEmailValid(isEmail(email));
                 if (!name) {
+                  //이름을 입력하지 않으면 이름을 입력하라는 모달 띄우기
                 } else {
+                  EmailChk();
+                  //중복검사 진행.
                 }
               } else {
+                //유효성검사 통과 못하면 하단의 글씨 2초동안 나오기
                 setEmailValid(isEmail(email));
+                setTimeout(() => setEmailValid(''), 2000);
               }
             }}
             style={{

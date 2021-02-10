@@ -37,7 +37,7 @@ import Search from '../../../components/Home/Search/search.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 const HomeScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [showModal, setShowModal] = React.useState(true);
+  const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([
     {URL: 'https://unsplash.it/400/400?image=1'},
