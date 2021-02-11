@@ -217,21 +217,50 @@ const TabBar = (props) => {
             onPress={() => {
               if (props.Title == '회원가입1') {
                 if (props.next == true) {
+                  //true를 ''으로 하면 넘어감
                   props.navigation.navigate('SignUpInformation2', {
                     phoneNumber: props.phoneNumber,
                   });
                 }
               } else if (props.Title == '회원가입2') {
-                props.navigation.navigate('SignUpInformation3', {
-                  phoneNumber: props.phoneNumber,
-                  pickBrand: props.pickBrand,
-                  pickModel: props.pickModel,
-                  pickModelDetail: props.pickModelDetail,
-                });
+                if (props.pickModelDetail?.brand) {
+                  //?.brand 를 빼면 넘어감
+                  props.navigation.navigate('SignUpInformation3', {
+                    phoneNumber: props.phoneNumber,
+                    pickBrand: props.pickBrand,
+                    pickModel: props.pickModel,
+                    pickModelDetail: props.pickModelDetail,
+                  });
+                }
               } else if (props.Title == '회원가입3') {
-                props.navigation.navigate('SignUpInformation4');
+                if (props.emailChk) {
+                  props.navigation.navigate('SignUpInformation4', {
+                    phoneNumber: props.phoneNumber,
+                    pickBrand: props.pickBrand,
+                    pickModel: props.pickModel,
+                    pickModelDetail: props.pickModelDetail,
+                    name: props.name,
+                    email: props.email,
+                  });
+                }
               } else if (props.Title == '회원가입4') {
-                props.navigation.navigate('SignUpComplete');
+                if (
+                  props.nickNameChk &&
+                  props.nickNameChk2 &&
+                  props.passwordChk &&
+                  props.phoneNumber &&
+                  props.pickBrand &&
+                  props.pickModel &&
+                  props.pickModelDetail &&
+                  props.name &&
+                  props.email &&
+                  props.nickName &&
+                  props.birthDay &&
+                  props.locationView &&
+                  props.location
+                ) {
+                  props.SignUpBack();
+                }
               } else if (props.Title == '아이디 찾기1') {
                 props.navigation.navigate('IdFindComplete');
               } else if (props.Title == '비밀번호 찾기1') {
@@ -281,6 +310,27 @@ const TabBar = (props) => {
                   : props.Title == '회원가입3' && props.emailChk
                   ? {
                       color: '#946AEF',
+                    }
+                  : props.Title == '회원가입4' &&
+                    props.nickNameChk &&
+                    props.nickNameChk2 &&
+                    props.passwordChk &&
+                    props.phoneNumber &&
+                    props.pickBrand &&
+                    props.pickModel &&
+                    props.pickModelDetail &&
+                    props.name &&
+                    props.email &&
+                    props.nickName &&
+                    props.birthDay &&
+                    props.locationView &&
+                    props.location
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '회원가입4'
+                  ? {
+                      color: '#CCCCCC',
                     }
                   : {
                       color: '#946AEF',

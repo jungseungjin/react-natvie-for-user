@@ -20,7 +20,7 @@ import CarSetting from '../../../components/Home/Setting/carSetting.js';
 import IsLoading from '../../../components/ActivityIndicator';
 const SignUpInformation = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState(
-    props?.route?.params?.phoneNumber,
+    props?.route?.params?.phoneNumber || null,
   );
   const [page, setPage] = React.useState('SignUp');
   const PageChangeValue = (text) => {

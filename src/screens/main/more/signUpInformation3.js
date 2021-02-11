@@ -21,35 +21,34 @@ import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
+import IsLoading from '../../../components/ActivityIndicator';
 const SignUpInformation = (props) => {
-  //이메일 입력하면 emailValid를 유효성검사로 넘김.(중복확인눌렀을 때??)
-  //중복확인을 눌렀을 때 emailValid가 true여야 아래 진행.  emailValid가 false면 하단에 빨간글씨 나오고 return.
-  //이름이랑 메일 뒷단으로 넘겨서 중복확인 시키고 중복이면 showModal을 true로 emailChk는 false
-  //중복이 아니면 showModal을 false emailChk는 true로
-  // emailChk는 true로 되면 이름,이메일 변경불가능하게 바꾸고 다음버튼 활성화. 다음버튼에서 폰번호 차량정보 이름 이메일 모두 가지고 다음으로
-  console.log(props);
   const [phoneNumber, setPhoneNumber] = React.useState(
-    props?.route?.params?.phoneNumber,
+    props?.route?.params?.phoneNumber || null,
   );
   const [pickBrand, setPickBrand] = React.useState(
-    props?.route?.params?.pickBrand,
+    props?.route?.params?.pickBrand || null,
   ); //디비에서 가져온 브랜드값
   const [pickModel, setPickModel] = React.useState(
-    props?.route?.params?.pickModel,
+    props?.route?.params?.pickModel || null,
   ); //디비에서 가져온 모델값
   const [pickModelDetail, setPickModelDetail] = React.useState(
-    props?.route?.params?.pickModelDetail,
+    props?.route?.params?.pickModelDetail || null,
   ); //디비에서 가져온 상세모델값
 
   const [isLoading, setIsLoading] = React.useState(false);
   const IsLoadingChangeValue = (text) => setIsLoading(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [nameModal, setNameModal] = React.useState(false);
+  const NameModalChangeValue = (text) => setNameModal(text);
 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [emailValid, setEmailValid] = React.useState('');
   const [emailChk, setEmailChk] = React.useState(false);
-  const [showModal, setShowModel] = React.useState(false);
-  const ShowModalChangeValue = (text) => setShowModel(text);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   function isEmail(asValue) {
     var regExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     return regExp.test(asValue); // 형식에 맞는 경우 true 리턴
@@ -57,31 +56,36 @@ const SignUpInformation = (props) => {
   const EmailChk = async (text) => {
     try {
       let result;
-      let url = Domain2 + '';
-      NetInfo.addEventListener((state) => {
-        if (state.isConnected) {
-          {
-            /*
-          
-      let url = Domain + 'feedback_register/1';
+      let url = Domain2 + 'signUp/emailchk';
       let data = {
-        writer: route.params.user_id, //작성자 아이디
-        writer_name: route.params.user_name, //작성자 이름
-        title: title, //제목
-        contents: contents, //내용
-        key: Key,
+        name: name,
+        email: text,
       };
-      let result = await axios.post(url, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-          */
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setIsLoading(true);
+          //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setIsLoading(false);
+            setEmailChk(true);
+          } else {
+            setIsLoading(false);
+            setShowModal(true);
           }
         } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
         }
       });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
   };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -91,6 +95,12 @@ const SignUpInformation = (props) => {
       <Tabbar
         Title={'회원가입3'}
         navigation={props.navigation}
+        phoneNumber={phoneNumber}
+        pickBrand={pickBrand}
+        pickModel={pickModel}
+        pickModelDetail={pickModelDetail}
+        name={name}
+        email={email}
         emailChk={emailChk}></Tabbar>
       <View
         style={{
@@ -111,6 +121,7 @@ const SignUpInformation = (props) => {
             placeholder="회원님의 성함을 적어주세요"
             placeholderTextColor="#CCCCCC"
             value={name}
+            editable={emailChk ? false : true}
             autoCapitalize={'none'}
             autoCompleteType={'off'}
             autoCorrect={false}
@@ -156,6 +167,7 @@ const SignUpInformation = (props) => {
               placeholder="이메일 주소를 입력해주세요"
               placeholderTextColor="#CCCCCC"
               value={email}
+              editable={emailChk ? false : true}
               autoCapitalize={'none'}
               autoCompleteType={'off'}
               autoCorrect={false}
@@ -188,6 +200,7 @@ const SignUpInformation = (props) => {
                 //유효성검사 통과하면 다음 중복검사 진행
                 setEmailValid(isEmail(email));
                 if (!name) {
+                  setNameModal(true);
                   //이름을 입력하지 않으면 이름을 입력하라는 모달 띄우기
                 } else {
                   EmailChk();
@@ -251,6 +264,24 @@ const SignUpInformation = (props) => {
           //BottomText={''}
           CenterButtonText={'닫기'}></ButtonOneModal>
       ) : null}
+      {nameModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NameModalChangeValue}
+          navigation={props.navigation}
+          Title={'회원님의 성함을 입력해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
+
+      {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>
   );
 };

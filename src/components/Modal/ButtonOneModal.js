@@ -51,7 +51,9 @@ const ButtonOneModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   },
-                  props.Title == '이미 가입된 중복 메일계정입니다'
+                  props.Title == '이미 가입된 중복 메일계정입니다' ||
+                  props.Title == '회원님의 성함을 입력해주세요' ||
+                  props.Title == '인터넷 연결을 확인해주세요'
                     ? {
                         marginLeft: 0,
                         textAlign: 'center',
@@ -105,7 +107,9 @@ const ButtonOneModal = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   },
-                  props.Title == '이미 가입된 중복 메일계정입니다'
+                  props.Title == '이미 가입된 중복 메일계정입니다' ||
+                  props.Title == '회원님의 성함을 입력해주세요' ||
+                  props.Title == '인터넷 연결을 확인해주세요'
                     ? {
                         color: '#1976E3',
                         fontSize: Font_normalize(16),

@@ -105,7 +105,10 @@ const LoginModal = (props) => {
             ]}>
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => {}}
+              onPress={() => {
+                props.ShowModalChangeValue(false);
+                props.navigation.navigate('Login');
+              }}
               style={{
                 width: Width_convert(271),
                 height: Width_convert(43),
@@ -125,7 +128,10 @@ const LoginModal = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => {}}
+              onPress={() => {
+                props.ShowModalChangeValue(false);
+                props.navigation.navigate('SignUp');
+              }}
               style={{
                 marginTop: Width_convert(9),
                 width: Width_convert(271),
