@@ -435,7 +435,15 @@ const SignUp = (props) => {
           activeOpacity={1}
           onPress={() => {
             if (agree1 && agree2 && agree3) {
-              props.navigation.navigate('SignUpInformation');
+              props.navigation.navigate('SignUpInformation', {
+                allAgree: allAgree,
+                agree1: agree1,
+                agree2: agree2,
+                agree3: agree3,
+                agree4: agree4,
+                agree5: agree5,
+                agree6: agree6,
+              });
             }
           }}
           style={[

@@ -55,6 +55,10 @@ const PasswordFindScreen = (props) => {
             placeholder="아이디를 입력해주세요"
             placeholderTextColor="#CCCCCC"
             value={phoneNumber}
+            keyboardType={'email-address'}
+            autoCapitalize={'none'}
+            autoCompleteType={'off'}
+            autoCorrect={false}
             onChangeText={(value) => {
               setPhoneNumber(value);
             }}

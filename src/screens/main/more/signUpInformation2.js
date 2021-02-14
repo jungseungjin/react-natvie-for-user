@@ -19,6 +19,7 @@ import Search from '../../../../assets/home/search.svg';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
 import IsLoading from '../../../components/ActivityIndicator';
 const SignUpInformation = (props) => {
+  const [agree, setAgree] = React.useState(props.route.params.agree);
   const [phoneNumber, setPhoneNumber] = React.useState(
     props?.route?.params?.phoneNumber || null,
   );
@@ -51,7 +52,8 @@ const SignUpInformation = (props) => {
         phoneNumber={phoneNumber}
         pickBrand={pickBrand}
         pickModel={pickModel}
-        pickModelDetail={pickModelDetail}></Tabbar>
+        pickModelDetail={pickModelDetail}
+        agree={agree}></Tabbar>
       {page == 'SignUp' ? (
         <View
           style={{

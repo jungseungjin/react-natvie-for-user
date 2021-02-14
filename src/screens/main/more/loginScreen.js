@@ -9,9 +9,65 @@ import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import Domain2 from '../../../../key/Domain2.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
 const LoginScreen = (props) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const IsLoadingChangeValue = (text) => setIsLoading(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const insets = useSafeAreaInsets();
   const [idText, setIdText] = React.useState('');
+  const [passwordText, setPasswordText] = React.useState('');
+
+  const LoginBack = () => {
+    try {
+      let result;
+      let url = Domain2 + 'login';
+      if (idText && passwordText) {
+      } else {
+        alert('아이디 비밀번호를 모두 입력해주세요');
+        return false;
+      }
+      let data = {
+        idText: idText,
+        passwordText: passwordText,
+      };
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setIsLoading(true);
+          //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].status == 'ok') {
+            console.log(result.data[0].loginData);
+            setIsLoading(false);
+            //아이디 비밀번호랑 세션토큰값, 키엑세스에 저장시켜야함 //리덕스에 로그인정보 -> 차량데이터,위치데이터 저장.
+            //매번 앱을 켤때 이 정보를 받아서 리덕스에 로그인정보 ->  차량데이터,위치데이터 넣기
+            //리덕스에 로그인정보에 로그인여부 넣기.
+            //props.navigation.navigate('SignUpComplete');
+          } else {
+            setIsLoading(false);
+            //로그인이 안됐어
+            alert(result.data[0].message);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      setIsLoading(false);
+      console.log(err);
+      alert(err);
+    }
+  };
   return (
     <View>
       <StatusBar
@@ -77,16 +133,16 @@ const LoginScreen = (props) => {
                   <TextInput
                     placeholder="아이디를 입력해주세요"
                     placeholderTextColor={'rgba(0,0,0,0.45)'}
+                    keyboardType={'email-address'}
+                    autoCapitalize={'none'}
+                    autoCompleteType={'off'}
+                    autoCorrect={false}
                     placeholderStyle={{
                       fontSize: Font_normalize(11),
                       fontFamily: Fonts?.NanumGothicRegular || null,
                       fontWeight: '700',
                     }}
                     onChangeText={(idText) => setIdText(idText)}
-                    autoCapitalize={'none'}
-                    autoCompleteType={'off'}
-                    autoCorrect={false}
-                    keyboardType="default"
                     value={idText}
                     style={{
                       paddingLeft: Width_convert(9),
@@ -110,12 +166,13 @@ const LoginScreen = (props) => {
                   <TextInput
                     placeholder="비밀번호를 입력해주세요"
                     placeholderTextColor={'rgba(0,0,0,0.45)'}
-                    onChangeText={(idText) => setIdText(idText)}
-                    autoCapitalize={'none'}
+                    onChangeText={(value) => setPasswordText(value)}
                     autoCompleteType={'off'}
-                    autoCorrect={false}
                     keyboardType="default"
-                    value={idText}
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                    secureTextEntry={true}
+                    value={passwordText}
                     placeholderStyle={{
                       fontSize: Font_normalize(11),
                       fontFamily: Fonts?.NanumGothicRegular || null,
@@ -142,7 +199,9 @@ const LoginScreen = (props) => {
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
-                    onPress={() => {}}
+                    onPress={() => {
+                      LoginBack();
+                    }}
                     style={{
                       width: Width_convert(273),
                       height: Height_convert(44),
@@ -192,7 +251,7 @@ const LoginScreen = (props) => {
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
-                      props.navigation.navigate('PassworkFind');
+                      props.navigation.navigate('PasswordFind');
                     }}>
                     <Text
                       style={{
@@ -222,6 +281,15 @@ const LoginScreen = (props) => {
           </View>
         </SafeAreaView>
       </DismissKeyboard>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
+      {isLoading ? <IsLoading></IsLoading> : null}
     </View>
   );
 };

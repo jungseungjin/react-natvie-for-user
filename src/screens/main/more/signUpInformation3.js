@@ -23,6 +23,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import IsLoading from '../../../components/ActivityIndicator';
 const SignUpInformation = (props) => {
+  const [agree, setAgree] = React.useState(props.route.params.agree);
   const [phoneNumber, setPhoneNumber] = React.useState(
     props?.route?.params?.phoneNumber || null,
   );
@@ -70,7 +71,7 @@ const SignUpInformation = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data[0].status == 'ok') {
             setIsLoading(false);
             setEmailChk(true);
           } else {
@@ -83,6 +84,7 @@ const SignUpInformation = (props) => {
         }
       });
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
       alert(err);
     }
@@ -101,7 +103,8 @@ const SignUpInformation = (props) => {
         pickModelDetail={pickModelDetail}
         name={name}
         email={email}
-        emailChk={emailChk}></Tabbar>
+        emailChk={emailChk}
+        agree={agree}></Tabbar>
       <View
         style={{
           marginLeft: Width_convert(24),

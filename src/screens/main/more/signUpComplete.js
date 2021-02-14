@@ -112,7 +112,9 @@ const SignUpComplete = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() => {}}
+                  onPress={() => {
+                    props.navigation.navigate('Login');
+                  }}
                   style={{
                     width: Width_convert(337),
                     height: Width_convert(46),

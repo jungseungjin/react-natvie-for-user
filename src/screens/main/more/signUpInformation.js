@@ -23,6 +23,7 @@ import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 const SignUpInformation = (props) => {
+  const [agree, setAgree] = React.useState(props.route.params);
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
   const [authNumber, setAuthNumber] = React.useState(''); //코드넘버
@@ -78,7 +79,8 @@ const SignUpInformation = (props) => {
         Title={'회원가입1'}
         navigation={props.navigation}
         next={next}
-        phoneNumber={phoneNumber}></Tabbar>
+        phoneNumber={phoneNumber}
+        agree={agree}></Tabbar>
       <View
         style={{
           marginLeft: Width_convert(24),

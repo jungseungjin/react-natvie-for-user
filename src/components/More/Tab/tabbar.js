@@ -74,7 +74,7 @@ const TabBar = (props) => {
         props.Title == '아이디 찾기1' ? (
         <TouchableOpacity
           activeOpacity={1}
-          style={{}}
+          style={{backgroundColor: '#FFFFFF'}}
           onPress={() => {
             props.navigation.goBack();
           }}>
@@ -85,7 +85,7 @@ const TabBar = (props) => {
       ) : (
         <TouchableOpacity
           activeOpacity={1}
-          style={{}}
+          style={{backgroundColor: '#FFFFFF'}}
           onPress={() => {
             return false;
             //props.navigation.goBack();
@@ -220,6 +220,7 @@ const TabBar = (props) => {
                   //true를 ''으로 하면 넘어감
                   props.navigation.navigate('SignUpInformation2', {
                     phoneNumber: props.phoneNumber,
+                    agree: props.agree,
                   });
                 }
               } else if (props.Title == '회원가입2') {
@@ -230,6 +231,7 @@ const TabBar = (props) => {
                     pickBrand: props.pickBrand,
                     pickModel: props.pickModel,
                     pickModelDetail: props.pickModelDetail,
+                    agree: props.agree,
                   });
                 }
               } else if (props.Title == '회원가입3') {
@@ -241,6 +243,7 @@ const TabBar = (props) => {
                     pickModelDetail: props.pickModelDetail,
                     name: props.name,
                     email: props.email,
+                    agree: props.agree,
                   });
                 }
               } else if (props.Title == '회원가입4') {

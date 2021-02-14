@@ -36,7 +36,8 @@ import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import DeviceInfo from 'react-native-device-info';
 const SignUpInformation = (props) => {
-  //디바이스정보 확인하고 , 약관 동의한것 넘겨받아서 백엔드로 넘겨준다. 가입  디바이스에서 어떤정보를 받을지 확인
+  const [agree, setAgree] = React.useState(props.route.params.agree);
+  //디바이스정보 확인하고 , 약관 동의한것 넘겨받아서 백엔드로 넘겨준다. 가입  디바이스에서 어떤정보를 받을지 확인 + 위치정보 더 가져오기
   //넘어가는 데이터 모두 태그 제거하자.
   const [phoneNumber, setPhoneNumber] = React.useState(
     props?.route?.params?.phoneNumber || null,
@@ -63,19 +64,6 @@ const SignUpInformation = (props) => {
   const [nickName, setNickName] = React.useState('');
   const [nickNameChk, setNickNameChk] = React.useState(''); //유효성검사
   const [nickNameChk2, setNickNameChk2] = React.useState(''); //중복검사
-  React.useEffect(() => {
-    // console.log(DeviceInfo.getUniqueId());
-    // console.log(DeviceInfo.getDeviceId());
-    // DeviceInfo.getIpAddress().then((device) => {
-    //   // "walleye"
-    //   console.log(device);
-    // });
-    // DeviceInfo.getDevice().then((device) => {
-    //   // "walleye"
-    //   console.log(device);
-    // });
-    console.log(DeviceInfo.getModel());
-  }, []);
 
   function isNickName(asValue) {
     var regExp = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
@@ -169,9 +157,16 @@ const SignUpInformation = (props) => {
   const [locationView, setLocationView] = React.useState('');
   //경위도
   const [location, setLocation] = React.useState({longitude: '', latitude: ''});
-  const [uniqueId, setUniqueId] = React.useState('');
-  const [deviceId, setDeviceId] = React.useState('');
-  const [ipAddress, setIpAddress] = React.useState('');
+  const [locationResult, setLocationResult] = React.useState([]);
+  const [device, setDevice] = React.useState([]);
+
+  React.useEffect(() => {
+    let push_arr = [];
+    push_arr.push({getUniqueId: DeviceInfo.getUniqueId()});
+    push_arr.push({getDeviceId: DeviceInfo.getDeviceId()});
+    push_arr.push({getModel: DeviceInfo.getModel()});
+    setDevice(push_arr);
+  }, []);
   //위치정보 가져오기(경위도, 네이버지도에서 주소까지)
   const CurrentPosition = () => {
     Geolocation.getCurrentPosition(
@@ -198,7 +193,7 @@ const SignUpInformation = (props) => {
           position.coords.longitude +
           ',' +
           position.coords.latitude +
-          '&orders=legalcode&output=json',
+          '&orders=legalcode,admcode,addr,roadaddr&&output=json',
         {
           headers: {
             'X-NCP-APIGW-API-KEY-ID': '56kfacm95e',
@@ -210,6 +205,7 @@ const SignUpInformation = (props) => {
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
         setIsLoading(false);
+        setLocationResult(result.data.results);
         setLocationView(
           result.data.results[0].region.area1.name +
             ' ' +
@@ -223,7 +219,9 @@ const SignUpInformation = (props) => {
         //네이버 맵에 없음
       }
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
+      alert(err);
     }
   };
   //회원가입 함수
@@ -243,8 +241,13 @@ const SignUpInformation = (props) => {
         birthDay &&
         locationView
       ) {
+        if (locationView == '요청한 데이타의 결과가 없습니다.') {
+          alert('위치정보를 확인해 주세요');
+          return false;
+        }
       } else {
-        alert('빈칸을 모두 입력해주세요');
+        alert('빈칸을 모두 입력해 주세요');
+        return false;
       }
       let data = {
         phoneNumber: phoneNumber,
@@ -258,6 +261,9 @@ const SignUpInformation = (props) => {
         birthDay: birthDay,
         locationView: locationView,
         location: location,
+        agree: agree,
+        locationResult: locationResult,
+        device: device,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -268,13 +274,13 @@ const SignUpInformation = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data[0].status == 'ok') {
             setIsLoading(false);
-            props.navigaton.navigate('SignUpComplete');
+            props.navigation.navigate('SignUpComplete');
           } else {
             setIsLoading(false);
             //가입이 안됐어
-            alert('gg');
+            alert(result.data[0].message);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -282,6 +288,7 @@ const SignUpInformation = (props) => {
         }
       });
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
       alert(err);
     }
