@@ -14,6 +14,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
+import * as Keychain from 'react-native-keychain';
 const LoginScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const IsLoadingChangeValue = (text) => setIsLoading(text);
@@ -46,10 +47,29 @@ const LoginScreen = (props) => {
             },
           });
           if (result.data[0].status == 'ok') {
+            console.log(result.data[0].sessionID);
             console.log(result.data[0].loginData);
             setIsLoading(false);
-            //아이디 비밀번호랑 세션토큰값, 키엑세스에 저장시켜야함 //리덕스에 로그인정보 -> 차량데이터,위치데이터 저장.
-            //매번 앱을 켤때 이 정보를 받아서 리덕스에 로그인정보 ->  차량데이터,위치데이터 넣기
+            await Keychain.setGenericPassword(idText, passwordText);
+            // try {
+            //   const credentials = await Keychain.getGenericPassword();
+            //   if (credentials) {
+            //     console.log(
+            //       'Credentials successfully loaded for user ' +
+            //         credentials.username,
+            //     );
+            //     console.log(
+            //       'Credentials successfully loaded for password ' +
+            //         credentials.password,
+            //     );
+            //   } else {
+            //     console.log('No credentials stored'); //저장된 정보가 없으면 여기로나옴.
+            //   }
+            // } catch (error) {
+            //   console.log("Keychain couldn't be accessed!", error);
+            // }
+            //리덕스에 로그인정보 -> 차량데이터,위치데이터 저장.
+            //매번 앱을 켤때 이 정보를 받아서 리덕스에 로그인정보 ->  차량데이터,위치데이터,로그인여부, 넣기
             //리덕스에 로그인정보에 로그인여부 넣기.
             //props.navigation.navigate('SignUpComplete');
           } else {

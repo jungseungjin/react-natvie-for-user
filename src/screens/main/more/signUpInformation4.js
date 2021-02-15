@@ -105,6 +105,8 @@ const SignUpInformation = (props) => {
   };
   const [password, setPassword] = React.useState('');
   const [passwordChk, setPasswordChk] = React.useState('');
+  const [passwordRe, setPasswordRe] = React.useState('');
+  const [passwordReChk, setPasswordReChk] = React.useState('');
   function isPassword(asValue) {
     var check_num = /[0-9]/; // 숫자
     var check_eng = /[a-zA-Z]/; // 문자
@@ -451,7 +453,7 @@ const SignUpInformation = (props) => {
                     borderBottomWidth: 1,
                   }}>
                   <TextInput
-                    placeholder="닉네임_한글+영문+숫자 2~10자, 띄어쓰기 불가"
+                    placeholder="닉네임"
                     placeholderTextColor="#CCCCCC"
                     value={nickName}
                     autoCapitalize={'none'}
@@ -499,7 +501,7 @@ const SignUpInformation = (props) => {
                       color: '#FF0000',
                     }}>
                     {nickNameChk === false
-                      ? '닉네임을 정확히 입력해 주세요'
+                      ? '한글+영문+숫자 2~10자, 띄어쓰기 불가'
                       : nickNameChk2 === false
                       ? '동일한 닉네임이 존재합니다'
                       : null}
@@ -515,7 +517,7 @@ const SignUpInformation = (props) => {
                 }}>
                 <View>
                   <TextInput
-                    placeholder="비밀번호_영문+숫자+특수문자 8~20자"
+                    placeholder="비밀번호"
                     placeholderTextColor="#CCCCCC"
                     value={password}
                     autoCapitalize={'none'}
@@ -556,7 +558,65 @@ const SignUpInformation = (props) => {
                       fontWeight: '400',
                       color: '#FF0000',
                     }}>
-                    비밀번호 형식을 확인해주세요
+                    영문+숫자+특수문자 8~20자
+                  </Text>
+                ) : null}
+              </View>
+
+              {/**비밀번호 확인 */}
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  width: Width_convert(327),
+                  height: Width_convert(73),
+                }}>
+                <View>
+                  <TextInput
+                    placeholder="비밀번호 재입력"
+                    placeholderTextColor="#CCCCCC"
+                    value={passwordRe}
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                    secureTextEntry={true}
+                    onChangeText={(value) => {
+                      if (value.indexOf(' ') != -1) {
+                        value = value.replace(/ /gi, '');
+                      }
+                      setPasswordRe(value);
+                      setPasswordReChk(isPassword(value));
+                      if (value != password) {
+                        setPasswordReChk(false);
+                      }
+                    }}
+                    placeholderStyle={{
+                      marginTop: Width_convert(35),
+                      paddingLeft: Width_convert(10),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(14),
+                      fontWeight: '400',
+                      color: '#000000',
+                    }}
+                    style={{
+                      marginTop: Width_convert(35),
+                      height: Width_convert(40),
+                      paddingLeft: Width_convert(5),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(14),
+                      fontWeight: '400',
+                      color: '#000000',
+                    }}></TextInput>
+                </View>
+                {passwordReChk === false ? (
+                  <Text
+                    style={{
+                      marginTop: Height_convert(7),
+                      paddingLeft: Width_convert(5),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(11),
+                      fontWeight: '400',
+                      color: '#FF0000',
+                    }}>
+                    영문+숫자+특수문자 8~20자 비밀번호와 동일하게 입력해주세요
                   </Text>
                 ) : null}
               </View>
@@ -672,7 +732,9 @@ const SignUpInformation = (props) => {
                 </View>
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() => {}}
+                  onPress={() => {
+                    props.navigation.navigate('', {});
+                  }}
                   style={{
                     width: Width_convert(35),
                     height: Width_convert(35),

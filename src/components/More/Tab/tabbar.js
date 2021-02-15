@@ -265,11 +265,17 @@ const TabBar = (props) => {
                   props.SignUpBack();
                 }
               } else if (props.Title == '아이디 찾기1') {
-                props.navigation.navigate('IdFindComplete');
+                if (props.next == true) {
+                  props.idFindBack();
+                }
               } else if (props.Title == '비밀번호 찾기1') {
-                props.navigation.navigate('PasswordFind2');
+                if (props.next == true && props.idText) {
+                  props.IdchkBack();
+                }
               } else if (props.Title == '비밀번호 찾기2') {
-                props.navigation.navigate('Login');
+                if (props.passwordChk && props.passwordReChk) {
+                  props.PasswordChange();
+                }
               }
               //props.navigation.navigate()
             }}>
@@ -332,6 +338,40 @@ const TabBar = (props) => {
                       color: '#946AEF',
                     }
                   : props.Title == '회원가입4'
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '아이디 찾기1' && props.next === ''
+                  ? {
+                      color: '#FFFFFF',
+                    }
+                  : props.Title == '아이디 찾기1' && props.next === false
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '아이디 찾기1' && props.next === true
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '비밀번호 찾기1' && props.next === ''
+                  ? {
+                      color: '#FFFFFF',
+                    }
+                  : props.Title == '비밀번호 찾기1' && props.next === false
+                  ? {
+                      color: '#CCCCCC',
+                    }
+                  : props.Title == '비밀번호 찾기1' && props.next === true
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '비밀번호 찾기2' &&
+                    props.passwordChk === true &&
+                    props.passwordReChk === true
+                  ? {
+                      color: '#946AEF',
+                    }
+                  : props.Title == '비밀번호 찾기2'
                   ? {
                       color: '#CCCCCC',
                     }

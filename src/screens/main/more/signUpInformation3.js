@@ -60,7 +60,7 @@ const SignUpInformation = (props) => {
       let url = Domain2 + 'signUp/emailchk';
       let data = {
         name: name,
-        email: text,
+        email: email,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

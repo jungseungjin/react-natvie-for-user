@@ -16,10 +16,14 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
+import moment from 'moment';
 const IdFindScreen = (props) => {
-  const [phoneNumber, setPhoneNumber] = React.useState('');
-  const [authButtonClick, setAuthButtonClick] = React.useState(false);
-  const [authNumber, setAuthNumber] = React.useState('');
+  const [idText, setIdText] = React.useState(props.route.params.idText);
+  const [idRegdate, setIdRegdate] = React.useState(
+    props.route.params.idRegdate,
+  );
+  console.log(idText);
+  console.log(idRegdate);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
@@ -31,7 +35,6 @@ const IdFindScreen = (props) => {
           borderTopWidth: 1,
           borderTopColor: 'rgba(219, 219, 219, 0.35)',
         }}></View>
-
       <View
         style={{
           marginLeft: Width_convert(19),
@@ -86,16 +89,28 @@ const IdFindScreen = (props) => {
               fontSize: Font_normalize(24),
               color: '#000000',
             }}>
-            bvd2***@naver.com
+            {idText}
           </Text>
           <Text
             style={{
+              marginTop: Height_convert(6),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontWeight: '700',
               fontSize: Font_normalize(16),
               color: '#000000',
             }}>
-            가입일 : 2020/07/17
+            가입일 :{' '}
+            {moment(idRegdate, 'YYYY-MM-DD HH:mm').format('YYYY/MM/DD')}
+          </Text>
+          <Text
+            style={{
+              marginTop: Height_convert(6),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontWeight: '700',
+              fontSize: Font_normalize(16),
+              color: '#000000',
+            }}>
+            로그인 : 투닝
           </Text>
         </View>
         <View

@@ -1,11 +1,10 @@
 import React from 'react';
 import Modal from 'react-native-modal';
-import {SafeAreaView, View, Text} from 'react-native';
+import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
 import Fonts from '../Fonts.js';
 import Font_normalize from '../Font_normalize.js';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const ButtonOneModal = (props) => {
   return (
@@ -27,11 +26,13 @@ const ButtonOneModal = (props) => {
           alignItems: 'center',
         }}>
         <View
-          style={{
-            width: Width_convert(295),
-            height: Height_convert(164),
-            backgroundColor: '#FFFFFF',
-          }}>
+          style={[
+            {
+              width: Width_convert(295),
+              height: Height_convert(164),
+              backgroundColor: '#FFFFFF',
+            },
+          ]}>
           <View
             style={{
               width: Width_convert(295),
@@ -51,6 +52,7 @@ const ButtonOneModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   },
+                  props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
                   props.Title == '인터넷 연결을 확인해주세요'
@@ -67,6 +69,8 @@ const ButtonOneModal = (props) => {
             </View>
             {props.BottomText ? (
               <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {}}
                 style={{
                   borderBottomWidth: 1,
                   borderBottomColor: '#946AEF',
@@ -107,6 +111,7 @@ const ButtonOneModal = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   },
+                  props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
                   props.Title == '인터넷 연결을 확인해주세요'
