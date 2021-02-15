@@ -99,6 +99,8 @@ const TabBar = (props) => {
           onPress={() => {
             if (props.Title == '작업종류') {
               props.navigation.navigate('CategoryDetail', {Page: props.Page});
+            } else if (props.Title == '설정') {
+              props.PushReduxData();
             }
           }}>
           <Text

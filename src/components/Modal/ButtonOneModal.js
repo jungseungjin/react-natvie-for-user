@@ -52,6 +52,7 @@ const ButtonOneModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   },
+                  props.Title == '차량과 지역을 모두 선택해주세요' ||
                   props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
@@ -111,6 +112,7 @@ const ButtonOneModal = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   },
+                  props.Title == '차량과 지역을 모두 선택해주세요' ||
                   props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||

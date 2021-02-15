@@ -96,7 +96,6 @@ function App(props) {
   }, []);
   Text.defaultProps = Text.defaultProps || {};
   Text.defaultProps.allowFontScaling = false;
-
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>

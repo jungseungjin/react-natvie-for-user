@@ -35,7 +35,9 @@ import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import {useSelector} from 'react-redux';
 const HomeScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
@@ -103,7 +105,7 @@ const HomeScreen = (props) => {
       animated: true,
     });
   };
-
+  console.log(reduexState.loginDataCheck.login);
   return (
     <>
       <StatusBar
@@ -159,7 +161,21 @@ const HomeScreen = (props) => {
                   Type={'car/location'}
                   navigation={props.navigation}></SettingButton>
                 <SettingButton
-                  Title={'차종 / 지역'}
+                  Title={
+                    reduexState.loginDataCheck.login.iu_car.length > 0 &&
+                    reduexState.loginDataCheck.login.location.legalcode
+                      ? reduexState.loginDataCheck.login.iu_car[0]
+                          .pickModelDetail.model_detail +
+                        ' / ' +
+                        reduexState.loginDataCheck.login.location.legalcode
+                      : reduexState.loginDataCheck.login.iu_car.length > 0
+                      ? reduexState.loginDataCheck.login.iu_car[0]
+                          .pickModelDetail.model_detail + ' / 지역'
+                      : reduexState.loginDataCheck.login.location.legalcode
+                      ? '차종 / ' +
+                        reduexState.loginDataCheck.login.location.legalcode
+                      : '차종 / 지역'
+                  }
                   Type={'car'}
                   navigation={props.navigation}></SettingButton>
               </View>

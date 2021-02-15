@@ -17,6 +17,13 @@ import X from '../../../../assets/home/x_black.svg';
 import {ScrollView} from 'react-native-gesture-handler';
 import Filter from '../../../../assets/home/filter.svg';
 import StatusBarHeight from '../../StatusBarHeight';
+import {
+  PERMISSIONS,
+  check,
+  request,
+  RESULTS,
+  requestNotifications,
+} from 'react-native-permissions';
 const TabBarBottom = ({
   navigation,
   Title,
@@ -40,7 +47,10 @@ const TabBarBottom = ({
             key={item.value}
             activeOpacity={1}
             onPress={() => {
-              PageChangeValue(item.value);
+              if (item.value == '지역설정') {
+              } else {
+                PageChangeValue(item.value);
+              }
             }}
             style={[
               {

@@ -25,7 +25,15 @@ import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import Domain2 from '../../../../key/Domain2.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import {useSelector} from 'react-redux';
 const InfoScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -656,7 +664,15 @@ const InfoScreen = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() => {}}
+                  onPress={() => {
+                    if (reduexState.loginDataCheck.login.login == true) {
+                      props.updateLoginStatus(false);
+                      props.updateIuCar([]);
+                      props.updateLocation({});
+                      props.navigation.navigate('More');
+                    } else {
+                    }
+                  }}
                   style={{
                     width: Width_convert(375) / 2,
                     height: Height_convert(50),
@@ -713,4 +729,29 @@ const InfoScreen = (props) => {
   );
 };
 
-export default InfoScreen;
+function mapStateToProps(state) {
+  return {
+    login: {
+      login: state.loginDataCheck.login.login,
+      iu_car: state.loginDataCheck.login.iu_car,
+      location: state.loginDataCheck.login.location,
+    },
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateLoginStatus: (boo) => {
+      dispatch(ActionCreator.loginDataCheckAction(boo));
+    },
+    updateIuCar: (Array) => {
+      dispatch(ActionCreator.loginDataIuCarCheckAction(Array));
+    },
+    updateLocation: (Object) => {
+      dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(InfoScreen);

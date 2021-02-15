@@ -15,7 +15,11 @@ import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import * as Keychain from 'react-native-keychain';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import {useSelector} from 'react-redux';
 const LoginScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const IsLoadingChangeValue = (text) => setIsLoading(text);
   const [networkModal, setNetworkModal] = React.useState(false);
@@ -47,31 +51,13 @@ const LoginScreen = (props) => {
             },
           });
           if (result.data[0].status == 'ok') {
-            console.log(result.data[0].sessionID);
-            console.log(result.data[0].loginData);
             setIsLoading(false);
             await Keychain.setGenericPassword(idText, passwordText);
-            // try {
-            //   const credentials = await Keychain.getGenericPassword();
-            //   if (credentials) {
-            //     console.log(
-            //       'Credentials successfully loaded for user ' +
-            //         credentials.username,
-            //     );
-            //     console.log(
-            //       'Credentials successfully loaded for password ' +
-            //         credentials.password,
-            //     );
-            //   } else {
-            //     console.log('No credentials stored'); //저장된 정보가 없으면 여기로나옴.
-            //   }
-            // } catch (error) {
-            //   console.log("Keychain couldn't be accessed!", error);
-            // }
-            //리덕스에 로그인정보 -> 차량데이터,위치데이터 저장.
-            //매번 앱을 켤때 이 정보를 받아서 리덕스에 로그인정보 ->  차량데이터,위치데이터,로그인여부, 넣기
-            //리덕스에 로그인정보에 로그인여부 넣기.
-            //props.navigation.navigate('SignUpComplete');
+            props.updateLoginStatus(true);
+            props.updateIuCar(result.data[0].loginData.iu_car);
+            props.updateLocation(result.data[0].loginData.location);
+            props.navigation.navigate('More');
+            props.navigation.navigate('HomeTab');
           } else {
             setIsLoading(false);
             //로그인이 안됐어
@@ -314,4 +300,29 @@ const LoginScreen = (props) => {
   );
 };
 
-export default LoginScreen;
+function mapStateToProps(state) {
+  return {
+    login: {
+      login: state.loginDataCheck.login.login,
+      iu_car: state.loginDataCheck.login.iu_car,
+      location: state.loginDataCheck.login.location,
+    },
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateLoginStatus: (boo) => {
+      dispatch(ActionCreator.loginDataCheckAction(boo));
+    },
+    updateIuCar: (Array) => {
+      dispatch(ActionCreator.loginDataIuCarCheckAction(Array));
+    },
+    updateLocation: (Object) => {
+      dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

@@ -79,7 +79,7 @@ const TabNavigator = (props) => {
         tabBarVisible: setTabBarVisible(route, reduexState),
       })}>
       <Tabs.Screen
-        name="Home"
+        name="HomeTab"
         component={HomeNavigator}
         options={{
           tabBarIcon: ({focused}) => {

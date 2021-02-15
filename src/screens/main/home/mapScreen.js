@@ -31,35 +31,64 @@ import NaverMapView, {
 } from 'react-native-nmap';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
 const MapScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [showModal, setShowModal] = React.useState(true);
+  const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [searchText, setSearchText] = React.useState('');
+  const [pickLocation, setPickLocation] = React.useState(
+    props.route.params.PickLocation.jibunAddress,
+  );
+  const [P0, setP0] = React.useState({
+    latitude: parseFloat(props.route.params.PickLocation.y),
+    longitude: parseFloat(props.route.params.PickLocation.x),
+  });
 
-  const P0 = {latitude: 37.564362, longitude: 126.977011};
-  const P1 = {latitude: 37.565051, longitude: 126.978567};
-  const P2 = {latitude: 37.565383, longitude: 126.976292};
-  function gotToMyLocation() {
-    console.log('gotToMyLocation is called');
-    navigator.geolocation.getCurrentPosition(
-      ({coords}) => {
-        console.log('curent location: ', coords);
-        console.log(this.map);
-        if (this.map) {
-          console.log('curent location: ', coords);
-          this.map.animateToRegion({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          });
-        }
-      },
-      (error) => alert('Error: Are location services on?'),
-      {enableHighAccuracy: true},
-    );
-  }
+  const getNaverLocagtion = async (position) => {
+    try {
+      setIsLoading(true);
+      let result = await axios.get(
+        'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
+          position.longitude +
+          ',' +
+          position.latitude +
+          '&orders=legalcode,admcode,addr,roadaddr&&output=json',
+        {
+          headers: {
+            'X-NCP-APIGW-API-KEY-ID': '56kfacm95e',
+            'X-NCP-APIGW-API-KEY': 'cyhAcOnJGtzyYZiQFDcOkWkJcsL5t0FAQ3bJldMR',
+          },
+        },
+      );
+      //legalcode admcode addr roadaddr
+      //법정동 행정동 지번주소 도로명주소
+      if (result.data.status.message == 'done') {
+        setIsLoading(false);
+        setPickLocation(
+          result.data.results[0].region.area1.name +
+            ' ' +
+            result.data.results[0].region.area2.name +
+            ' ' +
+            result.data.results[0].region.area3.name,
+        );
+      } else {
+        setIsLoading(false);
+        setPickLocation('요청한 데이타의 결과가 없습니다.');
+        //네이버 맵에 없음
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.log(err);
+      alert(err);
+    }
+  };
+  React.useEffect(() => {
+    getNaverLocagtion(P0);
+  }, [P0]);
   return (
     <>
       <StatusBar
@@ -99,6 +128,7 @@ const MapScreen = (props) => {
               autoCorrect={false}
               editable={false}
               keyboardType="default"
+              value={pickLocation}
               onChangeText={() => {}}
               returnKeyType={'search'}
               onSubmitEditing={() => {}}
@@ -140,13 +170,17 @@ const MapScreen = (props) => {
             zoomControl={false}
             rotateGesturesEnabled={false}
             useTextureView={false}
-            onTouch={(e) =>
-              console.warn('onTouch', JSON.stringify(e.nativeEvent))
-            }
+            // onTouch={(e) =>
+            //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
+            // }
             onCameraChange={(e) =>
-              console.warn('onCameraChange', JSON.stringify(e))
+              setP0({
+                latitude: parseFloat(e.latitude),
+                longitude: parseFloat(e.longitude),
+              })
             }
-            onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}>
+            //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
+          >
             <Marker
               coordinate={P0}
               onClick={() => console.warn('onClick! p0')}
