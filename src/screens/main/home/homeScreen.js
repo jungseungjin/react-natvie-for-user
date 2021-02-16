@@ -41,6 +41,8 @@ const HomeScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [pickButtonTitle, setPickButtonTitle] = React.useState('');
+  const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([
     {URL: 'https://unsplash.it/400/400?image=1'},
     {URL: 'https://unsplash.it/400/400?image=2'},
@@ -202,11 +204,15 @@ const HomeScreen = (props) => {
                   Title={'드레스업'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 외장을 꾸미고 싶을 때'}
+                  ShowModalChangeValue={ShowModalChangeValue}
+                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
                   navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={'퍼포먼스'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 성능을 높이고 싶을 때'}
+                  ShowModalChangeValue={ShowModalChangeValue}
+                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
                   navigation={props.navigation}></SettingButton>
               </View>
             </View>
@@ -232,11 +238,15 @@ const HomeScreen = (props) => {
                   Title={'편의장치'}
                   Type={'workDetail'}
                   SubTitle={'내 차의 풍부한 옵션이 필요할 때'}
+                  ShowModalChangeValue={ShowModalChangeValue}
+                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
                   navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={'캠핑카 튜닝'}
                   Type={'workDetail'}
                   SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}
+                  ShowModalChangeValue={ShowModalChangeValue}
+                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
                   navigation={props.navigation}></SettingButton>
               </View>
             </View>
@@ -391,6 +401,7 @@ const HomeScreen = (props) => {
         <ButtonTwoModal
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
+          pickButtonTitle={pickButtonTitle}
           Title={
             '차종과 지역설정을 하지 않은 경우에는 임의의 작업이 검색됩니다.'
           }

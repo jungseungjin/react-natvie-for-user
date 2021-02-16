@@ -11,6 +11,7 @@ import {useSelector} from 'react-redux';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import Geolocation from 'react-native-geolocation-service';
 import {
   PERMISSIONS,
@@ -20,11 +21,24 @@ import {
   requestNotifications,
 } from 'react-native-permissions';
 const SettingScreen = (props) => {
+  const unsubscribe = props.navigation.addListener('focus', async () => {
+    if (props.route?.params?.PickLocation) {
+      setPickLocation(props.route.params.PickLocation);
+      setPickBrand(props.route.params.PickBrandValue);
+      setPickModel(props.route.params.PickModelValue);
+      setPickModelDetail(props.route.params.PickModelDetail);
+    }
+  });
+  React.useEffect(() => {
+    unsubscribe;
+  }, [props.navigation]);
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const IsLoadingChangeValue = (text) => setIsLoading(text);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [locationModal, setLocationModal] = React.useState(false);
+  const LocationModalChangeValue = (text) => setLocationModal(text);
   const [page, setPage] = React.useState('car');
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState('domestic');
@@ -37,6 +51,22 @@ const SettingScreen = (props) => {
   const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
   const [pickLocation, setPickLocation] = React.useState({});
   const PickLocationChangeValue = (object) => setPickLocation(object);
+  React.useEffect(() => {
+    try {
+      if (reduexState.loginDataCheck.login.iu_car.length > 0) {
+        setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
+        setPickModel(reduexState.loginDataCheck.login.iu_car[0].pickModel);
+        setPickModelDetail(
+          reduexState.loginDataCheck.login.iu_car[0].pickModelDetail,
+        );
+      }
+      if (reduexState.loginDataCheck.login.location?.legalcode) {
+        setPickLocation(reduexState.loginDataCheck.login.location);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
   {
     /*선택하면 여기에서는 국산인지 수입인지 // 선택한 브랜드가 무엇인지 // 선택한 모델이 무엇인지 // 선택한 디테일모델이 무엇인지까지 가져옴. */
   }
@@ -114,6 +144,9 @@ const SettingScreen = (props) => {
       },
       (error) => {
         console.log(error.code, error.message);
+        if (error.message.indexOf('permission denied') != -1) {
+          setLocationModal(true);
+        }
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
@@ -205,7 +238,11 @@ const SettingScreen = (props) => {
         ) : (
           <LocationSetting
             navigation={props.navigation}
+            PickBrandValue={pickBrand}
+            PickModelValue={pickModel}
+            PickModelDetail={pickModelDetail}
             handleLocationPermission={handleLocationPermission}
+            LocationModalChangeValue={LocationModalChangeValue}
             CurrentPosition={CurrentPosition}
             pickLocation={pickLocation}
             PickLocationChangeValue={PickLocationChangeValue}></LocationSetting>
@@ -214,6 +251,14 @@ const SettingScreen = (props) => {
           <SignUp navigation={props.navigation}></SignUp>
         )}
       </SafeAreaView>
+      {locationModal ? (
+        <ButtonTwoModal
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+          navigation={props.navigation}
+          ShowModalChangeValue={LocationModalChangeValue}
+          LeftButtonTitle={'닫기'}
+          RightButtonTitle={'설정'}></ButtonTwoModal>
+      ) : null}
       {showModal ? (
         <ButtonOneModal
           ShowModalChangeValue={ShowModalChangeValue}

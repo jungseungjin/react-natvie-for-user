@@ -181,6 +181,10 @@ const SignUpInformation = (props) => {
       },
       (error) => {
         console.log(error.code, error.message);
+
+        if (error.message.indexOf('permission denied') != -1) {
+          setLocationModal(true);
+        }
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );

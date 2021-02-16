@@ -211,11 +211,17 @@ const MapScreen = (props) => {
           <ScrollView style={{flex: 1}}>
             {searchList.map((item) => (
               <View
+                key={item.jibunAddress}
                 style={{height: Height_convert(44), justifyContent: 'center'}}>
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.navigation.navigate('Map', {PickLocation: item});
+                    props.navigation.navigate('Map', {
+                      PickLocation: item,
+                      PickBrandValue: props.route.params.PickBrandValue,
+                      PickModelValue: props.route.params.PickModelValue,
+                      PickModelDetail: props.route.params.PickModelDetail,
+                    });
                   }}
                   style={{
                     flexDirection: 'row',

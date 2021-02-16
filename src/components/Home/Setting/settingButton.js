@@ -5,7 +5,9 @@ import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
+import {useSelector} from 'react-redux';
 const SettingButton = (props) => {
+  const reduexState = useSelector((state) => state);
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -24,7 +26,15 @@ const SettingButton = (props) => {
         } else if (props.Type == 'car') {
           return false;
         } else if (props.Type == 'workDetail') {
-          props.navigation.navigate('Category', {Title: props.Title});
+          if (
+            reduexState.loginDataCheck.login.iu_car.length == 0 ||
+            !reduexState.loginDataCheck.login.location.legalcode
+          ) {
+            props.PickButtonTitleChangeValue(props.Title);
+            props.ShowModalChangeValue(true);
+          } else {
+            props.navigation.navigate('Category', {Title: props.Title});
+          }
         }
       }}>
       <Text
@@ -54,7 +64,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRightWidth: 1,
     borderLeftWidth: 1,
-    overflow: 'hidden',
     borderRadius: Font_normalize(3),
     marginRight: Width_convert(8),
     alignItems: 'center',
@@ -97,7 +106,6 @@ const styles = StyleSheet.create({
     width: Width_convert(160),
     height: Height_convert(74),
     borderColor: '#F0F0F0',
-    overflow: 'hidden',
     borderRadius: Font_normalize(5),
     borderTopWidth: 1,
     borderBottomWidth: 1,

@@ -153,7 +153,16 @@ const ButtonTwoModal = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (props.Title == '지역 설정을 위해 위치서비스를 켜 주세요') {
+                  props.ShowModalChangeValue(false);
                   Linking.openSettings();
+                } else if (
+                  props.Title ==
+                  '차종과 지역설정을 하지 않은 경우에는 임의의 작업이 검색됩니다.'
+                ) {
+                  props.ShowModalChangeValue(false);
+                  props.navigation.navigate('Category', {
+                    Title: props.pickButtonTitle,
+                  });
                 }
               }}
               style={{

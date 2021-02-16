@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import Search from '../../../../assets/home/search.svg';
 import GoBack from '../../../../assets/home/goBack.svg';
 import X from '../../../../assets/home/x.svg';
+import GPS from '../../../../assets/home/gps.svg';
 import {
   SafeAreaView,
   StyleSheet,
@@ -29,25 +30,89 @@ import NaverMapView, {
   Polyline,
   Polygon,
 } from 'react-native-nmap';
+import {
+  PERMISSIONS,
+  check,
+  request,
+  RESULTS,
+  requestNotifications,
+} from 'react-native-permissions';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
+import Geolocation from 'react-native-geolocation-service';
 const MapScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [locationModal, setLocationModal] = React.useState(false);
+  const LocationModalChangeValue = (text) => setLocationModal(text);
   const [searchText, setSearchText] = React.useState('');
-  const [pickLocation, setPickLocation] = React.useState(
-    props.route.params.PickLocation.jibunAddress,
-  );
+  const [pickLocation, setPickLocation] = React.useState({
+    latitude: parseFloat(props.route.params.PickLocation.y),
+    longitude: parseFloat(props.route.params.PickLocation.x),
+    legalcode: props.route.params.PickLocation.jibunAddress,
+  });
   const [P0, setP0] = React.useState({
     latitude: parseFloat(props.route.params.PickLocation.y),
     longitude: parseFloat(props.route.params.PickLocation.x),
   });
 
+  //위치정보사용 퍼미션
+  const handleLocationPermission = async (Type) => {
+    if (Type == 'ios') {
+      const res = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+
+      if (res === RESULTS.GRANTED) {
+        return true;
+      } else if (res === RESULTS.DENIED) {
+        const res2 = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        if (res2 === RESULTS.GRANTED) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      const res = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+
+      if (res === RESULTS.GRANTED) {
+        return true;
+      } else if (res === RESULTS.DENIED) {
+        const res2 = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        if (res2 === RESULTS.GRANTED) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  };
+
+  //위치정보 가져오기(경위도, 네이버지도에서 주소까지)
+  const CurrentPosition = () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        position.coords.longitude = 126.70528; //지워야함
+        position.coords.latitude = 37.45639; //지워야함
+        setP0({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.log(error.code, error.message);
+        if (error.message.indexOf('permission denied') != -1) {
+          //권한은 허용되어있으나 gps가 꺼져있을때
+          setLocationModal(true);
+        }
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
   const getNaverLocagtion = async (position) => {
     try {
       setIsLoading(true);
@@ -64,20 +129,26 @@ const MapScreen = (props) => {
           },
         },
       );
+
       //legalcode admcode addr roadaddr
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
         setIsLoading(false);
-        setPickLocation(
-          result.data.results[0].region.area1.name +
+        setPickLocation({
+          ...P0,
+          legalcode:
+            result.data.results[0].region.area1.name +
             ' ' +
             result.data.results[0].region.area2.name +
             ' ' +
             result.data.results[0].region.area3.name,
-        );
+        });
       } else {
         setIsLoading(false);
-        setPickLocation('요청한 데이타의 결과가 없습니다.');
+        setPickLocation({
+          ...P0,
+          legalcode: '요청한 데이타의 결과가 없습니다.',
+        });
         //네이버 맵에 없음
       }
     } catch (err) {
@@ -91,18 +162,37 @@ const MapScreen = (props) => {
   }, [P0]);
   return (
     <>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={'#FFFFFF'}></StatusBar>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+      <View style={{width: '100%', height: '100%', position: 'absolute'}}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="dark-content"></StatusBar>
+        <NaverMapView
+          style={{width: '100%', height: '100%', position: 'absolute'}}
+          center={{...P0, zoom: 16}}
+          scaleBar={false}
+          zoomControl={false}
+          rotateGesturesEnabled={false}
+          useTextureView={false}
+          // onTouch={(e) =>
+          //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
+          // }
+          onCameraChange={(e) =>
+            setP0({
+              latitude: parseFloat(e.latitude),
+              longitude: parseFloat(e.longitude),
+            })
+          }
+          //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
+        >
+          <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />
+        </NaverMapView>
         <View
           style={{
-            height: Height_convert(88) - StatusBarHeight,
+            height: Height_convert(88) + StatusBarHeight,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottomColor: 'rgba(219,219,219,0.35)',
-            borderBottomWidth: 1,
           }}>
           <TouchableOpacity
             activeOpacity={1}
@@ -121,95 +211,88 @@ const MapScreen = (props) => {
             activeOpacity={1}
             onPress={() => {
               props.navigation.navigate('MapSearch');
-            }}>
-            <TextInput
-              autoCapitalize={'none'}
-              autoCompleteType={'off'}
-              autoCorrect={false}
-              editable={false}
-              keyboardType="default"
-              value={pickLocation}
-              onChangeText={() => {}}
-              returnKeyType={'search'}
-              onSubmitEditing={() => {}}
-              style={{
-                width: Width_convert(280),
-                fontSize: Font_normalize(16),
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontWeight: '400',
-                paddingTop: 0,
-                paddingBottom: 0,
-              }}
-              placeholderTextColor="#A1A1A1"
-              placeholder={'주소검색'}
-              //onKeyPress={this.handleKeyDown}
-              // /handleKeyDown: function(e) {
-              //   if(e.nativeEvent.key == "Enter"){
-              //     dismissKeyboard();
-              // }
-            ></TextInput>
-          </TouchableOpacity>
+            }}></TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            if (handleLocationPermission(Platform.OS)) {
+              //위치정보 사용 ok 현재위치를 가져와야합니다. 어디서?? 네이버에서
+              CurrentPosition(); //경위도 찍고
+            } else {
+              //위치정보 켜달라는 모달 띄우기
+              LocationModalChangeValue(true);
+            }
+          }}
+          style={{
+            zIndex: 9999,
+            width: Width_convert(42),
+            height: Width_convert(42),
+            position: 'absolute',
+            bottom: Width_convert(174),
+            right: Width_convert(22),
+            borderRadius: Width_convert(21),
+            backgroundColor: '#FFFFFF',
+            justifyContent: 'center',
+            alignItems: 'center',
+
+            shadowColor: '#000000', //그림자색
+            shadowOpacity: 0.3, //그림자 투명도
+            shadowOffset: {width: 2, height: 2}, //그림자 위치
+            //ANDROID
+            elevation: 5,
+          }}>
+          <GPS></GPS>
+        </TouchableOpacity>
+        <View
+          style={{
+            position: 'absolute',
+            bottom: Width_convert(174 - 65),
+            width: Width_convert(375),
+            height: Height_convert(65),
+            alignItems: 'center',
+          }}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {
-              props.navigation.navigate('MapSearch');
-            }}
+            onPress={() => {}}
             style={{
-              marginRight: Width_convert(22),
-              width: Width_convert(20),
-              height: Height_convert(20),
+              width: Width_convert(339),
+              height: Height_convert(65),
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: Font_normalize(3),
+              backgroundColor: '#FFFFFF',
+              marginTop: Height_convert(18),
             }}>
-            <Search></Search>
-          </TouchableOpacity>
-        </View>
-        <View style={{width: Width_convert(375), height: Height_convert(600)}}>
-          <NaverMapView
-            style={{width: '100%', height: '100%', position: 'absolute'}}
-            center={{...P0, zoom: 16}}
-            scaleBar={false}
-            zoomControl={false}
-            rotateGesturesEnabled={false}
-            useTextureView={false}
-            // onTouch={(e) =>
-            //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
-            // }
-            onCameraChange={(e) =>
-              setP0({
-                latitude: parseFloat(e.latitude),
-                longitude: parseFloat(e.longitude),
-              })
-            }
-            //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
-          >
-            <Marker
-              coordinate={P0}
-              onClick={() => console.warn('onClick! p0')}
-            />
-          </NaverMapView>
-          <TouchableOpacity
-            onPress={() => {
-              alert('gdgd');
-            }}
-            style={{
-              zIndex: 9999,
-              width: 60,
-              height: 60,
-              position: 'absolute',
-              bottom: 20,
-              right: 20,
-              borderRadius: 30,
-              backgroundColor: '#d2d2d2',
-            }}>
-            <Text>gdgdgd</Text>
+            <Text
+              style={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontSize: Font_normalize(19),
+                fontWeight: '700',
+                color: '#946AEF',
+              }}>
+              {pickLocation?.legalcode}
+            </Text>
           </TouchableOpacity>
         </View>
         <View
           style={{
+            position: 'absolute',
+            bottom: Width_convert(174 - 65 - 46 - 10),
             width: Width_convert(375),
-            height: '100%',
+            height: Height_convert(46),
             alignItems: 'center',
           }}>
           <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('Setting', {
+                PickLocation: pickLocation,
+                PickBrandValue: props.route.params.PickBrandValue,
+                PickModelValue: props.route.params.PickModelValue,
+                PickModelDetail: props.route.params.PickModelDetail,
+              });
+            }}
             style={{
               width: Width_convert(339),
               height: Height_convert(46),
@@ -230,7 +313,15 @@ const MapScreen = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
+      {locationModal ? (
+        <ButtonTwoModal
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+          navigation={props.navigation}
+          ShowModalChangeValue={LocationModalChangeValue}
+          LeftButtonTitle={'닫기'}
+          RightButtonTitle={'설정'}></ButtonTwoModal>
+      ) : null}
       {showModal ? (
         <ButtonTwoModal
           ShowModalChangeValue={ShowModalChangeValue}

@@ -54,7 +54,7 @@ const LocationSetting = (props) => {
             placeholder="가게와의 거리를 알기 위한 지역설정이 필요해요"
             placeholderTextColor="#CCCCCC"
             editable={false}
-            value={props.pickLocation.legalcode}
+            value={props.pickLocation?.legalcode}
             onChangeText={(value) => {}}
             placeholderStyle={{
               paddingLeft: Width_convert(10),
@@ -77,7 +77,11 @@ const LocationSetting = (props) => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            props.navigation.navigate('MapSearch', {});
+            props.navigation.navigate('MapSearch', {
+              PickBrandValue: props.PickBrandValue,
+              PickModelValue: props.PickModelValue,
+              PickModelDetail: props.PickModelDetail,
+            });
           }}
           style={{
             marginLeft: Width_convert(7),
@@ -107,7 +111,7 @@ const LocationSetting = (props) => {
             props.CurrentPosition(); //경위도 찍고
           } else {
             //위치정보 켜달라는 모달 띄우기
-            props.ShowModalChangeValue(true);
+            props.LocationModalChangeValue(true);
           }
           //props.navigation.navigate('Map');
         }}
