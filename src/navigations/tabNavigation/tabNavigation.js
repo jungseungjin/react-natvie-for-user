@@ -49,7 +49,7 @@ const setTabBarVisible = (route, reduexState) => {
     'OneOnOneRegister',
     'Feedback',
     'Entry',
-    'Setting',
+    'Setting_more',
     'Info',
     'Withdrawal',
     'InfoCar',
@@ -64,6 +64,8 @@ const setTabBarVisible = (route, reduexState) => {
     'IdFindComplete',
     'PasswordFind',
     'PasswordFind2',
+    'Map_more',
+    'MapSearch_more',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

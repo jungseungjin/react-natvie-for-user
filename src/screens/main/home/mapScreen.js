@@ -286,12 +286,18 @@ const MapScreen = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('Setting', {
-                PickLocation: pickLocation,
-                PickBrandValue: props.route.params.PickBrandValue,
-                PickModelValue: props.route.params.PickModelValue,
-                PickModelDetail: props.route.params.PickModelDetail,
-              });
+              if (props.route.params?.from == 'Setting') {
+                props.navigation.navigate('Setting', {
+                  PickLocation: pickLocation,
+                  PickBrandValue: props.route.params.PickBrandValue,
+                  PickModelValue: props.route.params.PickModelValue,
+                  PickModelDetail: props.route.params.PickModelDetail,
+                });
+              } else if (props.route.params?.from == 'SignUpInformation4') {
+                props.navigation.navigate('SignUpInformation4', {
+                  PickLocation: pickLocation,
+                });
+              }
             }}
             style={{
               width: Width_convert(339),

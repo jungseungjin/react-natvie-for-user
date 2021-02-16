@@ -25,7 +25,7 @@ const CarSettingBrand = (props) => {
           justifyContent: 'center',
           alignItems: 'center',
         },
-        props.PickBrandValue == props.item
+        props.PickBrandValue?._id == props.item?._id
           ? {backgroundColor: '#ECECEC'}
           : null,
       ]}>

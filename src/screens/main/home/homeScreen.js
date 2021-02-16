@@ -36,41 +36,20 @@ import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js'
 import Search from '../../../components/Home/Search/search.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import {useSelector} from 'react-redux';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
 const HomeScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [pickButtonTitle, setPickButtonTitle] = React.useState('');
   const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
-  const [topSliderImageList, setTopSliderImageList] = React.useState([
-    {URL: 'https://unsplash.it/400/400?image=1'},
-    {URL: 'https://unsplash.it/400/400?image=2'},
-    {URL: 'https://unsplash.it/400/400?image=3'},
-  ]);
-  const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([
-    {
-      URL: 'https://unsplash.it/400/400?image=1',
-      Title:
-        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
-      OwnersStore: '모토리 튜닝샵',
-      OwnersImage: 'https://unsplash.it/400/400?image=1',
-    },
-    {
-      URL: 'https://unsplash.it/400/400?image=2',
-      Title:
-        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
-      OwnersStore: '모토리 튜닝샵',
-      OwnersImage: 'https://unsplash.it/400/400?image=2',
-    },
-    {
-      URL: 'https://unsplash.it/400/400?image=3',
-      Title:
-        '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈',
-      OwnersStore: '모토리 튜닝샵',
-      OwnersImage: 'https://unsplash.it/400/400?image=3',
-    },
-  ]);
+  const [topSliderImageList, setTopSliderImageList] = React.useState([]);
+  const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([]);
   const [recentWorkList, setRecentWorkList] = React.useState([
     {
       URL: 'https://unsplash.it/400/400?image=4',
@@ -107,7 +86,33 @@ const HomeScreen = (props) => {
       animated: true,
     });
   };
-  console.log(reduexState.loginDataCheck.login);
+  React.useEffect(() => {
+    try {
+      let result;
+      let url = Domain2 + 'home';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setTopSliderImageList(result.data[0].SliderImageList);
+            setOwnersWokrVideoList(result.data[0].RecommendVideoList);
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  }, []);
+  //console.log(reduexState.loginDataCheck.login);
   return (
     <>
       <StatusBar
@@ -117,21 +122,27 @@ const HomeScreen = (props) => {
         <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef}>
           <Tabbar Title={'투닝'}></Tabbar>
           {/*상단 슬라이드 이미지 시작 */}
-          <Swiper
-            style={{height: Height_convert(211)}}
-            autoplay={true}
-            autoplayTimeout={4.5}
-            dot={<Dot></Dot>}
-            activeDot={<ActiveDot></ActiveDot>}>
-            {topSliderImageList.length > 0
-              ? topSliderImageList.map((item) => (
-                  <SwiperImage
-                    key={item.URL}
-                    from={'home'}
-                    image={item.URL}></SwiperImage>
-                ))
-              : null}
-          </Swiper>
+          {topSliderImageList.length > 0 ? (
+            <Swiper
+              style={{height: Height_convert(211)}}
+              autoplay={true}
+              autoplayTimeout={4.5}
+              dot={<Dot></Dot>}
+              activeDot={<ActiveDot></ActiveDot>}>
+              {topSliderImageList.map((item) => (
+                <SwiperImage
+                  key={item._id}
+                  from={'home'}
+                  image={item.url}></SwiperImage>
+              ))}
+            </Swiper>
+          ) : (
+            <View
+              style={{
+                height: Height_convert(211),
+                backgroundColor: '#FFFFFF',
+              }}></View>
+          )}
           {/*상단 슬라이드 이미지 끝 */}
           {/*슬라이드 이미지 아래부터 튜닝샵검색까지 시작 */}
           <View
@@ -285,12 +296,9 @@ const HomeScreen = (props) => {
                 {ownersWokrVideoList.length > 0
                   ? ownersWokrVideoList.map((item) => (
                       <OwnersWork
-                        key={item.URL}
+                        key={item.url}
                         From={'home'}
-                        Title={item.Title}
-                        ImageUrl={item.URL}
-                        OwnersImage={item.OwnersImage}
-                        OwnersStore={item.OwnersStore}
+                        item={item}
                         navigation={props.navigation}
                         Index={ownersWokrVideoList.indexOf(item)}></OwnersWork>
                     ))
@@ -397,6 +405,15 @@ const HomeScreen = (props) => {
           {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
+
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {showModal ? (
         <ButtonTwoModal
           ShowModalChangeValue={ShowModalChangeValue}

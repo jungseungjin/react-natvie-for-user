@@ -15,7 +15,7 @@ import PasswordFind from '../../screens/main/more/passwordFindScreen.js';
 import PasswordFind2 from '../../screens/main/more/passworkFindScreen2.js';
 import SignUpComplete from '../../screens/main/more/signUpComplete.js';
 import Login from '../../screens/main/more/loginScreen.js';
-import Setting from '../../screens/main/more/settingScreen.js';
+import Setting_more from '../../screens/main/more/settingScreen.js';
 import NoticeBoard from '../../screens/main/more/noticeBoardScreen.js';
 import NoticeBoardView from '../../screens/main/more/notiveBoardViewScreen.js';
 import Entry from '../../screens/main/more/entryQuestionScreen.js';
@@ -29,6 +29,8 @@ import OneOnOneView from '../../screens/main/more/oneOnOneViewScreen.js';
 import OneOnOneRegister from '../../screens/main/more/oneOnOneRegisterScreen.js';
 import Feedback from '../../screens/main/more/feedbackScreen.js';
 import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
+import Map_more from '../../screens/main/home/mapScreen.js';
+import MapSearch_more from '../../screens/main/home/mapSeachScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -162,8 +164,8 @@ const MoreNavigator = (props) => {
         }}
       />
       <Stack.Screen
-        name="Setting"
-        component={Setting}
+        name="Setting_more"
+        component={Setting_more}
         initialParams={{}}
         options={{
           headerShown: false,
@@ -276,6 +278,22 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="InfoCar"
         component={InfoCar}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Map_more"
+        component={Map_more}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MapSearch_more"
+        component={MapSearch_more}
         initialParams={{}}
         options={{
           headerShown: false,

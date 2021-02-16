@@ -36,6 +36,18 @@ import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import DeviceInfo from 'react-native-device-info';
 const SignUpInformation = (props) => {
+  const unsubscribe = props.navigation.addListener('focus', async () => {
+    if (props.route?.params?.PickLocation) {
+      setLocationView(props.route.params.PickLocation.legalcode);
+      setLocation({
+        longitude: props.route.params.PickLocation.longitude,
+        latitude: props.route.params.PickLocation.latitude,
+      });
+    }
+  });
+  React.useEffect(() => {
+    unsubscribe;
+  }, [props.navigation]);
   const [agree, setAgree] = React.useState(props.route.params.agree);
   //디바이스정보 확인하고 , 약관 동의한것 넘겨받아서 백엔드로 넘겨준다. 가입  디바이스에서 어떤정보를 받을지 확인 + 위치정보 더 가져오기
   //넘어가는 데이터 모두 태그 제거하자.
@@ -159,7 +171,6 @@ const SignUpInformation = (props) => {
   const [locationView, setLocationView] = React.useState('');
   //경위도
   const [location, setLocation] = React.useState({longitude: '', latitude: ''});
-  const [locationResult, setLocationResult] = React.useState([]);
   const [device, setDevice] = React.useState([]);
 
   React.useEffect(() => {
@@ -211,7 +222,6 @@ const SignUpInformation = (props) => {
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
         setIsLoading(false);
-        setLocationResult(result.data.results);
         setLocationView(
           result.data.results[0].region.area1.name +
             ' ' +
@@ -268,7 +278,6 @@ const SignUpInformation = (props) => {
         locationView: locationView,
         location: location,
         agree: agree,
-        locationResult: locationResult,
         device: device,
       };
       NetInfo.addEventListener(async (state) => {
@@ -737,7 +746,9 @@ const SignUpInformation = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.navigation.navigate('', {});
+                    props.navigation.navigate('MapSearch_more', {
+                      from: 'SignUpInformation4',
+                    });
                   }}
                   style={{
                     width: Width_convert(35),

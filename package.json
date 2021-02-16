@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@native-html/iframe-plugin": "^1.1.1",
+    "@native-html/iframe-plugin": "^1.1.2",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/netinfo": "^5.9.10",
@@ -43,7 +43,7 @@
     "react-native-svg": "^12.1.0",
     "react-native-svg-transformer": "^0.14.3",
     "react-native-swiper": "^1.6.0",
-    "react-native-webview": "^11.0.2",
+    "react-native-webview": "^11.2.3",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5"
   },

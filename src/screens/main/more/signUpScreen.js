@@ -13,11 +13,16 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 
 const SignUp = (props) => {
   const [allAgree, setAllAgree] = React.useState(false);
   const [agree1, setAgree1] = React.useState(false); //이용약관 동의
   const [agree2, setAgree2] = React.useState(false); //만 14세 이상 확인
+  const [agree2Modal, setAgree2Modal] = React.useState(false); //만 14세 이상 확인 모달
+  const Agree2ModalChangeValue = (text) => {
+    setAgree2Modal(text);
+  }; //만 14세 이상 확인 모달
   const [agree3, setAgree3] = React.useState(false); //개인정보 수집이용 동의
   const [agree4, setAgree4] = React.useState(false); //위치기반 서비스 이용약관
   const [agree5, setAgree5] = React.useState(false); //개인정보 제3자 제공 동의
@@ -117,7 +122,11 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('SignUpTerms', {agreeNumber: 1});
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -169,7 +178,11 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              setAgree2Modal(true);
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -222,7 +235,11 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('SignUpTerms', {agreeNumber: 3});
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -274,7 +291,11 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('SignUpTerms', {agreeNumber: 4});
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -326,7 +347,11 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('SignUpTerms', {agreeNumber: 5});
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -472,6 +497,16 @@ const SignUp = (props) => {
           </Text>
         </TouchableOpacity>
       </View>
+      {agree2Modal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={Agree2ModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            '정보통신망 이용촉진 및 정보보호 등에 관한 법률에는 만 14세미만 아동의 개인정보  수집시 법정대리인 동의를 받도록 규정하고 있으며, 만 14세 미만 아동이 법정대리인 동의없이 회원가입을 하는 경우 회원탈퇴 또는 서비스 이용이 제한 될 수 있습니다.'
+          }
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
     </SafeAreaView>
   );
 };

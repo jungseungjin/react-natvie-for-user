@@ -44,15 +44,22 @@ const LocationSetting = (props) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        <View
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            props.navigation.navigate('MapSearch', {
+              from: props.from,
+              PickBrandValue: props.PickBrandValue,
+              PickModelValue: props.PickModelValue,
+              PickModelDetail: props.PickModelDetail,
+            });
+          }}
           style={{
             borderBottomWidth: 1,
             width: Width_convert(297),
             height: Width_convert(35),
           }}>
           <TextInput
-            placeholder="가게와의 거리를 알기 위한 지역설정이 필요해요"
-            placeholderTextColor="#CCCCCC"
             editable={false}
             value={props.pickLocation?.legalcode}
             onChangeText={(value) => {}}
@@ -73,11 +80,12 @@ const LocationSetting = (props) => {
               color: '#000000',
               lineHeight: Font_normalize(14),
             }}></TextInput>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
             props.navigation.navigate('MapSearch', {
+              from: props.from,
               PickBrandValue: props.PickBrandValue,
               PickModelValue: props.PickModelValue,
               PickModelDetail: props.PickModelDetail,

@@ -7,38 +7,32 @@ import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import FastImage from 'react-native-fast-image';
 
-const OwnersWork = ({
-  From,
-  Title,
-  ImageUrl,
-  OwnersImage,
-  OwnersStore,
-  Index,
-  navigation,
-}) => {
+const OwnersWork = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
       style={
-        From == 'home'
-          ? Index == 0
+        props.From == 'home'
+          ? props.Index == 0
             ? styles.home_view_index0
             : styles.home_view
-          : Index == 0
+          : props.Index == 0
           ? styles.workVideo_view_index0
           : styles.workVideo_view
       }
       onPress={() => {
-        if (From == 'home') {
-          navigation.navigate('WorkVideo');
+        if (props.From == 'home') {
+          props.navigation.navigate('WorkVideo', {item: props.item});
         }
       }}>
       <FastImage
         style={
-          From == 'home' ? styles.home_fastImage : styles.workVideo_fastImage
+          props.From == 'home'
+            ? styles.home_fastImage
+            : styles.workVideo_fastImage
         }
         source={{
-          uri: ImageUrl,
+          uri: props.item.url,
           headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
@@ -57,7 +51,7 @@ const OwnersWork = ({
             color: '#000000',
             lineHeight: Height_convert(17),
           }}>
-          {Title}
+          {props.item.title}
         </Text>
       </View>
       <View
@@ -68,12 +62,12 @@ const OwnersWork = ({
         }}>
         <FastImage
           style={
-            From == 'home'
+            props.From == 'home'
               ? styles.home_fastImage2
               : styles.workVideo_fastImage2
           }
           source={{
-            uri: OwnersImage,
+            uri: props.item.ownersImage,
             headers: {Authorization: 'someAuthToken'},
             priority: FastImage.priority.normal,
           }}
@@ -85,7 +79,7 @@ const OwnersWork = ({
             fontSize: Font_normalize(10),
             color: '#000000',
           }}>
-          {OwnersStore}
+          {props.item.ownersname}
         </Text>
       </View>
     </TouchableOpacity>
@@ -142,11 +136,5 @@ const styles = StyleSheet.create({
     marginRight: Width_convert(3),
   },
 });
-OwnersWork.propTypes = {
-  Title: PropTypes.string.isRequired,
-  ImageUrl: PropTypes.string.isRequired,
-  OwnersImage: PropTypes.string.isRequired,
-  OwnersStore: PropTypes.string.isRequired,
-  Index: PropTypes.number.isRequired,
-};
+OwnersWork.propTypes = {};
 export default OwnersWork;

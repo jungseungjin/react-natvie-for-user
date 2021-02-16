@@ -216,12 +216,22 @@ const MapScreen = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.navigation.navigate('Map', {
-                      PickLocation: item,
-                      PickBrandValue: props.route.params.PickBrandValue,
-                      PickModelValue: props.route.params.PickModelValue,
-                      PickModelDetail: props.route.params.PickModelDetail,
-                    });
+                    if (props.route.params.from == 'Setting') {
+                      props.navigation.navigate('Map', {
+                        from: props.route.params.from,
+                        PickLocation: item,
+                        PickBrandValue: props.route.params.PickBrandValue,
+                        PickModelValue: props.route.params.PickModelValue,
+                        PickModelDetail: props.route.params.PickModelDetail,
+                      });
+                    } else if (
+                      props.route.params.from == 'SignUpInformation4'
+                    ) {
+                      props.navigation.navigate('Map_more', {
+                        from: props.route.params.from,
+                        PickLocation: item,
+                      });
+                    }
                   }}
                   style={{
                     flexDirection: 'row',

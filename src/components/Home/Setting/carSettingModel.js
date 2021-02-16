@@ -107,7 +107,9 @@ const CarSettingModel = (props) => {
                 PageChangeValue={props.PageChangeValue}
                 from={props.from}
                 PickModelDetail={
-                  props.PickModelDetail == item ? props.PickModelDetail : null
+                  props.PickModelDetail?._id == item?._id
+                    ? props.PickModelDetail
+                    : null
                 }
                 PickModelDetailChangeValue={
                   props.PickModelDetailChangeValue

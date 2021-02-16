@@ -42,7 +42,11 @@ const TabBar = (props) => {
         props.Title == '회원가입' ||
         props.Title == '아이디 찾기2' ||
         props.Title == '비밀번호 찾기1' ||
-        props.Title == '비밀번호 찾기2' ? (
+        props.Title == '비밀번호 찾기2' ||
+        props.Title == '투닝 이용약관' ||
+        props.Title == '개인정보 수집 및 이용' ||
+        props.Title == '위치기반 서비스 이용약관' ||
+        props.Title == '개인정보 제3자 제공 동의' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {

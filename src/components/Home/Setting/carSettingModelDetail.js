@@ -25,7 +25,7 @@ const CarSettingModelDetail = (props) => {
             paddingTop: Height_convert(13),
             paddingBottom: Height_convert(13),
           },
-          props?.PickModelDetail?.model_detail == props.item.model_detail
+          props?.PickModelDetail?.model_detail == props.item?.model_detail
             ? {
                 color: '#946AEF',
               }

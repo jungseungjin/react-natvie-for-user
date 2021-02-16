@@ -17,21 +17,29 @@ const WorkVideoListScreen = (props) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <OwnersWork
             From={'workVideo'}
-            Title={
-              '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈'
-            }
-            ImageUrl={'https://unsplash.it/400/400?image=1'}
-            OwnersImage={'https://unsplash.it/400/400?image=1'}
-            OwnersStore={'모토리 튜닝샵'}
+            item={{
+              show: true,
+              url: 'https://unsplash.it/400/400?image=6', //사진url
+              videoUrl:
+                '<iframe width="560" height="315" src="https://www.youtube.com/embed/oOcnauhMJJE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+              title:
+                '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈', //영상제목
+              ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
+              ownersname: '배말랭', //채널명
+            }}
             Index={0}></OwnersWork>
           <OwnersWork
             From={'workVideo'}
-            Title={
-              '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈'
-            }
-            ImageUrl={'https://unsplash.it/400/400?image=1'}
-            OwnersImage={'https://unsplash.it/400/400?image=1'}
-            OwnersStore={'모토리 튜닝샵'}
+            item={{
+              show: true,
+              url: 'https://unsplash.it/400/400?image=6', //사진url
+              videoUrl:
+                '<iframe width="560" height="315" src="https://www.youtube.com/embed/oOcnauhMJJE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+              title:
+                '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈', //영상제목
+              ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
+              ownersname: '배말랭', //채널명
+            }}
             Index={1}></OwnersWork>
         </ScrollView>
       </SafeAreaView>

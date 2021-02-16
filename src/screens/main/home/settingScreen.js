@@ -43,7 +43,11 @@ const SettingScreen = (props) => {
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState('domestic');
   const CategoryChangeValue = (text) => setCategory(text);
-  const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
+  const [pickBrand, setPickBrand] = React.useState(
+    reduexState.loginDataCheck.login.iu_car.length > 0
+      ? reduexState.loginDataCheck.login.iu_car[0].pickBrand
+      : {},
+  ); //디비에서 가져온 브랜드값
   const PickBrandChangeValue = (object) => setPickBrand(object);
   const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
   const PickModelChangeValue = (object) => setPickModel(object);
@@ -54,7 +58,7 @@ const SettingScreen = (props) => {
   React.useEffect(() => {
     try {
       if (reduexState.loginDataCheck.login.iu_car.length > 0) {
-        setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
+        //setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
         setPickModel(reduexState.loginDataCheck.login.iu_car[0].pickModel);
         setPickModelDetail(
           reduexState.loginDataCheck.login.iu_car[0].pickModelDetail,
@@ -238,6 +242,7 @@ const SettingScreen = (props) => {
         ) : (
           <LocationSetting
             navigation={props.navigation}
+            from={'Setting'}
             PickBrandValue={pickBrand}
             PickModelValue={pickModel}
             PickModelDetail={pickModelDetail}

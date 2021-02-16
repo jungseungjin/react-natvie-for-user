@@ -34,14 +34,21 @@ const ButtonOneModal = (props) => {
             },
           ]}>
           <View
-            style={{
-              width: Width_convert(295),
-              height: Height_convert(108),
-              backgroundColor: '#FFFFFF',
-              justifyContent: 'center',
-              borderBottomColor: '#DBDBDB',
-              borderBottomWidth: 1,
-            }}>
+            style={[
+              {
+                width: Width_convert(295),
+                height: Height_convert(108),
+                backgroundColor: '#FFFFFF',
+                justifyContent: 'center',
+                borderBottomColor: '#DBDBDB',
+                borderBottomWidth: 1,
+              },
+              props.Title.indexOf('14세미만') != -1
+                ? {
+                    height: Height_convert(178),
+                  }
+                : null,
+            ]}>
             <View>
               <Text
                 style={[
@@ -62,6 +69,10 @@ const ButtonOneModal = (props) => {
                         textAlign: 'center',
                         fontWeight: '700',
                         fontSize: Font_normalize(15),
+                      }
+                    : props.Title.indexOf('14세미만') != -1
+                    ? {
+                        marginRight: Width_convert(18),
                       }
                     : null,
                 ]}>
@@ -116,7 +127,8 @@ const ButtonOneModal = (props) => {
                   props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
-                  props.Title == '인터넷 연결을 확인해주세요'
+                  props.Title == '인터넷 연결을 확인해주세요' ||
+                  props.Title.indexOf('14세미만') != -1
                     ? {
                         color: '#1976E3',
                         fontSize: Font_normalize(16),
