@@ -26,15 +26,22 @@ import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 
 const SearchStore = (props) => {
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={{width: Width_convert(375), height: Height_convert(390)}}>
+      style={[
+        {width: Width_convert(375), height: Height_convert(390)},
+        props.getIndex === props.storeListLength
+          ? {height: Height_convert(390) + Width_convert(55)}
+          : null,
+      ]}>
       <FastImage
         style={{width: Width_convert(375), height: Height_convert(240)}}
         source={{
-          uri: 'https://unsplash.it/400/400?image=1',
-          headers: {Authorization: 'someAuthToken'},
+          uri: props.item.store_image,
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
@@ -67,7 +74,25 @@ const SearchStore = (props) => {
               fontFamily: Fonts?.NanumSquareBold || null,
               color: '#ffffff',
             }}>
-            드레스업 / 퍼포먼스
+            {props.item.store_category.indexOf('1') != -1 ? '드레스업' : null}
+            {props.item.store_category.indexOf('1') != -1 &&
+            (props.item.store_category.indexOf('2') != -1 ||
+              props.item.store_category.indexOf('3') != -1 ||
+              props.item.store_category.indexOf('4') != -1)
+              ? ' / '
+              : null}
+            {props.item.store_category.indexOf('2') != -1 ? '퍼포먼스' : null}
+            {props.item.store_category.indexOf('2') != -1 &&
+            (props.item.store_category.indexOf('3') != -1 ||
+              props.item.store_category.indexOf('4') != -1)
+              ? ' / '
+              : null}
+            {props.item.store_category.indexOf('3') != -1 ? '편의장치' : null}
+            {props.item.store_category.indexOf('3') != -1 &&
+            props.item.store_category.indexOf('4') != -1
+              ? ' / '
+              : null}
+            {props.item.store_category.indexOf('4') != -1 ? '캠핑카' : null}
           </Text>
         </View>
       </View>
@@ -88,55 +113,109 @@ const SearchStore = (props) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            WHEEL SPIN 구미점
+            {props.item.store_name}
           </Text>
         </View>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#4BCA90',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+        {props.item.store_badge.indexOf('1') != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(5),
-              paddingBottom: Width_convert(5),
-              paddingLeft: Width_convert(6),
-              paddingRight: Width_convert(6),
-              fontSize: Font_normalize(10),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#FFA740',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            신규업체
-          </Text>
-        </View>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#1A74FC',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+            <Text
+              style={{
+                paddingTop: Width_convert(5),
+                paddingBottom: Width_convert(5),
+                paddingLeft: Width_convert(6),
+                paddingRight: Width_convert(6),
+                fontSize: Font_normalize(10),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              인기추천
+            </Text>
+          </View>
+        ) : null}
+        {props.item.store_badge.indexOf('2') != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(5),
-              paddingBottom: Width_convert(5),
-              paddingLeft: Width_convert(6),
-              paddingRight: Width_convert(6),
-              fontSize: Font_normalize(10),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#F7606E',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            우리가게공임표 공개
-          </Text>
-        </View>
+            <Text
+              style={{
+                paddingTop: Width_convert(5),
+                paddingBottom: Width_convert(5),
+                paddingLeft: Width_convert(6),
+                paddingRight: Width_convert(6),
+                fontSize: Font_normalize(10),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              가격할인
+            </Text>
+          </View>
+        ) : null}
+        {props.item.store_badge.indexOf('3') != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#4BCA90',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(5),
+                paddingBottom: Width_convert(5),
+                paddingLeft: Width_convert(6),
+                paddingRight: Width_convert(6),
+                fontSize: Font_normalize(10),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              신규업체
+            </Text>
+          </View>
+        ) : null}
+        {props.item.store_badge.indexOf('4') != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#1A74FC',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(5),
+                paddingBottom: Width_convert(5),
+                paddingLeft: Width_convert(6),
+                paddingRight: Width_convert(6),
+                fontSize: Font_normalize(10),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              우리가게공임표 공개
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View
         style={{
@@ -153,12 +232,12 @@ const SearchStore = (props) => {
             fontSize: Font_normalize(12),
             color: '#000000',
           }}>
-          경상북도 구미시 송정동 12-3
+          {props.item.store_address}
         </Text>
       </View>
       <View
         style={{
-          width: Width_convert(362),
+          width: Width_convert(350),
           height: Height_convert(14),
           marginTop: Height_convert(6),
           marginLeft: Width_convert(13),
@@ -179,7 +258,7 @@ const SearchStore = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            4.8
+            {props.item.store_grade || 0}
           </Text>
           <Text
             style={{
@@ -189,32 +268,45 @@ const SearchStore = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            후기 100
+            후기
+            {props.item.reviewCount}
           </Text>
         </View>
         {props.editMode ? (
           <TouchableOpacity
-            activeOpacit={1}
+            activeOpacity={1}
             onPress={() => {
-              alert('gd');
+              let newArr = props.storeListDel;
+              if (props.storeListDel.indexOf(props.item._id) != -1) {
+                //빼기
+                newArr.splice(newArr.indexOf(props.item._id), 1);
+              } else {
+                //넣기
+                newArr.push(props.item._id);
+              }
+              props.StoreListDelChangeValue(newArr);
+              forceUpdate();
             }}>
-            <CheckBox
-              width={Width_convert(15)}
-              height={Width_convert(15)}></CheckBox>
-          </TouchableOpacity>
-        ) : null}
-        {props.editMode ? (
-          <TouchableOpacity
-            activeOpacit={1}
-            onPress={() => {
-              alert('gd');
-            }}>
-            <CheckedBox
-              width={Width_convert(15)}
-              height={Width_convert(15)}></CheckedBox>
+            {props.storeListDel.indexOf(props.item._id) != -1 ? (
+              <CheckedBox
+                width={Width_convert(15)}
+                height={Width_convert(15)}></CheckedBox>
+            ) : (
+              <CheckBox
+                width={Width_convert(15)}
+                height={Width_convert(15)}></CheckBox>
+            )}
           </TouchableOpacity>
         ) : null}
       </View>
+
+      {props.getIndex === props.storeListLength ? (
+        <View
+          style={{
+            width: Width_convert(375),
+            height: Width_convert(55),
+          }}></View>
+      ) : null}
     </TouchableOpacity>
   );
 };

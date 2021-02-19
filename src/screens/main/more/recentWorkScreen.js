@@ -1,6 +1,7 @@
 import React from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import {
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,6 +12,7 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  FlatList,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -27,50 +29,157 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
-import {FlatList} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import StatusBarHeight from '../../../components/StatusBarHeight';
+
 const RecentWork = (props) => {
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [page, setPage] = React.useState('work');
-  const [workList, setWorkList] = React.useState([
-    {tt: '1', _id: '1'},
-    {tt: '2', _id: '2'},
-    {tt: '3', _id: '3'},
-    {tt: '4', _id: '4'},
-  ]);
-  const [storeList, setStoreList] = React.useState([
-    {tt: '11', _id: '11'},
-    {tt: '22', _id: '22'},
-    {tt: '33', _id: '33'},
-    {tt: '44', _id: '44'},
-  ]);
+  const PageChangeValue = (text) => setPage(text);
 
-  const setData = async (value) => {
-    try {
-      //JSON.stringify
-      await AsyncStorage.setItem('landingCheck', value.toString());
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [workList, setWorkList] = React.useState([]);
+  const [workListDel, setWorkListDel] = React.useState([]);
+  const WorkListDelChangeValue = (text) => setWorkListDel(text);
+  const [storeList, setStoreList] = React.useState([]);
+  const [storeListDel, setStoreListDel] = React.useState([]);
+  const StoreListDelChangeValue = (text) => setStoreListDel(text);
 
-  const getData = async function () {
+  //최근 본 작업 - 작업 데이터 가져오기
+  const get_recentWorkList = async () => {
     try {
-      //JSON.parse()
-      let value = await AsyncStorage.getItem('landingCheck');
+      let value = await AsyncStorage.getItem('recentWorkList');
       if (value == null) {
+        setWorkList([]);
       } else {
-        setLandingCheck(true);
+        let new_data = value.split(',');
+        let new_arr = [];
+        let new_str = '';
+        for (var a = new_data.length - 1; a > -1; a--) {
+          if (a == new_data.length - 1) {
+            new_str = new_data[a];
+          } else {
+            new_str = new_str + ',' + new_data[a];
+          }
+        }
+        let result;
+        let url = Domain2 + 'recentWorkList';
+
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let result = await axios.get(url, {
+              params: {
+                workid: new_str,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].message == 'ok') {
+              setWorkList(result.data[0].result);
+            } else {
+              setWorkList([]);
+            }
+          } else {
+            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+            setNetworkModal(true);
+          }
+        });
       }
     } catch (err) {
       console.log(err);
     }
   };
-  const PageChangeValue = (text) => {
-    setPage(text);
+  //최근 본 작업 - 가게 데이터 가져오기
+  const get_recentStoreList = async () => {
+    try {
+      let value = await AsyncStorage.getItem('recentStoreList');
+      if (value == null) {
+        setStoreList([]);
+      } else {
+        let new_data = value.split(',');
+        let new_arr = [];
+        let new_str = '';
+        for (var a = new_data.length - 1; a > -1; a--) {
+          if (a == new_data.length - 1) {
+            new_str = new_data[a];
+          } else {
+            new_str = new_str + ',' + new_data[a];
+          }
+        }
+        let result;
+        let url = Domain2 + 'recentStoreList';
+
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let result = await axios.get(url, {
+              params: {
+                storeid: new_str,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].message == 'ok') {
+              setStoreList(result.data[0].result);
+            } else {
+              setStoreList([]);
+            }
+          } else {
+            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+            setNetworkModal(true);
+          }
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+  //데이터 삭제하기
+  const delete_data = async () => {
+    try {
+      let Workvalue = await AsyncStorage.getItem('recentWorkList');
+      let newValue = Workvalue;
+      for (var a = 0; a < workListDel.length; a++) {
+        newValue = newValue.replace(workListDel[a], '');
+        newValue = newValue.replace(',,', ',');
+      }
+      await AsyncStorage.setItem('recentWorkList', newValue);
+      let Storevalue = await AsyncStorage.getItem('recentStoreList');
+      let newStoreValue = Storevalue;
+      for (var a = 0; a < storeListDel.length; a++) {
+        newStoreValue = newStoreValue.replace(storeListDel[a], '');
+        newStoreValue = newStoreValue.replace(',,', ',');
+      }
+      await AsyncStorage.setItem('recentStoreList', newStoreValue);
+      if (newValue != Workvalue || newStoreValue != Storevalue) {
+        onRefresh();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    get_recentWorkList();
+    get_recentStoreList();
+    setRefreshing(false);
+  }, []);
+
+  React.useEffect(() => {
+    get_recentWorkList();
+    get_recentStoreList();
+  }, []);
   return (
     <>
       <StatusBar
@@ -87,21 +196,69 @@ const RecentWork = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <FlatList
+          alwaysBounceVertical={
+            page == 'work' && workList.length == 0
+              ? false
+              : page == 'store' && storeList.length == 0
+              ? false
+              : true
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
-          data={page == 'work' ? workList : page == 'store' ? storeList : null}
+          data={
+            page == 'work' && workList.length > 0
+              ? workList
+              : page == 'store' && storeList.length > 0
+              ? storeList
+              : page == 'work'
+              ? [{message: '최근 본 작업이 없습니다'}]
+              : page == 'store'
+              ? [{message: '최근 본 샵이 없습니다'}]
+              : null
+          }
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>
-            page == 'work' ? (
+            page == 'work' && workList.length > 0 ? (
               <WorkPick
-                key={item.tt}
+                getIndex={workList.indexOf(item) + 1}
+                workListLength={workList.length}
+                WorkListDelChangeValue={WorkListDelChangeValue}
+                workListDel={workListDel}
+                key={item._id}
+                item={item}
                 editMode={reduexState.editModeCheck.editMode}></WorkPick>
-            ) : page == 'store' ? (
+            ) : page == 'store' && storeList.length > 0 ? (
               <StorePick
-                key={item.tt}
+                getIndex={storeList.indexOf(item) + 1}
+                storeListLength={storeList.length}
+                StoreListDelChangeValue={StoreListDelChangeValue}
+                storeListDel={storeListDel}
+                key={item._id}
+                item={item}
                 editMode={reduexState.editModeCheck.editMode}></StorePick>
+            ) : page == 'work' || page == 'store' ? (
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(812) - Height_convert(94 + 48),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(16),
+                    fontWeight: '700',
+                    color: '#000000',
+                  }}>
+                  {item.message}
+                </Text>
+              </View>
             ) : null
           }
           keyExtractor={(item) => String(item._id)}></FlatList>
@@ -125,7 +282,10 @@ const RecentWork = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() => {}}
+                  onPress={() => {
+                    setWorkListDel([]);
+                    setStoreListDel([]);
+                  }}
                   style={{
                     height: Width_convert(55),
                     width: Width_convert(375) / 2,
@@ -148,6 +308,7 @@ const RecentWork = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     if (reduexState.editModeCheck.editMode) {
+                      delete_data();
                       props.updateEditMode(!reduexState.editModeCheck.editMode);
                     }
                   }}
@@ -180,6 +341,14 @@ const RecentWork = (props) => {
         ) : null}
         {/*하단 초기화 삭제하기버튼 끝*/}
       </SafeAreaView>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

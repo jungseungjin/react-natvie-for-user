@@ -23,6 +23,7 @@ import Domain from '../../../../key/Domain.js';
 import CarSettingBrand from './carSettingBrand.js';
 import CarSettingModel from './carSettingModel.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import NetInfo from '@react-native-community/netinfo';
 const CarSetting = (props) => {
   const insets = useSafeAreaInsets();
   const [brandList, setBrandList] = React.useState([]);
@@ -42,36 +43,50 @@ const CarSetting = (props) => {
         return false;
       }
       setModelList([]);
-      let url = Domain + 'brand_list/' + brandSeach;
-      props.IsLoadingChangeValue(true);
-      let result = await axios.get(url);
-      if (result.data[0].type) {
-        //get에서 type이 있으면 잘못된거
-        alert(result.data[0].message);
-        props.IsLoadingChangeValue(false);
-      } else {
-        setBrandList(result.data);
-        props.IsLoadingChangeValue(false);
-      }
+
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain + 'brand_list/' + brandSeach;
+          props.IsLoadingChangeValue(true);
+          let result = await axios.get(url);
+          if (result.data[0].type) {
+            //get에서 type이 있으면 잘못된거
+            alert(result.data[0].message);
+            props.IsLoadingChangeValue(false);
+          } else {
+            setBrandList(result.data);
+            props.IsLoadingChangeValue(false);
+          }
+        } else {
+          props.NetworkModalChangeValue(true);
+        }
+      });
     } catch (err) {
       console.log(err);
       alert('잠시 후에 다시해주세요');
     }
   };
+
   const get_model_data = async function (props) {
     try {
       if (props?.PickBrandValue?.brand) {
-        let url = Domain + 'model_list/' + props.PickBrandValue.brand;
-        //props.IsLoadingChangeValue(true);
-        let result = await axios.get(url);
-        if (result.data[0].type) {
-          //get에서 type이 있으면 잘못된거
-          alert(result.data[0].message);
-          //props.IsLoadingChangeValue(false);
-        } else {
-          setModelList(result.data);
-          //props.IsLoadingChangeValue(false);
-        }
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let url = Domain + 'model_list/' + props.PickBrandValue.brand;
+            //props.IsLoadingChangeValue(true);
+            let result = await axios.get(url);
+            if (result.data[0].type) {
+              //get에서 type이 있으면 잘못된거
+              alert(result.data[0].message);
+              //props.IsLoadingChangeValue(false);
+            } else {
+              setModelList(result.data);
+              //props.IsLoadingChangeValue(false);
+            }
+          } else {
+            props.NetworkModalChangeValue(true);
+          }
+        });
       }
     } catch (err) {
       console.log(err);
@@ -229,8 +244,9 @@ const CarSetting = (props) => {
                 }
                 PickBrandChangeValue={props.PickBrandChangeValue}
                 PickModelChangeValue={props.PickModelChangeValue}
-                PickModelDetailChangeValue={
-                  props.PickModelDetailChangeValue
+                PickModelDetailChangeValue={props.PickModelDetailChangeValue}
+                NetworkModalChangeValue={
+                  props.NetworkModalChangeValue
                 }></CarSettingBrand>
             )}
             keyExtractor={(item) => String(item._id)}></FlatList>
@@ -261,8 +277,9 @@ const CarSetting = (props) => {
               PageChangeValue={props.PageChangeValue}
               from={props.from}
               PickModelDetailChangeValue={props.PickModelDetailChangeValue}
-              IsLoadingChangeValue={
-                props.IsLoadingChangeValue
+              IsLoadingChangeValue={props.IsLoadingChangeValue}
+              NetworkModalChangeValue={
+                props.NetworkModalChangeValue
               }></CarSettingModel>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>

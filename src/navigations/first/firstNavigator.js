@@ -75,6 +75,7 @@ const FirstNavigator = (props) => {
               props.updateLoginStatus(true);
               props.updateIuCar(result.data[0].loginData.iu_car);
               props.updateLocation(result.data[0].loginData.location);
+              props.update_id(result.data[0].loginData._id);
             } else {
               //로그인이 안됐어
               //alert(result.data[0].message);
@@ -89,7 +90,9 @@ const FirstNavigator = (props) => {
         RNSplashScreen.hide();
       } else {
         RNSplashScreen.hide();
-        console.log('No credentials stored'); //저장된 정보가 없으면 여기로나옴.
+        console.log(
+          'No credentials stored 저장된 아이디 비밀번호 정보가 없으면 여기로나옴.',
+        ); //저장된 정보가 없으면 여기로나옴.
       }
     } catch (error) {
       RNSplashScreen.hide();
@@ -135,6 +138,7 @@ function mapStateToProps(state) {
       login: state.loginDataCheck.login.login,
       iu_car: state.loginDataCheck.login.iu_car,
       location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
     },
     //  first: state.calculator.sumInfo.first,
     //  second: state.calculator.sumInfo.second
@@ -150,6 +154,9 @@ function mapDispatchToProps(dispatch) {
     },
     updateLocation: (Object) => {
       dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+    update_id: (text) => {
+      dispatch(ActionCreator.loginData_idCheckAction(text));
     },
   };
 }

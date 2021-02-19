@@ -55,6 +55,8 @@ const SettingScreen = (props) => {
   const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
   const [pickLocation, setPickLocation] = React.useState({});
   const PickLocationChangeValue = (object) => setPickLocation(object);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   React.useEffect(() => {
     try {
       if (reduexState.loginDataCheck.login.iu_car.length > 0) {
@@ -236,9 +238,8 @@ const SettingScreen = (props) => {
             PickModelValue={pickModel}
             PickModelChangeValue={PickModelChangeValue}
             PickModelDetail={pickModelDetail}
-            PickModelDetailChangeValue={
-              PickModelDetailChangeValue
-            }></CarSetting>
+            PickModelDetailChangeValue={PickModelDetailChangeValue}
+            NetworkModalChangeValue={NetworkModalChangeValue}></CarSetting>
         ) : (
           <LocationSetting
             navigation={props.navigation}
@@ -250,12 +251,21 @@ const SettingScreen = (props) => {
             LocationModalChangeValue={LocationModalChangeValue}
             CurrentPosition={CurrentPosition}
             pickLocation={pickLocation}
-            PickLocationChangeValue={PickLocationChangeValue}></LocationSetting>
+            PickLocationChangeValue={PickLocationChangeValue}
+            NetworkModalChangeValue={NetworkModalChangeValue}></LocationSetting>
         )}
         {reduexState.loginDataCheck.login?.login ? null : (
           <SignUp navigation={props.navigation}></SignUp>
         )}
       </SafeAreaView>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {locationModal ? (
         <ButtonTwoModal
           Title={'지역 설정을 위해 위치서비스를 켜 주세요'}

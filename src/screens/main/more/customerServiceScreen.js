@@ -26,11 +26,9 @@ const CustomerServiceScreen = (props) => {
             borderTopWidth: 1,
             borderTopColor: '#DBDBDB',
           }}></View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
+        <View
           style={{
             width: Width_convert(375),
-            height: Height_convert(812),
             backgroundColor: '#FFFFFF',
           }}>
           <View
@@ -44,10 +42,10 @@ const CustomerServiceScreen = (props) => {
                 props.navigation.navigate('FrequentlyQuestion');
               }}
               style={{
-                marginTop: Width_convert(43),
+                marginTop: Height_convert(43),
                 width: Width_convert(281),
-                height: Width_convert(139),
-                borderRadius: Font_normalize(5),
+                height: Height_convert(150),
+                borderRadius: Font_normalize(10),
                 borderTopWidth: 2,
                 borderBottomWidth: 2,
                 borderLeftWidth: 2,
@@ -71,10 +69,10 @@ const CustomerServiceScreen = (props) => {
                 props.navigation.navigate('OneOnOne');
               }}
               style={{
-                marginTop: Width_convert(27),
+                marginTop: Height_convert(27),
                 width: Width_convert(281),
-                height: Width_convert(139),
-                borderRadius: Font_normalize(5),
+                height: Height_convert(150),
+                borderRadius: Font_normalize(10),
                 borderTopWidth: 2,
                 borderBottomWidth: 2,
                 borderLeftWidth: 2,
@@ -98,10 +96,10 @@ const CustomerServiceScreen = (props) => {
                 props.navigation.navigate('Feedback');
               }}
               style={{
-                marginTop: Width_convert(27),
+                marginTop: Height_convert(27),
                 width: Width_convert(281),
-                height: Width_convert(139),
-                borderRadius: Font_normalize(5),
+                height: Height_convert(150),
+                borderRadius: Font_normalize(10),
                 borderTopWidth: 2,
                 borderBottomWidth: 2,
                 borderLeftWidth: 2,
@@ -230,12 +228,7 @@ const CustomerServiceScreen = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              height: Height_convert(insets.bottom || 40),
-              backgroundColor: '#FFFFFF',
-            }}></View>
-        </ScrollView>
+        </View>
       </SafeAreaView>
     </>
   );

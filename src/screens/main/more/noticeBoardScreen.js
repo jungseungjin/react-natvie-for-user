@@ -1,17 +1,28 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  RefreshControl,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import {
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
 
 const NoticeBoardScreen = (props) => {
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    setRefreshing(false);
+  }, []);
   const [boardList, setBoardList] = React.useState([
     {_id: '1'},
     {_id: '2'},
@@ -40,6 +51,9 @@ const NoticeBoardScreen = (props) => {
             backgroundColor: '#FFFFFF',
           }}>
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             style={{minHeight: Height_convert(812)}}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}

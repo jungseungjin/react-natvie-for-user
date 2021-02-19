@@ -8,7 +8,18 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import SettingOn from '../../../../assets/home/setting_on.svg';
 import SettingOff from '../../../../assets/home/setting_off.svg';
+import {useSelector} from 'react-redux';
 const Setting = (props) => {
+  const reduexState = useSelector((state) => state);
+  //로그인된 상태면 로그인정보로 설정값 가져오기
+  //로그인 안된상태면 디바이스정보로 설정값 가져오기
+  //현재버전과 DB상의 버전을 비교해서 최신으로 안내
+  //여기 알림도 퍼미션이 꺼져있으면 모두 비활성화,
+  //퍼미션이 꺼져있고 알림 비활성화에서 알림켜면 설정으로가서 설정할수있게한다음 설정이 되어야 활성화로 가능
+  //퍼미션이 꺼져있으면 알림 비활성화 기본
+  //퍼미션이 켜져있고 알림 비활성화에서 알림켜면 켜지기
+  //퍼미션이 켜져있으면 알림 활성화가 기본 알림 끄면 꺼지기
+
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar

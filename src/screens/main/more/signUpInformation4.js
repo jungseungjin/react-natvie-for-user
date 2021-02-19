@@ -34,6 +34,7 @@ import Geolocation from 'react-native-geolocation-service';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 const SignUpInformation = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
@@ -51,6 +52,16 @@ const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params.agree);
   //디바이스정보 확인하고 , 약관 동의한것 넘겨받아서 백엔드로 넘겨준다. 가입  디바이스에서 어떤정보를 받을지 확인 + 위치정보 더 가져오기
   //넘어가는 데이터 모두 태그 제거하자.
+  const [fcmToken, setFcmToken] = React.useState('');
+
+  //토큰값 가져오기
+  const handlePushToken = React.useCallback(async () => {
+    const enabled = await messaging().hasPermission();
+    if (enabled) {
+      const getToken = await messaging().getToken();
+      setFcmToken(getToken);
+    }
+  });
   const [phoneNumber, setPhoneNumber] = React.useState(
     props?.route?.params?.phoneNumber || null,
   );
@@ -179,6 +190,7 @@ const SignUpInformation = (props) => {
     push_arr.push({getDeviceId: DeviceInfo.getDeviceId()});
     push_arr.push({getModel: DeviceInfo.getModel()});
     setDevice(push_arr);
+    handlePushToken();
   }, []);
   //위치정보 가져오기(경위도, 네이버지도에서 주소까지)
   const CurrentPosition = () => {
@@ -265,6 +277,7 @@ const SignUpInformation = (props) => {
         alert('빈칸을 모두 입력해 주세요');
         return false;
       }
+
       let data = {
         phoneNumber: phoneNumber,
         pickBrand: pickBrand,
@@ -279,6 +292,7 @@ const SignUpInformation = (props) => {
         location: location,
         agree: agree,
         device: device,
+        fcmToken: fcmToken,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

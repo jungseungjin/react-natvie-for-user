@@ -31,6 +31,7 @@ import Feedback from '../../screens/main/more/feedbackScreen.js';
 import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
 import Map_more from '../../screens/main/home/mapScreen.js';
 import MapSearch_more from '../../screens/main/home/mapSeachScreen.js';
+import PickScreen from '../../screens/main/pick/pickScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -51,14 +52,45 @@ const MoreNavigator = (props) => {
           shadowColor: 'white',
         },
       }}>
-      <Stack.Screen
-        name="More"
-        component={More}
-        initialParams={{}}
-        options={{
-          headerShown: false,
-        }}
-      />
+      {props.route.name == 'More' ? (
+        <>
+          <Stack.Screen
+            name="More"
+            component={More}
+            initialParams={{}}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="PickScreen"
+            component={PickScreen}
+            initialParams={{editMode: false}}
+            options={({navigation, route}) => ({
+              headerShown: false,
+            })}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="PickScreen"
+            component={PickScreen}
+            initialParams={{editMode: false}}
+            options={({navigation, route}) => ({
+              headerShown: false,
+            })}
+          />
+          <Stack.Screen
+            name="More"
+            component={More}
+            initialParams={{}}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </>
+      )}
       <Stack.Screen
         name="Info"
         component={Info}

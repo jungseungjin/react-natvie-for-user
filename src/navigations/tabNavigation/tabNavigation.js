@@ -96,7 +96,7 @@ const TabNavigator = (props) => {
       />
       <Tabs.Screen
         name="Pick"
-        component={PickNavigator}
+        component={MoreNavigator}
         options={{
           tabBarIcon: ({focused}) => {
             if (focused == true) {
@@ -105,6 +105,7 @@ const TabNavigator = (props) => {
               return <Pick_non_active></Pick_non_active>;
             }
           },
+          initialRouteParams: {foo: 'bar'},
         }}
         //options={{tabBarVisible: false}}
       />
@@ -119,6 +120,7 @@ const TabNavigator = (props) => {
               return <More_non_active></More_non_active>;
             }
           },
+          initialRouteParams: {foo: 'bar'},
         }}
         //options={{tabBarVisible: false}}
       />

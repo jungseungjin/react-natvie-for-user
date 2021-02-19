@@ -25,17 +25,26 @@ import Star from '../../../../assets/home/star.svg';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 const WorkPick = (props) => {
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   return (
     <View
-      style={{
-        width: Width_convert(375),
-        height: Width_convert(423),
-      }}>
+      style={[
+        {
+          width: Width_convert(375),
+          height: Width_convert(423) - Width_convert(25),
+        },
+        props.getIndex === props.workListLength
+          ? {
+              height: Width_convert(423),
+            }
+          : null,
+      ]}>
       <FastImage
         style={{width: Width_convert(375), height: Width_convert(240)}}
         source={{
-          uri: 'https://unsplash.it/400/400?image=1',
-          headers: {Authorization: 'someAuthToken'},
+          uri: props.item.store_thumbnail[0],
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
@@ -48,52 +57,106 @@ const WorkPick = (props) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#FFA740',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+        {props.item.info_store[0].store_badge?.indexOf('1') != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(3),
-              paddingBottom: Width_convert(3),
-              paddingLeft: Width_convert(4),
-              paddingRight: Width_convert(4),
-              fontSize: Font_normalize(9),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#FFA740',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            인기추천
-          </Text>
-        </View>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#1A74FC',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              인기추천
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge?.indexOf('2') != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(3),
-              paddingBottom: Width_convert(3),
-              paddingLeft: Width_convert(4),
-              paddingRight: Width_convert(4),
-              fontSize: Font_normalize(9),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#F7606E',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            우리가게 공임표 공개
-          </Text>
-        </View>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular,
+                color: '#ffffff',
+              }}>
+              가격할인
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge?.indexOf('3') != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#4BCA90',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular,
+                color: '#ffffff',
+              }}>
+              신규업체
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge?.indexOf('4') != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#1A74FC',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular,
+                color: '#ffffff',
+              }}>
+              우리가게 공임표 공개
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View
         style={{
@@ -110,7 +173,7 @@ const WorkPick = (props) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            아우디 Q7 ABT LINE 바디킷
+            {props.item.store_work_name}
           </Text>
         </View>
         <View
@@ -128,7 +191,7 @@ const WorkPick = (props) => {
               marginRight: Width_convert(8),
               color: '#000000',
             }}>
-            MOTION튜닝샵
+            {props.item.info_store[0].store_name}
           </Text>
           <Star
             width={Width_convert(12)}
@@ -142,7 +205,7 @@ const WorkPick = (props) => {
               marginRight: Width_convert(4),
               color: '#000000',
             }}>
-            4.8
+            {props.item.store_work_grade || 0}
           </Text>
           <Text
             style={{
@@ -151,7 +214,7 @@ const WorkPick = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            후기 33
+            후기 {props.item.reviewCount}
           </Text>
         </View>
         <View
@@ -169,28 +232,32 @@ const WorkPick = (props) => {
               fontWeight: '400',
               color: '#000000',
             }}>
-            서울특별시 강남구 청담동 12-3
+            {props.item.info_store[0].store_address}
           </Text>
           {props.editMode ? (
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                alert('gd');
+                let newArr = props.workListDel;
+                if (props.workListDel.indexOf(props.item._id) != -1) {
+                  //빼기
+                  newArr.splice(newArr.indexOf(props.item._id), 1);
+                } else {
+                  //넣기
+                  newArr.push(props.item._id);
+                }
+                props.WorkListDelChangeValue(newArr);
+                forceUpdate();
               }}>
-              <CheckBox
-                width={Width_convert(15)}
-                height={Width_convert(15)}></CheckBox>
-            </TouchableOpacity>
-          ) : null}
-          {props.editMode ? (
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => {
-                alert('gd');
-              }}>
-              <CheckedBox
-                width={Width_convert(15)}
-                height={Width_convert(15)}></CheckedBox>
+              {props.workListDel.indexOf(props.item._id) != -1 ? (
+                <CheckedBox
+                  width={Width_convert(15)}
+                  height={Width_convert(15)}></CheckedBox>
+              ) : (
+                <CheckBox
+                  width={Width_convert(15)}
+                  height={Width_convert(15)}></CheckBox>
+              )}
             </TouchableOpacity>
           ) : null}
         </View>
@@ -210,9 +277,18 @@ const WorkPick = (props) => {
               marginLeft: 'auto',
               marginRight: 0,
             }}>
-            2,300,000원
+            {props.item.store_work_total_cost
+              ? props.item.store_work_total_cost + ' 원'
+              : '업체 문의'}
           </Text>
         </View>
+        {props.getIndex === props.workListLength ? (
+          <View
+            style={{
+              width: Width_convert(375),
+              height: Width_convert(25),
+            }}></View>
+        ) : null}
       </View>
     </View>
   );

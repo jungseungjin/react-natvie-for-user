@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ShadowPropTypesIOS,
+  Platform,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -35,10 +36,14 @@ import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
+import AsyncStorage from '@react-native-community/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
 const HomeScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -50,43 +55,19 @@ const HomeScreen = (props) => {
   const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([]);
   const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([]);
-  const [recentWorkList, setRecentWorkList] = React.useState([
-    {
-      URL: 'https://unsplash.it/400/400?image=4',
-      Title: '아우디 Q7 ABTLINE 바디킷',
-      OwnersStore: '모토리 튜닝샵',
-      Average: 4.8,
-      Review: 343,
-      Address: '서울특별시 강남구 청담동',
-      Price: 30000,
-    },
-    {
-      URL: 'https://unsplash.it/400/400?image=5',
-      Title: '아우디 Q7 ABTLINE 바디킷',
-      OwnersStore: '모토리 튜닝샵2',
-      Average: 4,
-      Review: 2,
-      Address: '서울특별시 강남구 청동',
-      Price: 1000000,
-    },
-    {
-      URL: 'https://unsplash.it/400/400?image=6',
-      Title: '아우디 Q7 ABTLINE 바디킷',
-      OwnersStore: '모토리 튜닝샵3',
-      Average: 4.2,
-      Review: 214,
-      Address: '서울특별시 강남구 담동',
-      Price: 70000000,
-    },
-  ]);
+  const [recentWorkList, setRecentWorkList] = React.useState([]);
   const [showInformation, setShowInformation] = React.useState(false);
+
+  const [device, setDevice] = React.useState([]);
+
   const scrollRef = useRef();
   const handleClick = () => {
     scrollRef.current.scrollToEnd({
       animated: true,
     });
   };
-  React.useEffect(() => {
+  //홈화면 상단 슬라이드 이미지, 사장님의 작업영상 가져오기
+  const get_homeData = () => {
     try {
       let result;
       let url = Domain2 + 'home';
@@ -111,8 +92,112 @@ const HomeScreen = (props) => {
       console.log(err);
       alert(err);
     }
+  };
+  //홈화면 최근 본 작업 데이터 가져오기
+  const get_recentWorkList = async () => {
+    try {
+      let value = await AsyncStorage.getItem('recentWorkList');
+      if (value == null) {
+        setRecentWorkList([]);
+      } else {
+        let new_data = value.split(',');
+        let new_arr = [];
+        let new_str = '';
+        for (var a = 0; a < 6; a--) {
+          //6개만 나온다.
+          if (a == 0) {
+            new_str = new_data[a];
+          } else {
+            new_str = new_str + ',' + new_data[a];
+          }
+        }
+        let result;
+        let url = Domain2 + 'recentWorkList';
+
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let result = await axios.get(url, {
+              params: {
+                workid: new_str,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].message == 'ok') {
+              setRecentWorkList(result.data[0].result);
+            } else {
+              setRecentWorkList([]);
+            }
+          } else {
+            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+            setNetworkModal(true);
+          }
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  //토큰값 가져오기
+  const handlePushToken = React.useCallback(async () => {
+    const enabled = await messaging().hasPermission();
+    if (enabled) {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        let TokenValue = await AsyncStorage.getItem('fcmToken');
+        if (TokenValue) {
+          if (fcmToken == TokenValue) {
+          } else {
+            //토큰이 변경되었으니 저장한다.
+            await AsyncStorage.setItem('fcmToken', fcmToken);
+            TokenDB(fcmToken);
+          }
+        } else {
+          //처음 한번 저장한다
+          await AsyncStorage.setItem('fcmToken', fcmToken);
+          TokenDB(fcmToken);
+        }
+      }
+    } else {
+      const authorizaed = await messaging().requestPermission();
+    }
   }, []);
-  //console.log(reduexState.loginDataCheck.login);
+  const TokenDB = (fcmToken) => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'token';
+          let push_arr = [];
+          push_arr.push({getUniqueId: DeviceInfo.getUniqueId()});
+          push_arr.push({getDeviceId: DeviceInfo.getDeviceId()});
+          push_arr.push({getModel: DeviceInfo.getModel()});
+          let data = {
+            token: fcmToken,
+            getDevice: push_arr,
+          };
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            console.log(result.data[0]);
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  React.useEffect(() => {
+    get_homeData();
+    get_recentWorkList();
+    handlePushToken();
+  }, []);
   return (
     <>
       <StatusBar
@@ -327,30 +412,62 @@ const HomeScreen = (props) => {
                 Title={'최근 본 작업'}
                 navigation={props.navigation}></TabMore>
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(185),
-                marginTop: Height_convert(16),
-              }}>
-              {recentWorkList.length > 0
-                ? recentWorkList.map((item) => (
-                    <RecentWork
-                      key={item.URL}
-                      Title={item.Title}
-                      ImageUrl={item.URL}
-                      OwnersStore={item.OwnersStore}
-                      Average={item.Average}
-                      Review={item.Review}
-                      Address={item.Address}
-                      Price={item.Price}
-                      Index={recentWorkList.indexOf(item)}
-                      navigation={props.navigation}></RecentWork>
-                  ))
-                : null}
-            </ScrollView>
+            {recentWorkList.length > 0 ? (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(185),
+                  marginTop: Height_convert(16),
+                }}>
+                {recentWorkList.map((item) => (
+                  <RecentWork
+                    key={item.store_thumbnail[0]}
+                    Title={item.store_work_name}
+                    ImageUrl={item.store_thumbnail[0]}
+                    OwnersStore={item.info_store[0].store_name}
+                    Average={item.store_work_grade}
+                    Review={item.reviewCount}
+                    Address={item.info_store[0].store_address}
+                    Price={item.store_work_total_cost || null}
+                    Index={recentWorkList.indexOf(item)}
+                    navigation={props.navigation}></RecentWork>
+                ))}
+              </ScrollView>
+            ) : (
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(185),
+                  marginTop: Height_convert(16),
+                  marginLeft: Width_convert(19),
+                }}>
+                <View
+                  style={{
+                    width: Width_convert(160),
+                    height: Height_convert(90),
+                    borderRadius: Font_normalize(6),
+                    borderColor: '#DBDBDB',
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderRightWidth: 1,
+                    borderLeftWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(10),
+                      fontWeight: '700',
+                      color: '#C0C0C0',
+                    }}>
+                    최근 본 작업이 없습니다
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
           {/*최근 본 작업 끝 */}
           {/*투닝 정보 시작 */}

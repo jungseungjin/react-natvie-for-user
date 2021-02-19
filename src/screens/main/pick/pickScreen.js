@@ -1,6 +1,7 @@
 import React from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import {
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,6 +12,8 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  FlatList,
+  ScrollView,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -22,32 +25,121 @@ import Tabbar from '../../../components/Pick/Tabbar/tabbar.js';
 import TabBarBottom from '../../../components/Pick/Tabbar/tabbarBottom.js';
 import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';
-import {ScrollView} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
-import {FlatList} from 'react-native-gesture-handler';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import LoginModal from '../../../components/Modal/LoginModal.js';
 const PickScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [page, setPage] = React.useState('work');
-  const [workList, setWorkList] = React.useState([
-    {tt: '1', _id: '1'},
-    {tt: '2', _id: '2'},
-    {tt: '3', _id: '3'},
-    {tt: '4', _id: '4'},
-  ]);
-  const [storeList, setStoreList] = React.useState([
-    {tt: '1', _id: '11'},
-    {tt: '2', _id: '22'},
-    {tt: '3', _id: '33'},
-    {tt: '4', _id: '44'},
-  ]);
-  const PageChangeValue = (text) => {
-    setPage(text);
+  const [workList, setWorkList] = React.useState([]);
+  const [workListDel, setWorkListDel] = React.useState([]);
+  const WorkListDelChangeValue = (text) => setWorkListDel(text);
+  const [storeList, setStoreList] = React.useState([]);
+  const [storeListDel, setStoreListDel] = React.useState([]);
+  const StoreListDelChangeValue = (text) => setStoreListDel(text);
+  const PageChangeValue = (text) => setPage(text);
+  //로그인 되어 있으면 찜한데이터 가져오기
+  const get_pickData = () => {
+    try {
+      if (reduexState.loginDataCheck.login._id != '') {
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let url = Domain2 + 'pickData';
+            let result = await axios.get(url, {
+              params: {
+                _id: reduexState.loginDataCheck.login._id,
+              },
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].message == 'ok') {
+              if (result.data[0].workList != 0 && result.data[0].workList) {
+                setWorkList(result.data[0].workList);
+              } else {
+                setWorkList([]);
+              }
+              if (result.data[0].storeList != 0 && result.data[0].storeList) {
+                setStoreList(result.data[0].storeList);
+              } else {
+                setStoreList([]);
+              }
+            } else {
+              //setRecentWorkList([]);
+            }
+          } else {
+            setNetworkModal(true);
+          }
+        });
+      } else {
+        //로그인모달띄우기
+        setShowModal(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+  const delete_data = () => {
+    try {
+      if (reduexState.loginDataCheck.login._id != '') {
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            let url = Domain2 + 'pickData';
+            let data = {
+              _id: reduexState.loginDataCheck.login._id,
+              workListDel: workListDel,
+              storeListDel: storeListDel,
+            };
+            let result = await axios.post(url, data, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].message == 'ok') {
+              onRefresh();
+            } else {
+              //setRecentWorkList([]);
+            }
+          } else {
+            setNetworkModal(true);
+          }
+        });
+      } else {
+        //로그인모달띄우기
+        setShowModal(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    get_pickData();
+    setRefreshing(false);
+  }, []);
+  React.useEffect(() => {
+    try {
+      get_pickData();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
   return (
     <>
       <StatusBar
@@ -64,31 +156,74 @@ const PickScreen = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <FlatList
+          alwaysBounceVertical={
+            page == 'work' && workList.length == 0
+              ? false
+              : page == 'store' && storeList.length == 0
+              ? false
+              : true
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
-          data={page == 'work' ? workList : page == 'store' ? storeList : null}
+          data={
+            page == 'work' && workList.length > 0
+              ? workList
+              : page == 'store' && storeList.length > 0
+              ? storeList
+              : reduexState.loginDataCheck.login.login == false
+              ? [{message: '로그인이 필요합니다'}]
+              : page == 'work'
+              ? [{message: '찜한 작업이 없습니다'}]
+              : page == 'store'
+              ? [{message: '찜한 샵이 없습니다'}]
+              : null
+          }
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>
-            page == 'work' ? (
+            page == 'work' && workList.length > 0 ? (
               <WorkPick
-                key={item.tt}
+                getIndex={workList.indexOf(item) + 1}
+                workListLength={workList.length}
+                WorkListDelChangeValue={WorkListDelChangeValue}
+                workListDel={workListDel}
+                key={item._id}
+                item={item}
                 editMode={reduexState.editModeCheck.editMode}></WorkPick>
-            ) : page == 'store' ? (
+            ) : page == 'store' && storeList.length > 0 ? (
               <StorePick
-                key={item.tt}
+                getIndex={storeList.indexOf(item) + 1}
+                storeListLength={storeList.length}
+                StoreListDelChangeValue={StoreListDelChangeValue}
+                storeListDel={storeListDel}
+                key={item._id}
+                item={item}
                 editMode={reduexState.editModeCheck.editMode}></StorePick>
-            ) : null
+            ) : (
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(812) - Height_convert(94 + 48),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(16),
+                    fontWeight: '700',
+                    color: '#000000',
+                  }}>
+                  {item.message}
+                </Text>
+              </View>
+            )
           }
           keyExtractor={(item) => String(item._id)}></FlatList>
-        {reduexState.editModeCheck.editMode ? (
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Width_convert(55) + Height_convert(insets.bottom),
-            }}></View>
-        ) : null}
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         {reduexState.editModeCheck.editMode ? (
@@ -109,7 +244,10 @@ const PickScreen = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
-                  onPress={() => {}}
+                  onPress={() => {
+                    setWorkListDel([]);
+                    setStoreListDel([]);
+                  }}
                   style={{
                     height: Width_convert(55),
                     width: Width_convert(375) / 2,
@@ -132,6 +270,7 @@ const PickScreen = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     if (reduexState.editModeCheck.editMode) {
+                      delete_data();
                       props.updateEditMode(!reduexState.editModeCheck.editMode);
                     }
                   }}
@@ -163,6 +302,24 @@ const PickScreen = (props) => {
           </>
         ) : null}
         {/*하단 초기화 삭제하기버튼 끝*/}
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
+        {showModal ? (
+          <LoginModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            navigation={props.navigation}
+            //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+            //BottomText={'설정하러가기'}
+            //LeftButtonTitle={'아니오'}
+            //RightButtonTitle={'네'}
+          ></LoginModal>
+        ) : null}
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

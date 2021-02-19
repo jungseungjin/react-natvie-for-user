@@ -10,29 +10,36 @@ import Black_dot from '../../../../assets/home/black_dot.svg';
 import CarSettingModelDetail from './carSettingModelDetail.js';
 import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
 
 const CarSettingModel = (props) => {
   const [modelDetailList, setModelDetailList] = React.useState([]);
-  const get_model_detail_data = async (props) => {
+  const get_model_detail_data = (props) => {
     try {
       if (props?.PickBrandValue?.brand && props?.PickModelValue?.model) {
-        //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
-        let url =
-          Domain +
-          'model_detail_list/' +
-          props?.PickBrandValue?.brand +
-          '/' +
-          props?.PickModelValue?.model;
-        //props.IsLoadingChangeValue(true);
-        let result = await axios.get(url);
-        if (result.data[0].type) {
-          //get에서 type이 있으면 잘못된거
-          alert(result.data[0].message);
-          //props.IsLoadingChangeValue(false);
-        } else {
-          setModelDetailList(result.data);
-          //props.IsLoadingChangeValue(false);
-        }
+        NetInfo.addEventListener(async (state) => {
+          if (state.isConnected) {
+            //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
+            let url =
+              Domain +
+              'model_detail_list/' +
+              props?.PickBrandValue?.brand +
+              '/' +
+              props?.PickModelValue?.model;
+            //props.IsLoadingChangeValue(true);
+            let result = await axios.get(url);
+            if (result.data[0].type) {
+              //get에서 type이 있으면 잘못된거
+              alert(result.data[0].message);
+              //props.IsLoadingChangeValue(false);
+            } else {
+              setModelDetailList(result.data);
+              //props.IsLoadingChangeValue(false);
+            }
+          } else {
+            props.NetworkModalChangeValue(true);
+          }
+        });
       }
     } catch (err) {
       console.log(err);

@@ -4,6 +4,7 @@ const types = {
   LOGIN_DATA: 'LOGIN_DATA',
   LOGIN_DATA_IU_CAR: 'LOGIN_DATA_IU_CAR',
   LOGIN_DATA_LOCATION: 'LOGIN_DATA_LOCATION',
+  LOGIN_DATA_ID: 'LOGIN_DATA_ID',
 };
 
 export default types;

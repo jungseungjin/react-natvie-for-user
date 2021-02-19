@@ -20,7 +20,7 @@ const RecentWork = (props) => {
         style={styles.fastImage}
         source={{
           uri: props.ImageUrl,
-          headers: {Authorization: 'someAuthToken'},
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
@@ -28,12 +28,14 @@ const RecentWork = (props) => {
       <View style={styles.view2}>
         <Text style={styles.text2}>{props.OwnersStore}</Text>
         <Star style={styles.star}></Star>
-        <Text style={styles.text3}>{props.Average}</Text>
+        <Text style={styles.text3}>{props.Average || 0}</Text>
         <Text style={styles.text3}>후기 {props.Review}</Text>
       </View>
       <Text style={styles.text4}>주소 : {props.Address}</Text>
       <View style={styles.view3}>
-        <Text style={styles.text5}>{props.Price}원</Text>
+        <Text style={styles.text5}>
+          {props.Price ? props.Price + ' 원' : '업체문의'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -110,10 +112,10 @@ RecentWork.propTypes = {
   Title: PropTypes.string.isRequired,
   ImageUrl: PropTypes.string.isRequired,
   OwnersStore: PropTypes.string.isRequired,
-  Average: PropTypes.number.isRequired,
+  Average: PropTypes.number,
   Review: PropTypes.number.isRequired,
   Address: PropTypes.string.isRequired,
-  Price: PropTypes.number.isRequired,
+  Price: PropTypes.number,
   Index: PropTypes.number.isRequired,
 };
 export default RecentWork;

@@ -18,6 +18,7 @@ import * as Keychain from 'react-native-keychain';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
+import {prototype} from 'react-native/Libraries/Image/ImageBackground';
 const LoginScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -56,6 +57,7 @@ const LoginScreen = (props) => {
             props.updateLoginStatus(true);
             props.updateIuCar(result.data[0].loginData.iu_car);
             props.updateLocation(result.data[0].loginData.location);
+            props.update_id(result.data[0].loginData._id);
             props.navigation.navigate('More');
             props.navigation.navigate('HomeTab');
           } else {
@@ -306,6 +308,7 @@ function mapStateToProps(state) {
       login: state.loginDataCheck.login.login,
       iu_car: state.loginDataCheck.login.iu_car,
       location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
     },
     //  first: state.calculator.sumInfo.first,
     //  second: state.calculator.sumInfo.second
@@ -322,6 +325,9 @@ function mapDispatchToProps(dispatch) {
     },
     updateLocation: (Object) => {
       dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+    update_id: (text) => {
+      dispatch(ActionCreator.loginData_idCheckAction(text));
     },
   };
 }
