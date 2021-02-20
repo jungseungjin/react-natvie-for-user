@@ -14,6 +14,7 @@ import {
   request,
   RESULTS,
   requestNotifications,
+  checkNotifications,
 } from 'react-native-permissions';
 import {TextInputMask} from 'react-native-masked-text';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
@@ -277,7 +278,6 @@ const SignUpInformation = (props) => {
         alert('빈칸을 모두 입력해 주세요');
         return false;
       }
-
       let data = {
         phoneNumber: phoneNumber,
         pickBrand: pickBrand,
@@ -297,6 +297,16 @@ const SignUpInformation = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           setIsLoading(true);
+          let alarm = false;
+          alarm = await checkNotifications().then(({status, settings}) => {
+            //console.log(status); //blocked
+            if (status == 'granted') {
+              return true;
+            } else {
+              return false;
+            }
+          });
+          data.alarm = alarm;
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
           let result = await axios.post(url, data, {
             headers: {

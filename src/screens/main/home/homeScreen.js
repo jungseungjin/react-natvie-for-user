@@ -12,6 +12,7 @@ import {
   ShadowPropTypesIOS,
   Platform,
 } from 'react-native';
+import {checkNotifications} from 'react-native-permissions';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
 import Height_convert from '../../../components/Width_convert.js';
@@ -148,6 +149,7 @@ const HomeScreen = (props) => {
         let TokenValue = await AsyncStorage.getItem('fcmToken');
         if (TokenValue) {
           if (fcmToken == TokenValue) {
+            TokenDB(fcmToken);
           } else {
             //토큰이 변경되었으니 저장한다.
             await AsyncStorage.setItem('fcmToken', fcmToken);
@@ -169,13 +171,24 @@ const HomeScreen = (props) => {
         if (state.isConnected) {
           let url = Domain2 + 'token';
           let push_arr = [];
+          let alarm = false;
           push_arr.push({getUniqueId: DeviceInfo.getUniqueId()});
           push_arr.push({getDeviceId: DeviceInfo.getDeviceId()});
           push_arr.push({getModel: DeviceInfo.getModel()});
+          alarm = await checkNotifications().then(({status, settings}) => {
+            //console.log(status); //blocked
+            if (status == 'granted') {
+              return true;
+            } else {
+              return false;
+            }
+          });
           let data = {
             token: fcmToken,
             getDevice: push_arr,
+            alarm: alarm,
           };
+          console.log(data);
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',

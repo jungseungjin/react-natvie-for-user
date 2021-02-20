@@ -48,7 +48,9 @@ const ButtonTwoModal = (props) => {
                 borderBottomColor: '#DBDBDB',
                 borderBottomWidth: 1,
               },
-              props.Title == '지역 설정을 위해 위치서비스를 켜 주세요'
+              props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
+              props.Title ==
+                '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                 ? {
                     borderTopLeftRadius: Font_normalize(15),
                     borderTopRightRadius: Font_normalize(15),
@@ -70,6 +72,12 @@ const ButtonTwoModal = (props) => {
                     ? {
                         marginLeft: 0,
                         textAlign: 'center',
+                      }
+                    : props.Title ==
+                      '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
+                    ? {
+                        marginLeft: Width_convert(18),
+                        textAlign: 'left',
                       }
                     : null,
                 ]}>
@@ -111,7 +119,9 @@ const ButtonTwoModal = (props) => {
                 alignItems: 'center',
                 flexDirection: 'row',
               },
-              props.Title == '지역 설정을 위해 위치서비스를 켜 주세요'
+              props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
+              props.Title ==
+                '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                 ? {
                     borderBottomLeftRadius: Font_normalize(15),
                     borderBottomRightRadius: Font_normalize(15),
@@ -139,7 +149,9 @@ const ButtonTwoModal = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   },
-                  props.Title == '지역 설정을 위해 위치서비스를 켜 주세요'
+                  props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
+                  props.Title ==
+                    '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                     ? {
                         fontWeight: '400',
                         color: '#1976E3',
@@ -152,7 +164,11 @@ const ButtonTwoModal = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                if (props.Title == '지역 설정을 위해 위치서비스를 켜 주세요') {
+                if (
+                  props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
+                  props.Title ==
+                    '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
+                ) {
                   props.ShowModalChangeValue(false);
                   Linking.openSettings();
                 } else if (
@@ -179,7 +195,9 @@ const ButtonTwoModal = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   },
-                  props.Title == '지역 설정을 위해 위치서비스를 켜 주세요'
+                  props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
+                  props.Title ==
+                    '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                     ? {
                         fontWeight: '400',
                         color: '#1976E3',

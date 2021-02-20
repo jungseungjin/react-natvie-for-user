@@ -9,16 +9,142 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import SettingOn from '../../../../assets/home/setting_on.svg';
 import SettingOff from '../../../../assets/home/setting_off.svg';
 import {useSelector} from 'react-redux';
+import {checkNotifications} from 'react-native-permissions';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import DeviceInfo from 'react-native-device-info';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 const Setting = (props) => {
   const reduexState = useSelector((state) => state);
-  //로그인된 상태면 로그인정보로 설정값 가져오기
-  //로그인 안된상태면 디바이스정보로 설정값 가져오기
+  const [notificationPermission, setNotificationPermission] = React.useState(
+    false,
+  );
+  const [notice, setNotice] = React.useState(false);
+  const [review, setReview] = React.useState(false);
+  const [version, setVersion] = React.useState('1.0.0');
+  const [recentVersion, setRecentVersion] = React.useState('');
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [permissionModal, setPermissionModal] = React.useState(false);
+  const PermissionModalChangeValue = (text) => setPermissionModal(text);
+  const chkPermission = () => {
+    try {
+      checkNotifications().then(({status, settings}) => {
+        //console.log(status); //blocked
+        if (status == 'granted') {
+          setNotificationPermission(true);
+        } else {
+          setNotificationPermission(false);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getData = () => {
+    try {
+      let url = Domain2 + 'setting/more';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let params = {};
+          if (reduexState.loginDataCheck.login.login == true) {
+            //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
+            params = {
+              login: true,
+              _id: reduexState.loginDataCheck.login._id,
+            };
+          } else {
+            //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
+            params = {
+              login: false,
+              _id: DeviceInfo.getUniqueId(),
+            };
+          }
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params,
+          });
+          if (result.data[0].message == 'ok') {
+            setNotice(result.data[0].result?.notice);
+            setReview(result.data[0].result?.review);
+            setRecentVersion(result.data[0].version?.Version);
+            chkVersion();
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const chkVersion = () => {
+    try {
+      if (version == recentVersion) {
+        console.log('최신버전이랑 같음');
+      } else {
+        console.log('버전이 다름'); //-> 뭐시기 띄우기
+        console.log(version);
+        console.log(recentVersion);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const dataChange = (type, typeState) => {
+    try {
+      let data = {
+        review: review,
+        notice: notice,
+        chat: true,
+      };
+      let url = Domain2 + 'setting/more';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          if (type == 'review') {
+            setReview(!typeState);
+            data.review = !typeState;
+          } else if (type == 'notice') {
+            setNotice(!typeState);
+            data.notice = !typeState;
+          }
+          if (reduexState.loginDataCheck.login.login == true) {
+            //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
+            data._id = reduexState.loginDataCheck.login._id;
+            data.login = true;
+          } else {
+            //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
+            data._id = DeviceInfo.getUniqueId();
+            data.login = false;
+          }
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  React.useEffect(() => {
+    chkPermission();
+    getData();
+  }, []);
   //현재버전과 DB상의 버전을 비교해서 최신으로 안내
-  //여기 알림도 퍼미션이 꺼져있으면 모두 비활성화,
-  //퍼미션이 꺼져있고 알림 비활성화에서 알림켜면 설정으로가서 설정할수있게한다음 설정이 되어야 활성화로 가능
-  //퍼미션이 꺼져있으면 알림 비활성화 기본
-  //퍼미션이 켜져있고 알림 비활성화에서 알림켜면 켜지기
-  //퍼미션이 켜져있으면 알림 활성화가 기본 알림 끄면 꺼지기
 
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -30,7 +156,21 @@ const Setting = (props) => {
         <View style={{borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (review) {
+                //알림 켜진상태
+                //알림 끄기
+                dataChange('review', review);
+              } else {
+                //알림 꺼진상태
+                if (notificationPermission) {
+                  dataChange('review', review);
+                  //알림 켜기
+                } else {
+                  setPermissionModal(true);
+                }
+              }
+            }}
             style={{
               width: Width_convert(314),
               height: Width_convert(64),
@@ -48,13 +188,31 @@ const Setting = (props) => {
               }}>
               내게시물 댓글 알림
             </Text>
-            <SettingOn></SettingOn>
+            {review && notificationPermission ? (
+              <SettingOn></SettingOn>
+            ) : (
+              <SettingOff></SettingOff>
+            )}
           </TouchableOpacity>
         </View>
         <View style={{borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
           <TouchableOpacity
             activeOpacity={1}
-            onPress={() => {}}
+            onPress={() => {
+              if (notice) {
+                //알림 켜진상태
+                //알림 끄기
+                dataChange('notice', notice);
+              } else {
+                //알림 꺼진상태
+                if (notificationPermission) {
+                  dataChange('notice', notice);
+                  //알림 켜기
+                } else {
+                  setPermissionModal(true);
+                }
+              }
+            }}
             style={{
               width: Width_convert(314),
               height: Width_convert(64),
@@ -72,7 +230,11 @@ const Setting = (props) => {
               }}>
               공지사항 알림
             </Text>
-            <SettingOff></SettingOff>
+            {notice && notificationPermission ? (
+              <SettingOn></SettingOn>
+            ) : (
+              <SettingOff></SettingOff>
+            )}
           </TouchableOpacity>
         </View>
         <View style={{borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
@@ -103,11 +265,31 @@ const Setting = (props) => {
                 fontWeight: '700',
                 color: '#000000',
               }}>
-              1.0.0
+              {version}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
+      {permissionModal ? (
+        <ButtonTwoModal
+          ShowModalChangeValue={PermissionModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
+          }
+          //BottomText={''}
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}
+          CenterButtonText={'닫기'}></ButtonTwoModal>
+      ) : null}
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
     </SafeAreaView>
   );
 };
