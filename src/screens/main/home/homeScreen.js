@@ -140,76 +140,9 @@ const HomeScreen = (props) => {
       console.log(err);
     }
   };
-  //토큰값 가져오기
-  const handlePushToken = React.useCallback(async () => {
-    const enabled = await messaging().hasPermission();
-    if (enabled) {
-      const fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        let TokenValue = await AsyncStorage.getItem('fcmToken');
-        if (TokenValue) {
-          if (fcmToken == TokenValue) {
-            TokenDB(fcmToken);
-          } else {
-            //토큰이 변경되었으니 저장한다.
-            await AsyncStorage.setItem('fcmToken', fcmToken);
-            TokenDB(fcmToken);
-          }
-        } else {
-          //처음 한번 저장한다
-          await AsyncStorage.setItem('fcmToken', fcmToken);
-          TokenDB(fcmToken);
-        }
-      }
-    } else {
-      const authorizaed = await messaging().requestPermission();
-    }
-  }, []);
-  const TokenDB = (fcmToken) => {
-    try {
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          let url = Domain2 + 'token';
-          let push_arr = [];
-          let alarm = false;
-          push_arr.push({getUniqueId: DeviceInfo.getUniqueId()});
-          push_arr.push({getDeviceId: DeviceInfo.getDeviceId()});
-          push_arr.push({getModel: DeviceInfo.getModel()});
-          alarm = await checkNotifications().then(({status, settings}) => {
-            //console.log(status); //blocked
-            if (status == 'granted') {
-              return true;
-            } else {
-              return false;
-            }
-          });
-          let data = {
-            token: fcmToken,
-            getDevice: push_arr,
-            alarm: alarm,
-          };
-          console.log(data);
-          let result = await axios.post(url, data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (result.data[0].message == 'ok') {
-            console.log(result.data[0]);
-          } else {
-          }
-        } else {
-          setNetworkModal(true);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
   React.useEffect(() => {
     get_homeData();
     get_recentWorkList();
-    handlePushToken();
   }, []);
   return (
     <>

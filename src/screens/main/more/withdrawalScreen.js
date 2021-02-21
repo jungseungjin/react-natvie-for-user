@@ -8,9 +8,55 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import {useSelector} from 'react-redux';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import * as Keychain from 'react-native-keychain';
+import DeviceInfo from 'react-native-device-info';
 
 const Withdrawal = (props) => {
+  //삭제하기 실행하면 로그아웃상태로 만들고 기기데이터로 뭘 줘야하나?
+  const reduexState = useSelector((state) => state);
   const [withdrawalChk, setWithdrawalChk] = React.useState(false);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const sendData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'user/delete';
+          let data = {
+            _id: reduexState.loginDataCheck.login.data._id,
+            uniqueId: DeviceInfo.getUniqueId(),
+          };
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            await Keychain.resetGenericPassword();
+            props.updateLoginStatus(false);
+            props.updateIuCar([]);
+            props.updateLocation({});
+            props.update_id('');
+            props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+            props.navigation.navigate('More');
+            props.navigation.navigate('Home');
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -120,7 +166,7 @@ const Withdrawal = (props) => {
           activeOpacity={1}
           onPress={() => {
             if (withdrawalChk) {
-              alert('gg');
+              sendData();
             } else {
               //
             }
@@ -149,9 +195,50 @@ const Withdrawal = (props) => {
             계정 삭제하기
           </Text>
         </TouchableOpacity>
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
     </>
   );
 };
 
-export default Withdrawal;
+function mapStateToProps(state) {
+  return {
+    login: {
+      login: state.loginDataCheck.login.login,
+      iu_car: state.loginDataCheck.login.iu_car,
+      location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
+      data: state.loginDataCheck.login.data,
+    },
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateLoginStatus: (boo) => {
+      dispatch(ActionCreator.loginDataCheckAction(boo));
+    },
+    updateIuCar: (Array) => {
+      dispatch(ActionCreator.loginDataIuCarCheckAction(Array));
+    },
+    updateLocation: (Object) => {
+      dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+    update_id: (text) => {
+      dispatch(ActionCreator.loginData_idCheckAction(text));
+    },
+    updateData: (Object) => {
+      dispatch(ActionCreator.loginDataDataCheckAction(Object));
+    },
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Withdrawal);

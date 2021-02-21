@@ -8,6 +8,8 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import SettingOn from '../../../../assets/home/setting_on.svg';
 import SettingOff from '../../../../assets/home/setting_off.svg';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import {checkNotifications} from 'react-native-permissions';
 import axios from 'axios';
@@ -21,6 +23,8 @@ const Setting = (props) => {
   const [notificationPermission, setNotificationPermission] = React.useState(
     false,
   );
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [notice, setNotice] = React.useState(false);
   const [review, setReview] = React.useState(false);
   const [version, setVersion] = React.useState('1.0.0');
@@ -29,6 +33,7 @@ const Setting = (props) => {
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [permissionModal, setPermissionModal] = React.useState(false);
   const PermissionModalChangeValue = (text) => setPermissionModal(text);
+
   const chkPermission = () => {
     try {
       checkNotifications().then(({status, settings}) => {
@@ -45,46 +50,16 @@ const Setting = (props) => {
   };
   const getData = () => {
     try {
-      let url = Domain2 + 'setting/more';
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          let params = {};
-          if (reduexState.loginDataCheck.login.login == true) {
-            //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
-            params = {
-              login: true,
-              _id: reduexState.loginDataCheck.login._id,
-            };
-          } else {
-            //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
-            params = {
-              login: false,
-              _id: DeviceInfo.getUniqueId(),
-            };
-          }
-          let result = await axios.get(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            params,
-          });
-          if (result.data[0].message == 'ok') {
-            setNotice(result.data[0].result?.notice);
-            setReview(result.data[0].result?.review);
-            setRecentVersion(result.data[0].version?.Version);
-            chkVersion();
-          } else {
-          }
-        } else {
-          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
-        }
-      });
+      if (reduexState.loginDataCheck.login?.data?.alarm) {
+        setNotice(reduexState.loginDataCheck.login.data.alarm?.notice);
+        setReview(reduexState.loginDataCheck.login.data.alarm?.review);
+      }
     } catch (err) {
       console.log(err);
     }
   };
   const chkVersion = () => {
+    //버전가져와야함
     try {
       if (version == recentVersion) {
         console.log('최신버전이랑 같음');
@@ -99,41 +74,54 @@ const Setting = (props) => {
   };
   const dataChange = (type, typeState) => {
     try {
+      chkPermission();
       let data = {
         review: review,
         notice: notice,
         chat: true,
       };
-      let url = Domain2 + 'setting/more';
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          if (type == 'review') {
-            setReview(!typeState);
-            data.review = !typeState;
-          } else if (type == 'notice') {
-            setNotice(!typeState);
-            data.notice = !typeState;
-          }
-          if (reduexState.loginDataCheck.login.login == true) {
-            //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
-            data._id = reduexState.loginDataCheck.login._id;
-            data.login = true;
-          } else {
-            //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
-            data._id = DeviceInfo.getUniqueId();
-            data.login = false;
-          }
-          let result = await axios.post(url, data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+      checkNotifications().then(({status, settings}) => {
+        //console.log(status); //blocked
+        if (status == 'granted') {
+          let url = Domain2 + 'setting/more';
+          NetInfo.addEventListener(async (state) => {
+            if (state.isConnected) {
+              let prevData = reduexState.loginDataCheck.login.data;
+              if (type == 'review') {
+                setReview(!typeState);
+                data.review = !typeState;
+                prevData.alarm.review = !typeState;
+              } else if (type == 'notice') {
+                setNotice(!typeState);
+                data.notice = !typeState;
+                prevData.alarm.notice = !typeState;
+              }
+              if (reduexState.loginDataCheck.login.login == true) {
+                //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
+                data._id = reduexState.loginDataCheck.login._id;
+                data.login = true;
+              } else {
+                //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
+                data._id = DeviceInfo.getUniqueId();
+                data.login = false;
+              }
+              let result = await axios.post(url, data, {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              if (result.data[0].message == 'ok') {
+                props.updateData(prevData);
+              } else {
+              }
+            } else {
+              //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+              setNetworkModal(true);
+            }
           });
-          if (result.data[0].message == 'ok') {
-          } else {
-          }
         } else {
-          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          PermissionModalChangeValue(true);
+          return false;
         }
       });
     } catch (err) {
@@ -157,18 +145,13 @@ const Setting = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              if (review) {
+              if (review && notificationPermission) {
                 //알림 켜진상태
                 //알림 끄기
                 dataChange('review', review);
               } else {
                 //알림 꺼진상태
-                if (notificationPermission) {
-                  dataChange('review', review);
-                  //알림 켜기
-                } else {
-                  setPermissionModal(true);
-                }
+                dataChange('review', review);
               }
             }}
             style={{
@@ -199,18 +182,13 @@ const Setting = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              if (notice) {
+              if (notice && notificationPermission) {
                 //알림 켜진상태
                 //알림 끄기
                 dataChange('notice', notice);
               } else {
+                dataChange('notice', notice);
                 //알림 꺼진상태
-                if (notificationPermission) {
-                  dataChange('notice', notice);
-                  //알림 켜기
-                } else {
-                  setPermissionModal(true);
-                }
               }
             }}
             style={{
@@ -294,4 +272,37 @@ const Setting = (props) => {
   );
 };
 
-export default Setting;
+function mapStateToProps(state) {
+  return {
+    login: {
+      login: state.loginDataCheck.login.login,
+      iu_car: state.loginDataCheck.login.iu_car,
+      location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
+      data: state.loginDataCheck.login.data,
+    },
+    //  first: state.calculator.sumInfo.first,
+    //  second: state.calculator.sumInfo.second
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateLoginStatus: (boo) => {
+      dispatch(ActionCreator.loginDataCheckAction(boo));
+    },
+    updateIuCar: (Array) => {
+      dispatch(ActionCreator.loginDataIuCarCheckAction(Array));
+    },
+    updateLocation: (Object) => {
+      dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+    update_id: (text) => {
+      dispatch(ActionCreator.loginData_idCheckAction(text));
+    },
+    updateData: (Object) => {
+      dispatch(ActionCreator.loginDataDataCheckAction(Object));
+    },
+  };
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Setting);

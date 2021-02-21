@@ -58,6 +58,7 @@ const LoginScreen = (props) => {
             props.updateIuCar(result.data[0].loginData.iu_car);
             props.updateLocation(result.data[0].loginData.location);
             props.update_id(result.data[0].loginData._id);
+            props.updateData(result.data[0].loginData);
             props.navigation.navigate('More');
             props.navigation.navigate('HomeTab');
           } else {
@@ -309,6 +310,7 @@ function mapStateToProps(state) {
       iu_car: state.loginDataCheck.login.iu_car,
       location: state.loginDataCheck.login.location,
       _id: state.loginDataCheck.login._id,
+      data: state.loginDataCheck.login.data,
     },
     //  first: state.calculator.sumInfo.first,
     //  second: state.calculator.sumInfo.second
@@ -328,6 +330,9 @@ function mapDispatchToProps(dispatch) {
     },
     update_id: (text) => {
       dispatch(ActionCreator.loginData_idCheckAction(text));
+    },
+    updateData: (Object) => {
+      dispatch(ActionCreator.loginDataDataCheckAction(Object));
     },
   };
 }

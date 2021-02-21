@@ -26,15 +26,52 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import IsLoading from '../../../components/ActivityIndicator';
-import Domain2 from '../../../../key/Domain2.js';
-import axios from 'axios';
-import NetInfo from '@react-native-community/netinfo';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import * as Keychain from 'react-native-keychain';
+import DeviceInfo from 'react-native-device-info';
 const InfoScreen = (props) => {
+  //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const logout = async () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'user/logout';
+          let data = {
+            uniqueId: DeviceInfo.getUniqueId(),
+          };
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            await Keychain.resetGenericPassword();
+            props.updateLoginStatus(false);
+            props.updateIuCar([]);
+            props.updateLocation({});
+            props.update_id('');
+            props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+            props.navigation.navigate('More');
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
@@ -72,8 +109,10 @@ const InfoScreen = (props) => {
                     borderRadius: Width_convert(78),
                   }}
                   source={{
-                    uri: 'https://unsplash.it/400/400?image=1',
-                    headers: {Authorization: 'someAuthToken'},
+                    uri:
+                      reduexState.loginDataCheck.login.data
+                        .review_user_iu_image,
+                    //headers: {Authorization: 'someAuthToken'},
                     priority: FastImage.priority.normal,
                   }}
                   resizeMode={FastImage.resizeMode.stretch}></FastImage>
@@ -112,7 +151,7 @@ const InfoScreen = (props) => {
                       fontSize: Font_normalize(16),
                       color: '#000000',
                     }}>
-                    백준열
+                    {reduexState.loginDataCheck?.login?.data?.iu_name}
                   </Text>
                 </View>
               </View>
@@ -151,7 +190,7 @@ const InfoScreen = (props) => {
                       fontSize: Font_normalize(16),
                       color: '#000000',
                     }}>
-                    투링의순정
+                    {reduexState.loginDataCheck?.login?.data?.iu_nickname}
                   </Text>
                 </View>
               </View>
@@ -186,7 +225,9 @@ const InfoScreen = (props) => {
                     휴대폰번호
                   </Text>
                   <TextInput
-                    placeholder="01232223232"
+                    placeholder={
+                      reduexState.loginDataCheck?.login?.data?.iu_phone
+                    }
                     placeholderTextColor={'#A7A7A7'}
                     placeholderStyle={{
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -265,7 +306,10 @@ const InfoScreen = (props) => {
                       fontSize: Font_normalize(16),
                       color: '#000000',
                     }}>
-                    광주 북구 용봉동
+                    {
+                      reduexState.loginDataCheck?.login?.data?.location
+                        ?.legalcode
+                    }
                   </Text>
                   <TouchableOpacity
                     activeOpacity={1}
@@ -506,7 +550,7 @@ const InfoScreen = (props) => {
                       fontSize: Font_normalize(16),
                       color: '#000000',
                     }}>
-                    eoqwmmfkdsno@nabef.fefew
+                    {reduexState.loginDataCheck?.login?.data?.iu_id}
                   </Text>
                 </View>
               </View>
@@ -620,9 +664,16 @@ const InfoScreen = (props) => {
                       justifyContent: 'space-between',
                     }}>
                     <Text>카카오톡 수신동의</Text>
-                    <CheckedBox
-                      width={Width_convert(14)}
-                      height={Width_convert(14)}></CheckedBox>
+                    {reduexState.loginDataCheck?.login?.data?.marketting
+                      ?.kakaotalk ? (
+                      <CheckedBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckedBox>
+                    ) : (
+                      <CheckBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckBox>
+                    )}
                   </View>
                   <View
                     style={{
@@ -633,9 +684,16 @@ const InfoScreen = (props) => {
                       justifyContent: 'space-between',
                     }}>
                     <Text>메일 수신동의</Text>
-                    <CheckBox
-                      width={Width_convert(14)}
-                      height={Width_convert(14)}></CheckBox>
+                    {reduexState.loginDataCheck?.login?.data?.marketting
+                      ?.mail ? (
+                      <CheckedBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckedBox>
+                    ) : (
+                      <CheckBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckBox>
+                    )}
                   </View>
                   <View
                     style={{
@@ -646,9 +704,16 @@ const InfoScreen = (props) => {
                       justifyContent: 'space-between',
                     }}>
                     <Text>SMS 수신동의</Text>
-                    <CheckedBox
-                      width={Width_convert(14)}
-                      height={Width_convert(14)}></CheckedBox>
+                    {reduexState.loginDataCheck?.login?.data?.marketting
+                      ?.sms ? (
+                      <CheckedBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckedBox>
+                    ) : (
+                      <CheckBox
+                        width={Width_convert(14)}
+                        height={Width_convert(14)}></CheckBox>
+                    )}
                   </View>
                 </View>
               </View>
@@ -666,10 +731,7 @@ const InfoScreen = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     if (reduexState.loginDataCheck.login.login == true) {
-                      props.updateLoginStatus(false);
-                      props.updateIuCar([]);
-                      props.updateLocation({});
-                      props.navigation.navigate('More');
+                      logout();
                     } else {
                     }
                   }}
@@ -725,6 +787,14 @@ const InfoScreen = (props) => {
           </ScrollView>
         </DismissKeyboard>
       </KeyboardAvoidingView>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -735,6 +805,8 @@ function mapStateToProps(state) {
       login: state.loginDataCheck.login.login,
       iu_car: state.loginDataCheck.login.iu_car,
       location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
+      data: state.loginDataCheck.login.data,
     },
     //  first: state.calculator.sumInfo.first,
     //  second: state.calculator.sumInfo.second
@@ -751,6 +823,12 @@ function mapDispatchToProps(dispatch) {
     },
     updateLocation: (Object) => {
       dispatch(ActionCreator.loginDataLocationCheckAction(Object));
+    },
+    update_id: (text) => {
+      dispatch(ActionCreator.loginData_idCheckAction(text));
+    },
+    updateData: (Object) => {
+      dispatch(ActionCreator.loginDataDataCheckAction(Object));
     },
   };
 }
