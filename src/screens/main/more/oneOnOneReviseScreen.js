@@ -24,14 +24,16 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
-const OneOnOneRegister = (props) => {
+const OneOnOneRevise = (props) => {
   const reduexState = useSelector((state) => state);
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [contentsLengthModal, setContentsLengthModal] = React.useState(false);
   const ContentsLengthModalChangeValue = (text) => setContentsLengthModal(text);
-  const [title, setTitle] = React.useState('');
-  const [contents, setContents] = React.useState('');
+  const [title, setTitle] = React.useState(props.route.params.item.title);
+  const [contents, setContents] = React.useState(
+    props.route.params.item.contents,
+  );
   const sendData = () => {
     try {
       if (contents.length > 9) {
@@ -41,9 +43,10 @@ const OneOnOneRegister = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'question/register';
+          let url = Domain2 + 'question/revise';
           let data = {
             _id: reduexState.loginDataCheck.login.data._id,
+            question_id: props.route.params.item._id,
             title: title,
             contents: contents,
           };
@@ -175,7 +178,7 @@ const OneOnOneRegister = (props) => {
                 fontWeight: '700',
                 color: '#FFFFFF',
               }}>
-              작성완료
+              수정완료
             </Text>
           </TouchableOpacity>
         </View>
@@ -200,4 +203,4 @@ const OneOnOneRegister = (props) => {
   );
 };
 
-export default OneOnOneRegister;
+export default OneOnOneRevise;

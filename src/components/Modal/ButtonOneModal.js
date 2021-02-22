@@ -32,6 +32,10 @@ const ButtonOneModal = (props) => {
               height: Height_convert(164),
               backgroundColor: '#FFFFFF',
             },
+            props.Title ==
+            '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.'
+              ? {height: Height_convert(164 + 70)}
+              : null,
           ]}>
           <View
             style={[
@@ -44,6 +48,11 @@ const ButtonOneModal = (props) => {
                 borderBottomWidth: 1,
               },
               props.Title.indexOf('14세미만') != -1
+                ? {
+                    height: Height_convert(178),
+                  }
+                : props.Title ==
+                  '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.'
                 ? {
                     height: Height_convert(178),
                   }
@@ -63,9 +72,23 @@ const ButtonOneModal = (props) => {
                   props.Title == '해당정보로 등록된 아이디가 없습니다' ||
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
-                  props.Title == '인터넷 연결을 확인해주세요'
+                  props.Title == '내용을 10자 이상 입력해주세요' ||
+                  props.Title == '인터넷 연결을 확인해주세요' ||
+                  props.Title == '인증번호를 다시 입력해주세요' ||
+                  props.Title == '본인인증이 완료되었습니다'
                     ? {
                         marginLeft: 0,
+                        textAlign: 'center',
+                        fontWeight: '700',
+                        fontSize: Font_normalize(15),
+                      }
+                    : props.Title ==
+                        '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.' ||
+                      props.Title ==
+                        '비밀번호가 변경되어 로그아웃 되었습니다 \n로그인페이지로 이동합니다'
+                    ? {
+                        marginLeft: Width_convert(10),
+                        marginRight: Width_convert(10),
                         textAlign: 'center',
                         fontWeight: '700',
                         fontSize: Font_normalize(15),
@@ -113,7 +136,15 @@ const ButtonOneModal = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                props.ShowModalChangeValue(false);
+                if (
+                  props.Title ==
+                  '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.'
+                ) {
+                  props.ShowModalChangeValue(false);
+                  props.navigation.goBack();
+                } else {
+                  props.ShowModalChangeValue(false);
+                }
               }}>
               <Text
                 style={[
@@ -128,6 +159,13 @@ const ButtonOneModal = (props) => {
                   props.Title == '이미 가입된 중복 메일계정입니다' ||
                   props.Title == '회원님의 성함을 입력해주세요' ||
                   props.Title == '인터넷 연결을 확인해주세요' ||
+                  props.Title == '내용을 10자 이상 입력해주세요' ||
+                  props.Title == '인증번호를 다시 입력해주세요' ||
+                  props.Title == '본인인증이 완료되었습니다' ||
+                  props.Title ==
+                    '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.' ||
+                  props.Title ==
+                    '비밀번호가 변경되어 로그아웃 되었습니다 \n로그인페이지로 이동합니다' ||
                   props.Title.indexOf('14세미만') != -1
                     ? {
                         color: '#1976E3',

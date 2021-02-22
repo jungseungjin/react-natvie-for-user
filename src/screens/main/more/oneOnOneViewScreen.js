@@ -13,11 +13,47 @@ import BracketUp from '../../../../assets/home/braket_up.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
 import Enter from '../../../../assets/home/Enter.svg';
+import moment from 'moment';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import {useSelector} from 'react-redux';
 const OneOnOneView = (props) => {
-  const [page, setPage] = React.useState('TOP5');
-  const PageChangeValue = (text) => setPage(text);
-  const [dataList, setDataList] = React.useState([]);
-
+  const reduexState = useSelector((state) => state);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const DeleteQuestion = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'question/delete';
+          let data = {
+            _id: reduexState.loginDataCheck.login.data._id,
+            question_id: props.route.params.item._id,
+            title: props.route.params.item.title,
+            contents: props.route.params.item.contents,
+          };
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            props.navigation.navigate('OneOnOne');
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <StatusBar
@@ -72,7 +108,11 @@ const OneOnOneView = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                //props.navigation.navigate('OneOnOneRegister');
+                if (props.route.params.item.status == 0) {
+                  props.navigation.navigate('OneOnOneRevise', {
+                    item: props.route.params.item,
+                  });
+                }
               }}>
               <Text
                 style={{
@@ -83,13 +123,15 @@ const OneOnOneView = (props) => {
                   fontSize: Font_normalize(14),
                   color: '#63BEDB',
                 }}>
-                수정
+                {props.route.params.item.status == 0 ? '수정' : null}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                //props.navigation.navigate('OneOnOneRegister');
+                if (props.route.params.item.status == 0) {
+                  setShowModal(true);
+                }
               }}>
               <Text
                 style={{
@@ -100,7 +142,7 @@ const OneOnOneView = (props) => {
                   fontSize: Font_normalize(14),
                   color: '#FF0000',
                 }}>
-                삭제
+                {props.route.params.item.status == 0 ? '삭제' : null}
               </Text>
             </TouchableOpacity>
           </View>
@@ -134,7 +176,7 @@ const OneOnOneView = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
-                  작업시간이 수정이 안되요.
+                  {props.route.params.item.title}
                 </Text>
                 <Text
                   style={{
@@ -143,7 +185,9 @@ const OneOnOneView = (props) => {
                     fontSize: Font_normalize(8),
                     color: '#9F9F9F',
                   }}>
-                  2020년 7월 20일
+                  {moment(props.route.params.item.redDate).format(
+                    'YYYY년 MM월 DD일',
+                  )}
                 </Text>
               </View>
             </View>
@@ -171,24 +215,35 @@ const OneOnOneView = (props) => {
                     fontSize: Font_normalize(13),
                     color: '#000000',
                   }}>
-                  작업관리에 들어가서 등록한 작업을 수정하려고 하는데 수정오류가
-                  있습니다.
+                  {props.route.params.item.contents}
                 </Text>
               </View>
             </View>
 
             <View
-              style={{
-                minHeight: Height_convert(110),
-              }}>
+              style={[
+                {
+                  minHeight: Height_convert(110),
+                },
+                props.route.params.item.status == 0
+                  ? {
+                      minHeight: Height_convert(50),
+                    }
+                  : null,
+              ]}>
               <View
-                style={{
-                  marginTop: Height_convert(15),
-                  marginBottom: Height_convert(15),
-                  marginLeft: Width_convert(17),
-                  marginRight: Width_convert(17),
-                  width: Width_convert(375 - 34),
-                }}>
+                style={[
+                  {
+                    marginTop: Height_convert(15),
+                    marginBottom: Height_convert(15),
+                    marginLeft: Width_convert(17),
+                    marginRight: Width_convert(17),
+                    width: Width_convert(375 - 34),
+                  },
+                  props.route.params.item.status == 0
+                    ? {marginBottom: 0}
+                    : null,
+                ]}>
                 <View
                   style={{
                     height: Height_convert(20),
@@ -212,7 +267,9 @@ const OneOnOneView = (props) => {
                         fontWeight: '700',
                         color: '#37A0DB',
                       }}>
-                      답변 튜닝 담당자
+                      {props.route.params.item.status == 0
+                        ? '답변 예정'
+                        : '답변 투닝 담당자'}
                     </Text>
                     <Text
                       style={{
@@ -223,28 +280,55 @@ const OneOnOneView = (props) => {
                         fontWeight: '400',
                         color: '#9F9F9F',
                       }}>
-                      2020년 7월 30일
+                      {props.route.params.item.status == 0
+                        ? ''
+                        : moment(props.route.params.item.replyDate).format(
+                            'YYYY년 MM월 DD일',
+                          )}
                     </Text>
                   </View>
                 </View>
                 <Text
-                  style={{
-                    width: Width_convert(375 - 34 - 11 - 11),
-                    marginLeft: Width_convert(17 + 11),
-                    marginTop: Height_convert(15),
-                    marginBottom: Height_convert(15),
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(13),
-                    color: '#000000',
-                  }}>
-                  작업관리에 들어가서 등록한 작업을 수정하려고 하는데 수정오류가
-                  있습니다.
+                  style={[
+                    {
+                      width: Width_convert(375 - 34 - 11 - 11),
+                      marginLeft: Width_convert(17 + 11),
+                      marginTop: Height_convert(15),
+                      marginBottom: Height_convert(15),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontWeight: '400',
+                      fontSize: Font_normalize(13),
+                      color: '#000000',
+                    },
+                    props.route.params.item.status == 0
+                      ? {marginBottom: 0}
+                      : null,
+                  ]}>
+                  {props.route.params.item.status == 0
+                    ? ''
+                    : props.route.params.item.reply}
                 </Text>
               </View>
             </View>
           </View>
         </ScrollView>
+        {showModal ? (
+          <ButtonTwoModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            DeleteQuestion={DeleteQuestion}
+            navigation={props.navigation}
+            Title={'문의를 삭제하시겠습니까?'}
+            LeftButtonTitle={'취소'}
+            RightButtonTitle={'확인'}></ButtonTwoModal>
+        ) : null}
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
     </>
   );

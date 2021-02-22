@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  Linking,
+  Platform,
+} from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
@@ -9,9 +16,14 @@ import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
+import {useSelector} from 'react-redux';
+import LoginModal from '../../../components/Modal/LoginModal.js';
 
 const CustomerServiceScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
   return (
     <>
       <StatusBar
@@ -66,7 +78,11 @@ const CustomerServiceScreen = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                props.navigation.navigate('OneOnOne');
+                if (reduexState.loginDataCheck.login.login == true) {
+                  props.navigation.navigate('OneOnOne');
+                } else {
+                  setShowModal(true);
+                }
               }}
               style={{
                 marginTop: Height_convert(27),
@@ -177,7 +193,13 @@ const CustomerServiceScreen = (props) => {
             }}>
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => {}}
+              onPress={() => {
+                if (Platform.OS !== 'android') {
+                  Linking.openURL(`telprompt:01027655361`);
+                } else {
+                  Linking.openURL(`tel:01027655361`);
+                }
+              }}
               style={{
                 width: Width_convert(163),
                 height: Height_convert(36),
@@ -197,7 +219,7 @@ const CustomerServiceScreen = (props) => {
                   fontSize: Font_normalize(11),
                   color: '#000000',
                 }}>
-                070-0000-0000
+                010-2765-5361
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -229,6 +251,16 @@ const CustomerServiceScreen = (props) => {
             </TouchableOpacity>
           </View>
         </View>
+        {showModal ? (
+          <LoginModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            navigation={props.navigation}
+            //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+            //BottomText={'설정하러가기'}
+            //LeftButtonTitle={'아니오'}
+            //RightButtonTitle={'네'}
+          ></LoginModal>
+        ) : null}
       </SafeAreaView>
     </>
   );

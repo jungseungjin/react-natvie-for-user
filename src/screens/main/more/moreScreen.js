@@ -29,7 +29,7 @@ const MoreScreen = (props) => {
   );
   const LoginChk = () => {
     try {
-      if (reduexState.loginDataCheck.login.login) {
+      if (reduexState.loginDataCheck.login.login == true) {
       } else {
         setShowModal(true);
       }

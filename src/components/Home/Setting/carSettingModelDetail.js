@@ -12,6 +12,8 @@ const CarSettingModelDetail = (props) => {
         props.PickModelDetailChangeValue(props.item);
         if (props.from == 'SignUp') {
           props.PageChangeValue('SignUp');
+        } else if (props.from == 'info') {
+          props.PageChangeValue('info');
         }
       }}
       style={{justifyContent: 'center'}}>

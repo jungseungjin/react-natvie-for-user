@@ -17,11 +17,63 @@ import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
 import X from '../../../../assets/home/x_black.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import {useSelector} from 'react-redux';
+import DeviceInfo from 'react-native-device-info';
 const Feedback = (props) => {
-  const [page, setPage] = React.useState('TOP5');
-  const PageChangeValue = (text) => setPage(text);
-  const [dataList, setDataList] = React.useState([]);
+  const reduexState = useSelector((state) => state);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [feedBackCompleteModel, setFeedBackCompleteModel] = React.useState(
+    false,
+  );
+  const FeedBackCompleteModelChangeValue = (text) =>
+    setFeedBackCompleteModel(text);
+  const [title, setTitle] = React.useState('');
+  const [contents, setContents] = React.useState('');
 
+  const sendData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'feedback/register';
+          let data = {};
+          if (reduexState.loginDataCheck.login.login == true) {
+            data = {
+              _id: reduexState.loginDataCheck.login.data._id,
+              title: title,
+              contents: contents,
+            };
+          } else {
+            data = {
+              _id: 'no',
+              title: title,
+              contents: contents,
+            };
+          }
+          data.getUniqueId = DeviceInfo.getUniqueId();
+          data.getDeviceId = DeviceInfo.getDeviceId();
+          data.getModel = DeviceInfo.getModel();
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setFeedBackCompleteModel(true);
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <DismissKeyboard>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -46,6 +98,11 @@ const Feedback = (props) => {
           }}>
           <TextInput
             placeholder="제목"
+            autoCapitalize={'none'}
+            autoCompleteType={'off'}
+            autoCorrect={false}
+            onChangeText={(title) => setTitle(title)}
+            value={title}
             placeholderStyle={{
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontWeight: '700',
@@ -80,7 +137,12 @@ const Feedback = (props) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <TextInput
               multiline={true}
-              placeholder="문의 내용을 10자 이상 입력해주세요"
+              autoCapitalize={'none'}
+              autoCompleteType={'off'}
+              autoCorrect={false}
+              onChangeText={(contents) => setContents(contents)}
+              value={contents}
+              placeholder="투닝에게 뼈가 되고 살이 되는 피드백을 해주세요!"
               placeholderStyle={{
                 minHeight: Height_convert(812),
                 fontFamily: Fonts?.NanumSqureRegular || null,
@@ -111,7 +173,11 @@ const Feedback = (props) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              sendData();
+            }}>
             <Text
               style={{
                 fontFamily: Fonts?.NanumSqureRegular || null,
@@ -123,6 +189,24 @@ const Feedback = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
+        {feedBackCompleteModel ? (
+          <ButtonOneModal
+            ShowModalChangeValue={FeedBackCompleteModelChangeValue}
+            navigation={props.navigation}
+            Title={
+              '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.'
+            }
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
     </DismissKeyboard>
   );

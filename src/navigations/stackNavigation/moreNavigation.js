@@ -27,6 +27,7 @@ import FrequentlyQuestion from '../../screens/main/more/frequentlyQuestionScreen
 import OneOnOne from '../../screens/main/more/oneOnOneScreen.js';
 import OneOnOneView from '../../screens/main/more/oneOnOneViewScreen.js';
 import OneOnOneRegister from '../../screens/main/more/oneOnOneRegisterScreen.js';
+import OneOnOneRevise from '../../screens/main/more/oneOnOneReviseScreen.js';
 import Feedback from '../../screens/main/more/feedbackScreen.js';
 import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
 import Map_more from '../../screens/main/home/mapScreen.js';
@@ -286,6 +287,14 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="OneOnOneRegister"
         component={OneOnOneRegister}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OneOnOneRevise"
+        component={OneOnOneRevise}
         initialParams={{}}
         options={{
           headerShown: false,

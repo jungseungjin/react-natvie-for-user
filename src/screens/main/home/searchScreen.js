@@ -28,12 +28,17 @@ import DismissKeyboard from '../../../components/DismissKeyboard.js';
 
 const SearchScreen = ({navigation, route}) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const unsubscribe = navigation.addListener('focus', async () => {
-    let list = await AsyncStorage.getItem('resentSearch');
-    if (list !== null) {
-      setResentSearch(JSON.parse(list));
-    }
-  });
+
+  React.useEffect(
+    () =>
+      navigation.addListener('focus', async () => {
+        let list = await AsyncStorage.getItem('resentSearch');
+        if (list !== null) {
+          setResentSearch(JSON.parse(list));
+        }
+      }),
+    [],
+  );
   const [resentSearch, setResentSearch] = React.useState([]);
   const addData = async (searchValue) => {
     try {
@@ -80,10 +85,6 @@ const SearchScreen = ({navigation, route}) => {
   React.useEffect(() => {
     getData();
   }, []);
-  React.useEffect(() => {
-    unsubscribe;
-  }, [navigation]);
-
   const [searchText, setSearchText] = React.useState('');
   return (
     <>

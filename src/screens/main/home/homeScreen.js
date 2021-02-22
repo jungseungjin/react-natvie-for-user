@@ -44,7 +44,6 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import DeviceInfo from 'react-native-device-info';
 const HomeScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -58,8 +57,6 @@ const HomeScreen = (props) => {
   const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([]);
   const [recentWorkList, setRecentWorkList] = React.useState([]);
   const [showInformation, setShowInformation] = React.useState(false);
-
-  const [device, setDevice] = React.useState([]);
 
   const scrollRef = useRef();
   const handleClick = () => {

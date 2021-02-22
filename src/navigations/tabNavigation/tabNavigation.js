@@ -47,6 +47,7 @@ const setTabBarVisible = (route, reduexState) => {
     'OneOnOne',
     'OneOnOneView',
     'OneOnOneRegister',
+    'OneOnOneRevise',
     'Feedback',
     'Entry',
     'Setting_more',

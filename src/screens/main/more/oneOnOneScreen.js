@@ -1,21 +1,82 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  RefreshControl,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FrequentlyQuestionMenu from '../../../components/More/Menu/frequentlyQuestionMenu.js';
 import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
 const OneOnOne = (props) => {
-  const [page, setPage] = React.useState('TOP5');
-  const PageChangeValue = (text) => setPage(text);
+  React.useEffect(
+    () => props.navigation.addListener('focus', () => onRefresh()),
+    [],
+  );
+  const reduexState = useSelector((state) => state);
   const [dataList, setDataList] = React.useState([]);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [chkTime, setChkTime] = React.useState(moment().valueOf());
+  const [chkReload, setChkReload] = React.useState(0);
+  const getData = () => {
+    try {
+      if (chkReload != 0) {
+        if (parseInt(chkTime) > parseInt(moment().valueOf()) - 10000) {
+          console.log('gsssdgd');
+          return false;
+        }
+      }
+      console.log('gdgd');
+      setChkTime(moment().valueOf());
+      setChkReload(parseInt(chkReload) + 1);
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = Domain2 + 'question_list';
+          let result = await axios.get(url, {
+            params: {
+              _id: reduexState.loginDataCheck.login.data._id,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setDataList(result.data[0].result);
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getData();
+    setRefreshing(false);
+  }, []);
   return (
     <>
       <StatusBar
@@ -87,121 +148,100 @@ const OneOnOne = (props) => {
         </View>
         {/*탑바 대체 끝 */}
         {/*문의 리스트 시작 */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
+        <FlatList
+          alwaysBounceVertical={false}
           style={{
             marginTop: Height_convert(20),
-          }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              props.navigation.navigate('OneOnOneView');
-            }}
-            style={{
-              width: Width_convert(375),
-              borderBottomColor: '#EEEEEE',
-              borderBottomWidth: 1,
-            }}>
-            <View
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={{flex: 1}}
+          data={dataList}
+          windowSize={2}
+          initialNumToRender={10}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                props.navigation.navigate('OneOnOneView', {item: item});
+              }}
               style={{
-                marginLeft: Width_convert(12),
-                marginRight: Width_convert(12),
-                width: Width_convert(375 - 24), //351
-                height: Height_convert(93),
-                flexDirection: 'row',
-                alignItems: 'center',
+                width: Width_convert(375),
+                borderBottomColor: '#EEEEEE',
+                borderBottomWidth: 1,
               }}>
-              <View style={{width: Width_convert(250)}}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#000000',
-                  }}>
-                  작업시간이 수정이 안되요.
-                </Text>
-                <Text
-                  style={{
-                    marginTop: Height_convert(10),
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(10),
-                    fontWeight: '400',
-                    color: '#393939',
-                  }}>
-                  2020년 7월 30일
-                </Text>
+              <View
+                style={{
+                  marginLeft: Width_convert(12),
+                  marginRight: Width_convert(12),
+                  width: Width_convert(375 - 24), //351
+                  height: Height_convert(93),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View style={{width: Width_convert(250)}}>
+                  <Text
+                    style={{
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(16),
+                      fontWeight: '700',
+                      color: '#000000',
+                    }}>
+                    {item.title}
+                  </Text>
+                  <Text
+                    style={{
+                      marginTop: Height_convert(10),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(10),
+                      fontWeight: '400',
+                      color: '#393939',
+                    }}>
+                    {moment(item.regDate).format('YYYY년 MM월 DD일')}
+                  </Text>
+                </View>
+                <View style={{width: Width_convert(100)}}>
+                  <Text
+                    style={[
+                      {
+                        textAlign: 'right',
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontWeight: '400',
+                        fontSize: Font_normalize(16),
+                      },
+                      item.status == 0
+                        ? {
+                            color: '#908E8E',
+                          }
+                        : item.status == 1
+                        ? {
+                            color: '#37A0DB',
+                          }
+                        : null,
+                    ]}>
+                    {item.status == 0
+                      ? '답변예정'
+                      : item.status == 1
+                      ? '답변완료'
+                      : null}
+                  </Text>
+                </View>
               </View>
-              <View style={{width: Width_convert(100)}}>
-                <Text
-                  style={{
-                    textAlign: 'right',
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(16),
-                    color: '#37A0DB',
-                  }}>
-                  답변완료
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              props.navigation.navigate('OneOnOneView');
-            }}
-            style={{
-              width: Width_convert(375),
-              borderBottomColor: '#EEEEEE',
-              borderBottomWidth: 1,
-            }}>
-            <View
-              style={{
-                marginLeft: Width_convert(12),
-                marginRight: Width_convert(12),
-                width: Width_convert(375 - 24), //351
-                height: Height_convert(93),
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <View style={{width: Width_convert(250)}}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#000000',
-                  }}>
-                  작업시간이 수정이 안되요.
-                </Text>
-                <Text
-                  style={{
-                    marginTop: Height_convert(10),
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(10),
-                    fontWeight: '400',
-                    color: '#393939',
-                  }}>
-                  2020년 7월 30일
-                </Text>
-              </View>
-              <View style={{width: Width_convert(100)}}>
-                <Text
-                  style={{
-                    textAlign: 'right',
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(16),
-                    color: '#37A0DB',
-                  }}>
-                  답변완료
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </ScrollView>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item) => String(item._id)}></FlatList>
         {/*문의 리스트 끝 */}
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
     </>
   );
