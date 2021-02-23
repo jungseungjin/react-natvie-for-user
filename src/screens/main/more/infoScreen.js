@@ -188,38 +188,43 @@ const InfoScreen = (props) => {
   const [nickname, setNickname] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [location, setLocation] = React.useState({});
-  const [car, setCar] = React.useState([]);
+  const [car, setCar] = React.useState(
+    reduexState.loginDataCheck?.login?.data?.iu_car,
+  );
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
-  React.useEffect(() => {
-    setCar(reduexState.loginDataCheck?.login?.data?.iu_car);
-  }, []);
-  const PageChangeValue = (text) => {
-    //리덕스값이 변하는 이유 모르겠음
-    try {
-      if (page == 'carAdd') {
-        //차량정보 추가
-        let prevData = car;
-        prevData.push({
-          pickBrand: pickBrand,
-          pickModel: pickModel,
-          pickModelDetail: pickModelDetail,
-        });
-        //setCar(prevData);
-        setPickBrand({});
-        setPickModel({});
-        setPickModelDetail({});
-      } else if (page == 'carChange') {
-        //차량정보 변경 -> 인덱스가 있어야해
-      }
-      setPage(text);
-    } catch (err) {
-      console.log(err);
+
+  const PageChangeValue = (text) => setPage(text);
+
+  //차량데이터 추가 or 변경
+  const AddCarData = () => {
+    let prevData = car.slice();
+    if (page == 'carAdd') {
+      //차량정보 추가
+      prevData.push({
+        pickBrand: pickBrand,
+        pickModel: pickModel,
+        pickModelDetail: pickModelDetail,
+      });
+    } else if (page.indexOf('carChange') != -1) {
+      //차량정보 변경
+      let index = page.replace('carChange', '');
+      prevData[index] = {
+        pickBrand: pickBrand,
+        pickModel: pickModel,
+        pickModelDetail: pickModelDetail,
+      };
     }
+    setCar(prevData);
+    setPickBrand({});
+    setPickModel({});
+    setPickModelDetail({});
+    setPage('info');
   };
+  //차량데이터 삭제
   const DeleteCarData = (index) => {
     try {
-      let prevData = car;
+      let prevData = car.slice();
       prevData.splice(index, 1);
       setCar(prevData);
       forceUpdate();
@@ -227,7 +232,79 @@ const InfoScreen = (props) => {
       console.log(err);
     }
   };
-
+  //차량데이터 대표차량 변경
+  const ChangeCarData = (index) => {
+    let prevData = car.slice();
+    let changeData1 = prevData[index]; //변경될데이터
+    let changeData2 = prevData[0]; //변경될데이터
+    prevData[0] = changeData1;
+    prevData[index] = changeData2;
+    setCar(prevData);
+  };
+  //변경된값 저장
+  const saveData = () => {
+    //저장 눌러서 데이터 수정하기.
+    try {
+      if (reduexState.loginDataCheck.login.login == false) {
+        //로그아웃상태면 아무것도 하지 않음.
+        return false;
+      }
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          //수정된 데이터를 구분해서 값 넣어주기
+          let data = {
+            //차량데이터는 초기값이 redux에 저장된 로그인데이터값이니 그대로 이용
+            iu_car: car,
+            _id: reduexState.loginDataCheck.login.data._id,
+          };
+          if (nickname.length > 0) {
+            //닉네임에 값이 들어가있으면
+            data.iu_nickname = nickname.trim();
+          } else {
+            //값이 없으면 원래값
+            data.iu_nickname = reduexState.loginDataCheck.login.data.iu_nickname.trim();
+          }
+          if (location?.legalcode) {
+            //지역에 값이 들어가 있으면
+            if (location?.legalcode != '요청한 데이타의 결과가 없습니다.') {
+              data.location = location;
+            } else {
+              return false;
+            }
+          } else {
+            //값이 없으면 원래값
+            data.location = reduexState.loginDataCheck.login.data.location;
+          }
+          if (confirmChk) {
+            //휴대폰 인증이 되지 않았으면
+            data.iu_phone = phoneNumber.trim();
+          } else {
+            //원래값
+            data.iu_phone = reduexState.loginDataCheck.login.data.iu_phone.trim();
+          }
+          let url = Domain2 + 'info/changedata';
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            props.updateIuCar(result.data[0].result.iu_car);
+            props.updateLocation(result.data[0].result.location);
+            props.updateData(result.data[0].result);
+            //변경되었으니 리덕스에 값도 변경시키기
+            props.navigation.goBack();
+            props.navigation.navigate('Home');
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const [password, setPassword] = React.useState('');
   const [passwordChk, setPasswordChk] = React.useState('');
   const [passwordChangeModal, setPasswordChangeModal] = React.useState(false);
@@ -364,8 +441,10 @@ const InfoScreen = (props) => {
     Geolocation.getCurrentPosition(
       (position) => {
         setLocation({
-          longitude: position.coords.longitude,
-          latitude: position.coords.latitude,
+          location: {
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude,
+          },
         });
         getNaverLocagtion(position);
       },
@@ -403,14 +482,19 @@ const InfoScreen = (props) => {
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
         setIsLoading(false);
-        let prevData = location;
-        (location.legalcode =
-          result.data.results[0].region.area1.name +
-          ' ' +
-          result.data.results[0].region.area2.name +
-          ' ' +
-          result.data.results[0].region.area3.name),
-          setLocation(location);
+        let newData = {
+          location: {
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude,
+          },
+          legalcode:
+            result.data.results[0].region.area1.name +
+            ' ' +
+            result.data.results[0].region.area2.name +
+            ' ' +
+            result.data.results[0].region.area3.name,
+        };
+        setLocation(newData);
       } else {
         setIsLoading(false);
         location.legalcode = '요청한 데이타의 결과가 없습니다.';
@@ -423,234 +507,154 @@ const InfoScreen = (props) => {
       alert(err);
     }
   };
+
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <Tabbar Title={'내정보'} navigation={props.navigation}></Tabbar>
       {page == 'info' ? (
-        <KeyboardAvoidingView
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            backgroundColor: '#FFFFFF',
-          }}
-          behavior={Platform.OS == 'ios' ? 'padding' : null}
-          enabled
-          keyboardVerticalOffset={30}>
-          <DismissKeyboard>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{
-                flexGrow: 1,
-                width: Width_convert(375),
-              }}>
-              <View
+        <>
+          <Tabbar
+            Title={'내정보'}
+            navigation={props.navigation}
+            saveData={saveData}></Tabbar>
+          <KeyboardAvoidingView
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              backgroundColor: '#FFFFFF',
+            }}
+            behavior={Platform.OS == 'ios' ? 'padding' : null}
+            enabled
+            keyboardVerticalOffset={30}>
+            <DismissKeyboard>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
                 style={{
+                  flexGrow: 1,
                   width: Width_convert(375),
                 }}>
                 <View
                   style={{
                     width: Width_convert(375),
-                    height: Width_convert(263 - 94 - 57),
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <FastImage
-                    style={{
-                      width: Width_convert(78),
-                      height: Width_convert(78),
-                      borderRadius: Width_convert(78),
-                    }}
-                    source={{
-                      uri:
-                        reduexState.loginDataCheck.login.data
-                          .review_user_iu_image,
-                      //headers: {Authorization: 'someAuthToken'},
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                </View>
-                {/*이름 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                    height: Width_convert(57),
                   }}>
                   <View
                     style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
-                      height: Width_convert(57),
+                      width: Width_convert(375),
+                      height: Width_convert(263 - 94 - 57),
+                      justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text
+                    <FastImage
                       style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      이름
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#000000',
-                      }}>
-                      {reduexState.loginDataCheck?.login?.data?.iu_name}
-                    </Text>
+                        width: Width_convert(78),
+                        height: Width_convert(78),
+                        borderRadius: Width_convert(78),
+                      }}
+                      source={{
+                        uri:
+                          reduexState.loginDataCheck.login.data
+                            .review_user_iu_image,
+                        //headers: {Authorization: 'someAuthToken'},
+                        priority: FastImage.priority.normal,
+                      }}
+                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
                   </View>
-                </View>
-                {/*이름 끝 */}
-                {/*닉네임 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                    height: Width_convert(57),
-                  }}>
+                  {/*이름 시작 */}
                   <View
                     style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
                       height: Width_convert(57),
-                      alignItems: 'center',
                     }}>
-                    <Text
+                    <View
                       style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      닉네임
-                    </Text>
-                    <TextInput
-                      placeholder={
-                        reduexState.loginDataCheck.login.data.iu_nickname
-                      }
-                      value={nickname}
-                      onChangeText={(value) => {
-                        setNickname(value);
-                      }}
-                      placeholderTextColor={'#000000'}
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#000000',
-                      }}></TextInput>
-                  </View>
-                </View>
-                {/*닉네임 끝 */}
-                {/*휴대폰번호 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
-                      height: Width_convert(57),
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                    }}>
-                    <Text
-                      style={{
-                        width: Width_convert(70),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      휴대폰번호
-                    </Text>
-                    <TextInput
-                      editable={authButtonClick ? false : true}
-                      placeholder={
-                        reduexState.loginDataCheck?.login?.data?.iu_phone
-                      }
-                      placeholderTextColor="#CCCCCC"
-                      value={phoneNumber}
-                      keyboardType={'number-pad'}
-                      onChangeText={(value) => {
-                        if (value.length > 13) {
-                        } else {
-                          let newValue = InputPhoneNumber(value);
-                          setPhoneNumber(newValue);
-                        }
-                      }}
-                      placeholderStyle={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#A7A7A7',
-                      }}
-                      style={{
-                        width: Width_convert(230),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#000000',
-                      }}></TextInput>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        if (phoneNumber.length == 13) {
-                          signInWithPhoneNumber(phoneNumber);
-                          setMinutes(parseInt(3));
-                          setSeconds(parseInt(0));
-                          setAuthButtonClick(true);
-                        } else {
-                          return false;
-                        }
-                      }}
-                      style={{
-                        width: Width_convert(35),
-                        height: Width_convert(20),
-                        backgroundColor: '#C1C1C1',
-                        borderRadius: Font_normalize(2),
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        height: Width_convert(57),
                         alignItems: 'center',
-                        justifyContent: 'center',
                       }}>
                       <Text
                         style={{
-                          padding: Width_convert(5),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
-                          fontSize: Font_normalize(9),
-                          color: '#FFFFFF',
-                          textAlign: 'center',
-                          textAlignVertical: 'center',
+                          fontSize: Font_normalize(15),
+                          color: '#C4C4C4',
+                          marginRight: Width_convert(13),
                         }}>
-                        재인증
+                        이름
                       </Text>
-                    </TouchableOpacity>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(16),
+                          color: '#000000',
+                        }}>
+                        {reduexState.loginDataCheck?.login?.data?.iu_name}
+                      </Text>
+                    </View>
                   </View>
-                  {authButtonClick ? (
+                  {/*이름 끝 */}
+                  {/*닉네임 시작 */}
+                  <View
+                    style={{
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
+                      height: Width_convert(57),
+                    }}>
                     <View
                       style={{
-                        marginTop: -Width_convert(25),
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        height: Width_convert(57),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#C4C4C4',
+                          marginRight: Width_convert(13),
+                        }}>
+                        닉네임
+                      </Text>
+                      <TextInput
+                        placeholder={
+                          reduexState.loginDataCheck.login.data.iu_nickname
+                        }
+                        value={nickname}
+                        onChangeText={(value) => {
+                          setNickname(value);
+                        }}
+                        placeholderTextColor={'#000000'}
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(16),
+                          color: '#000000',
+                        }}></TextInput>
+                    </View>
+                  </View>
+                  {/*닉네임 끝 */}
+                  {/*휴대폰번호 시작 */}
+                  <View
+                    style={{
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
+                    }}>
+                    <View
+                      style={{
                         flexDirection: 'row',
                         marginLeft: Width_convert(16),
                         marginRight: Width_convert(11),
@@ -661,59 +665,57 @@ const InfoScreen = (props) => {
                       }}>
                       <Text
                         style={{
-                          width: Width_convert(83),
+                          width: Width_convert(70),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(15),
                           color: '#C4C4C4',
+                          marginRight: Width_convert(13),
                         }}>
-                        인증번호입력
+                        휴대폰번호
                       </Text>
                       <TextInput
-                        editable={confirmChk ? false : true}
+                        editable={authButtonClick ? false : true}
+                        placeholder={
+                          reduexState.loginDataCheck?.login?.data?.iu_phone
+                        }
+                        placeholderTextColor="#CCCCCC"
+                        value={phoneNumber}
                         keyboardType={'number-pad'}
-                        value={authNumber}
                         onChangeText={(value) => {
-                          if (value.length > 6) {
+                          if (value.length > 13) {
                           } else {
-                            setAuthNumber(value);
+                            let newValue = InputPhoneNumber(value);
+                            setPhoneNumber(newValue);
                           }
                         }}
+                        placeholderStyle={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(16),
+                          color: '#A7A7A7',
+                        }}
                         style={{
-                          width: Width_convert(165),
+                          width: Width_convert(230),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}></TextInput>
-                      <Text
-                        style={[
-                          {
-                            width: Width_convert(30),
-                            marginRight: Width_convert(16),
-                            fontFamily: Fonts?.NanumSqureRegular || null,
-                            fontWeight: '700',
-                            fontSize: Font_normalize(11),
-                            color: '#FF0000',
-                          },
-                          confirmChk
-                            ? {
-                                color: '#FFFFFF',
-                              }
-                            : null,
-                        ]}>
-                        {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-                      </Text>
                       <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
-                          if (confirmChk) {
+                          if (phoneNumber.length == 13) {
+                            signInWithPhoneNumber(phoneNumber);
+                            setMinutes(parseInt(3));
+                            setSeconds(parseInt(0));
+                            setAuthButtonClick(true);
                           } else {
-                            confirmCode(authNumber);
+                            return false;
                           }
                         }}
                         style={{
-                          width: Width_convert(56),
+                          width: Width_convert(35),
                           height: Width_convert(20),
                           backgroundColor: '#C1C1C1',
                           borderRadius: Font_normalize(2),
@@ -730,629 +732,726 @@ const InfoScreen = (props) => {
                             textAlign: 'center',
                             textAlignVertical: 'center',
                           }}>
-                          확인
+                          재인증
                         </Text>
                       </TouchableOpacity>
                     </View>
-                  ) : null}
-                </View>
-                {/*휴대폰번호 끝 */}
-                {/*지역 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                    height: Width_convert(57),
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
-                      height: Width_convert(57),
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                    }}>
-                    <Text
-                      style={{
-                        width: Width_convert(28),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      지역
-                    </Text>
-                    <Text
-                      style={{
-                        width: Width_convert(272),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#000000',
-                      }}>
-                      {location.legalcode ||
-                        reduexState.loginDataCheck?.login?.data?.location
-                          ?.legalcode ||
-                        null}
-                    </Text>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        if (handleLocationPermission(Platform.OS)) {
-                          CurrentPosition(); //경위도 찍고
-                        } else {
-                          //퍼미션 허용해달라고 모달띄우기
-                          setLocationModal(true);
-                        }
-                      }}
-                      style={{
-                        width: Width_convert(35),
-                        height: Width_convert(20),
-                        backgroundColor: '#C1C1C1',
-                        borderRadius: Font_normalize(2),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
+                    {authButtonClick ? (
+                      <View
                         style={{
-                          padding: Width_convert(5),
-                          fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontWeight: '700',
-                          fontSize: Font_normalize(9),
-                          color: '#FFFFFF',
-                          textAlign: 'center',
-                          textAlignVertical: 'center',
+                          marginTop: -Width_convert(25),
+                          flexDirection: 'row',
+                          marginLeft: Width_convert(16),
+                          marginRight: Width_convert(11),
+                          width: Width_convert(375 - 27),
+                          height: Width_convert(57),
+                          alignItems: 'center',
+                          justifyContent: 'flex-end',
                         }}>
-                        재인증
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                {/*지역 끝 */}
-                {/*차종 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                  }}>
-                  {/**하나랑 두개 스타일 다름. */}
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
-                      //height: Width_convert(57),//하나있을때
-                      //두개부터는 height없애고
-                      marginTop: Width_convert(21),
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        width: Width_convert(28),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      차종
-                    </Text>
-                  </View>
-                  {car.length > 0
-                    ? car.map((item) => (
-                        <View
-                          key={car.indexOf(item)}
+                        <Text
                           style={{
-                            flexDirection: 'row',
-                            marginTop: Width_convert(12),
-                            marginLeft: Width_convert(16),
-                            marginRight: Width_convert(11),
-                            width: Width_convert(375 - 27),
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
+                            width: Width_convert(83),
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '700',
+                            fontSize: Font_normalize(15),
+                            color: '#C4C4C4',
                           }}>
-                          <TouchableOpacity
-                            activeOpacity={1}
-                            onPress={() => {
-                              if (car.indexOf(item) == 0) {
-                                //대표차량 안바꿈
-                              } else {
-                                //대표차량 바꿈
-                              }
-                            }}
-                            style={[
-                              {
-                                borderTopWidth: 1,
-                                borderBottomWidth: 1,
-                                borderRightWidth: 1,
-                                borderLeftWidth: 1,
-                                borderTopColor: '#C1C1C1',
-                                borderBottomColor: '#C1C1C1',
-                                borderRightColor: '#C1C1C1',
-                                borderLeftColor: '#C1C1C1',
-                                borderRadius: Font_normalize(2),
-                                marginRight: Width_convert(14),
-                              },
-                              car.indexOf(item) == 0
-                                ? {
-                                    borderTopColor: '#946AEF',
-                                    borderBottomColor: '#946AEF',
-                                    borderRightColor: '#946AEF',
-                                    borderLeftColor: '#946AEF',
-                                  }
-                                : null,
-                            ]}>
-                            <Text
-                              style={[
-                                {
-                                  width: Width_convert(28),
-                                  fontFamily: Fonts?.NanumSqureRegular || null,
-                                  fontWeight: '700',
-                                  fontSize: Font_normalize(9),
-                                  color: '#C1C1C1',
-                                  paddingTop: Width_convert(5),
-                                  paddingBottom: Width_convert(5),
-                                  paddingRight: Width_convert(5),
-                                  paddingLeft: Width_convert(5),
-                                  textAlign: 'center',
-                                },
-                                car.indexOf(item) == 0
-                                  ? {
-                                      color: '#946AEF',
-                                    }
-                                  : null,
-                              ]}>
-                              대표
-                            </Text>
-                          </TouchableOpacity>
-                          <Text
-                            style={{
-                              width: Width_convert(234),
+                          인증번호입력
+                        </Text>
+                        <TextInput
+                          editable={confirmChk ? false : true}
+                          keyboardType={'number-pad'}
+                          value={authNumber}
+                          onChangeText={(value) => {
+                            if (value.length > 6) {
+                            } else {
+                              setAuthNumber(value);
+                            }
+                          }}
+                          style={{
+                            width: Width_convert(165),
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '700',
+                            fontSize: Font_normalize(16),
+                            color: '#000000',
+                          }}></TextInput>
+                        <Text
+                          style={[
+                            {
+                              width: Width_convert(30),
+                              marginRight: Width_convert(16),
                               fontFamily: Fonts?.NanumSqureRegular || null,
                               fontWeight: '700',
-                              fontSize: Font_normalize(16),
-                              color: '#000000',
+                              fontSize: Font_normalize(11),
+                              color: '#FF0000',
+                            },
+                            confirmChk
+                              ? {
+                                  color: '#FFFFFF',
+                                }
+                              : null,
+                          ]}>
+                          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                        </Text>
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => {
+                            if (confirmChk) {
+                            } else {
+                              confirmCode(authNumber);
+                            }
+                          }}
+                          style={{
+                            width: Width_convert(56),
+                            height: Width_convert(20),
+                            backgroundColor: '#C1C1C1',
+                            borderRadius: Font_normalize(2),
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              padding: Width_convert(5),
+                              fontFamily: Fonts?.NanumSqureRegular || null,
+                              fontWeight: '700',
+                              fontSize: Font_normalize(9),
+                              color: '#FFFFFF',
+                              textAlign: 'center',
+                              textAlignVertical: 'center',
                             }}>
-                            {item.pickModelDetail.brand +
-                              ' ' +
-                              item.pickModelDetail.model_detail}
+                            확인
                           </Text>
-                          <TouchableOpacity
-                            activeOpacity={1}
-                            onPress={() => {}}
-                            style={{
-                              marginRight: Width_convert(5),
-                              width: Width_convert(35),
-                              height: Width_convert(20),
-                              backgroundColor: '#C1C1C1',
-                              borderRadius: Font_normalize(2),
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                fontFamily: Fonts?.NanumSqureRegular || null,
-                                fontWeight: '700',
-                                fontSize: Font_normalize(9),
-                                color: '#FFFFFF',
-                              }}>
-                              변경
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            activeOpacity={1}
-                            onPress={() => {
-                              DeleteCarData(car.indexOf(item));
-                            }}
-                            style={{
-                              width: Width_convert(35),
-                              height: Width_convert(20),
-                              backgroundColor: '#EF6666',
-                              borderRadius: Font_normalize(2),
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}>
-                            <Text
-                              style={{
-                                fontFamily: Fonts?.NanumSqureRegular || null,
-                                fontWeight: '700',
-                                fontSize: Font_normalize(9),
-                                color: '#FFFFFF',
-                              }}>
-                              삭제
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      ))
-                    : null}
+                        </TouchableOpacity>
+                      </View>
+                    ) : null}
+                  </View>
+                  {/*휴대폰번호 끝 */}
+                  {/*지역 시작 */}
                   <View
                     style={{
-                      marginTop: Width_convert(21),
-                      marginBottom: Width_convert(21),
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
                       width: Width_convert(375),
-                      height: Height_convert(28),
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        setPage('carAdd');
-                      }}>
-                      <PurplePlus></PurplePlus>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                {/*차종 끝 */}
-                {/*아이디 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                    height: Width_convert(57),
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
                       height: Width_convert(57),
-                      alignItems: 'center',
                     }}>
-                    <Text
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      아이디
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(16),
-                        color: '#000000',
-                      }}>
-                      {reduexState.loginDataCheck?.login?.data?.iu_id}
-                    </Text>
-                  </View>
-                </View>
-                {/*아이디 끝 */}
-                {/*비밀번호 시작 */}
-                <View
-                  style={{
-                    borderBottomColor: '#EEEEEE',
-                    borderBottomWidth: 1,
-                    width: Width_convert(375),
-                    height: Width_convert(57),
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginLeft: Width_convert(16),
-                      marginRight: Width_convert(11),
-                      width: Width_convert(375 - 27),
-                      height: Width_convert(57),
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                    }}>
-                    <Text
-                      style={{
-                        width: Width_convert(56),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(15),
-                        color: '#C4C4C4',
-                        marginRight: Width_convert(13),
-                      }}>
-                      비밀번호
-                    </Text>
-                    <TextInput
-                      placeholder="영문+숫자+특수문자 8~20자"
-                      placeholderTextColor={'rgba(0, 0, 0, 0.2)'}
-                      value={password}
-                      autoCapitalize={'none'}
-                      autoCorrect={false}
-                      secureTextEntry={true}
-                      onChangeText={(value) => {
-                        if (value.indexOf(' ') != -1) {
-                          value = value.replace(/ /gi, '');
-                        }
-                        setPassword(value);
-                        setPasswordChk(isPassword(value));
-                      }}
-                      placeholderStyle={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(12),
-                        color: 'rgba(0, 0, 0, 0.2)',
-                      }}
-                      style={{
-                        width: Width_convert(244),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(12),
-                        color: '#000000',
-                      }}></TextInput>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      onPress={() => {
-                        if (passwordChk) {
-                          ChangePassword();
-                        } else {
-                        }
-                      }}
-                      style={{
-                        width: Width_convert(35),
-                        height: Width_convert(20),
-                        backgroundColor: '#C1C1C1',
-                        borderRadius: Font_normalize(2),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          padding: Width_convert(5),
-                          fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontWeight: '700',
-                          fontSize: Font_normalize(9),
-                          color: '#FFFFFF',
-                          textAlign: 'center',
-                          textAlignVertical: 'center',
-                        }}>
-                        변경
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  {passwordChk === false ? (
                     <View
                       style={{
+                        flexDirection: 'row',
                         marginLeft: Width_convert(16),
                         marginRight: Width_convert(11),
                         width: Width_convert(375 - 27),
-                        flexDirection: 'row',
-                        marginTop: -Width_convert(20),
+                        height: Width_convert(57),
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
                       }}>
                       <Text
                         style={{
-                          width: Width_convert(58),
+                          width: Width_convert(28),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(15),
-                          color: '#FFFFFF',
+                          color: '#C4C4C4',
+                          marginRight: Width_convert(13),
+                        }}>
+                        지역
+                      </Text>
+                      <Text
+                        style={{
+                          width: Width_convert(272),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(16),
+                          color: '#000000',
+                        }}>
+                        {location.legalcode ||
+                          reduexState.loginDataCheck?.login?.data?.location
+                            ?.legalcode ||
+                          null}
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          if (handleLocationPermission(Platform.OS)) {
+                            CurrentPosition(); //경위도 찍고
+                          } else {
+                            //퍼미션 허용해달라고 모달띄우기
+                            setLocationModal(true);
+                          }
+                        }}
+                        style={{
+                          width: Width_convert(35),
+                          height: Width_convert(20),
+                          backgroundColor: '#C1C1C1',
+                          borderRadius: Font_normalize(2),
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            padding: Width_convert(5),
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '700',
+                            fontSize: Font_normalize(9),
+                            color: '#FFFFFF',
+                            textAlign: 'center',
+                            textAlignVertical: 'center',
+                          }}>
+                          재인증
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  {/*지역 끝 */}
+                  {/*차종 시작 */}
+                  <View
+                    style={{
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
+                    }}>
+                    {/**하나랑 두개 스타일 다름. */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        //height: Width_convert(57),//하나있을때
+                        //두개부터는 height없애고
+                        marginTop: Width_convert(21),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          width: Width_convert(28),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#C4C4C4',
+                          marginRight: Width_convert(13),
+                        }}>
+                        차종
+                      </Text>
+                    </View>
+                    {car.length > 0
+                      ? car.map((item) => (
+                          <View
+                            key={car.indexOf(item)}
+                            style={{
+                              flexDirection: 'row',
+                              marginTop: Width_convert(12),
+                              marginLeft: Width_convert(16),
+                              marginRight: Width_convert(11),
+                              width: Width_convert(375 - 27),
+                              alignItems: 'center',
+                              justifyContent: 'flex-end',
+                            }}>
+                            <TouchableOpacity
+                              activeOpacity={1}
+                              onPress={() => {
+                                if (car.indexOf(item) == 0) {
+                                  //대표차량 안바꿈
+                                } else {
+                                  //대표차량 바꿈
+                                  ChangeCarData(car.indexOf(item));
+                                }
+                              }}
+                              style={[
+                                {
+                                  borderTopWidth: 1,
+                                  borderBottomWidth: 1,
+                                  borderRightWidth: 1,
+                                  borderLeftWidth: 1,
+                                  borderTopColor: '#C1C1C1',
+                                  borderBottomColor: '#C1C1C1',
+                                  borderRightColor: '#C1C1C1',
+                                  borderLeftColor: '#C1C1C1',
+                                  borderRadius: Font_normalize(2),
+                                  marginRight: Width_convert(14),
+                                },
+                                car.indexOf(item) == 0
+                                  ? {
+                                      borderTopColor: '#946AEF',
+                                      borderBottomColor: '#946AEF',
+                                      borderRightColor: '#946AEF',
+                                      borderLeftColor: '#946AEF',
+                                    }
+                                  : null,
+                              ]}>
+                              <Text
+                                style={[
+                                  {
+                                    width: Width_convert(28),
+                                    fontFamily:
+                                      Fonts?.NanumSqureRegular || null,
+                                    fontWeight: '700',
+                                    fontSize: Font_normalize(9),
+                                    color: '#C1C1C1',
+                                    paddingTop: Width_convert(5),
+                                    paddingBottom: Width_convert(5),
+                                    paddingRight: Width_convert(5),
+                                    paddingLeft: Width_convert(5),
+                                    textAlign: 'center',
+                                  },
+                                  car.indexOf(item) == 0
+                                    ? {
+                                        color: '#946AEF',
+                                      }
+                                    : null,
+                                ]}>
+                                대표
+                              </Text>
+                            </TouchableOpacity>
+                            <Text
+                              style={{
+                                width: Width_convert(234),
+                                fontFamily: Fonts?.NanumSqureRegular || null,
+                                fontWeight: '700',
+                                fontSize: Font_normalize(16),
+                                color: '#000000',
+                              }}>
+                              {item?.pickModelDetail?.brand +
+                                ' ' +
+                                item?.pickModelDetail?.model_detail}
+                            </Text>
+                            <TouchableOpacity
+                              activeOpacity={1}
+                              onPress={() => {
+                                setPage('carChange' + car.indexOf(item));
+                              }}
+                              style={{
+                                marginRight: Width_convert(5),
+                                width: Width_convert(35),
+                                height: Width_convert(20),
+                                backgroundColor: '#C1C1C1',
+                                borderRadius: Font_normalize(2),
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  fontFamily: Fonts?.NanumSqureRegular || null,
+                                  fontWeight: '700',
+                                  fontSize: Font_normalize(9),
+                                  color: '#FFFFFF',
+                                }}>
+                                변경
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              activeOpacity={1}
+                              onPress={() => {
+                                DeleteCarData(car.indexOf(item));
+                              }}
+                              style={{
+                                width: Width_convert(35),
+                                height: Width_convert(20),
+                                backgroundColor: '#EF6666',
+                                borderRadius: Font_normalize(2),
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <Text
+                                style={{
+                                  fontFamily: Fonts?.NanumSqureRegular || null,
+                                  fontWeight: '700',
+                                  fontSize: Font_normalize(9),
+                                  color: '#FFFFFF',
+                                }}>
+                                삭제
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        ))
+                      : null}
+                    <View
+                      style={{
+                        marginTop: Width_convert(21),
+                        marginBottom: Width_convert(21),
+                        width: Width_convert(375),
+                        height: Height_convert(28),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          setPage('carAdd');
+                        }}>
+                        <PurplePlus></PurplePlus>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  {/*차종 끝 */}
+                  {/*아이디 시작 */}
+                  <View
+                    style={{
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
+                      height: Width_convert(57),
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        height: Width_convert(57),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#C4C4C4',
+                          marginRight: Width_convert(13),
+                        }}>
+                        아이디
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(16),
+                          color: '#000000',
+                        }}>
+                        {reduexState.loginDataCheck?.login?.data?.iu_id}
+                      </Text>
+                    </View>
+                  </View>
+                  {/*아이디 끝 */}
+                  {/*비밀번호 시작 */}
+                  <View
+                    style={{
+                      borderBottomColor: '#EEEEEE',
+                      borderBottomWidth: 1,
+                      width: Width_convert(375),
+                      height: Width_convert(57),
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        height: Width_convert(57),
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                      }}>
+                      <Text
+                        style={{
+                          width: Width_convert(56),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#C4C4C4',
                           marginRight: Width_convert(13),
                         }}>
                         비밀번호
                       </Text>
+                      <TextInput
+                        placeholder="영문+숫자+특수문자 8~20자"
+                        placeholderTextColor={'rgba(0, 0, 0, 0.2)'}
+                        value={password}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        secureTextEntry={true}
+                        onChangeText={(value) => {
+                          if (value.indexOf(' ') != -1) {
+                            value = value.replace(/ /gi, '');
+                          }
+                          setPassword(value);
+                          setPasswordChk(isPassword(value));
+                        }}
+                        placeholderStyle={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(12),
+                          color: 'rgba(0, 0, 0, 0.2)',
+                        }}
+                        style={{
+                          width: Width_convert(244),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(12),
+                          color: '#000000',
+                        }}></TextInput>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                          if (passwordChk) {
+                            ChangePassword();
+                          } else {
+                          }
+                        }}
+                        style={{
+                          width: Width_convert(35),
+                          height: Width_convert(20),
+                          backgroundColor: '#C1C1C1',
+                          borderRadius: Font_normalize(2),
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            padding: Width_convert(5),
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '700',
+                            fontSize: Font_normalize(9),
+                            color: '#FFFFFF',
+                            textAlign: 'center',
+                            textAlignVertical: 'center',
+                          }}>
+                          변경
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    {passwordChk === false ? (
+                      <View
+                        style={{
+                          marginLeft: Width_convert(16),
+                          marginRight: Width_convert(11),
+                          width: Width_convert(375 - 27),
+                          flexDirection: 'row',
+                          marginTop: -Width_convert(20),
+                        }}>
+                        <Text
+                          style={{
+                            width: Width_convert(58),
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '700',
+                            fontSize: Font_normalize(15),
+                            color: '#FFFFFF',
+                            marginRight: Width_convert(13),
+                          }}>
+                          비밀번호
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontWeight: '400',
+                            fontSize: Font_normalize(9),
+                            color: '#FF0202',
+                          }}>
+                          잘못된 비밀번호 형식입니다
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  {/*비밀번호 끝 */}
+                  {/*마케팅 정보 수신 동의 시작 */}
+                  <View style={{marginTop: Height_convert(19)}}>
+                    <Text
+                      style={{
+                        marginLeft: Width_convert(17),
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontWeight: '700',
+                        fontSize: Font_normalize(16),
+                        color: '#000000',
+                      }}>
+                      마케팅 정보 수신 동의
+                    </Text>
+                    <Text
+                      style={{
+                        marginLeft: Width_convert(17),
+                        marginTop: Height_convert(8),
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontWeight: '700',
+                        fontSize: Font_normalize(9),
+                        color: '#000000',
+                      }}>
+                      투닝에서 보내드리는 다양한 정보를 받으실 수 있습니다
+                    </Text>
+                    <View
+                      style={{
+                        width: Width_convert(375),
+                        marginTop: Height_convert(11),
+                      }}>
+                      <View
+                        style={{
+                          marginTop: Height_convert(8),
+                          marginLeft: Width_convert(17),
+                          width: Width_convert(339),
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontSize: Font_normalize(12),
+                            color: '#000000',
+                            fontWeight: '400',
+                          }}>
+                          카카오톡 수신동의
+                        </Text>
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => {
+                            ChangeMarkettting('kakaotalk');
+                          }}>
+                          {reduexState.loginDataCheck?.login?.data?.marketting
+                            ?.kakaotalk ? (
+                            <CheckedBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckedBox>
+                          ) : (
+                            <CheckBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckBox>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          marginTop: Height_convert(8),
+                          marginLeft: Width_convert(17),
+                          width: Width_convert(339),
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontSize: Font_normalize(12),
+                            color: '#000000',
+                            fontWeight: '400',
+                          }}>
+                          메일 수신동의
+                        </Text>
+
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => {
+                            ChangeMarkettting('mail');
+                          }}>
+                          {reduexState.loginDataCheck?.login?.data?.marketting
+                            ?.mail ? (
+                            <CheckedBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckedBox>
+                          ) : (
+                            <CheckBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckBox>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                      <View
+                        style={{
+                          marginTop: Height_convert(8),
+                          marginLeft: Width_convert(17),
+                          width: Width_convert(339),
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: Fonts?.NanumSqureRegular || null,
+                            fontSize: Font_normalize(12),
+                            color: '#000000',
+                            fontWeight: '400',
+                          }}>
+                          SMS 수신동의
+                        </Text>
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => {
+                            ChangeMarkettting('sms');
+                          }}>
+                          {reduexState.loginDataCheck?.login?.data?.marketting
+                            ?.sms ? (
+                            <CheckedBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckedBox>
+                          ) : (
+                            <CheckBox
+                              width={Width_convert(14)}
+                              height={Width_convert(14)}></CheckBox>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                  {/*마케팅 정보 수신 동의 끝 */}
+                  {/**로그아웃 회원탈퇴버튼 시작 */}
+                  <View
+                    style={{
+                      marginTop: Height_convert(26),
+                      width: Width_convert(375),
+                      height: Height_convert(50),
+                      backgroundColor: '#F0F0F0',
+                      flexDirection: 'row',
+                    }}>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        if (reduexState.loginDataCheck.login.login == true) {
+                          logout();
+                        } else {
+                        }
+                      }}
+                      style={{
+                        width: Width_convert(375) / 2,
+                        height: Height_convert(50),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
                       <Text
                         style={{
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '400',
                           fontSize: Font_normalize(9),
-                          color: '#FF0202',
+                          color: '#797979',
                         }}>
-                        잘못된 비밀번호 형식입니다
+                        로그아웃
                       </Text>
-                    </View>
-                  ) : null}
-                </View>
-                {/*비밀번호 끝 */}
-                {/*마케팅 정보 수신 동의 시작 */}
-                <View style={{marginTop: Height_convert(19)}}>
-                  <Text
-                    style={{
-                      marginLeft: Width_convert(17),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontWeight: '700',
-                      fontSize: Font_normalize(16),
-                      color: '#000000',
-                    }}>
-                    마케팅 정보 수신 동의
-                  </Text>
-                  <Text
-                    style={{
-                      marginLeft: Width_convert(17),
-                      marginTop: Height_convert(8),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontWeight: '700',
-                      fontSize: Font_normalize(9),
-                      color: '#000000',
-                    }}>
-                    투닝에서 보내드리는 다양한 정보를 받으실 수 있습니다
-                  </Text>
-                  <View
-                    style={{
-                      width: Width_convert(375),
-                      marginTop: Height_convert(11),
-                    }}>
-                    <View
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        props.navigation.navigate('Withdrawal');
+                      }}
                       style={{
-                        marginTop: Height_convert(8),
-                        marginLeft: Width_convert(17),
-                        width: Width_convert(339),
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        width: Width_convert(375) / 2,
+                        height: Height_convert(50),
+                        justifyContent: 'center',
+                        alignItems: 'center',
                       }}>
                       <Text
                         style={{
                           fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontSize: Font_normalize(12),
-                          color: '#000000',
                           fontWeight: '400',
+                          fontSize: Font_normalize(9),
+                          color: '#797979',
                         }}>
-                        카카오톡 수신동의
+                        회원탈퇴
                       </Text>
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => {
-                          ChangeMarkettting('kakaotalk');
-                        }}>
-                        {reduexState.loginDataCheck?.login?.data?.marketting
-                          ?.kakaotalk ? (
-                          <CheckedBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckedBox>
-                        ) : (
-                          <CheckBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckBox>
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        marginTop: Height_convert(8),
-                        marginLeft: Width_convert(17),
-                        width: Width_convert(339),
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <Text
-                        style={{
-                          fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontSize: Font_normalize(12),
-                          color: '#000000',
-                          fontWeight: '400',
-                        }}>
-                        메일 수신동의
-                      </Text>
-
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => {
-                          ChangeMarkettting('mail');
-                        }}>
-                        {reduexState.loginDataCheck?.login?.data?.marketting
-                          ?.mail ? (
-                          <CheckedBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckedBox>
-                        ) : (
-                          <CheckBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckBox>
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                    <View
-                      style={{
-                        marginTop: Height_convert(8),
-                        marginLeft: Width_convert(17),
-                        width: Width_convert(339),
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <Text
-                        style={{
-                          fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontSize: Font_normalize(12),
-                          color: '#000000',
-                          fontWeight: '400',
-                        }}>
-                        SMS 수신동의
-                      </Text>
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => {
-                          ChangeMarkettting('sms');
-                        }}>
-                        {reduexState.loginDataCheck?.login?.data?.marketting
-                          ?.sms ? (
-                          <CheckedBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckedBox>
-                        ) : (
-                          <CheckBox
-                            width={Width_convert(14)}
-                            height={Width_convert(14)}></CheckBox>
-                        )}
-                      </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
                   </View>
+                  {/**로그아웃 회원탈퇴버튼 끝 */}
                 </View>
-                {/*마케팅 정보 수신 동의 끝 */}
-                {/**로그아웃 회원탈퇴버튼 시작 */}
+
+                {/*하단 버튼만큼의 공간 띄우기 시작 */}
                 <View
                   style={{
-                    marginTop: Height_convert(26),
                     width: Width_convert(375),
-                    height: Height_convert(50),
+                    height: Height_convert(insets.bottom),
                     backgroundColor: '#F0F0F0',
-                    flexDirection: 'row',
-                  }}>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      if (reduexState.loginDataCheck.login.login == true) {
-                        logout();
-                      } else {
-                      }
-                    }}
-                    style={{
-                      width: Width_convert(375) / 2,
-                      height: Height_convert(50),
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '400',
-                        fontSize: Font_normalize(9),
-                        color: '#797979',
-                      }}>
-                      로그아웃
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      props.navigation.navigate('Withdrawal');
-                    }}
-                    style={{
-                      width: Width_convert(375) / 2,
-                      height: Height_convert(50),
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '400',
-                        fontSize: Font_normalize(9),
-                        color: '#797979',
-                      }}>
-                      회원탈퇴
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                {/**로그아웃 회원탈퇴버튼 끝 */}
-              </View>
-
-              {/*하단 버튼만큼의 공간 띄우기 시작 */}
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(insets.bottom),
-                  backgroundColor: '#F0F0F0',
-                }}></View>
-              {/*하단 버튼만큼의 공간 띄우기 끝 */}
-            </ScrollView>
-          </DismissKeyboard>
-        </KeyboardAvoidingView>
+                  }}></View>
+                {/*하단 버튼만큼의 공간 띄우기 끝 */}
+              </ScrollView>
+            </DismissKeyboard>
+          </KeyboardAvoidingView>
+        </>
       ) : (
         <>
+          <Tabbar
+            Title={'차량선택_info'}
+            navigation={props.navigation}
+            PageChangeValue={PageChangeValue}
+            AddCarData={AddCarData}></Tabbar>
           <View style={{borderTopWidth: 1, borderTopColor: '#DBDBDB'}}></View>
           <CarSetting
             page={page}

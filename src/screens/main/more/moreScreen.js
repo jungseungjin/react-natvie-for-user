@@ -8,6 +8,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -24,9 +25,6 @@ const MoreScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [loginChk, setLoginChk] = React.useState(
-    reduexState.loginDataCheck.login.login,
-  );
   const LoginChk = () => {
     try {
       if (reduexState.loginDataCheck.login.login == true) {
@@ -62,27 +60,22 @@ const MoreScreen = (props) => {
           <Menu
             Title={'후기관리'}
             navigation={props.navigation}
-            loginChk={loginChk}
             ShowModalChangeValue={ShowModalChangeValue}></Menu>
           <Menu
             Title={'최근 본 작업'}
             navigation={props.navigation}
-            loginChk={loginChk}
             ShowModalChangeValue={ShowModalChangeValue}></Menu>
           <Menu
             Title={'공지사항 및 이벤트'}
             navigation={props.navigation}
-            loginChk={loginChk}
             ShowModalChangeValue={ShowModalChangeValue}></Menu>
           <Menu
             Title={'고객센터'}
             navigation={props.navigation}
-            loginChk={loginChk}
             ShowModalChangeValue={ShowModalChangeValue}></Menu>
           <Menu
             Title={'설정'}
             navigation={props.navigation}
-            loginChk={loginChk}
             ShowModalChangeValue={ShowModalChangeValue}></Menu>
           {/* <Menu
             Title={'투닝 가게 입점 문의'}

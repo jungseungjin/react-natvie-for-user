@@ -12,6 +12,7 @@ import RNSplashScreen from 'react-native-splash-screen';
 enableScreens();
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
+import {checkNotifications} from 'react-native-permissions';
 
 import ButtonOneModal from '../../components/Modal/ButtonOneModal.js';
 import Domain2 from '../../../key/Domain2.js';

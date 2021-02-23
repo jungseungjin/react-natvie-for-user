@@ -21,7 +21,7 @@ const CarSettingBrand = (props) => {
           borderRadius: Font_normalize(4),
           marginLeft: 'auto',
           marginRight: 'auto',
-          marginTop: Width_convert(16),
+          marginTop: Width_convert(5),
           justifyContent: 'center',
           alignItems: 'center',
         },
@@ -31,11 +31,7 @@ const CarSettingBrand = (props) => {
       ]}>
       <FastImage
         style={{
-          borderTopWidth: 1,
-          borderBottomWidth: 1,
-          borderLeftWidth: 1,
-          borderRightWidth: 1,
-          width: Width_convert(64),
+          width: Width_convert(84),
           height: Width_convert(40),
         }}
         source={{

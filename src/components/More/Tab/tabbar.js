@@ -39,6 +39,7 @@ const TabBar = (props) => {
         props.Title == '1:1문의' ||
         props.Title == '피드백주기' ||
         props.Title == '차량선택' ||
+        props.Title == '차량선택_info' ||
         props.Title == '회원가입' ||
         props.Title == '아이디 찾기2' ||
         props.Title == '비밀번호 찾기1' ||
@@ -50,7 +51,11 @@ const TabBar = (props) => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            props.navigation.goBack();
+            if (props.Title == '차량선택_info') {
+              props.PageChangeValue('info');
+            } else {
+              props.navigation.goBack();
+            }
           }}>
           {props.Title == '설정' ? (
             <GoBack
@@ -119,6 +124,8 @@ const TabBar = (props) => {
             ? '아이디 찾기'
             : props.Title.indexOf('비밀번호 찾기') != -1
             ? '비밀번호 찾기'
+            : props.Title.indexOf('차량선택') != -1
+            ? '차량선택'
             : props.Title != '공지사항 및 이벤트 보기'
             ? props.Title
             : null}
@@ -179,6 +186,7 @@ const TabBar = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
+              props.saveData();
               //props.navigation.navigate()
             }}>
             <Text
@@ -193,12 +201,15 @@ const TabBar = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
-      ) : props.Title == '차량선택' ? (
+      ) : props.Title == '차량선택' || props.Title == '차량선택_info' ? (
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
               //props.navigation.navigate()
+              if (props.Title == '차량선택_info') {
+                props.AddCarData();
+              }
             }}>
             <Text
               style={{

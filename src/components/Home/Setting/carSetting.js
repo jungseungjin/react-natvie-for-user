@@ -72,7 +72,9 @@ const CarSetting = (props) => {
       if (props?.PickBrandValue?.brand) {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
+            console.log(props.PickBrandValue.brand); //쉐보레 대우
             let url = Domain + 'model_list/' + props.PickBrandValue.brand;
+            console.log(url);
             //props.IsLoadingChangeValue(true);
             let result = await axios.get(url);
             if (result.data[0].type) {

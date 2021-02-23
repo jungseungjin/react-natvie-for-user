@@ -6,7 +6,9 @@ import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import PropTypes from 'prop-types';
 
+import {useSelector} from 'react-redux';
 const Menu = (props) => {
+  const reduexState = useSelector((state) => state);
   return (
     <View
       style={{
@@ -24,7 +26,7 @@ const Menu = (props) => {
           } else if (props.Title == '로그인하기') {
             props.navigation.navigate('Login');
           } else if (props.Title == '후기관리') {
-            if (props.loginChk) {
+            if (reduexState.loginDataCheck.login.login) {
               props.navigation.navigate('ReviewManage');
             } else {
               props.ShowModalChangeValue(true);

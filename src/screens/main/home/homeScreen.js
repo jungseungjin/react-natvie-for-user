@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   ShadowPropTypesIOS,
   Platform,
+  RefreshControl,
 } from 'react-native';
-import {checkNotifications} from 'react-native-permissions';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
 import Height_convert from '../../../components/Width_convert.js';
@@ -141,13 +141,27 @@ const HomeScreen = (props) => {
     get_homeData();
     get_recentWorkList();
   }, []);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    get_homeData();
+    get_recentWorkList();
+    setRefreshing(false);
+  }, []);
   return (
     <>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          ref={scrollRef}
+          alwaysBounceVertical={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <Tabbar Title={'투닝'}></Tabbar>
           {/*상단 슬라이드 이미지 시작 */}
           {topSliderImageList.length > 0 ? (
