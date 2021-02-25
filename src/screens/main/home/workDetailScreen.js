@@ -36,10 +36,23 @@ import StoreInformation from '../../../components/Home/Infomation/storeInformati
 import LaborInformation from '../../../components/Home/Infomation/laborInformation.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import {useSelector} from 'react-redux';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import LoginModal from '../../../components/Modal/LoginModal.js';
 const WorkDetailScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const offset = useRef(new Animated.Value(0)).current;
   const [scrollValue, setScrollValue] = React.useState(0);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [page, setPage] = React.useState('work');
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
@@ -51,6 +64,53 @@ const WorkDetailScreen = (props) => {
   };
 
   const ChangeScrollValue = (text) => setScrollValue(text);
+  const Pick = () => {
+    try {
+      let url = Domain2 + 'pickData_detail';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          if (reduexState.loginDataCheck.login.data) {
+            let data = {
+              _id: reduexState.loginDataCheck.login.data._id,
+              type: 'work',
+              item_id: props.route.params.item._id,
+            };
+            let result = await axios.post(url, data, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].status == 'ok') {
+              console.log(result.data[0]);
+              if (
+                props.route.params.item.store_work_pick.indexOf(
+                  reduexState.loginDataCheck.login.data._id,
+                ) != -1
+              ) {
+                props.route.params.item.store_work_pick.splice(
+                  props.route.params.item.store_work_pick.indexOf(
+                    reduexState.loginDataCheck.login.data._id,
+                  ),
+                  1,
+                );
+              } else {
+                props.route.params.item.store_work_pick.push(
+                  reduexState.loginDataCheck.login.data._id,
+                );
+              }
+              forceUpdate();
+            } else {
+            }
+          } else {
+            setShowModal(true);
+          }
+        } else {
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <StatusBar
@@ -97,15 +157,12 @@ const WorkDetailScreen = (props) => {
               autoplayTimeout={4.5}
               dot={<Dot></Dot>}
               activeDot={<ActiveDot></ActiveDot>}>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
+              {props.route.params.item.store_thumbnail.map((item) => (
+                <SwiperImage
+                  from={'work'}
+                  image={item}
+                  key={item}></SwiperImage>
+              ))}
             </Swiper>
             {/*상단 슬라이더 끝 */}
             {/*작업 이름부터 가격까지 시작 */}
@@ -127,7 +184,7 @@ const WorkDetailScreen = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   }}>
-                  아우디 Q8 ABT LINE 바디킷
+                  {props.route.params.item.store_work_name}
                 </Text>
               </View>
               <View
@@ -144,7 +201,7 @@ const WorkDetailScreen = (props) => {
                       color: '#000000',
                       fontSize: Font_normalize(12),
                     }}>
-                    MOTION튜닝샵
+                    {props.route.params.item.info_store[0].store_name}
                   </Text>
                   <VerticalBar
                     style={{marginRight: Width_convert(5)}}></VerticalBar>
@@ -170,14 +227,16 @@ const WorkDetailScreen = (props) => {
                       color: '#000000',
                       fontSize: Font_normalize(12),
                     }}>
-                    서울특별시 강남구 청담동 12-3
+                    {props.route.params.item.info_store[0].store_address}
                   </Text>
                   <VerticalBar
                     style={{marginRight: Width_convert(5)}}></VerticalBar>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
-                      props.navigation.navigate('StoreLocation');
+                      props.navigation.navigate('StoreLocation', {
+                        item: props.route.params.item,
+                      });
                     }}>
                     <LocationSVG></LocationSVG>
                   </TouchableOpacity>
@@ -204,13 +263,13 @@ const WorkDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    4.8
+                    {props.route.params.item.store_work_grade || 0}
                   </Text>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
                       props.navigation.navigate('ReviewView', {
-                        Page: props.Page,
+                        item: props.route.params.item,
                       });
                     }}
                     style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -222,7 +281,10 @@ const WorkDetailScreen = (props) => {
                         fontSize: Font_normalize(14),
                         color: '#9B6FAB',
                       }}>
-                      후기 30
+                      후기{' '}
+                      {props.route.params.item.reviewCount
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     </Text>
                     <PurpleTag></PurpleTag>
                   </TouchableOpacity>
@@ -241,7 +303,7 @@ const WorkDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#59A3D9',
                     }}>
-                    작업소요 2시간
+                    작업소요 {props.route.params.item.store_work_time}
                   </Text>
                 </View>
                 <View style={{marginTop: Height_convert(4)}}>
@@ -252,7 +314,12 @@ const WorkDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    2,300,000원
+                    {props.route.params.item.store_work_total_cost != null &&
+                    props.route.params.item.store_work_total_cost != 0
+                      ? props.route.params.item.store_work_total_cost
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
+                      : '업체문의'}
                   </Text>
                 </View>
               </View>
@@ -286,7 +353,7 @@ const WorkDetailScreen = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     props.navigation.navigate('ReviewView', {
-                      Page: props.Page,
+                      item: props.route.params.item,
                     });
                   }}
                   style={{
@@ -316,7 +383,7 @@ const WorkDetailScreen = (props) => {
                 }}
                 style={[
                   {
-                    width: Width_convert(375 / 3),
+                    width: Width_convert(375 / 2),
                     height: Width_convert(48),
                     borderBottomWidth: 3,
                     justifyContent: 'center',
@@ -357,7 +424,7 @@ const WorkDetailScreen = (props) => {
                 }}
                 style={[
                   {
-                    width: Width_convert(375 / 3),
+                    width: Width_convert(375 / 2),
                     height: Width_convert(48),
                     borderBottomWidth: 3,
                     justifyContent: 'center',
@@ -389,7 +456,7 @@ const WorkDetailScreen = (props) => {
                   사장님 가게소개
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/*<TouchableOpacity
                 //key={item.value}
                 activeOpacity={1}
                 onPress={() => {
@@ -429,14 +496,16 @@ const WorkDetailScreen = (props) => {
                   ]}>
                   우리가게공임표
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {page == 'work' ? (
-            <WorkInformation></WorkInformation>
+            <WorkInformation
+              item={props.route.params.item.store_work_info}></WorkInformation>
           ) : page == 'store' ? (
-            <StoreInformation></StoreInformation>
+            <StoreInformation
+              item={props.route.params.item.info_store[0]}></StoreInformation>
           ) : page == 'labor' ? (
             <LaborInformation></LaborInformation>
           ) : null}
@@ -450,6 +519,21 @@ const WorkDetailScreen = (props) => {
           {/*하단 버튼만큼의 공간 띄우기 끝 */}
         </ScrollView>
         <AnimatedHeader
+          Length={props.route.params.item.store_work_pick.length}
+          Pick={
+            reduexState.loginDataCheck.login.login
+              ? props.route.params.item.store_work_pick.indexOf(
+                  reduexState.loginDataCheck.login.data._id,
+                ) != -1
+                ? true
+                : false
+              : false
+          }
+          PickChangeValue={Pick}
+          page={'work'}
+          ShowModalChangeValue={ShowModalChangeValue}
+          redux={reduexState.loginDataCheck.login}
+          Title={props.route.params.item.info_store[0].store_name}
           navigation={props.navigation}
           animatedValue={offset}
           scrollValue={scrollValue}></AnimatedHeader>
@@ -459,6 +543,24 @@ const WorkDetailScreen = (props) => {
         <BottomButton></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
+      {showModal ? (
+        <LoginModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+          //BottomText={'설정하러가기'}
+          //LeftButtonTitle={'아니오'}
+          //RightButtonTitle={'네'}
+        ></LoginModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

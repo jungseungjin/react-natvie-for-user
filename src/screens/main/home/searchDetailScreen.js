@@ -14,6 +14,8 @@ import BlankBox from '../../../../assets/home/blank_box.svg';
 import QuestionRound from '../../../../assets/home/question_round.svg';
 import DisabledBox from '../../../../assets/home/disabled_box.svg';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import {
   SafeAreaView,
   StyleSheet,
@@ -27,6 +29,8 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  FlatList,
+  RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
@@ -39,24 +43,26 @@ import FilterView from '../../../components/Home/Search/filterView.js';
 import PickButton from '../../../components/Home/Search/pickButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-const SearchScreenDetail = ({navigation, route}) => {
+import {useSelector} from 'react-redux';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+const SearchScreenDetail = (props) => {
+  const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   //기본으로 데이터받아오는 검색부터 진행해야됨.
   //데이터 받아와야하니까 로딩걸린다잉
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [searchText, setSearchText] = React.useState(
-    route?.params?.searchText || null,
+    props.route?.params?.searchText || null,
   );
   const [resentSearch, setResentSearch] = React.useState(
-    route?.params?.resentSearch || null,
+    props.route?.params?.resentSearch || null,
   );
   const [statusBar, setStatusBar] = React.useState(0);
   const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
-  const [resultWorkList, setresultWorkList] = React.useState([
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-  ]);
+  const [resultWorkList, setresultWorkList] = React.useState([]);
   const [resultStoreList, setresultStoreList] = React.useState([]);
   const [pickButton, setPickButton] = React.useState('work');
   const ButtonChangeValue = (text) => setPickButton(text);
@@ -64,6 +70,39 @@ const SearchScreenDetail = ({navigation, route}) => {
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);
   const SortChangeValue = (text) => setPickSort(text);
+  const getData = (searchText) => {
+    try {
+      let result;
+      let url =
+        Domain2 +
+        'searchlist/?searchText=' +
+        searchText +
+        '&longitude=' +
+        reduexState?.loginDataCheck?.login?.location?.location?.longitude +
+        '&latitude=' +
+        reduexState?.loginDataCheck?.login?.location?.location?.latitude;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setresultWorkList(result.data[0].WorkList);
+            setresultStoreList(result.data[0].StoreList);
+          } else {
+            console.log(result.data[0]);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const addData = async (searchValue) => {
     try {
       if (resentSearch.indexOf(searchValue) != -1) {
@@ -77,10 +116,21 @@ const SearchScreenDetail = ({navigation, route}) => {
       console.log(err);
     }
   };
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getData(searchText);
+    setRefreshing(false);
+  }, []);
   const textInputRef = useRef();
   const handleClick = () => {
     textInputRef.current.focus();
   };
+  React.useEffect(() => {
+    getData(props.route?.params?.searchText);
+  }, []);
   return (
     <>
       <StatusBar
@@ -101,7 +151,7 @@ const SearchScreenDetail = ({navigation, route}) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                navigation.goBack();
+                props.navigation.goBack();
               }}
               style={{
                 marginLeft: Width_convert(22),
@@ -165,7 +215,6 @@ const SearchScreenDetail = ({navigation, route}) => {
               }}
               onPress={() => {
                 if (searchText.trim()) {
-                  //검색함수 ㄲ
                   addData(searchText);
                 }
               }}>
@@ -254,16 +303,67 @@ const SearchScreenDetail = ({navigation, route}) => {
               </View>
             </View>
           ) : null}
-          {resultWorkList.length == 0 && resultStoreList.length == 0 ? (
+          {(pickButton == 'work' && resultWorkList.length == 0) ||
+          (pickButton == 'store' && resultStoreList.length == 0) ? (
             <SearchNull></SearchNull>
           ) : (
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {resultStoreList ? <SearchStore></SearchStore> : null}
-              {resultWorkList ? <SearchWork></SearchWork> : null}
-            </ScrollView>
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{minHeight: Height_convert(812)}}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              data={
+                pickButton == 'work'
+                  ? resultWorkList
+                  : pickButton == 'store'
+                  ? resultStoreList
+                  : null
+              }
+              windowSize={2}
+              initialNumToRender={10}
+              renderItem={({item}) =>
+                pickButton == 'work' ? (
+                  <>
+                    {resultWorkList.indexOf(item) != 0 ? (
+                      <View style={{height: Height_convert(15)}}></View>
+                    ) : null}
+                    <SearchWork
+                      key={item._id}
+                      item={item}
+                      navigation={props.navigation}></SearchWork>
+                    {resultWorkList.indexOf(item) ==
+                    resultWorkList.length - 1 ? (
+                      <View style={{height: Height_convert(390)}}></View>
+                    ) : null}
+                  </>
+                ) : pickButton == 'store' ? (
+                  <>
+                    <SearchStore
+                      key={item._id}
+                      item={item}
+                      navigation={props.navigation}></SearchStore>
+                    {resultStoreList.indexOf(item) ==
+                    resultStoreList.length - 1 ? (
+                      <View style={{height: Height_convert(390)}}></View>
+                    ) : null}
+                  </>
+                ) : null
+              }
+              keyExtractor={(item) => String(item._id)}></FlatList>
           )}
         </SafeAreaView>
       </DismissKeyboard>
+
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

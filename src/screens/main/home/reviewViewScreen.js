@@ -22,9 +22,9 @@ import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
 
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-const ReviewView = ({navigation, Page}) => {
+const ReviewView = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [page, setPage] = React.useState('MOTION튜닝샵');
+  const [page, setPage] = React.useState('');
   const [scrollValue, setScrollValue] = React.useState(0);
 
   return (
@@ -47,9 +47,9 @@ const ReviewView = ({navigation, Page}) => {
               ? '편의장치'
               : page == 'camping'
               ? '캠핑카'
-              : 'MOTION튜닝샵'
+              : props.route.params.item.info_store[0].store_name
           }
-          navigation={navigation}></Tabbar>
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             width: Width_convert(375),
@@ -74,7 +74,8 @@ const ReviewView = ({navigation, Page}) => {
                 lineHeight: Font_normalize(23),
                 marginRight: Width_convert(8),
               }}>
-              작업후기{'\n'}37개
+              작업후기{'\n'}
+              {props.route.params.item.reviewCount}개
             </Text>
           </View>
           <View
@@ -92,7 +93,7 @@ const ReviewView = ({navigation, Page}) => {
                 fontSize: Font_normalize(22),
                 color: '#FFFFFF',
               }}>
-              4.6
+              {props.route.params.item.store_work_grade || '0.0'}
             </Text>
           </View>
         </View>
@@ -733,7 +734,9 @@ const ReviewView = ({navigation, Page}) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              navigation.navigate('ReviewRegister');
+              props.navigation.navigate('ReviewRegister', {
+                item: props.route.params.item,
+              });
             }}
             style={{
               width: Width_convert(48),

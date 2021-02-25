@@ -16,15 +16,15 @@ import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
 import HeartRed from '../../../../assets/home/HeartRed.svg';
 import HeartWhite from '../../../../assets/home/HeartWhite.svg';
 import StatusBarHeight from '../../StatusBarHeight';
-const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
+const AnimatedHeader = (props) => {
   const insets = useSafeAreaInsets();
 
-  const background = animatedValue.interpolate({
+  const background = props.animatedValue.interpolate({
     inputRange: [100, Width_convert(240) - StatusBarHeight],
     outputRange: ['rgba( 255, 255, 255, 0)', 'rgba( 255, 255, 255, 1)'],
     extrapolate: 'clamp',
   });
-  const centerText = animatedValue.interpolate({
+  const centerText = props.animatedValue.interpolate({
     inputRange: [100, Width_convert(240) - StatusBarHeight],
     outputRange: ['rgba( 0, 0, 0, 0)', 'rgba( 0, 0, 0, 1)'],
     extrapolate: 'clamp',
@@ -55,11 +55,11 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
               activeOpacity={1}
               style={{}}
               onPress={() => {
-                navigation.goBack();
+                props.navigation.goBack();
               }}>
               <GoBackWhite
                 fill={
-                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
+                  props.scrollValue > Width_convert(240) - 2 * StatusBarHeight
                     ? '#000000'
                     : '#FFFFFF'
                 }
@@ -77,7 +77,7 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
                 color: centerText,
                 textAlign: 'center',
               }}>
-              MOTION튜닝
+              {props.Title}
             </Animated.Text>
           </View>
           <View
@@ -89,13 +89,25 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
               style={{
                 flexDirection: 'row',
               }}
-              onPress={() => {}}>
-              <HeartWhite
-                fill={
-                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
-                    ? '#000000'
-                    : '#FFFFFF'
-                }></HeartWhite>
+              onPress={() => {
+                if (props.redux.login) {
+                  console.log('로그인됨');
+                  props.PickChangeValue();
+                } else {
+                  props.ShowModalChangeValue(true);
+                }
+                //찜한거에 추가하기빼기 -> 로그인이 되어있어야함
+              }}>
+              {props.Pick ? (
+                <HeartRed></HeartRed>
+              ) : (
+                <HeartWhite
+                  fill={
+                    props.scrollValue > Width_convert(240) - 2 * StatusBarHeight
+                      ? '#000000'
+                      : '#FFFFFF'
+                  }></HeartWhite>
+              )}
               <Text
                 style={[
                   {
@@ -105,11 +117,14 @@ const AnimatedHeader = ({navigation, animatedValue, scrollValue}) => {
                     fontWeight: '700',
                     fontSize: Font_normalize(6),
                   },
-                  scrollValue > Width_convert(240) - 2 * StatusBarHeight
+                  props.Pick
+                    ? {color: '#EA5152'}
+                    : props.scrollValue >
+                      Width_convert(240) - 2 * StatusBarHeight
                     ? {color: '#000000'}
                     : {color: '#FFFFFF'},
                 ]}>
-                123
+                {props.Length}
               </Text>
             </TouchableOpacity>
           </View>

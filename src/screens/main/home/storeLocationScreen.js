@@ -7,6 +7,13 @@ import {
   SafeAreaView,
 } from 'react-native';
 
+import {
+  PERMISSIONS,
+  check,
+  request,
+  RESULTS,
+  requestNotifications,
+} from 'react-native-permissions';
 import NaverMapView, {
   Circle,
   Marker,
@@ -21,32 +28,76 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-const StoreLocationScreen = ({navigation}) => {
+import GPS from '../../../../assets/home/gps.svg';
+import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import Geolocation from 'react-native-geolocation-service';
+const StoreLocationScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [locationModal, setLocationModal] = React.useState(false);
+  const LocationModalChangeValue = (text) => setLocationModal(text);
+  const [P0, setP0] = React.useState({
+    latitude: parseFloat(props.route.params.item.store_location.coordinates[1]),
+    longitude: parseFloat(
+      props.route.params.item.store_location.coordinates[0],
+    ),
+  });
 
-  const P0 = {latitude: 37.564362, longitude: 126.977011};
-  const P1 = {latitude: 37.565051, longitude: 126.978567};
-  const P2 = {latitude: 37.565383, longitude: 126.976292};
-  function gotToMyLocation() {
-    console.log('gotToMyLocation is called');
-    navigator.geolocation.getCurrentPosition(
-      ({coords}) => {
-        console.log('curent location: ', coords);
-        console.log(this.map);
-        if (this.map) {
-          console.log('curent location: ', coords);
-          this.map.animateToRegion({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          });
+  //위치정보사용 퍼미션
+  const handleLocationPermission = async (Type) => {
+    if (Type == 'ios') {
+      const res = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+
+      if (res === RESULTS.GRANTED) {
+        return true;
+      } else if (res === RESULTS.DENIED) {
+        const res2 = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        if (res2 === RESULTS.GRANTED) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      const res = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+
+      if (res === RESULTS.GRANTED) {
+        return true;
+      } else if (res === RESULTS.DENIED) {
+        const res2 = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        if (res2 === RESULTS.GRANTED) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+  };
+
+  //위치정보 가져오기(경위도, 네이버지도에서 주소까지)
+  const CurrentPosition = () => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        position.coords.longitude = 126.70528; //지워야함
+        position.coords.latitude = 37.45639; //지워야함
+        setP0({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.log(error.code, error.message);
+        if (error.message.indexOf('permission denied') != -1) {
+          //권한은 허용되어있으나 gps가 꺼져있을때
+          setLocationModal(true);
         }
       },
-      (error) => alert('Error: Are location services on?'),
-      {enableHighAccuracy: true},
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
-  }
+  };
   return (
     <>
       <StatusBar
@@ -74,7 +125,7 @@ const StoreLocationScreen = ({navigation}) => {
               activeOpacity={1}
               style={{}}
               onPress={() => {
-                navigation.goBack();
+                props.navigation.goBack();
               }}>
               <GoBackWhite
                 fill={'#000000'}
@@ -92,7 +143,7 @@ const StoreLocationScreen = ({navigation}) => {
                 color: '#000000',
                 textAlign: 'center',
               }}>
-              MOTION튜닝
+              {props.route.params.item.info_store[0].store_name}
             </Text>
           </View>
           <View
@@ -141,36 +192,71 @@ const StoreLocationScreen = ({navigation}) => {
             zoomControl={false}
             rotateGesturesEnabled={false}
             useTextureView={false}
-            onTouch={(e) =>
-              console.warn('onTouch', JSON.stringify(e.nativeEvent))
-            }
+            // onTouch={(e) =>
+            //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
+            // }
             onCameraChange={(e) =>
-              console.warn('onCameraChange', JSON.stringify(e))
+              setP0({
+                latitude: parseFloat(e.latitude),
+                longitude: parseFloat(e.longitude),
+              })
             }
-            onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}>
-            <Marker
-              coordinate={P0}
-              onClick={() => console.warn('onClick! p0')}
-            />
+            //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
+          >
+            <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />
           </NaverMapView>
           <TouchableOpacity
+            activeOpacity={1}
             onPress={() => {
-              alert('gdgd');
+              if (handleLocationPermission(Platform.OS)) {
+                //위치정보 사용 ok 현재위치를 가져와야합니다. 어디서?? 네이버에서
+                CurrentPosition(); //경위도 찍고
+              } else {
+                //위치정보 켜달라는 모달 띄우기
+                LocationModalChangeValue(true);
+              }
             }}
             style={{
               zIndex: 9999,
-              width: 60,
-              height: 60,
+              width: Width_convert(42),
+              height: Width_convert(42),
               position: 'absolute',
-              bottom: 20,
-              right: 20,
-              borderRadius: 30,
-              backgroundColor: '#d2d2d2',
+              bottom: Width_convert(50),
+              right: Width_convert(22),
+              borderRadius: Width_convert(21),
+              backgroundColor: '#FFFFFF',
+              justifyContent: 'center',
+              alignItems: 'center',
+
+              shadowColor: '#000000', //그림자색
+              shadowOpacity: 0.3, //그림자 투명도
+              shadowOffset: {width: 2, height: 2}, //그림자 위치
+              //ANDROID
+              elevation: 5,
             }}>
-            <Text>gdgdgd</Text>
+            <GPS></GPS>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      {locationModal ? (
+        <ButtonTwoModal
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+          navigation={props.navigation}
+          ShowModalChangeValue={LocationModalChangeValue}
+          LeftButtonTitle={'닫기'}
+          RightButtonTitle={'설정'}></ButtonTwoModal>
+      ) : null}
+      {showModal ? (
+        <ButtonTwoModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            '지역 설정을 위해 고객님의 권한이 필요합니다. 권한을 허용하시겠습니까?'
+          }
+          //BottomText={'설정하러가기'}
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}></ButtonTwoModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

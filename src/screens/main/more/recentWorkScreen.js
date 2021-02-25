@@ -62,8 +62,8 @@ const RecentWork = (props) => {
         let new_data = value.split(',');
         let new_arr = [];
         let new_str = '';
-        for (var a = new_data.length - 1; a > -1; a--) {
-          if (a == new_data.length - 1) {
+        for (var a = 0; a < new_data.length; a++) {
+          if (a == 0) {
             new_str = new_data[a];
           } else {
             new_str = new_str + ',' + new_data[a];
@@ -107,8 +107,8 @@ const RecentWork = (props) => {
         let new_data = value.split(',');
         let new_arr = [];
         let new_str = '';
-        for (var a = new_data.length - 1; a > -1; a--) {
-          if (a == new_data.length - 1) {
+        for (var a = 0; a < new_data.length; a++) {
+          if (a == 0) {
             new_str = new_data[a];
           } else {
             new_str = new_str + ',' + new_data[a];

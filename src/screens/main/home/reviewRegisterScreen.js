@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  TextInput,
 } from 'react-native';
 
 import Height_convert from '../../../components/Height_convert.js';
@@ -16,110 +17,299 @@ import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
-import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import StarGrey from '../../../../assets/home/star_grey.svg';
 import PicktureNestedPlus from '../../../../assets/home/pickture_nestedPlus.svg';
 import IsLoading from '../../../components/ActivityIndicator';
-import {TextInput} from 'react-native-gesture-handler';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-const ReviewRegister = ({navigation, Page}) => {
+import ImagePicker from 'react-native-image-crop-picker';
+import FastImage from 'react-native-fast-image';
+import key from '../../../../key/key.js';
+import moment from 'moment';
+import S3 from 'aws-sdk/clients/s3';
+import fs from 'react-native-fs';
+import base64_arraybuffer from 'base64-arraybuffer';
+const ReviewRegister = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [page, setPage] = React.useState('MOTION튜닝샵');
+  const [page, setPage] = React.useState('');
   const [scrollValue, setScrollValue] = React.useState(0);
-
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [starCount, setStartCount] = React.useState([
+    {value: 0, index: 0},
+    {value: 0, index: 1},
+    {value: 0, index: 2},
+    {value: 0, index: 3},
+    {value: 0, index: 4},
+  ]);
+  const [contents, setContents] = React.useState('');
+  const [imageList, setImageList] = React.useState([
+    {value: 0, index: 0},
+    {value: 0, index: 1},
+    {value: 0, index: 2},
+    {value: 0, index: 3},
+  ]);
+  const [awsImage, setAwsImage] = React.useState([]);
+  const addImage = () => {
+    try {
+      ImagePicker.openPicker({
+        compressImageMaxWidth: 2000,
+        compressImageMaxHeight: 1000,
+        multiple: true,
+      }).then((images) => {
+        uploadImageOnS3(images);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const uploadImageOnS3 = async (file) => {
+    const s3bucket = new S3({
+      accessKeyId: key.amazonID,
+      secretAccessKey: key.amazonSECRET,
+      Bucket: key.amazonBUCKET_NAME,
+      signatureVersion: 'v4',
+    });
+    let imageArr = [];
+    for (var a = 0; a < file.length; a++) {
+      console.log(a);
+      console.log(file.length - 1);
+      let contentType = 'image/jpeg';
+      let contentDeposition =
+        'review_image/' + moment().valueOf() + file[a].filename;
+      const base64 = await fs.readFile(file[a].path, 'base64');
+      const arrayBuffer = base64_arraybuffer.decode(base64);
+      await s3bucket.createBucket(async () => {
+        const params = {
+          Bucket: key.amazonBUCKET_NAME,
+          Key: contentDeposition,
+          Body: arrayBuffer,
+          ContentDisposition: contentDeposition,
+          ContentType: contentType,
+        };
+        await s3bucket.upload(params, (err, data) => {
+          if (err) {
+            console.log('error in callback');
+          }
+          console.log('success');
+          //console.log('Respomse URL : ' + data.Location);
+          imageArr.push(data.Location);
+          //setAwsImage(imageArr);
+        });
+      });
+    }
+  };
   return (
-    <>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={'#FFFFFF'}></StatusBar>
-      <DismissKeyboard>
-        <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-          {Platform.OS == 'android' ? (
-            <View
-              style={{
-                width: Width_convert(375),
-                height: StatusBarHeight,
-              }}></View>
-          ) : null}
-          <Tabbar
-            Title={
-              page == 'dressup'
-                ? '드레스업'
-                : page == 'perfomance'
-                ? '퍼포먼스'
-                : page == 'convenience'
-                ? '편의장치'
-                : page == 'camping'
-                ? '캠핑카'
-                : '후기작성'
-            }
-            navigation={navigation}></Tabbar>
-          {/*  작업명, 샵이름, 별점 시작 */}
-          <View style={{alignItems: 'center', width: Width_convert(375)}}>
-            <View>
-              <Text
-                style={{
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(16),
-                  color: '#000000',
-                }}>
-                기아 쏘렌토 제스트 바디킷
-              </Text>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  marginTop: Height_convert(5),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '400',
-                  fontSize: Font_normalize(10),
-                  color: '#000000',
-                }}>
-                MOTION튜닝샵
-              </Text>
-            </View>
-            <View
-              style={{
-                marginTop: Height_convert(14),
-                flexDirection: 'row',
-              }}>
-              <Star
-                width={Width_convert(20)}
-                height={Height_convert(20)}
-                style={{marginRight: Width_convert(7)}}></Star>
-              <Star
-                width={Width_convert(20)}
-                height={Height_convert(20)}
-                style={{marginRight: Width_convert(7)}}></Star>
-              <Star
-                width={Width_convert(20)}
-                height={Height_convert(20)}
-                style={{marginRight: Width_convert(7)}}></Star>
-              <Star
-                width={Width_convert(20)}
-                height={Height_convert(20)}
-                style={{marginRight: Width_convert(7)}}></Star>
-              <Star
-                width={Width_convert(20)}
-                height={Height_convert(20)}
-                style={{marginRight: Width_convert(7)}}></Star>
-            </View>
-          </View>
-
-          {/*  작업명, 샵이름, 별점 끝 */}
+    <DismissKeyboard>
+      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={'#FFFFFF'}></StatusBar>
+        {Platform.OS == 'android' ? (
           <View
             style={{
-              marginTop: Height_convert(17),
               width: Width_convert(375),
-              height: Width_convert(479),
-              alignItems: 'center',
+              height: StatusBarHeight,
+            }}></View>
+        ) : null}
+        <Tabbar
+          Title={
+            page == 'dressup'
+              ? '드레스업'
+              : page == 'perfomance'
+              ? '퍼포먼스'
+              : page == 'convenience'
+              ? '편의장치'
+              : page == 'camping'
+              ? '캠핑카'
+              : '후기작성'
+          }
+          navigation={props.navigation}></Tabbar>
+        {/*  작업명, 샵이름, 별점 시작 */}
+        <View style={{alignItems: 'center', width: Width_convert(375)}}>
+          <View>
+            <Text
+              style={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                fontSize: Font_normalize(16),
+                color: '#000000',
+              }}>
+              {props.route.params.item.store_work_name}
+            </Text>
+            <Text
+              style={{
+                textAlign: 'right',
+                marginTop: Height_convert(5),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '400',
+                fontSize: Font_normalize(10),
+                color: '#000000',
+              }}>
+              {props.route.params.item.info_store[0].store_name}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginTop: Height_convert(14),
+              flexDirection: 'row',
             }}>
-            {/*후기 글작성 시작 */}
-            <View
+            {starCount.map((item) =>
+              item.value == 0 ? (
+                <TouchableOpacity
+                  key={item.index}
+                  activeOpacity={1}
+                  onPress={() => {
+                    let newArr = [];
+                    for (var a = 0; a < 5; a++) {
+                      if (item.index >= a) {
+                        newArr.push({value: 1, index: a});
+                      } else {
+                        newArr.push({value: 0, index: a});
+                      }
+                    }
+                    setStartCount(newArr);
+                  }}>
+                  <StarGrey
+                    width={Width_convert(20)}
+                    height={Height_convert(20)}
+                    style={{marginRight: Width_convert(7)}}></StarGrey>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  key={item.index}
+                  activeOpacity={1}
+                  onPress={() => {
+                    let newArr = [];
+                    for (var a = 0; a < 5; a++) {
+                      if (item.index >= a) {
+                        newArr.push({value: 1, index: a});
+                      } else {
+                        newArr.push({value: 0, index: a});
+                      }
+                    }
+                    setStartCount(newArr);
+                  }}>
+                  <Star
+                    width={Width_convert(20)}
+                    height={Height_convert(20)}
+                    style={{marginRight: Width_convert(7)}}></Star>
+                </TouchableOpacity>
+              ),
+            )}
+          </View>
+        </View>
+
+        {/*  작업명, 샵이름, 별점 끝 */}
+        <View
+          style={{
+            marginTop: Height_convert(17),
+            width: Width_convert(375),
+            height: Width_convert(479),
+            alignItems: 'center',
+          }}>
+          {/*후기 글작성 시작 */}
+          <View
+            style={{
+              width: Width_convert(339),
+              height: Height_convert(391),
+              borderBottomWidth: 1,
+              borderBottomColor: '#BFBFBF',
+              borderTopWidth: 1,
+              borderTopColor: '#BFBFBF',
+              borderLeftWidth: 1,
+              borderLeftColor: '#BFBFBF',
+              borderRightWidth: 1,
+              borderRightColor: '#BFBFBF',
+            }}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
               style={{
                 width: Width_convert(339),
-                height: Width_convert(391),
+                height: Height_convert(391),
+              }}>
+              <TextInput
+                placeholder="여러분의 후기를 통해, 튜닝정보가 더욱 투명해지고 열린 정보가 되어 활기찬 튜닝문화를 만들어 나갈 수 있습니다"
+                multiline={true}
+                autoCapitalize={'none'}
+                autoCompleteType={'off'}
+                autoCorrect={false}
+                onChangeText={(contents) => setContents(contents)}
+                value={contents}
+                placeholderStyle={{
+                  minHeight: Height_convert(812),
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontWeight: '700',
+                  fontSize: Font_normalize(15),
+                  color: '#A1A1A1',
+                  textAlignVertical: 'top',
+                }}
+                style={{
+                  minHeight: Height_convert(812),
+                  paddingLeft: Width_convert(7),
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontWeight: '700',
+                  fontSize: Font_normalize(15),
+                  color: '#000000',
+                  textAlignVertical: 'top',
+                }}></TextInput>
+            </ScrollView>
+          </View>
+          {/*후기 글작성 끝 */}
+          {/* 하단 사진추가버튼 시작 */}
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              addImage();
+            }}
+            style={{
+              width: Width_convert(339),
+              height: Width_convert(71),
+              marginTop: Height_convert(17),
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            {imageList.map((item) => (
+              <View
+                key={item.index}
+                style={{
+                  width: Width_convert(71),
+                  height: Width_convert(71),
+                  marginRight: Width_convert(18),
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#BFBFBF',
+                  borderTopWidth: 1,
+                  borderTopColor: '#BFBFBF',
+                  borderLeftWidth: 1,
+                  borderLeftColor: '#BFBFBF',
+                  borderRightWidth: 1,
+                  borderRightColor: '#BFBFBF',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {item.value == 0 ? (
+                  <PicktureNestedPlus></PicktureNestedPlus>
+                ) : (
+                  <FastImage
+                    style={{
+                      width: Width_convert(71),
+                      height: Width_convert(71),
+                    }}
+                    source={{
+                      uri: item.value,
+                      //headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                )}
+              </View>
+            ))}
+            <View
+              style={{
+                width: Width_convert(71),
+                height: Width_convert(71),
+                marginRight: Width_convert(18),
                 borderBottomWidth: 1,
                 borderBottomColor: '#BFBFBF',
                 borderTopWidth: 1,
@@ -128,148 +318,79 @@ const ReviewRegister = ({navigation, Page}) => {
                 borderLeftColor: '#BFBFBF',
                 borderRightWidth: 1,
                 borderRightColor: '#BFBFBF',
-              }}>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={{
-                  minHeight: Width_convert(391),
-                  width: Width_convert(339),
-                }}>
-                <TextInput
-                  placeholder="리뷰는 큰 힘이 됩니다."
-                  multiline={true}
-                  placeholderStyle={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '700',
-                    fontSize: Font_normalize(15),
-                    color: '#A1A1A1',
-                    textAlignVertical: 'center',
-                  }}
-                  style={{
-                    paddingLeft: Width_convert(7),
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '700',
-                    fontSize: Font_normalize(15),
-                    color: '#000000',
-                    textAlignVertical: 'center',
-                  }}></TextInput>
-              </ScrollView>
-            </View>
-            {/*후기 글작성 끝 */}
-            {/* 하단 사진추가버튼 시작 */}
-            <View
-              style={{
-                width: Width_convert(339),
-                height: Width_convert(71),
-                marginTop: Height_convert(17),
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(71),
-                  height: Width_convert(71),
-                  marginRight: Width_convert(18),
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#BFBFBF',
-                  borderTopWidth: 1,
-                  borderTopColor: '#BFBFBF',
-                  borderLeftWidth: 1,
-                  borderLeftColor: '#BFBFBF',
-                  borderRightWidth: 1,
-                  borderRightColor: '#BFBFBF',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <PicktureNestedPlus></PicktureNestedPlus>
-              </View>
-              <View
-                style={{
-                  width: Width_convert(71),
-                  height: Width_convert(71),
-                  marginRight: Width_convert(18),
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#BFBFBF',
-                  borderTopWidth: 1,
-                  borderTopColor: '#BFBFBF',
-                  borderLeftWidth: 1,
-                  borderLeftColor: '#BFBFBF',
-                  borderRightWidth: 1,
-                  borderRightColor: '#BFBFBF',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <PicktureNestedPlus></PicktureNestedPlus>
-              </View>
-              <View
-                style={{
-                  width: Width_convert(71),
-                  height: Width_convert(71),
-                  marginRight: Width_convert(18),
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#BFBFBF',
-                  borderTopWidth: 1,
-                  borderTopColor: '#BFBFBF',
-                  borderLeftWidth: 1,
-                  borderLeftColor: '#BFBFBF',
-                  borderRightWidth: 1,
-                  borderRightColor: '#BFBFBF',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <PicktureNestedPlus></PicktureNestedPlus>
-              </View>
-              <View
-                style={{
-                  width: Width_convert(71),
-                  height: Width_convert(71),
-                  marginRight: Width_convert(18),
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#BFBFBF',
-                  borderTopWidth: 1,
-                  borderTopColor: '#BFBFBF',
-                  borderLeftWidth: 1,
-                  borderLeftColor: '#BFBFBF',
-                  borderRightWidth: 1,
-                  borderRightColor: '#BFBFBF',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <PicktureNestedPlus></PicktureNestedPlus>
-              </View>
-            </View>
-            {/* 하단 사진추가버튼 끝 */}
-            <View
-              style={{
-                marginTop: Height_convert(30),
-                width: Width_convert(375),
-                height: Width_convert(46),
+                justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <TouchableOpacity
-                style={{
-                  width: Width_convert(339),
-                  height: Width_convert(46),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: Font_normalize(5),
-                  backgroundColor: '#946AEF',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#FFFFFF',
-                  }}>
-                  작성완료
-                </Text>
-              </TouchableOpacity>
+              <PicktureNestedPlus></PicktureNestedPlus>
             </View>
+            <View
+              style={{
+                width: Width_convert(71),
+                height: Width_convert(71),
+                marginRight: Width_convert(18),
+                borderBottomWidth: 1,
+                borderBottomColor: '#BFBFBF',
+                borderTopWidth: 1,
+                borderTopColor: '#BFBFBF',
+                borderLeftWidth: 1,
+                borderLeftColor: '#BFBFBF',
+                borderRightWidth: 1,
+                borderRightColor: '#BFBFBF',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <PicktureNestedPlus></PicktureNestedPlus>
+            </View>
+            <View
+              style={{
+                width: Width_convert(71),
+                height: Width_convert(71),
+                marginRight: Width_convert(18),
+                borderBottomWidth: 1,
+                borderBottomColor: '#BFBFBF',
+                borderTopWidth: 1,
+                borderTopColor: '#BFBFBF',
+                borderLeftWidth: 1,
+                borderLeftColor: '#BFBFBF',
+                borderRightWidth: 1,
+                borderRightColor: '#BFBFBF',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <PicktureNestedPlus></PicktureNestedPlus>
+            </View>
+          </TouchableOpacity>
+          {/* 하단 사진추가버튼 끝 */}
+          <View
+            style={{
+              marginTop: Height_convert(30),
+              width: Width_convert(375),
+              height: Width_convert(46),
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={{
+                width: Width_convert(339),
+                height: Width_convert(46),
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: Font_normalize(5),
+                backgroundColor: '#946AEF',
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(16),
+                  fontWeight: '700',
+                  color: '#FFFFFF',
+                }}>
+                작성완료
+              </Text>
+            </TouchableOpacity>
           </View>
-        </SafeAreaView>
-      </DismissKeyboard>
-    </>
+        </View>
+      </SafeAreaView>
+    </DismissKeyboard>
   );
 };
 export default ReviewRegister;

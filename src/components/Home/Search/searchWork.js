@@ -21,10 +21,16 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
-
-const SearchWork = ({navigation, route}) => {
+import SetRecentList from '../../../components/setRecentList.js';
+const SearchWork = (props) => {
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => {
+        //최근 본 작업에 넣기
+        SetRecentList('work', props.item._id);
+        props.navigation.navigate('WorkDetail', {item: props.item});
+      }}
       style={{
         width: Width_convert(375),
         height: Width_convert(423),
@@ -32,8 +38,8 @@ const SearchWork = ({navigation, route}) => {
       <FastImage
         style={{width: Width_convert(375), height: Width_convert(240)}}
         source={{
-          uri: 'https://unsplash.it/400/400?image=1',
-          headers: {Authorization: 'someAuthToken'},
+          uri: props.item.store_thumbnail[0],
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
@@ -46,52 +52,106 @@ const SearchWork = ({navigation, route}) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#FFA740',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+        {props.item.info_store[0].store_badge.indexOf(1) != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(3),
-              paddingBottom: Width_convert(3),
-              paddingLeft: Width_convert(4),
-              paddingRight: Width_convert(4),
-              fontSize: Font_normalize(9),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#FFA740',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            인기추천
-          </Text>
-        </View>
-        <View
-          style={{
-            borderRadius: Font_normalize(2),
-            backgroundColor: '#1A74FC',
-            marginRight: Width_convert(5),
-            textAlign: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              인기추천
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge.indexOf(2) != -1 ? (
+          <View
             style={{
-              paddingTop: Width_convert(3),
-              paddingBottom: Width_convert(3),
-              paddingLeft: Width_convert(4),
-              paddingRight: Width_convert(4),
-              fontSize: Font_normalize(9),
-              fontWeight: '700',
-              fontFamily: Fonts?.NanumSqureRegular,
-              color: '#ffffff',
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#F7606E',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            우리가게 공임표 공개
-          </Text>
-        </View>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              가격할인
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge.indexOf(3) != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#4BCA90',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                color: '#ffffff',
+              }}>
+              신규업체
+            </Text>
+          </View>
+        ) : null}
+        {props.item.info_store[0].store_badge.indexOf(4) != -1 ? (
+          <View
+            style={{
+              borderRadius: Font_normalize(2),
+              backgroundColor: '#1A74FC',
+              marginRight: Width_convert(5),
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                paddingTop: Width_convert(3),
+                paddingBottom: Width_convert(3),
+                paddingLeft: Width_convert(4),
+                paddingRight: Width_convert(4),
+                fontSize: Font_normalize(9),
+                fontWeight: '700',
+                fontFamily: Fonts?.NanumSqureRegular,
+                color: '#ffffff',
+              }}>
+              우리가게 공임표 공개
+            </Text>
+          </View>
+        ) : null}
       </View>
       <View
         style={{
@@ -108,7 +168,7 @@ const SearchWork = ({navigation, route}) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            아우디 Q7 ABT LINE 바디킷
+            {props.item.store_work_name}
           </Text>
         </View>
         <View
@@ -126,7 +186,7 @@ const SearchWork = ({navigation, route}) => {
               marginRight: Width_convert(8),
               color: '#000000',
             }}>
-            MOTION튜닝샵
+            {props.item.info_store[0].store_name}
           </Text>
           <Star
             width={Width_convert(12)}
@@ -140,7 +200,7 @@ const SearchWork = ({navigation, route}) => {
               marginRight: Width_convert(4),
               color: '#000000',
             }}>
-            4.8
+            {props.item.store_work_grade || 0}
           </Text>
           <Text
             style={{
@@ -149,7 +209,10 @@ const SearchWork = ({navigation, route}) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            후기 33
+            후기{' '}
+            {props.item.reviewCount
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           </Text>
         </View>
         <View
@@ -165,7 +228,7 @@ const SearchWork = ({navigation, route}) => {
               fontWeight: '400',
               color: '#000000',
             }}>
-            서울특별시 강남구 청담동 12-3
+            {props.item.info_store[0].store_address}
           </Text>
         </View>
         <View
@@ -184,11 +247,16 @@ const SearchWork = ({navigation, route}) => {
               marginLeft: 'auto',
               marginRight: 0,
             }}>
-            2,300,000원
+            {props.item.store_work_total_cost != null &&
+            props.item.store_work_total_cost != 0
+              ? props.item.store_work_total_cost
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
+              : '업체문의'}
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default SearchWork;

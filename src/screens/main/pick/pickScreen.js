@@ -52,6 +52,14 @@ const PickScreen = (props) => {
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
   const PageChangeValue = (text) => setPage(text);
   //로그인 되어 있으면 찜한데이터 가져오기
+
+  React.useEffect(
+    () =>
+      props.navigation.addListener('focus', async () => {
+        onRefresh();
+      }),
+    [],
+  );
   const get_pickData = () => {
     try {
       if (reduexState.loginDataCheck.login._id != '') {

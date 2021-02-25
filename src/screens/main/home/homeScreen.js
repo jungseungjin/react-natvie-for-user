@@ -80,6 +80,7 @@ const HomeScreen = (props) => {
             setTopSliderImageList(result.data[0].SliderImageList);
             setOwnersWokrVideoList(result.data[0].RecommendVideoList);
           } else {
+            console.log(result.data[0]);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -95,6 +96,7 @@ const HomeScreen = (props) => {
   const get_recentWorkList = async () => {
     try {
       let value = await AsyncStorage.getItem('recentWorkList');
+
       if (value == null) {
         setRecentWorkList([]);
       } else {
@@ -139,14 +141,14 @@ const HomeScreen = (props) => {
   };
   React.useEffect(() => {
     get_homeData();
-    get_recentWorkList();
+    //get_recentWorkList();
   }, []);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     get_homeData();
-    get_recentWorkList();
+    //get_recentWorkList();
     setRefreshing(false);
   }, []);
   return (

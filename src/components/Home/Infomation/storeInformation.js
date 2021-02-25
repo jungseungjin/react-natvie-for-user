@@ -5,7 +5,7 @@ import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 
-const WorkInformation = () => {
+const WorkInformation = (props) => {
   return (
     <View
       style={{
@@ -39,12 +39,7 @@ const WorkInformation = () => {
             fontSize: Font_normalize(11),
             color: '#000000',
           }}>
-          안녕하세요? MOTION튜닝 사장 ***입니다 저희 튜닝샵은 이 지역에서만
-          작업을 한지 10년입니다. 다양한 튜닝작업을 해왔으며 특히, 바디킷
-          장착에서만큼은 그 누구보다 부족함 없이 잘하고 있다고 자부합니다!
-          고객님들의 불편한 점과 문제에 대해서 지적하신 것에 대해 늘 받아드리고
-          배울 준비가 되어있습니다. 많은 작업들을 올려 놓았으니 구경한번 하시고
-          편안하게 방문해주시면 감사하겠습니다!
+          {props.item.store_info}
         </Text>
       </View>
       <View
@@ -90,7 +85,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              서울특별시 강남구 청담동 12-3 1층 MOTION튜닝샵
+              {props.item.store_address + ' ' + props.item.store_address_detail}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -157,7 +152,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              02-123-4567
+              {props.item.store_number}
             </Text>
           </View>
         </View>
@@ -204,7 +199,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              백준열
+              {props.item.store_ceo}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -226,7 +221,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              MOTION튜닝
+              {props.item.store_name}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -248,7 +243,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              서울특별시 강남구 청담동 12-3 1층
+              {props.item.store_address + ' ' + props.item.store_address_detail}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -270,7 +265,7 @@ const WorkInformation = () => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              02-123-4567
+              {props.item.store_register}
             </Text>
           </View>
         </View>

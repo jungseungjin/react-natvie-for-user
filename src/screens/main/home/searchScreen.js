@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
-import Height_convert from '../../../components/Height_convert.js';
+import Height_convert from '../../../components/Width_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Fonts from '../../../components/Fonts.js';
 import PropTypes from 'prop-types';
