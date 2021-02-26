@@ -54,6 +54,9 @@ const WorkDetailScreen = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [page, setPage] = React.useState('work');
+  const [pickCount, setPickCount] = React.useState(
+    props.route.params.item.userCount,
+  );
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
   const handleClick = () => {
@@ -62,7 +65,6 @@ const WorkDetailScreen = (props) => {
       animated: true,
     });
   };
-
   const ChangeScrollValue = (text) => setScrollValue(text);
   const Pick = () => {
     try {
@@ -81,22 +83,36 @@ const WorkDetailScreen = (props) => {
               },
             });
             if (result.data[0].status == 'ok') {
-              console.log(result.data[0]);
-              if (
-                props.route.params.item.store_work_pick.indexOf(
-                  reduexState.loginDataCheck.login.data._id,
-                ) != -1
+              let newArr = [];
+              for (
+                var a = 0;
+                a < props.route.params.item.info_user.length;
+                a++
               ) {
-                props.route.params.item.store_work_pick.splice(
-                  props.route.params.item.store_work_pick.indexOf(
-                    reduexState.loginDataCheck.login.data._id,
-                  ),
+                newArr.push(
+                  props.route.params.item.info_user[a]._id.toString(),
+                );
+              }
+              if (
+                newArr.indexOf(reduexState.loginDataCheck.login.data._id) != -1
+              ) {
+                //있으니 제거
+                newArr.splice(
+                  newArr.indexOf(reduexState.loginDataCheck.login.data._id),
                   1,
                 );
+                let newArr2 = [];
+                for (var a = 0; a < newArr.length; a++) {
+                  newArr2.push({_id: newArr[a]});
+                }
+                props.route.params.item.info_user = newArr2.slice();
+                setPickCount(pickCount - 1);
               } else {
-                props.route.params.item.store_work_pick.push(
-                  reduexState.loginDataCheck.login.data._id,
-                );
+                //없으니 추가
+                props.route.params.item.info_user.push({
+                  _id: reduexState.loginDataCheck.login.data._id,
+                });
+                setPickCount(pickCount + 1);
               }
               forceUpdate();
             } else {
@@ -263,7 +279,12 @@ const WorkDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    {props.route.params.item.store_work_grade || 0}
+                    {props.route.params.item.reviewCount > 0
+                      ? parseFloat(
+                          props.route.params.item.reviewTotal /
+                            props.route.params.item.reviewCount,
+                        ).toFixed(1)
+                      : '0.0'}
                   </Text>
                   <TouchableOpacity
                     activeOpacity={1}
@@ -519,11 +540,13 @@ const WorkDetailScreen = (props) => {
           {/*하단 버튼만큼의 공간 띄우기 끝 */}
         </ScrollView>
         <AnimatedHeader
-          Length={props.route.params.item.store_work_pick.length}
+          Length={pickCount}
           Pick={
             reduexState.loginDataCheck.login.login
-              ? props.route.params.item.store_work_pick.indexOf(
-                  reduexState.loginDataCheck.login.data._id,
+              ? JSON.stringify(props.route.params.item.info_user).indexOf(
+                  JSON.stringify({
+                    _id: reduexState.loginDataCheck.login.data._id,
+                  }),
                 ) != -1
                 ? true
                 : false

@@ -55,7 +55,8 @@ const ButtonTwoModal = (props) => {
                     borderTopLeftRadius: Font_normalize(15),
                     borderTopRightRadius: Font_normalize(15),
                   }
-                : props.Title == '문의를 삭제하시겠습니까?'
+                : props.Title == '문의를 삭제하시겠습니까?' ||
+                  props.Title == '후기를 삭제하시겠습니까?'
                 ? {
                     borderTopLeftRadius: Font_normalize(5),
                     borderTopRightRadius: Font_normalize(5),
@@ -84,7 +85,8 @@ const ButtonTwoModal = (props) => {
                         marginLeft: Width_convert(18),
                         textAlign: 'left',
                       }
-                    : props.Title == '문의를 삭제하시겠습니까?'
+                    : props.Title == '문의를 삭제하시겠습니까?' ||
+                      props.Title == '후기를 삭제하시겠습니까?'
                     ? {
                         fontWeight: '700',
                         marginLeft: 0,
@@ -137,7 +139,8 @@ const ButtonTwoModal = (props) => {
                     borderBottomLeftRadius: Font_normalize(15),
                     borderBottomRightRadius: Font_normalize(15),
                   }
-                : props.Title == '문의를 삭제하시겠습니까?'
+                : props.Title == '문의를 삭제하시겠습니까?' ||
+                  props.Title == '후기를 삭제하시겠습니까?'
                 ? {
                     borderBottomLeftRadius: Font_normalize(5),
                     borderBottomRightRadius: Font_normalize(5),
@@ -167,6 +170,7 @@ const ButtonTwoModal = (props) => {
                   },
                   props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
                   props.Title == '문의를 삭제하시겠습니까?' ||
+                  props.Title == '후기를 삭제하시겠습니까?' ||
                   props.Title ==
                     '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                     ? {
@@ -199,6 +203,9 @@ const ButtonTwoModal = (props) => {
                 } else if (props.Title == '문의를 삭제하시겠습니까?') {
                   props.ShowModalChangeValue(false);
                   props.DeleteQuestion();
+                } else if (props.Title == '후기를 삭제하시겠습니까?') {
+                  props.ShowModalChangeValue(false);
+                  props.DeleteReview();
                 }
               }}
               style={{
@@ -217,6 +224,7 @@ const ButtonTwoModal = (props) => {
                   },
                   props.Title == '지역 설정을 위해 위치서비스를 켜 주세요' ||
                   props.Title == '문의를 삭제하시겠습니까?' ||
+                  props.Title == '후기를 삭제하시겠습니까?' ||
                   props.Title ==
                     '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
                     ? {

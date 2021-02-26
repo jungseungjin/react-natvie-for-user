@@ -6,19 +6,38 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import StarGrey from '../../../../assets/home/star_grey.svg';
 import Store from '../../../../assets/home/Store.svg';
 import BraketRight from '../../../../assets/home/braket_right.svg';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import ReviewImage from './reviewImage.js';
 import ReviewButton from './reviewButton.js';
 const Review = (props) => {
-  const [reviewImageList, setReviewImageList] = React.useState([
-    //props로 전달받을거임
-    {_id: 'gdgsd'},
-    {_id: 'gdg2d'},
-    {_id: 'gdgdd'},
-    {_id: 'gddgsd'},
-  ]);
+  const StarRender = (grade) => {
+    let newArr = [];
+    for (var a = 1; a < 6; a++) {
+      if (a <= grade) {
+        newArr.push({value: 1, index: a});
+      } else {
+        newArr.push({value: 0, index: a});
+      }
+    }
+    return newArr.map((item) =>
+      item.value == 1 ? (
+        <Star
+          key={item.index}
+          width={Width_convert(9)}
+          height={Width_convert(9)}
+          style={{marginRight: Width_convert(4)}}></Star>
+      ) : (
+        <StarGrey
+          key={item.index}
+          width={Width_convert(9)}
+          height={Width_convert(9)}
+          style={{marginRight: Width_convert(4)}}></StarGrey>
+      ),
+    );
+  };
   return (
     <View
       style={{
@@ -48,9 +67,11 @@ const Review = (props) => {
               color: '#000000',
               marginRight: Width_convert(3),
             }}>
-            MOTION튜닝샵
+            {props.item.info_store[0].store_name}
           </Text>
-          <Store></Store>
+          <Store
+          //가게정보로 이동
+          ></Store>
         </View>
         <View
           style={{
@@ -60,9 +81,13 @@ const Review = (props) => {
           }}>
           <ReviewButton
             Title={'수정'}
+            item={props.item}
             navigation={props.navigation}></ReviewButton>
           <ReviewButton
             Title={'삭제'}
+            item={props.item}
+            DeleteModalChangeValue={props.DeleteModalChangeValue}
+            DeleteItemChangeValue={props.DeleteItemChangeValue}
             navigation={props.navigation}></ReviewButton>
         </View>
       </View>
@@ -73,6 +98,10 @@ const Review = (props) => {
         }}>
         <View style={{justifyContent: 'center'}}>
           <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              //작업디테일로
+            }}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text
               style={{
@@ -82,17 +111,13 @@ const Review = (props) => {
                 color: '#A1A1A1',
                 marginRight: Width_convert(4),
               }}>
-              G70 카나드콘 립 에어댐
+              {props.item.store_work[0].store_work_name}
             </Text>
             <BraketRight></BraketRight>
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-          <Star style={{marginRight: Width_convert(4)}}></Star>
-          <Star style={{marginRight: Width_convert(4)}}></Star>
-          <Star style={{marginRight: Width_convert(4)}}></Star>
-          <Star style={{marginRight: Width_convert(4)}}></Star>
-          <Star></Star>
+          {StarRender(props.item.review_reply_grade)}
         </View>
       </View>
       <View
@@ -108,7 +133,7 @@ const Review = (props) => {
             color: '#000000',
             fontWeight: '400',
           }}>
-          정말 친절하시고 실력까지 좋은 가게입니다. 다른분들께 강력추천드립니다!
+          {props.item.review_reply_contents}
         </Text>
       </View>
       <View style={{marginTop: Height_convert(21)}}>
@@ -117,15 +142,20 @@ const Review = (props) => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{width: Width_convert(375)}}
-          data={reviewImageList}
+          data={props.item.review_reply_image}
           windowSize={2}
           initialNumToRender={10}
-          renderItem={({item}) => (
-            <ReviewImage
-              item={item}
-              index={reviewImageList.indexOf(item)}></ReviewImage>
-          )}
-          keyExtractor={(item) => String(item._id)}></FlatList>
+          renderItem={({item}) =>
+            typeof item == 'number' ? null : (
+              <ReviewImage
+                key={item}
+                item={item}
+                index={props.item.review_reply_image.indexOf(
+                  item,
+                )}></ReviewImage>
+            )
+          }
+          keyExtractor={(item) => String(item)}></FlatList>
       </View>
     </View>
   );

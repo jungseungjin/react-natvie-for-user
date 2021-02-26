@@ -75,7 +75,9 @@ const ButtonOneModal = (props) => {
                   props.Title == '내용을 10자 이상 입력해주세요' ||
                   props.Title == '인터넷 연결을 확인해주세요' ||
                   props.Title == '인증번호를 다시 입력해주세요' ||
-                  props.Title == '본인인증이 완료되었습니다'
+                  props.Title == '본인인증이 완료되었습니다' ||
+                  props.Title == '평점을 평가해주세요' ||
+                  props.Title == '후기 내용을 입력해주세요'
                     ? {
                         marginLeft: 0,
                         textAlign: 'center',
@@ -162,6 +164,8 @@ const ButtonOneModal = (props) => {
                   props.Title == '내용을 10자 이상 입력해주세요' ||
                   props.Title == '인증번호를 다시 입력해주세요' ||
                   props.Title == '본인인증이 완료되었습니다' ||
+                  props.Title == '평점을 평가해주세요' ||
+                  props.Title == '후기 내용을 입력해주세요' ||
                   props.Title ==
                     '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.' ||
                   props.Title ==

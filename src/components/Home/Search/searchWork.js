@@ -200,7 +200,11 @@ const SearchWork = (props) => {
               marginRight: Width_convert(4),
               color: '#000000',
             }}>
-            {props.item.store_work_grade || 0}
+            {props.item.reviewCount > 0
+              ? parseFloat(
+                  props.item.reviewTotal / props.item.reviewCount,
+                ).toFixed(1)
+              : '0.0'}
           </Text>
           <Text
             style={{

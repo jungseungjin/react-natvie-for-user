@@ -30,13 +30,24 @@ import moment from 'moment';
 import S3 from 'aws-sdk/clients/s3';
 import fs from 'react-native-fs';
 import base64_arraybuffer from 'base64-arraybuffer';
+import {Braket} from 'aws-sdk';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import {useSelector} from 'react-redux';
 const ReviewRegister = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const reduexState = useSelector((state) => state);
   const [page, setPage] = React.useState('');
-  const [scrollValue, setScrollValue] = React.useState(0);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [showModal, setShowModal] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModal(text);
+  const [showModalTitle, setShowModalTitle] = React.useState('');
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [starCount, setStartCount] = React.useState([
+  const [starCount, setStarCount] = React.useState([
     {value: 0, index: 0},
     {value: 0, index: 1},
     {value: 0, index: 2},
@@ -44,22 +55,23 @@ const ReviewRegister = (props) => {
     {value: 0, index: 4},
   ]);
   const [contents, setContents] = React.useState('');
-  const [imageList, setImageList] = React.useState([
-    {value: 0, index: 0},
-    {value: 0, index: 1},
-    {value: 0, index: 2},
-    {value: 0, index: 3},
-  ]);
-  const [awsImage, setAwsImage] = React.useState([]);
+  const [imageList, setImageList] = React.useState([0, 1, 2, 3]);
   const addImage = () => {
     try {
       ImagePicker.openPicker({
-        compressImageMaxWidth: 2000,
-        compressImageMaxHeight: 1000,
+        height: 1280,
+        compressImageMaxWidth: 1280,
+        width: 960,
+        compressImageMaxHeight: 960,
         multiple: true,
-      }).then((images) => {
-        uploadImageOnS3(images);
-      });
+        maxFiles: 4,
+      })
+        .then((images) => {
+          uploadImageOnS3(images);
+        })
+        .catch((e) => {
+          console.log('err pickWithCamera: ', e);
+        });
     } catch (err) {
       console.log(err);
     }
@@ -71,17 +83,18 @@ const ReviewRegister = (props) => {
       Bucket: key.amazonBUCKET_NAME,
       signatureVersion: 'v4',
     });
-    let imageArr = [];
-    for (var a = 0; a < file.length; a++) {
-      console.log(a);
-      console.log(file.length - 1);
-      let contentType = 'image/jpeg';
-      let contentDeposition =
-        'review_image/' + moment().valueOf() + file[a].filename;
-      const base64 = await fs.readFile(file[a].path, 'base64');
-      const arrayBuffer = base64_arraybuffer.decode(base64);
-      await s3bucket.createBucket(async () => {
-        const params = {
+    await s3bucket.createBucket(async () => {
+      let newArr = [0, 1, 2, 3];
+      for (var a = 0; a < file.length; a++) {
+        if (a > 3) {
+          break;
+        }
+        let contentType = 'image/jpeg';
+        let contentDeposition =
+          'review_image/' + moment().valueOf() + file[a].filename;
+        let base64 = await fs.readFile(file[a].path, 'base64');
+        let arrayBuffer = base64_arraybuffer.decode(base64);
+        let params = {
           Bucket: key.amazonBUCKET_NAME,
           Key: contentDeposition,
           Body: arrayBuffer,
@@ -92,12 +105,67 @@ const ReviewRegister = (props) => {
           if (err) {
             console.log('error in callback');
           }
-          console.log('success');
-          //console.log('Respomse URL : ' + data.Location);
-          imageArr.push(data.Location);
-          //setAwsImage(imageArr);
+          for (var b = 0; b < 4; b++) {
+            if (typeof newArr[b] == 'number') {
+              newArr[b] = data.Location;
+              //newArr.push(data.Location);
+              setImageList(newArr);
+              forceUpdate();
+              break;
+            }
+          }
         });
+      }
+    });
+  };
+  const sendData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let data = {};
+          let url = Domain2 + 'review/register';
+          if (reduexState.loginDataCheck.login.login == true) {
+            let starValue = 0;
+            for (var a = 0; a < starCount.length; a++) {
+              if (starCount[a].value == 1) {
+                starValue++;
+              }
+            }
+            if (starValue == 0) {
+              setShowModalTitle('평점을 평가해주세요');
+              setShowModal(true);
+              return false;
+            } else if (contents == '') {
+              setShowModalTitle('후기 내용을 입력해주세요');
+              setShowModal(true);
+              return false;
+            }
+            data = {
+              item_id: props.route.params.item._id,
+              _id: reduexState.loginDataCheck.login.data._id,
+              contents: contents,
+              starCount: starValue,
+              imageList: imageList,
+            };
+          } else {
+            return false;
+          }
+          let result = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            props.navigation.goBack();
+            props.navigation.goBack();
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
       });
+    } catch (err) {
+      console.log(err);
     }
   };
   return (
@@ -169,7 +237,7 @@ const ReviewRegister = (props) => {
                         newArr.push({value: 0, index: a});
                       }
                     }
-                    setStartCount(newArr);
+                    setStarCount(newArr);
                   }}>
                   <StarGrey
                     width={Width_convert(20)}
@@ -189,7 +257,7 @@ const ReviewRegister = (props) => {
                         newArr.push({value: 0, index: a});
                       }
                     }
-                    setStartCount(newArr);
+                    setStarCount(newArr);
                   }}>
                   <Star
                     width={Width_convert(20)}
@@ -272,7 +340,7 @@ const ReviewRegister = (props) => {
             }}>
             {imageList.map((item) => (
               <View
-                key={item.index}
+                key={item}
                 style={{
                   width: Width_convert(71),
                   height: Width_convert(71),
@@ -288,7 +356,7 @@ const ReviewRegister = (props) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                {item.value == 0 ? (
+                {typeof item == 'number' ? (
                   <PicktureNestedPlus></PicktureNestedPlus>
                 ) : (
                   <FastImage
@@ -297,7 +365,7 @@ const ReviewRegister = (props) => {
                       height: Width_convert(71),
                     }}
                     source={{
-                      uri: item.value,
+                      uri: item,
                       //headers: {Authorization: 'someAuthToken'},
                       priority: FastImage.priority.normal,
                     }}
@@ -305,60 +373,6 @@ const ReviewRegister = (props) => {
                 )}
               </View>
             ))}
-            <View
-              style={{
-                width: Width_convert(71),
-                height: Width_convert(71),
-                marginRight: Width_convert(18),
-                borderBottomWidth: 1,
-                borderBottomColor: '#BFBFBF',
-                borderTopWidth: 1,
-                borderTopColor: '#BFBFBF',
-                borderLeftWidth: 1,
-                borderLeftColor: '#BFBFBF',
-                borderRightWidth: 1,
-                borderRightColor: '#BFBFBF',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <PicktureNestedPlus></PicktureNestedPlus>
-            </View>
-            <View
-              style={{
-                width: Width_convert(71),
-                height: Width_convert(71),
-                marginRight: Width_convert(18),
-                borderBottomWidth: 1,
-                borderBottomColor: '#BFBFBF',
-                borderTopWidth: 1,
-                borderTopColor: '#BFBFBF',
-                borderLeftWidth: 1,
-                borderLeftColor: '#BFBFBF',
-                borderRightWidth: 1,
-                borderRightColor: '#BFBFBF',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <PicktureNestedPlus></PicktureNestedPlus>
-            </View>
-            <View
-              style={{
-                width: Width_convert(71),
-                height: Width_convert(71),
-                marginRight: Width_convert(18),
-                borderBottomWidth: 1,
-                borderBottomColor: '#BFBFBF',
-                borderTopWidth: 1,
-                borderTopColor: '#BFBFBF',
-                borderLeftWidth: 1,
-                borderLeftColor: '#BFBFBF',
-                borderRightWidth: 1,
-                borderRightColor: '#BFBFBF',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <PicktureNestedPlus></PicktureNestedPlus>
-            </View>
           </TouchableOpacity>
           {/* 하단 사진추가버튼 끝 */}
           <View
@@ -369,6 +383,10 @@ const ReviewRegister = (props) => {
               alignItems: 'center',
             }}>
             <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                sendData();
+              }}
               style={{
                 width: Width_convert(339),
                 height: Width_convert(46),
@@ -389,6 +407,22 @@ const ReviewRegister = (props) => {
             </TouchableOpacity>
           </View>
         </View>
+        {showModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            navigation={props.navigation}
+            Title={showModalTitle}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
       </SafeAreaView>
     </DismissKeyboard>
   );

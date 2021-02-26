@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  RefreshControl,
+  FlatList,
 } from 'react-native';
 
 import Height_convert from '../../../components/Height_convert.js';
@@ -18,15 +20,106 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import StarGrey from '../../../../assets/home/star_grey.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
-
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-const ReviewView = (props) => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [page, setPage] = React.useState('');
-  const [scrollValue, setScrollValue] = React.useState(0);
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import {useSelector} from 'react-redux';
+import LoginModal from '../../../components/Modal/LoginModal.js';
+import moment from 'moment';
+import 'moment/locale/ko';
 
+const ReviewView = (props) => {
+  moment.locale('ko');
+  //해당 작업 후기 불러오기
+  const reduexState = useSelector((state) => state);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [loginModal, setLoginModal] = React.useState(false);
+  const LoginModalChangeValue = (text) => setLoginModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [reviewList, setReviewList] = React.useState([]);
+  const [reviewCount, setReviewCount] = React.useState(
+    props.route.params.item.reviewCount,
+  );
+
+  //작업에 대한 리뷰 기준.  가게에 대한 리뷰기준이면 가게기준으로 변경필요
+  const [reviewGrade, setReviewGrade] = React.useState(
+    props.route.params.item.store_work_grade,
+  );
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getData();
+    setRefreshing(false);
+  }, []);
+  const getData = () => {
+    try {
+      let result;
+      let url = Domain2 + 'reviewList/work';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              item_id: props.route.params.item._id,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setReviewList(result.data[0].result);
+            setReviewCount(result.data[0].result.length);
+            //작업에 대한 리뷰 기준.  가게에 대한 리뷰기준이면 가게기준으로 변경필요
+            if (result.data[0].result.length > 0) {
+              setReviewGrade(
+                result.data[0].result[0].store_work[0].store_work_grade,
+              );
+            }
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  React.useEffect(() => {
+    getData();
+  }, []);
+  const StarRender = (grade) => {
+    let newArr = [];
+    for (var a = 1; a < 6; a++) {
+      if (a <= grade) {
+        newArr.push({value: 1, index: a - 1});
+      } else {
+        newArr.push({value: 0, index: a - 1});
+      }
+    }
+    return newArr.map((item) =>
+      item.value == 1 ? (
+        <Star
+          key={item.index}
+          width={Width_convert(9)}
+          height={Width_convert(9)}
+          style={{marginRight: Width_convert(4)}}></Star>
+      ) : (
+        <StarGrey
+          key={item.index}
+          width={Width_convert(9)}
+          height={Width_convert(9)}
+          style={{marginRight: Width_convert(4)}}></StarGrey>
+      ),
+    );
+  };
   return (
     <>
       <StatusBar
@@ -38,17 +131,7 @@ const ReviewView = (props) => {
             style={{width: Width_convert(375), height: StatusBarHeight}}></View>
         ) : null}
         <Tabbar
-          Title={
-            page == 'dressup'
-              ? '드레스업'
-              : page == 'perfomance'
-              ? '퍼포먼스'
-              : page == 'convenience'
-              ? '편의장치'
-              : page == 'camping'
-              ? '캠핑카'
-              : props.route.params.item.info_store[0].store_name
-          }
+          Title={props.route.params.item.info_store[0].store_name}
           navigation={props.navigation}></Tabbar>
         <View
           style={{
@@ -75,7 +158,7 @@ const ReviewView = (props) => {
                 marginRight: Width_convert(8),
               }}>
               작업후기{'\n'}
-              {props.route.params.item.reviewCount}개
+              {reviewCount}개
             </Text>
           </View>
           <View
@@ -93,636 +176,151 @@ const ReviewView = (props) => {
                 fontSize: Font_normalize(22),
                 color: '#FFFFFF',
               }}>
-              {props.route.params.item.store_work_grade || '0.0'}
+              {reviewGrade
+                ? reviewGrade % 1 === 0
+                  ? reviewGrade + '.0'
+                  : parseFloat(reviewGrade.toFixed(1))
+                : '0.0'}
             </Text>
           </View>
         </View>
-        <ScrollView
+
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          style={{width: Width_convert(375)}}
           showsVerticalScrollIndicator={false}
-          style={{width: Width_convert(375)}}>
-          <View
-            style={{
-              width: Width_convert(375),
-              paddingBottom: Height_convert(35),
-              borderBottomWidth: 1,
-              borderBottomColor: '#EEEEEE',
-            }}>
+          showsHorizontalScrollIndicator={false}
+          data={reviewList}
+          windowSize={2}
+          initialNumToRender={10}
+          renderItem={({item}) => (
             <View
+              key={item._id}
               style={{
-                marginTop: Height_convert(17),
-                marginLeft: Width_convert(16),
-                flexDirection: 'row',
+                width: Width_convert(375),
+                paddingBottom: Height_convert(35),
+                borderBottomWidth: 1,
+                borderBottomColor: '#EEEEEE',
               }}>
               <View
                 style={{
-                  width: Width_convert(34),
-                  height: Width_convert(34),
-                  marginRight: Width_convert(7),
+                  marginTop: Height_convert(17),
+                  marginLeft: Width_convert(16),
+                  flexDirection: 'row',
                 }}>
-                <FastImage
+                <View
                   style={{
                     width: Width_convert(34),
                     height: Width_convert(34),
-                    borderRadius: Width_convert(34),
-                  }}
-                  source={{
-                    uri: 'https://unsplash.it/400/400?image=1',
-                    headers: {Authorization: 'someAuthToken'},
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.stretch}></FastImage>
-              </View>
-              <View>
-                <View>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    광주 검팅어
-                  </Text>
-                </View>
-                <View
-                  style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(9),
-                      color: '#8D8D8D',
-                    }}>
-                    1일전
-                  </Text>
-                </View>
-                <View style={{marginTop: Height_convert(8)}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(9),
-                      fontWeight: '700',
-                      color: '#A1A1A1',
-                    }}>
-                    G70 카나드콘 립 에어댐
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    width: Width_convert(265),
-                    marginTop: Height_convert(8),
+                    marginRight: Width_convert(7),
                   }}>
-                  <Text
+                  <FastImage
                     style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(12),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}>
-                    정말 친절하시고 실력까지 좋은 가게입니다. 다른분들께
-                    강력추천드립니다!
-                  </Text>
+                      width: Width_convert(34),
+                      height: Width_convert(34),
+                      borderRadius: Width_convert(34),
+                    }}
+                    source={{
+                      uri: item.info_user[0].review_user_iu_image,
+                      //headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
                 </View>
-                <ScrollView
-                  style={{
-                    marginTop: Height_convert(21),
-                  }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
+                <View>
+                  <View>
+                    <Text
                       style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontSize: Font_normalize(14),
+                        fontWeight: '700',
+                        color: '#000000',
+                      }}>
+                      {item.info_user[0].iu_nickname}
+                    </Text>
                   </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginTop: Height_convert(4),
+                    }}>
+                    {StarRender(item.review_reply_grade)}
+                    <Text
                       style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                        fontFamily: Fonts?.NanumGothicRegular || null,
+                        fontWeight: '400',
+                        fontSize: Font_normalize(9),
+                        color: '#8D8D8D',
+                      }}>
+                      {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
+                        .add(9, 'h')
+                        .fromNow()}
+                    </Text>
                   </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
+                  <View style={{marginTop: Height_convert(8)}}>
+                    <Text
                       style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontSize: Font_normalize(9),
+                        fontWeight: '700',
+                        color: '#A1A1A1',
+                      }}>
+                      {item.store_work[0].store_work_name}
+                    </Text>
                   </View>
-                </ScrollView>
+                  <View
+                    style={{
+                      width: Width_convert(265),
+                      marginTop: Height_convert(8),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontSize: Font_normalize(12),
+                        fontWeight: '400',
+                        color: '#000000',
+                      }}>
+                      {item.review_reply_contents}
+                    </Text>
+                  </View>
+                  <ScrollView
+                    style={{
+                      marginTop: Height_convert(21),
+                      minWidth: Width_convert(375),
+                    }}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}>
+                    {item.review_reply_image.map((imageItem) =>
+                      typeof imageItem == 'number' ? null : (
+                        <View
+                          key={imageItem}
+                          style={{marginRight: Width_convert(7)}}>
+                          <FastImage
+                            style={{
+                              width: Width_convert(134),
+                              height: Width_convert(88),
+                              borderRadius: Width_convert(3),
+                            }}
+                            source={{
+                              uri: imageItem,
+                              //headers: {Authorization: 'someAuthToken'},
+                              priority: FastImage.priority.normal,
+                            }}
+                            resizeMode={
+                              FastImage.resizeMode.stretch
+                            }></FastImage>
+                        </View>
+                      ),
+                    )}
+                  </ScrollView>
+                </View>
               </View>
             </View>
-          </View>
+          )}
+          keyExtractor={(imageItem) => String(imageItem._id)}></FlatList>
 
-          <View
-            style={{
-              width: Width_convert(375),
-              paddingBottom: Height_convert(35),
-              borderBottomWidth: 1,
-              borderBottomColor: '#EEEEEE',
-            }}>
-            <View
-              style={{
-                marginTop: Height_convert(17),
-                marginLeft: Width_convert(16),
-                flexDirection: 'row',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(34),
-                  height: Width_convert(34),
-                  marginRight: Width_convert(7),
-                }}>
-                <FastImage
-                  style={{
-                    width: Width_convert(34),
-                    height: Width_convert(34),
-                    borderRadius: Width_convert(34),
-                  }}
-                  source={{
-                    uri: 'https://unsplash.it/400/400?image=1',
-                    headers: {Authorization: 'someAuthToken'},
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.stretch}></FastImage>
-              </View>
-              <View>
-                <View>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    광주 검팅어
-                  </Text>
-                </View>
-                <View
-                  style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(9),
-                      color: '#8D8D8D',
-                    }}>
-                    1일전
-                  </Text>
-                </View>
-                <View style={{marginTop: Height_convert(8)}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(9),
-                      fontWeight: '700',
-                      color: '#A1A1A1',
-                    }}>
-                    G70 카나드콘 립 에어댐
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    width: Width_convert(265),
-                    marginTop: Height_convert(8),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(12),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}>
-                    정말 친절하시고 실력까지 좋은 가게입니다. 다른분들께
-                    강력추천드립니다!
-                  </Text>
-                </View>
-                <ScrollView
-                  style={{
-                    marginTop: Height_convert(21),
-                  }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                </ScrollView>
-              </View>
-            </View>
-          </View>
-
-          <View
-            style={{
-              width: Width_convert(375),
-              paddingBottom: Height_convert(35),
-              borderBottomWidth: 1,
-              borderBottomColor: '#EEEEEE',
-            }}>
-            <View
-              style={{
-                marginTop: Height_convert(17),
-                marginLeft: Width_convert(16),
-                flexDirection: 'row',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(34),
-                  height: Width_convert(34),
-                  marginRight: Width_convert(7),
-                }}>
-                <FastImage
-                  style={{
-                    width: Width_convert(34),
-                    height: Width_convert(34),
-                    borderRadius: Width_convert(34),
-                  }}
-                  source={{
-                    uri: 'https://unsplash.it/400/400?image=1',
-                    headers: {Authorization: 'someAuthToken'},
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.stretch}></FastImage>
-              </View>
-              <View>
-                <View>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    광주 검팅어
-                  </Text>
-                </View>
-                <View
-                  style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(9),
-                      color: '#8D8D8D',
-                    }}>
-                    1일전
-                  </Text>
-                </View>
-                <View style={{marginTop: Height_convert(8)}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(9),
-                      fontWeight: '700',
-                      color: '#A1A1A1',
-                    }}>
-                    G70 카나드콘 립 에어댐
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    width: Width_convert(265),
-                    marginTop: Height_convert(8),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(12),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}>
-                    정말 친절하시고 실력까지 좋은 가게입니다. 다른분들께
-                    강력추천드립니다!
-                  </Text>
-                </View>
-                <ScrollView
-                  style={{
-                    marginTop: Height_convert(21),
-                  }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                </ScrollView>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              width: Width_convert(375),
-              paddingBottom: Height_convert(35),
-              borderBottomWidth: 1,
-              borderBottomColor: '#EEEEEE',
-            }}>
-            <View
-              style={{
-                marginTop: Height_convert(17),
-                marginLeft: Width_convert(16),
-                flexDirection: 'row',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(34),
-                  height: Width_convert(34),
-                  marginRight: Width_convert(7),
-                }}>
-                <FastImage
-                  style={{
-                    width: Width_convert(34),
-                    height: Width_convert(34),
-                    borderRadius: Width_convert(34),
-                  }}
-                  source={{
-                    uri: 'https://unsplash.it/400/400?image=1',
-                    headers: {Authorization: 'someAuthToken'},
-                    priority: FastImage.priority.normal,
-                  }}
-                  resizeMode={FastImage.resizeMode.stretch}></FastImage>
-              </View>
-              <View>
-                <View>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    광주 검팅어
-                  </Text>
-                </View>
-                <View
-                  style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Star
-                    width={Width_convert(9)}
-                    height={Width_convert(9)}
-                    style={{marginRight: Width_convert(4)}}></Star>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(9),
-                      color: '#8D8D8D',
-                    }}>
-                    1일전
-                  </Text>
-                </View>
-                <View style={{marginTop: Height_convert(8)}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(9),
-                      fontWeight: '700',
-                      color: '#A1A1A1',
-                    }}>
-                    G70 카나드콘 립 에어댐
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    width: Width_convert(265),
-                    marginTop: Height_convert(8),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(12),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}>
-                    정말 친절하시고 실력까지 좋은 가게입니다. 다른분들께
-                    강력추천드립니다!
-                  </Text>
-                </View>
-                <ScrollView
-                  style={{
-                    marginTop: Height_convert(21),
-                  }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                  <View style={{marginRight: Width_convert(7)}}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(134),
-                        height: Width_convert(88),
-                        borderRadius: Width_convert(3),
-                      }}
-                      source={{
-                        uri: 'https://unsplash.it/400/400?image=1',
-                        headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
-                </ScrollView>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
         <View
           style={{
             width: Width_convert(48),
@@ -734,9 +332,13 @@ const ReviewView = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('ReviewRegister', {
-                item: props.route.params.item,
-              });
+              if (reduexState.loginDataCheck.login.login == true) {
+                props.navigation.navigate('ReviewRegister', {
+                  item: props.route.params.item,
+                });
+              } else {
+                setLoginModal(true);
+              }
             }}
             style={{
               width: Width_convert(48),
@@ -758,6 +360,24 @@ const ReviewView = (props) => {
               height={Width_convert(30)}></ReviewRegister>
           </TouchableOpacity>
         </View>
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
+        {loginModal ? (
+          <LoginModal
+            ShowModalChangeValue={LoginModalChangeValue}
+            navigation={props.navigation}
+            //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+            //BottomText={'설정하러가기'}
+            //LeftButtonTitle={'아니오'}
+            //RightButtonTitle={'네'}
+          ></LoginModal>
+        ) : null}
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

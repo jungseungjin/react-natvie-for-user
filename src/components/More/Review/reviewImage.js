@@ -17,8 +17,8 @@ const ReviewImage = (props) => {
           borderRadius: Width_convert(3),
         }}
         source={{
-          uri: 'https://unsplash.it/400/400?image=1',
-          headers: {Authorization: 'someAuthToken'},
+          uri: props.item,
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>

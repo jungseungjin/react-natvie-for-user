@@ -11,8 +11,10 @@ const ReviewButton = (props) => {
       activeOpacity={1}
       onPress={() => {
         if (props.Title == '수정') {
-          props.navigation.navigate('ReviewRevise');
+          props.navigation.navigate('ReviewRevise', {item: props.item});
         } else if (props.Title == '삭제') {
+          props.DeleteItemChangeValue(props.item);
+          props.DeleteModalChangeValue(true);
         }
       }}
       style={[
