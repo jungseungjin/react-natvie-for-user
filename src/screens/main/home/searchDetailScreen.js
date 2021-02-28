@@ -117,6 +117,13 @@ const SearchScreenDetail = (props) => {
     }
   };
 
+  React.useEffect(
+    () =>
+      props.navigation.addListener('focus', async () => {
+        onRefresh();
+      }),
+    [],
+  );
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {

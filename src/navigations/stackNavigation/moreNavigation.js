@@ -33,6 +33,11 @@ import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
 import Map_more from '../../screens/main/home/mapScreen.js';
 import MapSearch_more from '../../screens/main/home/mapSeachScreen.js';
 import PickScreen from '../../screens/main/pick/pickScreen.js';
+
+import WorkDetail from '../../screens/main/home/workDetailScreen.js';
+import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
+import StoreDetail from '../../screens/main/home/storeDetailScreen.js';
+import StoreWorkList from '../../screens/main/home/storeWorkListScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -47,6 +52,7 @@ const MoreNavigator = (props) => {
     <Stack.Navigator
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        headerShown: false,
         headerStyle: {
           backgroundColor: 'white',
           borderBottomColor: 'white',
@@ -339,6 +345,30 @@ const MoreNavigator = (props) => {
         options={{
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name="WorkDetail"
+        component={WorkDetail}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="StoreDetail"
+        component={StoreDetail}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="StoreWorkList"
+        component={StoreWorkList}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="StoreLocation"
+        component={StoreLocation}
+        initialParams={{}}
+        options={{}}
       />
     </Stack.Navigator>
   );

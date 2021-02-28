@@ -18,17 +18,12 @@ import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-const StoreWorkList = ({navigation, Page, route}) => {
+const StoreWorkList = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [page, setPage] = React.useState(route.params.Page || null);
+  const [page, setPage] = React.useState(props.route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
 
-  const [resultWorkList, setresultWorkList] = React.useState([
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-  ]);
+  const [resultWorkList, setresultWorkList] = React.useState([]);
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);
@@ -79,7 +74,7 @@ const StoreWorkList = ({navigation, Page, route}) => {
               ? '캠핑카'
               : page
           }
-          navigation={navigation}></Tabbar>
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             width: Width_convert(375),
@@ -286,23 +281,11 @@ const StoreWorkList = ({navigation, Page, route}) => {
               height: Height_convert(812 - 184),
             }}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <SearchWork></SearchWork>
+              <SearchWork item={props.route.params.item}></SearchWork>
               <View
                 style={{
                   width: Width_convert(375),
                   height: Height_convert(31),
-                }}></View>
-              <SearchWork></SearchWork>
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(31),
-                }}></View>
-              <SearchWork></SearchWork>
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(50),
                 }}></View>
             </ScrollView>
           </View>

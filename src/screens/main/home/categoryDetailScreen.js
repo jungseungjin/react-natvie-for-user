@@ -24,12 +24,7 @@ const CategoryDetailScreen = (props) => {
   const [page, setPage] = React.useState(props.route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
 
-  const [resultWorkList, setresultWorkList] = React.useState([
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-    {tt: 'tt'},
-  ]);
+  const [resultWorkList, setresultWorkList] = React.useState([]);
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);

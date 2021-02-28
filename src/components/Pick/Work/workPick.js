@@ -24,15 +24,25 @@ import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
+import SetRecentList from '../../../components/setRecentList.js';
 const WorkPick = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => {
+        if (!props.editMode) {
+          //편집상테가 아닐때 페이지이동
+          //최근 본 작업에 넣기
+          SetRecentList('work', props.item._id);
+          props.navigation.navigate('WorkDetail', {item: props.item});
+        }
+      }}
       style={[
         {
           width: Width_convert(375),
-          height: Width_convert(423) - Width_convert(25),
+          height: Width_convert(423),
         },
         props.getIndex === props.workListLength
           ? {
@@ -43,7 +53,7 @@ const WorkPick = (props) => {
       <FastImage
         style={{width: Width_convert(375), height: Width_convert(240)}}
         source={{
-          uri: props.item.store_thumbnail[0],
+          uri: props.item?.store_thumbnail[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
@@ -205,7 +215,11 @@ const WorkPick = (props) => {
               marginRight: Width_convert(4),
               color: '#000000',
             }}>
-            {props.item.store_work_grade || 0}
+            {props.item?.reviewCount > 0
+              ? parseFloat(
+                  props.item?.reviewTotal / props.item?.reviewCount,
+                ).toFixed(1)
+              : '0.0'}
           </Text>
           <Text
             style={{
@@ -214,7 +228,10 @@ const WorkPick = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            후기 {props.item.reviewCount}
+            후기{' '}
+            {props.item?.reviewCount
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           </Text>
         </View>
         <View
@@ -277,9 +294,12 @@ const WorkPick = (props) => {
               marginLeft: 'auto',
               marginRight: 0,
             }}>
-            {props.item.store_work_total_cost
-              ? props.item.store_work_total_cost + ' 원'
-              : '업체 문의'}
+            {props.item?.store_work_total_cost != null &&
+            props.item?.store_work_total_cost != 0
+              ? props.item?.store_work_total_cost
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
+              : '업체문의'}
           </Text>
         </View>
         {props.getIndex === props.workListLength ? (
@@ -290,7 +310,7 @@ const WorkPick = (props) => {
             }}></View>
         ) : null}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default WorkPick;

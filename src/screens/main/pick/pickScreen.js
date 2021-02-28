@@ -118,6 +118,8 @@ const PickScreen = (props) => {
             });
             if (result.data[0].message == 'ok') {
               onRefresh();
+              setWorkListDel();
+              setStoreListDel();
             } else {
               //setRecentWorkList([]);
             }
@@ -195,6 +197,7 @@ const PickScreen = (props) => {
           renderItem={({item}) =>
             page == 'work' && workList.length > 0 ? (
               <WorkPick
+                navigation={props.navigation}
                 getIndex={workList.indexOf(item) + 1}
                 workListLength={workList.length}
                 WorkListDelChangeValue={WorkListDelChangeValue}
@@ -204,6 +207,7 @@ const PickScreen = (props) => {
                 editMode={reduexState.editModeCheck.editMode}></WorkPick>
             ) : page == 'store' && storeList.length > 0 ? (
               <StorePick
+                navigation={props.navigation}
                 getIndex={storeList.indexOf(item) + 1}
                 storeListLength={storeList.length}
                 StoreListDelChangeValue={StoreListDelChangeValue}

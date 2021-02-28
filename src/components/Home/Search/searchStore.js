@@ -20,12 +20,17 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import SetRecentList from '../../../components/setRecentList.js';
 
 const SearchStore = (props) => {
-  console.log(props.item);
   return (
     <TouchableOpacity
       activeOpacity={1}
+      onPress={() => {
+        //최근 본 작업에 넣기
+        SetRecentList('store', props.item._id);
+        props.navigation.navigate('StoreDetail', {item: props.item});
+      }}
       style={{width: Width_convert(375), height: Height_convert(390)}}>
       <FastImage
         style={{width: Width_convert(375), height: Height_convert(240)}}

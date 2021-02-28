@@ -51,7 +51,12 @@ const ReviewView = (props) => {
 
   //작업에 대한 리뷰 기준.  가게에 대한 리뷰기준이면 가게기준으로 변경필요
   const [reviewGrade, setReviewGrade] = React.useState(
-    props.route.params.item.store_work_grade,
+    props.route.params.item.reviewCount > 0
+      ? parseFloat(
+          props.route.params.item.reviewTotal /
+            props.route.params.item.reviewCount,
+        )
+      : '0',
   );
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -61,7 +66,7 @@ const ReviewView = (props) => {
   const getData = () => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/work';
+      let url = Domain2 + 'reviewList/' + props.route.params.type;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -75,12 +80,6 @@ const ReviewView = (props) => {
           if (result.data[0].message == 'ok') {
             setReviewList(result.data[0].result);
             setReviewCount(result.data[0].result.length);
-            //작업에 대한 리뷰 기준.  가게에 대한 리뷰기준이면 가게기준으로 변경필요
-            if (result.data[0].result.length > 0) {
-              setReviewGrade(
-                result.data[0].result[0].store_work[0].store_work_grade,
-              );
-            }
           } else {
           }
         } else {
@@ -120,6 +119,35 @@ const ReviewView = (props) => {
       ),
     );
   };
+  const getDataAndNavigate = (type, item_id) => {
+    try {
+      let result;
+      let url = Domain2 + 'reviewList/navigate/' + type;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              item_id: item_id,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            props.navigation.navigate('WorkDetail', {
+              item: result.data[0].result[0],
+            });
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <StatusBar
@@ -131,7 +159,13 @@ const ReviewView = (props) => {
             style={{width: Width_convert(375), height: StatusBarHeight}}></View>
         ) : null}
         <Tabbar
-          Title={props.route.params.item.info_store[0].store_name}
+          Title={
+            props.route.params.type == 'work'
+              ? props.route.params.item?.info_store[0]?.store_name
+              : props.route.params.type == 'store'
+              ? props.route.params.item?.store_name
+              : null
+          }
           navigation={props.navigation}></Tabbar>
         <View
           style={{
@@ -259,7 +293,12 @@ const ReviewView = (props) => {
                         .fromNow()}
                     </Text>
                   </View>
-                  <View style={{marginTop: Height_convert(8)}}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      getDataAndNavigate('work', item._id);
+                    }}
+                    style={{marginTop: Height_convert(8)}}>
                     <Text
                       style={{
                         fontFamily: Fonts?.NanumSqureRegular || null,
@@ -269,7 +308,7 @@ const ReviewView = (props) => {
                       }}>
                       {item.store_work[0].store_work_name}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                   <View
                     style={{
                       width: Width_convert(265),
@@ -320,46 +359,47 @@ const ReviewView = (props) => {
             </View>
           )}
           keyExtractor={(imageItem) => String(imageItem._id)}></FlatList>
-
-        <View
-          style={{
-            width: Width_convert(48),
-            height: Width_convert(48),
-            position: 'absolute',
-            bottom: Height_convert(72),
-            right: Width_convert(14),
-          }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              if (reduexState.loginDataCheck.login.login == true) {
-                props.navigation.navigate('ReviewRegister', {
-                  item: props.route.params.item,
-                });
-              } else {
-                setLoginModal(true);
-              }
-            }}
+        {props.route.params.type == 'work' ? (
+          <View
             style={{
               width: Width_convert(48),
               height: Width_convert(48),
-              marginRight: Width_convert(14),
-              borderRadius: Width_convert(48),
-              backgroundColor: '#946AEF',
-              justifyContent: 'center',
-              alignItems: 'center',
-
-              shadowColor: '#000000', //그림자색
-              shadowOpacity: 0.2, //그림자 투명도
-              shadowOffset: {width: 2, height: 2}, //그림자 위치
-              //ANDROID
-              elevation: 5,
+              position: 'absolute',
+              bottom: Height_convert(72),
+              right: Width_convert(14),
             }}>
-            <ReviewRegister
-              width={Width_convert(30)}
-              height={Width_convert(30)}></ReviewRegister>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                if (reduexState.loginDataCheck.login.login == true) {
+                  props.navigation.navigate('ReviewRegister', {
+                    item: props.route.params.item,
+                  });
+                } else {
+                  setLoginModal(true);
+                }
+              }}
+              style={{
+                width: Width_convert(48),
+                height: Width_convert(48),
+                marginRight: Width_convert(14),
+                borderRadius: Width_convert(48),
+                backgroundColor: '#946AEF',
+                justifyContent: 'center',
+                alignItems: 'center',
+
+                shadowColor: '#000000', //그림자색
+                shadowOpacity: 0.2, //그림자 투명도
+                shadowOffset: {width: 2, height: 2}, //그림자 위치
+                //ANDROID
+                elevation: 5,
+              }}>
+              <ReviewRegister
+                width={Width_convert(30)}
+                height={Width_convert(30)}></ReviewRegister>
+            </TouchableOpacity>
+          </View>
+        ) : null}
         {networkModal ? (
           <ButtonOneModal
             ShowModalChangeValue={NetworkModalChangeValue}

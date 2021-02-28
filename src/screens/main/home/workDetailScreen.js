@@ -42,6 +42,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
+import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 const WorkDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -49,6 +50,8 @@ const WorkDetailScreen = (props) => {
   const [scrollValue, setScrollValue] = React.useState(0);
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [workConsultingModal, setWorkConsultingModal] = React.useState(false);
+  const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [, updateState] = React.useState();
@@ -86,11 +89,11 @@ const WorkDetailScreen = (props) => {
               let newArr = [];
               for (
                 var a = 0;
-                a < props.route.params.item.info_user.length;
+                a < props.route.params.item.info_user_id.length;
                 a++
               ) {
                 newArr.push(
-                  props.route.params.item.info_user[a]._id.toString(),
+                  props.route.params.item.info_user_id[a]._id.toString(),
                 );
               }
               if (
@@ -105,13 +108,17 @@ const WorkDetailScreen = (props) => {
                 for (var a = 0; a < newArr.length; a++) {
                   newArr2.push({_id: newArr[a]});
                 }
-                props.route.params.item.info_user = newArr2.slice();
+                props.route.params.item.info_user_id = newArr2.slice();
+                props.route.params.item.userCount =
+                  props.route.params.item.userCount - 1;
                 setPickCount(pickCount - 1);
               } else {
                 //없으니 추가
-                props.route.params.item.info_user.push({
+                props.route.params.item.info_user_id.push({
                   _id: reduexState.loginDataCheck.login.data._id,
                 });
+                props.route.params.item.userCount =
+                  props.route.params.item.userCount + 1;
                 setPickCount(pickCount + 1);
               }
               forceUpdate();
@@ -121,6 +128,36 @@ const WorkDetailScreen = (props) => {
             setShowModal(true);
           }
         } else {
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getDataAndNavigateFromWork = (type, item_id) => {
+    try {
+      let result;
+      let url = Domain2 + 'detail/navigate/' + type;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              item_id: item_id,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            props.navigation.navigate('StoreDetail', {
+              item: result.data[0].result[0],
+            });
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
         }
       });
     } catch (err) {
@@ -224,7 +261,10 @@ const WorkDetailScreen = (props) => {
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
-                      props.navigation.navigate('StoreDetail');
+                      getDataAndNavigateFromWork(
+                        'store',
+                        props.route.params.item.info_store[0]._id,
+                      );
                     }}>
                     <StoreSVG></StoreSVG>
                   </TouchableOpacity>
@@ -251,7 +291,7 @@ const WorkDetailScreen = (props) => {
                     activeOpacity={1}
                     onPress={() => {
                       props.navigation.navigate('StoreLocation', {
-                        item: props.route.params.item,
+                        item: props.route.params.item.info_store[0],
                       });
                     }}>
                     <LocationSVG></LocationSVG>
@@ -291,6 +331,7 @@ const WorkDetailScreen = (props) => {
                     onPress={() => {
                       props.navigation.navigate('ReviewView', {
                         item: props.route.params.item,
+                        type: 'work',
                       });
                     }}
                     style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -375,6 +416,7 @@ const WorkDetailScreen = (props) => {
                   onPress={() => {
                     props.navigation.navigate('ReviewView', {
                       item: props.route.params.item,
+                      type: 'work',
                     });
                   }}
                   style={{
@@ -543,7 +585,7 @@ const WorkDetailScreen = (props) => {
           Length={pickCount}
           Pick={
             reduexState.loginDataCheck.login.login
-              ? JSON.stringify(props.route.params.item.info_user).indexOf(
+              ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
                   JSON.stringify({
                     _id: reduexState.loginDataCheck.login.data._id,
                   }),
@@ -563,9 +605,19 @@ const WorkDetailScreen = (props) => {
         {/*하단 카카오채팅 전화예약버튼 시작*/}
 
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
-        <BottomButton></BottomButton>
+        <BottomButton
+          WorkConsultingModalChangeValue={
+            WorkConsultingModalChangeValue
+          }></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      {workConsultingModal ? (
+        <WorkConsultingModal
+          storeNumber={props.route.params.item.info_store[0].store_number}
+          WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
+          name={reduexState.loginDataCheck.login?.data?.iu_name || null}
+          navigation={props.navigation}></WorkConsultingModal>
+      ) : null}
       {networkModal ? (
         <ButtonOneModal
           ShowModalChangeValue={NetworkModalChangeValue}

@@ -24,13 +24,21 @@ import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-
+import SetRecentList from '../../../components/setRecentList.js';
 const SearchStore = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   return (
     <TouchableOpacity
       activeOpacity={1}
+      onPress={() => {
+        if (!props.editMode) {
+          //편집상테가 아닐때 페이지이동
+          //최근 본 작업에 넣기
+          SetRecentList('store', props.item._id);
+          props.navigation.navigate('StoreDetail', {item: props.item});
+        }
+      }}
       style={[
         {width: Width_convert(375), height: Height_convert(390)},
         props.getIndex === props.storeListLength
@@ -258,7 +266,11 @@ const SearchStore = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            {props.item.store_grade || 0}
+            {props.item?.reviewCount > 0
+              ? parseFloat(
+                  props.item?.reviewTotal / props.item?.reviewCount,
+                ).toFixed(1)
+              : '0.0'}
           </Text>
           <Text
             style={{
@@ -268,8 +280,10 @@ const SearchStore = (props) => {
               fontSize: Font_normalize(12),
               color: '#000000',
             }}>
-            후기
-            {props.item.reviewCount}
+            후기{' '}
+            {props.item?.reviewCount
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           </Text>
         </View>
         {props.editMode ? (

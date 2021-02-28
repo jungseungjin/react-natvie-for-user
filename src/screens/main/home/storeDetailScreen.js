@@ -31,20 +31,37 @@ import PurpleTag from '../../../../assets/home/purple_tag.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 import WorkMenu from '../../../../assets/home/work_menu.svg';
+import {useSelector} from 'react-redux';
 import AnimatedHeader from '../../../components/Home/Animate/animatedHeader.js';
 import StoreInformation from '../../../components/Home/Infomation/storeInformation.js';
 import LaborInformation from '../../../components/Home/Infomation/laborInformation.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
+import FastImage from 'react-native-fast-image';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 const StoreDetailScreen = (props) => {
+  const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [showModal, setShowModal] = React.useState(true);
+  const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [workConsultingModal, setWorkConsultingModal] = React.useState(false);
+  const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
   const offset = useRef(new Animated.Value(0)).current;
   const [scrollValue, setScrollValue] = React.useState(0);
   const [page, setPage] = React.useState('store');
+  const [pickCount, setPickCount] = React.useState(
+    props.route.params.item.userCount,
+  );
 
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
   const handleClick = () => {
@@ -53,8 +70,72 @@ const StoreDetailScreen = (props) => {
       animated: true,
     });
   };
-
   const ChangeScrollValue = (text) => setScrollValue(text);
+  const Pick = () => {
+    try {
+      let url = Domain2 + 'pickData_detail';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          if (reduexState.loginDataCheck.login.data) {
+            let data = {
+              _id: reduexState.loginDataCheck.login.data._id,
+              type: 'store',
+              item_id: props.route.params.item._id,
+            };
+            let result = await axios.post(url, data, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (result.data[0].status == 'ok') {
+              let newArr = [];
+              for (
+                var a = 0;
+                a < props.route.params.item.info_user_id.length;
+                a++
+              ) {
+                newArr.push(
+                  props.route.params.item.info_user_id[a]._id.toString(),
+                );
+              }
+              if (
+                newArr.indexOf(reduexState.loginDataCheck.login.data._id) != -1
+              ) {
+                //있으니 제거
+                newArr.splice(
+                  newArr.indexOf(reduexState.loginDataCheck.login.data._id),
+                  1,
+                );
+                let newArr2 = [];
+                for (var a = 0; a < newArr.length; a++) {
+                  newArr2.push({_id: newArr[a]});
+                }
+                props.route.params.item.info_user_id = newArr2.slice();
+                props.route.params.item.userCount =
+                  props.route.params.item.userCount - 1;
+                setPickCount(pickCount - 1);
+              } else {
+                //없으니 추가
+                props.route.params.item.info_user_id.push({
+                  _id: reduexState.loginDataCheck.login.data._id,
+                });
+                props.route.params.item.userCount =
+                  props.route.params.item.userCount + 1;
+                setPickCount(pickCount + 1);
+              }
+              forceUpdate();
+            } else {
+            }
+          } else {
+            setShowModal(true);
+          }
+        } else {
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <StatusBar
@@ -94,24 +175,16 @@ const StoreDetailScreen = (props) => {
               width: Width_convert(375),
               height: Width_convert(240 + 89),
             }}>
-            {/*상단 슬라이더 시작 */}
-            <Swiper
-              style={{height: Width_convert(240)}}
-              autoplay={true}
-              autoplayTimeout={4.5}
-              dot={<Dot></Dot>}
-              activeDot={<ActiveDot></ActiveDot>}>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-              <SwiperImage
-                from={'work'}
-                image={'https://unsplash.it/400/400?image=1'}></SwiperImage>
-            </Swiper>
-            {/*상단 슬라이더 끝 */}
+            {/*상단 이미지 시작 */}
+            <FastImage
+              style={{height: Height_convert(240)}}
+              source={{
+                uri: props.route.params.item.store_image,
+                //headers: {Authorization: 'someAuthToken'},
+                priority: FastImage.priority.normal,
+              }}
+              resizeMode={FastImage.resizeMode.stretch}></FastImage>
+            {/*상단 이미지 끝 */}
             {/*작업 이름부터 가격까지 시작 */}
             <View
               style={{
@@ -134,7 +207,7 @@ const StoreDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    MOTION튜닝샵
+                    {props.route.params.item.store_name}
                   </Text>
                 </View>
                 <View
@@ -142,7 +215,11 @@ const StoreDetailScreen = (props) => {
                     marginTop: Height_convert(13),
                     marginLeft: Width_convert(19),
                   }}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
                     <Text
                       style={{
                         marginRight: Width_convert(5),
@@ -151,12 +228,18 @@ const StoreDetailScreen = (props) => {
                         color: '#000000',
                         fontSize: Font_normalize(12),
                       }}>
-                      서울특별시 강남구 청담동 12-3
+                      {props.route.params.item.store_address}
                     </Text>
                     <VerticalBar
                       style={{marginRight: Width_convert(5)}}></VerticalBar>
-                    <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-                      <StoreSVG></StoreSVG>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        props.navigation.navigate('StoreLocation', {
+                          item: props.route.params.item,
+                        });
+                      }}>
+                      <LocationSVG></LocationSVG>
                     </TouchableOpacity>
                   </View>
                   <View
@@ -181,13 +264,19 @@ const StoreDetailScreen = (props) => {
                         fontWeight: '700',
                         color: '#000000',
                       }}>
-                      4.8
+                      {props.route.params.item.reviewCount > 0
+                        ? parseFloat(
+                            props.route.params.item.reviewTotal /
+                              props.route.params.item.reviewCount,
+                          ).toFixed(1)
+                        : '0.0'}
                     </Text>
                     <TouchableOpacity
                       activeOpacity={1}
                       onPress={() => {
                         props.navigation.navigate('ReviewView', {
-                          Page: props.Page,
+                          item: props.route.params.item,
+                          type: 'store',
                         });
                       }}
                       style={{
@@ -202,7 +291,10 @@ const StoreDetailScreen = (props) => {
                           fontSize: Font_normalize(14),
                           color: '#9B6FAB',
                         }}>
-                        후기 30
+                        후기{' '}
+                        {props.route.params.item.reviewCount
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                       </Text>
                       <PurpleTag></PurpleTag>
                     </TouchableOpacity>
@@ -233,45 +325,68 @@ const StoreDetailScreen = (props) => {
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
             {/*터치 안되는곳 강제로 터치 추가맞춤 시작*/}
-            <View
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(94),
-                flexDirection: 'row',
-              }}>
+            {Platform.OS == 'ios' ? (
               <View
                 style={{
-                  width: Width_convert(300),
+                  marginTop: -Height_convert(10),
+                  width: Width_convert(375),
                   height: Height_convert(94),
+                  flexDirection: 'row',
                 }}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={() => {
-                    props.navigation.navigate('ReviewView', {
-                      Page: props.Page,
-                    });
-                  }}
+                <View
                   style={{
-                    marginTop: Height_convert(70),
-                    marginLeft: Width_convert(60),
-                    width: Width_convert(60),
-                    height: Height_convert(30),
-                  }}></TouchableOpacity>
+                    width: Width_convert(300),
+                    height: Height_convert(94),
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('StoreLocation', {
+                        item: props.route.params.item,
+                      });
+                    }}
+                    style={{
+                      height: Height_convert(25),
+                      marginTop: Height_convert(30),
+                      marginRight: Width_convert(100),
+                    }}></TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('ReviewView', {
+                        item: props.route.params.item,
+                        type: 'store',
+                      });
+                    }}
+                    style={{
+                      marginTop: -Height_convert(5),
+                      height: Height_convert(30),
+                      marginRight: Width_convert(150),
+                    }}></TouchableOpacity>
+                </View>
+                <View style={{marginRight: Width_convert(20)}}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    style={{
+                      width: Width_convert(55),
+                      height: Height_convert(60),
+                    }}
+                    onPress={() => {
+                      props.navigation.navigate('StoreWorkList', {
+                        item: props.route.params.item,
+                      });
+                    }}></TouchableOpacity>
+                </View>
               </View>
-              <View style={{marginRight: Width_convert(20)}}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  style={{
-                    width: Width_convert(55),
-                    height: Height_convert(85),
-                  }}
-                  onPress={() => {
-                    props.navigation.navigate('StoreWorkList', {
-                      Page: 'MOTION튜닝샵',
-                    });
-                  }}></TouchableOpacity>
-              </View>
-            </View>
+            ) : (
+              <View
+                style={{
+                  marginTop: -Height_convert(10),
+                  width: Width_convert(375),
+                  height: Height_convert(94),
+                  flexDirection: 'row',
+                }}></View>
+            )}
             {/*터치 안되는곳 강제로 터치 추가맞춤 끝*/}
             <View
               style={{
@@ -355,7 +470,7 @@ const StoreDetailScreen = (props) => {
                         }
                       : {color: '#AAAAAA'},
                   ]}>
-                  우리가게공임표
+                  후기
                 </Text>
               </TouchableOpacity>
             </View>
@@ -363,7 +478,7 @@ const StoreDetailScreen = (props) => {
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*작업설명 -> HTML로 불러오기 */}
           {page == 'store' ? (
-            <StoreInformation></StoreInformation>
+            <StoreInformation item={props.route.params.item}></StoreInformation>
           ) : page == 'labor' ? (
             <LaborInformation></LaborInformation>
           ) : null}
@@ -377,13 +492,48 @@ const StoreDetailScreen = (props) => {
           {/*하단 버튼만큼의 공간 띄우기 끝 */}
         </ScrollView>
         <AnimatedHeader
+          Length={pickCount}
+          Pick={
+            reduexState.loginDataCheck.login.login
+              ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
+                  JSON.stringify({
+                    _id: reduexState.loginDataCheck.login.data._id,
+                  }),
+                ) != -1
+                ? true
+                : false
+              : false
+          }
+          PickChangeValue={Pick}
+          page={'store'}
+          ShowModalChangeValue={ShowModalChangeValue}
+          redux={reduexState.loginDataCheck.login}
+          Title={props.route.params.item.store_name}
           navigation={props.navigation}
           animatedValue={offset}
           scrollValue={scrollValue}></AnimatedHeader>
         {/*하단 카카오채팅 전화예약버튼 시작*/}
-        <BottomButton></BottomButton>
+        <BottomButton
+          WorkConsultingModalChangeValue={
+            WorkConsultingModalChangeValue
+          }></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      {workConsultingModal ? (
+        <WorkConsultingModal
+          storeNumber={props.route.params.item.store_number}
+          WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
+          name={reduexState.loginDataCheck.login?.data?.iu_name || null}
+          navigation={props.navigation}></WorkConsultingModal>
+      ) : null}
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {showModal ? (
         <LoginModal
           ShowModalChangeValue={ShowModalChangeValue}

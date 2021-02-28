@@ -143,7 +143,7 @@ const StoreLocationScreen = (props) => {
                 color: '#000000',
                 textAlign: 'center',
               }}>
-              {props.route.params.item.info_store[0].store_name}
+              {props.route.params.item.store_name}
             </Text>
           </View>
           <View

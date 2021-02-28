@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, FlatList, TouchableOpacity} from 'react-native';
 import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -9,7 +9,6 @@ import Star from '../../../../assets/home/star.svg';
 import StarGrey from '../../../../assets/home/star_grey.svg';
 import Store from '../../../../assets/home/Store.svg';
 import BraketRight from '../../../../assets/home/braket_right.svg';
-import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import ReviewImage from './reviewImage.js';
 import ReviewButton from './reviewButton.js';
 const Review = (props) => {
@@ -54,7 +53,11 @@ const Review = (props) => {
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        <View
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            props.getDataAndNavigate('store', props.item._id);
+          }}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -72,7 +75,7 @@ const Review = (props) => {
           <Store
           //가게정보로 이동
           ></Store>
-        </View>
+        </TouchableOpacity>
         <View
           style={{
             marginRight: Width_convert(11),
@@ -100,7 +103,7 @@ const Review = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              //작업디테일로
+              props.getDataAndNavigate('work', props.item._id);
             }}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text

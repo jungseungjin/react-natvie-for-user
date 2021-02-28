@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Linking,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Height_convert from '../../../components/Height_convert.js';
@@ -17,7 +18,7 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 
-const BottomButton = () => {
+const BottomButton = (props) => {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -36,7 +37,9 @@ const BottomButton = () => {
         }}>
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => {}}
+          onPress={() => {
+            Linking.openURL('https://open.kakao.com/o/gNSUnzob');
+          }}
           style={{
             height: Width_convert(55),
             width: Width_convert(375) / 2,
@@ -61,7 +64,9 @@ const BottomButton = () => {
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => {}}
+          onPress={() => {
+            props.WorkConsultingModalChangeValue(true);
+          }}
           style={{
             height: Width_convert(55),
             width: Width_convert(375) / 2,
@@ -80,7 +85,7 @@ const BottomButton = () => {
               fontWeight: '700',
               color: '#EEEEEE',
             }}>
-            전화예약
+            작업 상담
           </Text>
         </TouchableOpacity>
       </View>

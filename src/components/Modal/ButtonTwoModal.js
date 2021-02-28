@@ -19,6 +19,11 @@ const ButtonTwoModal = (props) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
+      <StatusBar
+        translucent
+        backgroundColor="rgba(32, 32, 32, 0.3)"
+        barStyle="light-content" //dark-content
+      />
       <Modal
         //isVisible Props에 State 값을 물려주어 On/off control
         isVisible={true}

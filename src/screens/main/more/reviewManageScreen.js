@@ -107,6 +107,41 @@ const ReviewManage = (props) => {
       console.log(err);
     }
   };
+  const getDataAndNavigate = (type, item_id) => {
+    try {
+      let result;
+      let url = Domain2 + 'reviewList/navigate/' + type;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              item_id: item_id,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            if (type === 'work') {
+              props.navigation.navigate('WorkDetail', {
+                item: result.data[0].result[0],
+              });
+            } else if (type === 'store') {
+              props.navigation.navigate('StoreDetail', {
+                item: result.data[0].result[0],
+              });
+            }
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   React.useEffect(() => {
     props.navigation.addListener('focus', async () => {
       onRefresh();
@@ -159,6 +194,7 @@ const ReviewManage = (props) => {
             <Review
               key={item}
               item={item}
+              getDataAndNavigate={getDataAndNavigate}
               DeleteModalChangeValue={DeleteModalChangeValue}
               DeleteItemChangeValue={DeleteItemChangeValue}
               navigation={props.navigation}></Review>
