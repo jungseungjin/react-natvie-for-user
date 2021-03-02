@@ -1,6 +1,12 @@
 import React from 'react';
 import Modal from 'react-native-modal';
-import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+} from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
 import Fonts from '../Fonts.js';

@@ -119,7 +119,6 @@ const HomeScreen = (props) => {
             let result;
             let url = Domain2 + 'recentWorkList';
             if (new_str) {
-              console.log(new_str);
               let result = await axios.get(url, {
                 params: {
                   workid: new_str,

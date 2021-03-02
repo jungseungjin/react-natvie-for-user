@@ -60,6 +60,8 @@ const SearchScreenDetail = (props) => {
   const [resentSearch, setResentSearch] = React.useState(
     props.route?.params?.resentSearch || null,
   );
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [statusBar, setStatusBar] = React.useState(0);
   const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
   const [resultWorkList, setresultWorkList] = React.useState([]);
@@ -75,6 +77,7 @@ const SearchScreenDetail = (props) => {
       let ArrayList = resultWorkList.slice();
       let ArrayList2 = resultStoreList.slice();
       if (text === '가까운 순 ') {
+        //거리 가까운것부터
         ArrayList.sort(function (a, b) {
           return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
         });
@@ -82,25 +85,18 @@ const SearchScreenDetail = (props) => {
           return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
         });
       } else if (text === '별점 순 ') {
+        //별점 높은것부터
         ArrayList.sort(function (a, b) {
-          return a.reviewCount == 0
+          return a.reviewGrade < b.reviewGrade
             ? 1
-            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) <
-              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
-            ? 1
-            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) >
-              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            : a.reviewGrade > b.reviewGrade
             ? -1
             : 0;
         });
         ArrayList2.sort(function (a, b) {
-          return a.reviewCount == 0
+          return a.reviewGrade < b.reviewGrade
             ? 1
-            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) <
-              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
-            ? 1
-            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) >
-              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            : a.reviewGrade > b.reviewGrade
             ? -1
             : 0;
         });
@@ -160,7 +156,22 @@ const SearchScreenDetail = (props) => {
   };
   const getData = (searchText, sort) => {
     try {
+      console.log(sort);
+      console.log(pickSort);
       let result;
+      if (sort == '가까운 순 ') {
+        sort = '1';
+      } else if (sort == '별점 순 ') {
+        sort = '2';
+      } else if (sort == '후기많은 순 ') {
+        sort = '3';
+      } else if (sort == '찜 많은 순 ') {
+        sort = '4';
+      } else if (sort == '우리가게공임표 공개 ') {
+        sort = '5';
+      } else {
+        sort = '0';
+      }
       let url =
         Domain2 +
         'searchlist/?searchText=' +
@@ -171,7 +182,6 @@ const SearchScreenDetail = (props) => {
         reduexState?.loginDataCheck?.login?.location?.location?.latitude +
         '&sort=' +
         sort;
-      console.log(url);
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -200,7 +210,6 @@ const SearchScreenDetail = (props) => {
       } else {
         const list = [...resentSearch, searchValue];
         setResentSearch(list);
-        console.log(list);
         await AsyncStorage.setItem('resentSearch', JSON.stringify(list));
       }
     } catch (err) {
@@ -210,9 +219,9 @@ const SearchScreenDetail = (props) => {
 
   React.useEffect(
     () =>
-      props.navigation.addListener('focus', async () => {
-        onRefresh(); //찜한거 변경하기 위해서
-        //SortChangeValue(pickSort); //찍어놓은 정렬대로  -> 제대로 안되면 찍어놓은ㄹ것대로 백으로 정렬값 가지고가서??
+      props.navigation.addListener('focus', () => {
+        forceUpdate();
+        onRefresh();
       }),
     [],
   );
