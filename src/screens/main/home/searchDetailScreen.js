@@ -69,8 +69,96 @@ const SearchScreenDetail = (props) => {
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);
-  const SortChangeValue = (text) => setPickSort(text);
-  const getData = (searchText) => {
+  const SortChangeValue = (text) => {
+    setPickSort(text);
+    if (text !== false) {
+      let ArrayList = resultWorkList.slice();
+      let ArrayList2 = resultStoreList.slice();
+      if (text === '가까운 순 ') {
+        ArrayList.sort(function (a, b) {
+          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
+        });
+        ArrayList2.sort(function (a, b) {
+          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
+        });
+      } else if (text === '별점 순 ') {
+        ArrayList.sort(function (a, b) {
+          return a.reviewCount == 0
+            ? 1
+            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) <
+              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            ? 1
+            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) >
+              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            ? -1
+            : 0;
+        });
+        ArrayList2.sort(function (a, b) {
+          return a.reviewCount == 0
+            ? 1
+            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) <
+              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            ? 1
+            : parseFloat(a.reviewTotal / a.reviewCount).toFixed(1) >
+              parseFloat(b.reviewTotal / b.reviewCount).toFixed(1)
+            ? -1
+            : 0;
+        });
+      } else if (text === '후기많은 순 ') {
+        ArrayList.sort(function (a, b) {
+          return a.reviewCount < b.reviewCount
+            ? 1
+            : a.reviewCount > b.reviewCount
+            ? -1
+            : 0;
+        });
+        ArrayList2.sort(function (a, b) {
+          return a.reviewCount < b.reviewCount
+            ? 1
+            : a.reviewCount > b.reviewCount
+            ? -1
+            : 0;
+        });
+      } else if (text === '찜 많은 순 ') {
+        ArrayList.sort(function (a, b) {
+          return a.userCount < b.userCount
+            ? 1
+            : a.userCount > b.userCount
+            ? -1
+            : 0;
+        });
+        ArrayList2.sort(function (a, b) {
+          return a.userCount < b.userCount
+            ? 1
+            : a.userCount > b.userCount
+            ? -1
+            : 0;
+        });
+      } else if (text === '우리가게공임표 공개 ') {
+        ArrayList.sort(function (a, b) {
+          return a.store_work_total_cost == 0 || b.store_work_total_cost == 0
+            ? -1
+            : a.store_work_total_cost < b.store_work_total_cost
+            ? -1
+            : a.store_work_total_cost > b.store_work_total_cost
+            ? 1
+            : 0;
+        });
+        ArrayList2.sort(function (a, b) {
+          return a.store_badge.indexOf('4') != -1 &&
+            b.store_badge.indexOf('4') == -1
+            ? -1
+            : a.store_badge.indexOf('4') == -1 &&
+              b.store_badge.indexOf('4') != -1
+            ? 1
+            : 0;
+        });
+      }
+      setresultWorkList(ArrayList);
+      setresultStoreList(ArrayList2);
+    }
+  };
+  const getData = (searchText, sort) => {
     try {
       let result;
       let url =
@@ -80,7 +168,10 @@ const SearchScreenDetail = (props) => {
         '&longitude=' +
         reduexState?.loginDataCheck?.login?.location?.location?.longitude +
         '&latitude=' +
-        reduexState?.loginDataCheck?.login?.location?.location?.latitude;
+        reduexState?.loginDataCheck?.login?.location?.location?.latitude +
+        '&sort=' +
+        sort;
+      console.log(url);
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -120,7 +211,8 @@ const SearchScreenDetail = (props) => {
   React.useEffect(
     () =>
       props.navigation.addListener('focus', async () => {
-        onRefresh();
+        onRefresh(); //찜한거 변경하기 위해서
+        //SortChangeValue(pickSort); //찍어놓은 정렬대로  -> 제대로 안되면 찍어놓은ㄹ것대로 백으로 정렬값 가지고가서??
       }),
     [],
   );
@@ -128,7 +220,7 @@ const SearchScreenDetail = (props) => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getData(searchText);
+    getData(searchText, pickSort);
     setRefreshing(false);
   }, []);
   const textInputRef = useRef();
@@ -136,7 +228,7 @@ const SearchScreenDetail = (props) => {
     textInputRef.current.focus();
   };
   React.useEffect(() => {
-    getData(props.route?.params?.searchText);
+    getData(props.route?.params?.searchText, pickSort);
   }, []);
   return (
     <>
@@ -221,9 +313,9 @@ const SearchScreenDetail = (props) => {
                 height: Height_convert(20),
               }}
               onPress={() => {
-                if (searchText.trim()) {
-                  addData(searchText);
-                }
+                addData(searchText);
+                //검색
+                getData(searchText);
               }}>
               <Search></Search>
             </TouchableOpacity>
@@ -290,7 +382,7 @@ const SearchScreenDetail = (props) => {
                   SortChangeValue={SortChangeValue}></FilterView>
                 <FilterView
                   index={4}
-                  Title={'우리가게공임표 공개'}
+                  Title={'우리가게공임표 공개 '}
                   nowValue={pickSort}
                   SortChangeValue={SortChangeValue}></FilterView>
               </View>

@@ -11,30 +11,23 @@ import DisabledBox from '../../../../assets/home/disabled_box.svg';
 import QuestionRound from '../../../../assets/home/question_round.svg';
 import PropTypes from 'prop-types';
 
-const FilterView = ({
-  navigation,
-  route,
-  index,
-  Title,
-  nowValue,
-  SortChangeValue,
-}) => {
+const FilterView = (props) => {
   return (
-    <View style={Title == '가까운 순 ' ? styles.view : styles.view_2}>
+    <View style={props.Title == '가까운 순 ' ? styles.view : styles.view_2}>
       <View style={styles.view2}>
-        <Text style={styles.text}>{Title}</Text>
-        {Title == '가까운 순 ' ? <QuestionRound></QuestionRound> : null}
+        <Text style={styles.text}>{props.Title}</Text>
+        {props.Title == '가까운 순 ' ? <QuestionRound></QuestionRound> : null}
       </View>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          if (nowValue == Title) {
-            SortChangeValue(false);
+          if (props.nowValue == props.Title) {
+            props.SortChangeValue(false);
           } else {
-            SortChangeValue(Title);
+            props.SortChangeValue(props.Title);
           }
         }}>
-        {nowValue == Title ? (
+        {props.nowValue == props.Title ? (
           <CheckedBox style={{marginRight: Width_convert(15)}}></CheckedBox>
         ) : (
           <BlankBox style={{marginRight: Width_convert(15)}}></BlankBox>
@@ -43,12 +36,7 @@ const FilterView = ({
     </View>
   );
 };
-FilterView.propsType = {
-  index: PropTypes.number.isRequired,
-  Title: PropTypes.string.isRequired,
-  nowValue: PropTypes.string.isRequired,
-  SortChangeValue: PropTypes.func.isRequired,
-};
+FilterView.propsType = {};
 const styles = StyleSheet.create({
   view: {
     width: Width_convert(360),

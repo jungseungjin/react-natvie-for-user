@@ -93,62 +93,69 @@ const HomeScreen = (props) => {
     }
   };
   //홈화면 최근 본 작업 데이터 가져오기
-  const get_recentWorkList = async () => {
+  const get_recentWorkList = () => {
     try {
-      let value = await AsyncStorage.getItem('recentWorkList');
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let value = await AsyncStorage.getItem('recentWorkList');
 
-      if (value == null) {
-        setRecentWorkList([]);
-      } else {
-        let new_data = value.split(',');
-        let new_arr = [];
-        let new_str = '';
-        for (var a = 0; a < 6; a--) {
-          //6개만 나온다.
-          if (a == 0) {
-            new_str = new_data[a];
+          if (value == null) {
+            setRecentWorkList([]);
           } else {
-            new_str = new_str + ',' + new_data[a];
-          }
-        }
-        let result;
-        let url = Domain2 + 'recentWorkList';
-
-        NetInfo.addEventListener(async (state) => {
-          if (state.isConnected) {
-            let result = await axios.get(url, {
-              params: {
-                workid: new_str,
-              },
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (result.data[0].message == 'ok') {
-              setRecentWorkList(result.data[0].result);
+            let new_data = value.split(',');
+            let new_arr = [];
+            let new_str = '';
+            for (var a = 0; a < 6; a++) {
+              //6개만 나온다.
+              if (new_data[a] == undefined) {
+                break;
+              }
+              if (a == 0) {
+                new_str = new_data[a];
+              } else {
+                new_str = new_str + ',' + new_data[a];
+              }
+            }
+            let result;
+            let url = Domain2 + 'recentWorkList';
+            if (new_str) {
+              console.log(new_str);
+              let result = await axios.get(url, {
+                params: {
+                  workid: new_str,
+                },
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              if (result.data[0].message == 'ok') {
+                setRecentWorkList(result.data[0].result);
+              } else {
+                setRecentWorkList([]);
+              }
             } else {
               setRecentWorkList([]);
             }
-          } else {
-            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-            setNetworkModal(true);
           }
-        });
-      }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
     } catch (err) {
       console.log(err);
     }
   };
   React.useEffect(() => {
     get_homeData();
-    //get_recentWorkList();
+    get_recentWorkList();
   }, []);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     get_homeData();
-    //get_recentWorkList();
+    get_recentWorkList();
     setRefreshing(false);
   }, []);
   return (
@@ -383,13 +390,7 @@ const HomeScreen = (props) => {
                 {recentWorkList.map((item) => (
                   <RecentWork
                     key={item.store_thumbnail[0]}
-                    Title={item.store_work_name}
-                    ImageUrl={item.store_thumbnail[0]}
-                    OwnersStore={item.info_store[0].store_name}
-                    Average={item.store_work_grade}
-                    Review={item.reviewCount}
-                    Address={item.info_store[0].store_address}
-                    Price={item.store_work_total_cost || null}
+                    item={item}
                     Index={recentWorkList.indexOf(item)}
                     navigation={props.navigation}></RecentWork>
                 ))}

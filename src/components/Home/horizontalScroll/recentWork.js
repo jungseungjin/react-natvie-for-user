@@ -13,28 +13,45 @@ const RecentWork = (props) => {
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
-        props.navigation.navigate('WorkDetail');
+        props.navigation.navigate('WorkDetail', {item: props.item});
       }}
       style={props.Index == 0 ? styles.view_index0 : styles.view}>
       <FastImage
         style={styles.fastImage}
         source={{
-          uri: props.ImageUrl,
+          uri: props.item.store_thumbnail[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
-      <Text style={styles.text}>{props.Title}</Text>
+      <Text style={styles.text}>{props.item.store_work_name}</Text>
       <View style={styles.view2}>
-        <Text style={styles.text2}>{props.OwnersStore}</Text>
+        <Text style={styles.text2}>{props.item.info_store[0].store_name}</Text>
         <Star style={styles.star}></Star>
-        <Text style={styles.text3}>{props.Average || 0}</Text>
-        <Text style={styles.text3}>후기 {props.Review}</Text>
+        <Text style={styles.text3}>
+          {props.item.reviewCount > 0
+            ? parseFloat(
+                props.item.reviewTotal / props.item.reviewCount,
+              ).toFixed(1)
+            : '0.0'}
+        </Text>
+        <Text style={styles.text3}>
+          후기
+          {props.item.reviewCount
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+        </Text>
       </View>
-      <Text style={styles.text4}>주소 : {props.Address}</Text>
+      <Text style={styles.text4}>
+        주소 : {props.item.info_store[0].store_address}
+      </Text>
       <View style={styles.view3}>
         <Text style={styles.text5}>
-          {props.Price ? props.Price + ' 원' : '업체문의'}
+          {props.item.store_work_total_cost
+            ? props.item.store_work_total_cost
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 원'
+            : '업체문의'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -108,14 +125,5 @@ const styles = StyleSheet.create({
     marginRight: Width_convert(3),
   },
 });
-RecentWork.propTypes = {
-  Title: PropTypes.string.isRequired,
-  ImageUrl: PropTypes.string.isRequired,
-  OwnersStore: PropTypes.string.isRequired,
-  Average: PropTypes.number,
-  Review: PropTypes.number.isRequired,
-  Address: PropTypes.string.isRequired,
-  Price: PropTypes.number,
-  Index: PropTypes.number.isRequired,
-};
+RecentWork.propTypes = {};
 export default RecentWork;
