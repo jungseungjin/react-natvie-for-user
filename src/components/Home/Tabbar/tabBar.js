@@ -59,7 +59,9 @@ const TabBar = (props) => {
           onPress={() => {
             props.navigation.goBack();
           }}>
-          <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
+          <GoBack
+            fill={'#000000'}
+            style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
@@ -98,7 +100,7 @@ const TabBar = (props) => {
           activeOpacity={1}
           onPress={() => {
             if (props.Title == '작업종류') {
-              props.navigation.navigate('CategoryDetail', {Page: props.Page});
+              props.getDataAndNavigate();
             } else if (props.Title == '설정') {
               props.PushReduxData();
             }

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 
 const FilterView = (props) => {
   return (
-    <View style={props.Title == '가까운 순 ' ? styles.view : styles.view_2}>
+    <View style={props.index == 0 ? styles.view : styles.view_2}>
       <View style={styles.view2}>
         <Text style={styles.text}>{props.Title}</Text>
         {props.Title == '가까운 순 ' ? <QuestionRound></QuestionRound> : null}
@@ -21,13 +21,17 @@ const FilterView = (props) => {
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          if (props.nowValue == props.Title) {
+          if (props.Title == '가까운 순 ' && props.location == null) {
+            //아무것도 안해
+          } else if (props.nowValue == props.Title) {
             props.SortChangeValue(false);
           } else {
             props.SortChangeValue(props.Title);
           }
         }}>
-        {props.nowValue == props.Title ? (
+        {props.Title == '가까운 순 ' && props.location == null ? (
+          <DisabledBox style={{marginRight: Width_convert(15)}}></DisabledBox>
+        ) : props.nowValue == props.Title ? (
           <CheckedBox style={{marginRight: Width_convert(15)}}></CheckedBox>
         ) : (
           <BlankBox style={{marginRight: Width_convert(15)}}></BlankBox>

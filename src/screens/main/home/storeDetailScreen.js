@@ -306,7 +306,7 @@ const StoreDetailScreen = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     props.navigation.navigate('StoreWorkList', {
-                      Page: 'MOTION튜닝샵',
+                      item: props.route.params.item,
                     });
                   }}>
                   <WorkMenu></WorkMenu>

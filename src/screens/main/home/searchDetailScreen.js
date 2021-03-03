@@ -71,7 +71,9 @@ const SearchScreenDetail = (props) => {
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);
+  //정렬
   const SortChangeValue = (text) => {
+    //
     setPickSort(text);
     if (text !== false) {
       let ArrayList = resultWorkList.slice();
@@ -132,12 +134,10 @@ const SearchScreenDetail = (props) => {
         });
       } else if (text === '우리가게공임표 공개 ') {
         ArrayList.sort(function (a, b) {
-          return a.store_work_total_cost == 0 || b.store_work_total_cost == 0
-            ? -1
-            : a.store_work_total_cost < b.store_work_total_cost
-            ? -1
-            : a.store_work_total_cost > b.store_work_total_cost
+          return a.store_work_total_cost < b.store_work_total_cost
             ? 1
+            : a.store_work_total_cost > b.store_work_total_cost
+            ? -1
             : 0;
         });
         ArrayList2.sort(function (a, b) {
@@ -154,10 +154,9 @@ const SearchScreenDetail = (props) => {
       setresultStoreList(ArrayList2);
     }
   };
+  //검색한 값으로 데이터 가져오기
   const getData = (searchText, sort) => {
     try {
-      console.log(sort);
-      console.log(pickSort);
       let result;
       if (sort == '가까운 순 ') {
         sort = '1';
@@ -172,16 +171,7 @@ const SearchScreenDetail = (props) => {
       } else {
         sort = '0';
       }
-      let url =
-        Domain2 +
-        'searchlist/?searchText=' +
-        searchText +
-        '&longitude=' +
-        reduexState?.loginDataCheck?.login?.location?.location?.longitude +
-        '&latitude=' +
-        reduexState?.loginDataCheck?.login?.location?.location?.latitude +
-        '&sort=' +
-        sort;
+      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -204,6 +194,7 @@ const SearchScreenDetail = (props) => {
       console.log(err);
     }
   };
+  //검색한 값 저장
   const addData = async (searchValue) => {
     try {
       if (resentSearch.indexOf(searchValue) != -1) {
@@ -220,16 +211,18 @@ const SearchScreenDetail = (props) => {
   React.useEffect(
     () =>
       props.navigation.addListener('focus', () => {
-        forceUpdate();
-        onRefresh();
+        if (pickSort != false) {
+          getData(searchText, pickSort);
+        }
       }),
-    [],
+    [pickSort],
   );
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getData(searchText, pickSort);
+    setPickSort(false);
+    getData(searchText, false);
     setRefreshing(false);
   }, []);
   const textInputRef = useRef();
