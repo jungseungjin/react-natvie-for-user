@@ -414,6 +414,7 @@ const ReviewRegister = (props) => {
               //BottomText={''}
               CenterButtonText={'닫기'}></ButtonOneModal>
           ) : null}
+          {isLoading ? <IsLoading></IsLoading> : null}
         </SafeAreaView>
       </DismissKeyboard>
     </>

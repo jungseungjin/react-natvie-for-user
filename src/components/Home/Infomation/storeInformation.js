@@ -4,8 +4,76 @@ import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 const WorkInformation = (props) => {
+  moment.locale('ko');
+  const [closedDay, setClosedDay] = React.useState([]);
+  const [operationTime, setOperationTime] = React.useState([]);
+  React.useEffect(() => {
+    let newArr = [];
+    let newArr2 = [];
+    if (props.item.store_closed_day.length > 0) {
+      for (items of props.item.store_closed_day) {
+        let A, B;
+        if (items.week === '1') {
+          A = '매달 첫번째 ';
+        } else if (items.week === '2') {
+          A = '매달 두번째 ';
+        } else if (items.week === '3') {
+          A = '매달 세번째 ';
+        } else if (items.week === '4') {
+          A = '매달 네번째 ';
+        } else if (items.week === '5') {
+          A = '매달 다섯번째 ';
+        } else if (items.week === '6') {
+          A = '매달 여섯번째 ';
+        }
+        if (items.day === 'mon') {
+          B = '월요일';
+        } else if (items.day === 'tue') {
+          B = '화요일';
+        } else if (items.day === 'wen') {
+          B = '수요일';
+        } else if (items.day === 'thu') {
+          B = '목요일';
+        } else if (items.day === 'fri') {
+          B = '금요일';
+        } else if (items.day === 'sat') {
+          B = '토요일';
+        } else if (items.day === 'sun') {
+          B = '일요일';
+        }
+        newArr.push(A + B);
+      }
+      setClosedDay(newArr);
+    }
+    if (props.item.store_operation_time.length > 0) {
+      for (items of props.item.store_operation_time) {
+        let A, B, C;
+        if (items.workday === 1) {
+          A = '월요일';
+        } else if (items.workday === 2) {
+          A = '화요일';
+        } else if (items.workday === 3) {
+          A = '수요일';
+        } else if (items.workday === 4) {
+          A = '목요일';
+        } else if (items.workday === 5) {
+          A = '금요일';
+        } else if (items.workday === 6) {
+          A = '토요일';
+        } else if (items.workday === 7) {
+          A = '일요일';
+        }
+        B = moment(items.startTime, 'HH:mm').format('A hh:mm');
+        C = moment(items.endTime, 'HH:mm').format('A hh:mm');
+        newArr2.push(A + B + '~' + C);
+      }
+      setOperationTime(newArr2);
+    }
+  }, []);
   return (
     <View
       style={{
@@ -107,8 +175,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              월요일 - 금요일 오전 09:00 ~ 오후 07:00{'\n'}토요일 - 일요일 오전
-              10:00 ~ 오후 06:00
+              {operationTime.map((item) => `${item}\n`)}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -130,7 +197,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              매달 첫째주 일요일{'\n'}매달 셋째주 일요일
+              {closedDay.map((item) => `${item}\n`)}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>

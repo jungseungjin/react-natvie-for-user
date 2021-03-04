@@ -7,12 +7,15 @@ import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
+import SetRecentList from '../../../components/setRecentList.js';
 
 const RecentWork = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={() => {
+        //최근 본 작업에 넣기
+        SetRecentList('store', props.item._id);
         props.navigation.navigate('WorkDetail', {item: props.item});
       }}
       style={props.Index == 0 ? styles.view_index0 : styles.view}>

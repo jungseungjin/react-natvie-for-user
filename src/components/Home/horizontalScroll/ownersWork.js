@@ -21,7 +21,7 @@ const OwnersWork = (props) => {
           : styles.workVideo_view
       }
       onPress={() => {
-        if (props.From == 'home') {
+        if (props.From == 'home' || props.From == 'workVideo') {
           props.navigation.navigate('WorkVideo', {item: props.item});
         }
       }}>

@@ -56,7 +56,7 @@ const FirstNavigator = (props) => {
         //로그인해서 리덕스에 정보 넣기,
         //로그인이 실패하면? 디바이스정보로 가져와보자
         let result;
-        let url = Domain2 + 'login';
+        let url = `${Domain2}login`;
         let data = {};
         if (credentials.username && credentials.password) {
           data = {
@@ -64,32 +64,34 @@ const FirstNavigator = (props) => {
             passwordText: credentials.password,
           };
         } else {
-          url = Domain2 + 'deviceLogin';
+          url = `${Domain2}deviceLogin`;
           data = {
             uniqueId: DeviceInfo.getUniqueId(),
           };
         }
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
             let result = await axios.post(url, data, {
               headers: {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].status == 'ok') {
+            if (result.data[0].status === 'ok') {
               if (data?.idText) {
+                //아이디로 로그인했으면
                 props.updateLoginStatus(true);
                 props.updateIuCar(result.data[0].loginData.iu_car);
                 props.updateLocation(result.data[0].loginData.location);
                 props.update_id(result.data[0].loginData._id);
                 props.updateData(result.data[0].loginData);
               } else {
+                //디바이스로 로그인했으면
                 props.updateLoginStatus(false);
                 props.updateData(result.data[0].deviceData);
               }
             } else {
               //로그인이 안됐어
+              await Keychain.resetGenericPassword();
               //alert(result.data[0].message);
             }
           } else {
@@ -99,13 +101,12 @@ const FirstNavigator = (props) => {
         });
         RNSplashScreen.hide();
       } else {
-        let url = Domain2 + 'deviceLogin';
+        let url = `${Domain2}deviceLogin`;
         let data = {
           uniqueId: DeviceInfo.getUniqueId(),
         };
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
             let result = await axios.post(url, data, {
               headers: {
                 'Content-Type': 'application/json',
@@ -115,9 +116,10 @@ const FirstNavigator = (props) => {
               props.updateLoginStatus(false);
               props.updateData(result.data[0].deviceData);
             } else {
+              //로그인이 안됐어
+              await Keychain.resetGenericPassword();
             }
           } else {
-            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
             setNetworkModal(true);
           }
         });

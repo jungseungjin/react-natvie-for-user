@@ -43,6 +43,7 @@ const CategoryDetailScreen = (props) => {
   ///중분류 새로 선택하면 그에 맞게 값 나오게 -> 뒤에서 데이터 가져오기
   const PickMiddleChangeValue = (text) => {
     setPickMiddle(text);
+    setPickFilter(false);
     setPickSmall('');
     getData(text);
   };
@@ -50,6 +51,20 @@ const CategoryDetailScreen = (props) => {
   const getData = (text) => {
     //-> 작업분류값은 가져올필요 없음
     try {
+      let sort;
+      if (pickSort == '가까운 순 ') {
+        sort = '1';
+      } else if (pickSort == '별점 순 ') {
+        sort = '2';
+      } else if (pickSort == '후기많은 순 ') {
+        sort = '3';
+      } else if (pickSort == '찜 많은 순 ') {
+        sort = '4';
+      } else if (pickSort == '우리가게공임표 공개 ') {
+        sort = '5';
+      } else {
+        sort = '0';
+      }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let url = `${Domain2}categoryworklist/second`;
@@ -58,6 +73,7 @@ const CategoryDetailScreen = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
+              sort: sort,
               middle: text,
               iu_car:
                 reduexState.loginDataCheck.login.iu_car[0].pickModelDetail
@@ -92,10 +108,52 @@ const CategoryDetailScreen = (props) => {
   ///소분류 새로 선택하면 한바퀴 둘러
   const PickSmallChangeValue = (text) => {
     setPickSmall(text);
+    setPickFilter(false);
     let newArr = [];
     for (var a = 0; a < resultWorkList.length; a++) {
       if (resultWorkList[a].store_info_work.includes(text)) {
         newArr.push(resultWorkList[a]);
+      }
+    }
+    if (pickSort !== false) {
+      if (pickSort === '가까운 순 ') {
+        //거리 가까운것부터
+        newArr.sort(function (a, b) {
+          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
+        });
+      } else if (pickSort === '별점 순 ') {
+        //별점 높은것부터
+        newArr.sort(function (a, b) {
+          return a.reviewGrade < b.reviewGrade
+            ? 1
+            : a.reviewGrade > b.reviewGrade
+            ? -1
+            : 0;
+        });
+      } else if (pickSort === '후기많은 순 ') {
+        newArr.sort(function (a, b) {
+          return a.reviewCount < b.reviewCount
+            ? 1
+            : a.reviewCount > b.reviewCount
+            ? -1
+            : 0;
+        });
+      } else if (pickSort === '찜 많은 순 ') {
+        newArr.sort(function (a, b) {
+          return a.userCount < b.userCount
+            ? 1
+            : a.userCount > b.userCount
+            ? -1
+            : 0;
+        });
+      } else if (pickSort === '우리가게공임표 공개 ') {
+        newArr.sort(function (a, b) {
+          return a.store_work_total_cost < b.store_work_total_cost
+            ? 1
+            : a.store_work_total_cost > b.store_work_total_cost
+            ? -1
+            : 0;
+        });
       }
     }
     setViewWorkList(newArr);
@@ -109,7 +167,53 @@ const CategoryDetailScreen = (props) => {
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(false);
-  const SortChangeValue = (text) => setPickSort(text);
+  //필터로 정렬값 변경되면 -> 지금보여지는것 값도 변경시키고
+  const SortChangeValue = (text) => {
+    setPickSort(text);
+    let newArr = viewWorkList.slice() || [];
+    if (text !== false) {
+      if (text === '가까운 순 ') {
+        //거리 가까운것부터
+        newArr.sort(function (a, b) {
+          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
+        });
+      } else if (text === '별점 순 ') {
+        //별점 높은것부터
+        newArr.sort(function (a, b) {
+          return a.reviewGrade < b.reviewGrade
+            ? 1
+            : a.reviewGrade > b.reviewGrade
+            ? -1
+            : 0;
+        });
+      } else if (text === '후기많은 순 ') {
+        newArr.sort(function (a, b) {
+          return a.reviewCount < b.reviewCount
+            ? 1
+            : a.reviewCount > b.reviewCount
+            ? -1
+            : 0;
+        });
+      } else if (text === '찜 많은 순 ') {
+        newArr.sort(function (a, b) {
+          return a.userCount < b.userCount
+            ? 1
+            : a.userCount > b.userCount
+            ? -1
+            : 0;
+        });
+      } else if (text === '우리가게공임표 공개 ') {
+        newArr.sort(function (a, b) {
+          return a.store_work_total_cost < b.store_work_total_cost
+            ? 1
+            : a.store_work_total_cost > b.store_work_total_cost
+            ? -1
+            : 0;
+        });
+      }
+    }
+    setViewWorkList(newArr);
+  };
   const [showModal, setShowModel] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModel(text);
 
@@ -234,7 +338,7 @@ const CategoryDetailScreen = (props) => {
                 SortChangeValue={SortChangeValue}></FilterView>
               <FilterView
                 index={4}
-                Title={'우리가게공임표 공개'}
+                Title={'우리가게공임표 공개 '}
                 nowValue={pickSort}
                 SortChangeValue={SortChangeValue}></FilterView>
             </View>
@@ -249,7 +353,7 @@ const CategoryDetailScreen = (props) => {
                 activeOpacity={1}
                 style={{flex: 1}}
                 onPress={() => {
-                  //setPickFilter(false);
+                  setPickFilter(false);
                 }}></TouchableOpacity>
             </View>
           </View>
@@ -267,6 +371,7 @@ const CategoryDetailScreen = (props) => {
               style={{minHeight: Height_convert(812)}}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
+              alwaysBounceVertical={false}
               data={viewWorkList}
               windowSize={2}
               initialNumToRender={10}

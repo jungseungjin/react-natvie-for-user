@@ -219,12 +219,17 @@ const SearchScreenDetail = (props) => {
   );
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback((text) => {
     setRefreshing(true);
     setPickSort(false);
-    getData(searchText, false);
+    if (text) {
+      getData(text, false);
+    } else {
+      getData(searchText.trim(), false);
+    }
     setRefreshing(false);
   }, []);
+
   const textInputRef = useRef();
   const handleClick = () => {
     textInputRef.current.focus();
@@ -276,6 +281,8 @@ const SearchScreenDetail = (props) => {
               onSubmitEditing={() => {
                 if (searchText.trim()) {
                   //검색함수 ㄲ
+                  addData(searchText.trim());
+                  onRefresh(searchText.trim());
                 }
               }}
               style={{
@@ -315,9 +322,8 @@ const SearchScreenDetail = (props) => {
                 height: Height_convert(20),
               }}
               onPress={() => {
-                addData(searchText);
-                //검색
-                getData(searchText);
+                addData(searchText.trim());
+                onRefresh(searchText.trim());
               }}>
               <Search></Search>
             </TouchableOpacity>
@@ -366,6 +372,10 @@ const SearchScreenDetail = (props) => {
                   index={0}
                   Title={'가까운 순 '}
                   nowValue={pickSort}
+                  location={
+                    reduexState.loginDataCheck?.login?.location?.location ||
+                    null
+                  }
                   SortChangeValue={SortChangeValue}></FilterView>
                 <FilterView
                   index={1}

@@ -142,6 +142,7 @@ const WorkVideoScreen = (props) => {
               ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
               ownersname: '배말랭', //채널명
             }}
+            navigation={props.navigation}
             Index={0}></OwnersWork>
           <OwnersWork
             From={'workVideo'}
@@ -154,6 +155,7 @@ const WorkVideoScreen = (props) => {
               ownersImage: 'https://unsplash.it/400/400?image=7', //채널이미지
               ownersname: '직모', //채널명
             }}
+            navigation={props.navigation}
             Index={1}></OwnersWork>
         </ScrollView>
       </SafeAreaView>

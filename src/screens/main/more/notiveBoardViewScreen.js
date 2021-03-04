@@ -6,7 +6,7 @@ import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-
+import moment from 'moment';
 const NoticeBoardViewScreen = (props) => {
   return (
     <>
@@ -44,7 +44,7 @@ const NoticeBoardViewScreen = (props) => {
                 fontWeight: '700',
                 color: '#000000',
               }}>
-              2020년 7월 31일 업데이트 내용공지
+              {props.route.params.item.title}
             </Text>
             <Text
               style={{
@@ -53,7 +53,9 @@ const NoticeBoardViewScreen = (props) => {
                 fontWeight: '400',
                 color: '#000000',
               }}>
-              2020년 7월 31일
+              {moment(props.route.params.item.regDate).format(
+                'YYYY년 MM월 DD일',
+              )}
             </Text>
           </TouchableOpacity>
         </View>
@@ -72,10 +74,7 @@ const NoticeBoardViewScreen = (props) => {
                 fontSize: Font_normalize(13),
                 color: '#000000',
               }}>
-              안녕하세요. 튜닝의순정입니다. 아무래도 저희가 서비스를 시작한지
-              얼마되지 않다보니 오류들이 조금씩 발견되고 있습니다. 사장님들께
-              불편드리지 않기 위해 실시간으로 모니터링을 통해 최대한 빠른 복구를
-              할 수 있도록 노력하고 있습니다.
+              {props.route.params.item.contents}
             </Text>
           </View>
         </ScrollView>

@@ -213,6 +213,7 @@ const CategoryScreen = (props) => {
             <FlatList
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
+              alwaysBounceVertical={false}
               style={{flex: 1}}
               data={middleCategoryList}
               windowSize={2}
@@ -235,6 +236,7 @@ const CategoryScreen = (props) => {
             <FlatList
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
+              alwaysBounceVertical={false}
               style={{flex: 1}}
               data={smallCategoryList}
               windowSize={2}

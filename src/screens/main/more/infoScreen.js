@@ -47,6 +47,13 @@ import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
 import BackgroundTimer from 'react-native-background-timer';
 import auth from '@react-native-firebase/auth';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
+import ImagePicker from 'react-native-image-crop-picker';
+import key from '../../../../key/key.js';
+import moment from 'moment';
+import S3 from 'aws-sdk/clients/s3';
+import fs from 'react-native-fs';
+import base64_arraybuffer from 'base64-arraybuffer';
+import {Braket} from 'aws-sdk';
 const InfoScreen = (props) => {
   //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
   //저장을 해야 값이 변경됨.
@@ -256,6 +263,7 @@ const InfoScreen = (props) => {
             //차량데이터는 초기값이 redux에 저장된 로그인데이터값이니 그대로 이용
             iu_car: car,
             _id: reduexState.loginDataCheck.login.data._id,
+            userImage: userImage,
           };
           if (nickname.length > 0) {
             //닉네임에 값이 들어가있으면
@@ -305,6 +313,57 @@ const InfoScreen = (props) => {
       console.log(err);
     }
   };
+
+  const addImage = () => {
+    try {
+      ImagePicker.openPicker({
+        height: 1280,
+        compressImageMaxWidth: 1280,
+        width: 960,
+        compressImageMaxHeight: 960,
+        multiple: false,
+        //maxFiles: 4,
+      })
+        .then((images) => {
+          uploadImageOnS3(images);
+        })
+        .catch((e) => {
+          console.log('err pickWithCamera: ', e);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const uploadImageOnS3 = async (file) => {
+    const s3bucket = new S3({
+      accessKeyId: key.amazonID,
+      secretAccessKey: key.amazonSECRET,
+      Bucket: key.amazonBUCKET_NAME,
+      signatureVersion: 'v4',
+    });
+    await s3bucket.createBucket(async () => {
+      let contentType = 'image/jpeg';
+      let contentDeposition =
+        'User_image/' + moment().valueOf() + file.filename;
+      let base64 = await fs.readFile(file.path, 'base64');
+      let arrayBuffer = base64_arraybuffer.decode(base64);
+      let params = {
+        Bucket: key.amazonBUCKET_NAME,
+        Key: contentDeposition,
+        Body: arrayBuffer,
+        ContentDisposition: contentDeposition,
+        ContentType: contentType,
+      };
+      await s3bucket.upload(params, (err, data) => {
+        if (err) {
+          console.log('error in callback');
+        } else {
+          setUserImage(data.Location);
+          forceUpdate();
+        }
+      });
+    });
+  };
   const [password, setPassword] = React.useState('');
   const [passwordChk, setPasswordChk] = React.useState('');
   const [passwordChangeModal, setPasswordChangeModal] = React.useState(false);
@@ -312,6 +371,9 @@ const InfoScreen = (props) => {
     setPasswordChangeModal(text);
     props.navigation.navigate('Login');
   };
+  const [userImage, setUserImage] = React.useState(
+    reduexState.loginDataCheck.login?.data?.review_user_iu_image || null,
+  );
 
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
@@ -540,7 +602,11 @@ const InfoScreen = (props) => {
                   style={{
                     width: Width_convert(375),
                   }}>
-                  <View
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      addImage();
+                    }}
                     style={{
                       width: Width_convert(375),
                       height: Width_convert(263 - 94 - 57),
@@ -554,14 +620,12 @@ const InfoScreen = (props) => {
                         borderRadius: Width_convert(78),
                       }}
                       source={{
-                        uri:
-                          reduexState.loginDataCheck.login.data
-                            .review_user_iu_image,
+                        uri: userImage,
                         //headers: {Authorization: 'someAuthToken'},
                         priority: FastImage.priority.normal,
                       }}
                       resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                  </View>
+                  </TouchableOpacity>
                   {/*이름 시작 */}
                   <View
                     style={{

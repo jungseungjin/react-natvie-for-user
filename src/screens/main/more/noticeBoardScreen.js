@@ -11,30 +11,52 @@ import {
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
+import IsLoading from '../../../components/ActivityIndicator';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
+import moment from 'moment';
 
 const NoticeBoardScreen = (props) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
-
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = `${Domain2}noticelist`;
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setBoardList(result.data[0].result);
+          } else {
+          }
+        } else {
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-
+    getData();
     setRefreshing(false);
   }, []);
-  const [boardList, setBoardList] = React.useState([
-    {_id: '1'},
-    {_id: '2'},
-    {_id: '3'},
-    {_id: '4'},
-    {_id: '5'},
-    {_id: '6'},
-    {_id: '7'},
-    {_id: '8'},
-    {_id: '9'},
-    {_id: '10'},
-  ]);
+  const [boardList, setBoardList] = React.useState([]);
+  React.useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <StatusBar
@@ -74,7 +96,7 @@ const NoticeBoardScreen = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.navigation.navigate('NoticeBoardView');
+                    props.navigation.navigate('NoticeBoardView', {item: item});
                   }}
                   style={{
                     marginLeft: Width_convert(17),
@@ -86,7 +108,7 @@ const NoticeBoardScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    2020년 7월 31일 업데이트 내용공지
+                    {item.title}
                   </Text>
                   <Text
                     style={{
@@ -95,13 +117,22 @@ const NoticeBoardScreen = (props) => {
                       fontWeight: '400',
                       color: '#000000',
                     }}>
-                    2020년 7월 31일
+                    {moment(item.regDate).format('YYYY년 MM월 DD일')}
                   </Text>
                 </TouchableOpacity>
               </View>
             )}
             keyExtractor={(item) => String(item._id)}></FlatList>
         </View>
+        {networkModal ? (
+          <ButtonOneModal
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요'}
+            //BottomText={''}
+            CenterButtonText={'닫기'}></ButtonOneModal>
+        ) : null}
+        {isLoading ? <IsLoading></IsLoading> : null}
       </SafeAreaView>
     </>
   );

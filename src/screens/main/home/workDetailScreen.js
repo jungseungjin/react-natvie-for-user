@@ -186,6 +186,7 @@ const WorkDetailScreen = (props) => {
         <ScrollView
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
+          alwaysBounceVertical={false}
           scrollEventThrottle={16}
           stickyHeaderIndices={[2]}
           onScroll={Animated.event(

@@ -1,10 +1,58 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, ScrollView} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import Height_convert from '../../../components/Height_convert.js';
+import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain2 from '../../../../key/Domain2.js';
 const WorkVideoListScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [viewWorkList, setViewWorkList] = React.useState([]);
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let url = `${Domain2}videolist`;
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setViewWorkList(result.data[0].RecommendVideoList);
+          } else {
+            console.log(result.data[0]);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getData();
+    setRefreshing(false);
+  }, []);
+  React.useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <StatusBar
@@ -14,35 +62,46 @@ const WorkVideoListScreen = (props) => {
         <Tabbar
           Title={'사장님의 작업영상'}
           navigation={props.navigation}></Tabbar>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <OwnersWork
-            From={'workVideo'}
-            item={{
-              show: true,
-              url: 'https://unsplash.it/400/400?image=6', //사진url
-              videoUrl:
-                '<iframe width="560" height="315" src="https://www.youtube.com/embed/oOcnauhMJJE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
-              title:
-                '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈', //영상제목
-              ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
-              ownersname: '배말랭', //채널명
-            }}
-            Index={0}></OwnersWork>
-          <OwnersWork
-            From={'workVideo'}
-            item={{
-              show: true,
-              url: 'https://unsplash.it/400/400?image=6', //사진url
-              videoUrl:
-                '<iframe width="560" height="315" src="https://www.youtube.com/embed/oOcnauhMJJE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
-              title:
-                '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈', //영상제목
-              ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
-              ownersname: '배말랭', //채널명
-            }}
-            Index={1}></OwnersWork>
-        </ScrollView>
+
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          style={{minHeight: Height_convert(812)}}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          data={viewWorkList}
+          windowSize={2}
+          initialNumToRender={10}
+          renderItem={({item}) => (
+            <>
+              <OwnersWork
+                From={'workVideo'}
+                item={{
+                  show: true,
+                  url: item.url, //사진url
+                  videoUrl: item.videoUrl,
+                  title: item.Title, //영상제목
+                  ownersImage: item.ownersImage, //채널이미지
+                  ownersname: item.ownersname, //채널명
+                }}
+                navigation={props.navigation}
+                Index={viewWorkList.indexOf(item)}></OwnersWork>
+              {viewWorkList.indexOf(item) == viewWorkList.length - 1 ? (
+                <View style={{height: Height_convert(390)}}></View>
+              ) : null}
+            </>
+          )}
+          keyExtractor={(item) => String(item._id)}></FlatList>
       </SafeAreaView>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

@@ -42,6 +42,7 @@ const StoreWorkList = (props) => {
   const [pickSmall, setPickSmall] = React.useState('');
   const PickSmallChangeValue = (text) => {
     setPickSmall(text);
+    setPickFilter(false);
     let newArr = [];
     for (var a = 0; a < resultWorkList.length; a++) {
       if (resultWorkList[a].store_info_work.includes(text)) {
@@ -98,6 +99,7 @@ const StoreWorkList = (props) => {
   const [pickSort, setPickSort] = React.useState(false);
   const SortChangeValue = (text) => {
     setPickSort(text);
+    setPickFilter(false);
     let newArr = viewWorkList.slice() || [];
     if (text !== false) {
       if (text === '가까운 순 ') {
