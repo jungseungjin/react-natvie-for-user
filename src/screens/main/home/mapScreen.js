@@ -54,7 +54,9 @@ const MapScreen = (props) => {
   const [pickLocation, setPickLocation] = React.useState({
     latitude: parseFloat(props.route.params.PickLocation.y),
     longitude: parseFloat(props.route.params.PickLocation.x),
-    legalcode: props.route.params.PickLocation.jibunAddress,
+    legalcode:
+      props.route.params?.PickLocation?.jibunAddress ||
+      props.route.params?.PickLocation?.roadAddress,
   });
   const [P0, setP0] = React.useState({
     latitude: parseFloat(props.route.params.PickLocation.y),

@@ -24,7 +24,7 @@ const SwiperImage = (props) => {
         }
         source={{
           uri: props.image,
-          headers: {Authorization: 'someAuthToken'},
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>

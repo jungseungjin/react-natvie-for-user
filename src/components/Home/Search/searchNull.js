@@ -34,7 +34,7 @@ import Star from '../../../../assets/home/star.svg';
 import SearchStore from '../../../components/Home/Search/searchStore.js';
 import StatusBarHeight from '../../StatusBarHeight';
 
-const SearchNull = ({navigation, route}) => {
+const SearchNull = (props) => {
   return (
     <View
       style={[
@@ -67,7 +67,7 @@ const SearchNull = ({navigation, route}) => {
             fontWeight: '700',
             color: '#000000',
           }}>
-          원하시는 검색결과가 나올 수 있도록{'\n'} 노력하는 투닝이 되겠습니다 🔥
+          원하시는 검색결과가 나올 수 있도록 노력하는 투닝이 되겠습니다 🔥
         </Text>
       </View>
     </View>

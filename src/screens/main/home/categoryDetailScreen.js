@@ -398,10 +398,11 @@ const CategoryDetailScreen = (props) => {
         ) : (
           <View
             style={{
-              width: Width_convert(375),
+              width: Width_convert(245),
               height: Height_convert(812 - 184),
               justifyContent: 'center',
               alignItems: 'center',
+              marginLeft: Width_convert(65),
             }}>
             <Text
               style={{
@@ -410,8 +411,7 @@ const CategoryDetailScreen = (props) => {
                 fontWeight: '700',
                 color: '#000000',
               }}>
-              원하시는 검색결과가 나올 수 있도록 {'\n'}노력하는 투닝이
-              되겠습니다 🔥
+              원하시는 검색결과가 나올 수 있도록 노력하는 투닝이 되겠습니다 🔥
             </Text>
           </View>
         )}

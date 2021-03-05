@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2, //그림자 투명도
     shadowOffset: {width: 0.5, height: 0.5}, //그림자 위치
     //ANDROID
-    elevation: 5,
+    elevation: 2,
   },
   text: {
     fontFamily: Fonts?.NanumSqureRegular || null,

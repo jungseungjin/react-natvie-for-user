@@ -69,7 +69,10 @@ const SearchScreenDetail = (props) => {
   const [resultWorkList, setresultWorkList] = React.useState([]);
   const [resultStoreList, setresultStoreList] = React.useState([]);
   const [pickButton, setPickButton] = React.useState('work');
-  const ButtonChangeValue = (text) => setPickButton(text);
+  const ButtonChangeValue = (text) => {
+    setPickButton(text);
+    setPickFilter(false);
+  };
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(
@@ -163,6 +166,7 @@ const SearchScreenDetail = (props) => {
   //검색한 값으로 데이터 가져오기
   const getData = (searchText, sort) => {
     try {
+      setPickFilter(false);
       let result;
       if (sort == '가까운 순 ') {
         sort = '1';
@@ -285,6 +289,9 @@ const SearchScreenDetail = (props) => {
               onChangeText={(text) => {
                 setSearchText(text);
               }}
+              onFocus={() => {
+                setPickFilter(false);
+              }}
               defaultValue={searchText}
               returnKeyType={'search'}
               onSubmitEditing={() => {
@@ -313,6 +320,7 @@ const SearchScreenDetail = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
+                setPickFilter(false);
                 setSearchText('');
                 handleClick();
               }}

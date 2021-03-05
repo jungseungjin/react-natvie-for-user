@@ -230,6 +230,8 @@ const HomeScreen = (props) => {
                     reduexState.loginDataCheck.login.iu_car[0]?.pickModelDetail
                       ?.model_detail != undefined
                       ? reduexState.loginDataCheck.login.iu_car[0]
+                          ?.pickModelDetail?.brand +
+                        reduexState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.model_detail +
                         ' / ' +
                         reduexState.loginDataCheck.login.location.legalcode
@@ -237,7 +239,10 @@ const HomeScreen = (props) => {
                         reduexState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.model_detail != undefined
                       ? reduexState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.model_detail + ' / 지역'
+                          ?.pickModelDetail?.brand +
+                        reduexState.loginDataCheck.login.iu_car[0]
+                          ?.pickModelDetail?.model_detail +
+                        ' / 지역'
                       : reduexState.loginDataCheck.login.iu_car.length > 0 &&
                         reduexState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail === 'all' &&

@@ -47,7 +47,8 @@ const TabBar = (props) => {
         props.Title == '투닝 이용약관' ||
         props.Title == '개인정보 수집 및 이용' ||
         props.Title == '위치기반 서비스 이용약관' ||
-        props.Title == '개인정보 제3자 제공 동의' ? (
+        props.Title == '개인정보 제3자 제공 동의' ||
+        props.Title == '로그인' ? (
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -80,8 +81,7 @@ const TabBar = (props) => {
         props.Title == '회원가입3' ||
         props.Title == '회원가입4' ||
         props.Title == '회원가입5' ||
-        props.Title == '아이디 찾기1' ||
-        props.Title == '로그인' ? (
+        props.Title == '아이디 찾기1' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{backgroundColor: '#FFFFFF'}}

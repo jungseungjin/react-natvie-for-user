@@ -32,11 +32,17 @@ const StoreWorkList = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [page, setPage] = React.useState('dressup');
-  const PageChangeValue = (text) => setPage(text);
+  const PageChangeValue = (text) => {
+    setPage(text);
+    setPickFilter(false);
+  };
 
   const [middleList, setMiddleList] = React.useState([]);
   const [pickMiddle, setPickMiddle] = React.useState('');
-  const PickMiddleChangeValue = (text) => setPickMiddle(text);
+  const PickMiddleChangeValue = (text) => {
+    setPickMiddle(text);
+    setPickFilter(false);
+  };
 
   const [smallList, setSmallList] = React.useState([]);
   const [pickSmall, setPickSmall] = React.useState('');
@@ -99,7 +105,6 @@ const StoreWorkList = (props) => {
   const [pickSort, setPickSort] = React.useState(false);
   const SortChangeValue = (text) => {
     setPickSort(text);
-    setPickFilter(false);
     let newArr = viewWorkList.slice() || [];
     if (text !== false) {
       if (text === '가까운 순 ') {
@@ -290,7 +295,7 @@ const StoreWorkList = (props) => {
                 marginBottom: Height_convert(10),
               }}
               onPress={() => {
-                setPage('dressup');
+                PageChangeValue('dressup');
               }}>
               <Text
                 style={[
@@ -335,7 +340,7 @@ const StoreWorkList = (props) => {
                 marginBottom: Height_convert(10),
               }}
               onPress={() => {
-                setPage('perfomance');
+                PageChangeValue('perfomance');
               }}>
               <Text
                 style={[
@@ -380,7 +385,7 @@ const StoreWorkList = (props) => {
                 marginBottom: Height_convert(10),
               }}
               onPress={() => {
-                setPage('convenience');
+                PageChangeValue('convenience');
               }}>
               <Text
                 style={[
@@ -425,7 +430,7 @@ const StoreWorkList = (props) => {
                 marginBottom: Height_convert(10),
               }}
               onPress={() => {
-                setPage('camping');
+                PageChangeValue('camping');
               }}>
               <Text
                 style={[
@@ -570,10 +575,11 @@ const StoreWorkList = (props) => {
         ) : (
           <View
             style={{
-              width: Width_convert(375),
+              width: Width_convert(245),
               height: Height_convert(812 - 184),
               justifyContent: 'center',
               alignItems: 'center',
+              marginLeft: Width_convert(65),
             }}>
             <Text
               style={{
@@ -582,8 +588,7 @@ const StoreWorkList = (props) => {
                 fontWeight: '700',
                 color: '#000000',
               }}>
-              원하시는 검색결과가 나올 수 있도록 {'\n'}노력하는 투닝이
-              되겠습니다 🔥
+              원하시는 검색결과가 나올 수 있도록 노력하는 투닝이 되겠습니다 🔥
             </Text>
           </View>
         )}

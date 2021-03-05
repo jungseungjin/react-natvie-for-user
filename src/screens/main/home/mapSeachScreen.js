@@ -59,6 +59,7 @@ const MapScreen = (props) => {
             },
           );
           if (result.data.addresses) {
+            console.log(result.data);
             setSearchList(result.data.addresses);
           } else {
           }
@@ -211,7 +212,7 @@ const MapScreen = (props) => {
           <ScrollView style={{flex: 1}}>
             {searchList.map((item) => (
               <View
-                key={item.jibunAddress}
+                key={item.jibunAddress || item.roadAddress}
                 style={{height: Height_convert(44), justifyContent: 'center'}}>
                 <TouchableOpacity
                   activeOpacity={1}
@@ -247,7 +248,7 @@ const MapScreen = (props) => {
                       fontWeight: '400',
                       color: '#000000',
                     }}>
-                    {item.jibunAddress}
+                    {item.jibunAddress || item.roadAddress}
                   </Text>
                 </TouchableOpacity>
               </View>
