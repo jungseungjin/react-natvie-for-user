@@ -525,8 +525,8 @@ const InfoScreen = (props) => {
         return false;
       }
       setIsLoading(true);
-      position.coords.longitude = 126.70528; //지워야함
-      position.coords.latitude = 37.45639; //지워야함
+      // position.coords.longitude = 126.70528; //지워야함
+      // position.coords.latitude = 37.45639; //지워야함
       let result = await axios.get(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
           position.coords.longitude +

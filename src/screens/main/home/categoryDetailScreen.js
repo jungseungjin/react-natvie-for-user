@@ -67,6 +67,7 @@ const CategoryDetailScreen = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
+          setIsLoading(true);
           let url = `${Domain2}categoryworklist/second`;
           let result = await axios.get(url, {
             headers: {
@@ -76,13 +77,13 @@ const CategoryDetailScreen = (props) => {
               sort: sort,
               middle: text,
               iu_car:
-                reduexState.loginDataCheck.login.iu_car[0].pickModelDetail
-                  .info_car_id || undefined,
+                reduexState.loginDataCheck?.login?.iu_car[0]?.pickModelDetail
+                  ?.info_car_id || undefined,
               longitude:
-                reduexState.loginDataCheck.login.location.location.longitude ||
+                reduexState.loginDataCheck?.login?.location?.longitude ||
                 undefined,
               latitude:
-                reduexState.loginDataCheck.login.location.location.latitude ||
+                reduexState.loginDataCheck?.login?.location?.latitude ||
                 undefined,
             },
           });
@@ -91,6 +92,7 @@ const CategoryDetailScreen = (props) => {
             setViewWorkList(result.data[0].WorkList);
           } else {
           }
+          setIsLoading(false);
         } else {
           setNetworkModal(true);
         }
@@ -166,7 +168,11 @@ const CategoryDetailScreen = (props) => {
 
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(false);
+  const [pickSort, setPickSort] = React.useState(
+    reduexState.loginDataCheck?.login?.location?.legalcode
+      ? '가까운 순 '
+      : false,
+  );
   //필터로 정렬값 변경되면 -> 지금보여지는것 값도 변경시키고
   const SortChangeValue = (text) => {
     setPickSort(text);
@@ -310,15 +316,16 @@ const CategoryDetailScreen = (props) => {
             <View
               style={{
                 width: Width_convert(375),
-                height: Width_convert(162),
+                height: Width_convert(162 - 32),
                 backgroundColor: '#FFFFFF',
               }}>
               <FilterView
                 index={0}
                 Title={'가까운 순 '}
                 nowValue={pickSort}
+                ShowModalChangeValue={ShowModalChangeValue}
                 location={
-                  reduexState.loginDataCheck?.login?.location?.location || null
+                  reduexState.loginDataCheck?.login?.location?.legalcode || null
                 }
                 SortChangeValue={SortChangeValue}></FilterView>
               <FilterView
@@ -336,11 +343,11 @@ const CategoryDetailScreen = (props) => {
                 Title={'찜 많은 순 '}
                 nowValue={pickSort}
                 SortChangeValue={SortChangeValue}></FilterView>
-              <FilterView
+              {/* <FilterView
                 index={4}
                 Title={'우리가게공임표 공개 '}
                 nowValue={pickSort}
-                SortChangeValue={SortChangeValue}></FilterView>
+                SortChangeValue={SortChangeValue}></FilterView> */}
             </View>
             <View
               opacity={0.3}
@@ -408,25 +415,25 @@ const CategoryDetailScreen = (props) => {
             </Text>
           </View>
         )}
-        {networkModal ? (
-          <ButtonOneModal
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
-            //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
-        ) : null}
-        {showModal ? (
-          <ButtonOneModal
-            ShowModalChangeValue={ShowModalChangeValue}
-            navigation={props.navigation}
-            Title={
-              "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
-            }
-            BottomText={'설정하러가기'}
-            CenterButtonText={'확인'}></ButtonOneModal>
-        ) : null}
       </SafeAreaView>
+      {networkModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요'}
+          //BottomText={''}
+          CenterButtonText={'닫기'}></ButtonOneModal>
+      ) : null}
+      {showModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
+          }
+          BottomText={'설정하러가기'}
+          CenterButtonText={'확인'}></ButtonOneModal>
+      ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );

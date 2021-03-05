@@ -199,6 +199,8 @@ const CarSetting = (props) => {
                   if (props.nowValue == 'all') {
                   } else {
                     props.CategoryChangeValue('all');
+                    setBrandList([]);
+                    setModelList([]);
                   }
                 }}
                 style={{

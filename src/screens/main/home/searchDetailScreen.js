@@ -54,6 +54,8 @@ const SearchScreenDetail = (props) => {
   //데이터 받아와야하니까 로딩걸린다잉
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [showModal, setShowModel] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModel(text);
   const [searchText, setSearchText] = React.useState(
     props.route?.params?.searchText || null,
   );
@@ -70,7 +72,11 @@ const SearchScreenDetail = (props) => {
   const ButtonChangeValue = (text) => setPickButton(text);
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(false);
+  const [pickSort, setPickSort] = React.useState(
+    reduexState.loginDataCheck?.login?.location?.legalcode
+      ? '가까운 순 '
+      : false,
+  );
   //정렬
   const SortChangeValue = (text) => {
     //
@@ -171,7 +177,7 @@ const SearchScreenDetail = (props) => {
       } else {
         sort = '0';
       }
-      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}`;
+      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.latitude}&sort=${sort}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -221,7 +227,11 @@ const SearchScreenDetail = (props) => {
 
   const onRefresh = React.useCallback((text) => {
     setRefreshing(true);
-    setPickSort(false);
+    setPickSort(
+      reduexState.loginDataCheck?.login?.location?.legalcode
+        ? '가까운 순 '
+        : false,
+    );
     if (text) {
       getData(text, false);
     } else {
@@ -229,7 +239,6 @@ const SearchScreenDetail = (props) => {
     }
     setRefreshing(false);
   }, []);
-
   const textInputRef = useRef();
   const handleClick = () => {
     textInputRef.current.focus();
@@ -365,15 +374,16 @@ const SearchScreenDetail = (props) => {
               <View
                 style={{
                   width: Width_convert(375),
-                  height: Height_convert(162),
+                  height: Height_convert(162 - 32),
                   backgroundColor: '#FFFFFF',
                 }}>
                 <FilterView
                   index={0}
                   Title={'가까운 순 '}
                   nowValue={pickSort}
+                  ShowModalChangeValue={ShowModalChangeValue}
                   location={
-                    reduexState.loginDataCheck?.login?.location?.location ||
+                    reduexState.loginDataCheck?.login?.location?.legalcode ||
                     null
                   }
                   SortChangeValue={SortChangeValue}></FilterView>
@@ -392,11 +402,11 @@ const SearchScreenDetail = (props) => {
                   Title={'찜 많은 순 '}
                   nowValue={pickSort}
                   SortChangeValue={SortChangeValue}></FilterView>
-                <FilterView
+                {/* <FilterView
                   index={4}
                   Title={'우리가게공임표 공개 '}
                   nowValue={pickSort}
-                  SortChangeValue={SortChangeValue}></FilterView>
+                  SortChangeValue={SortChangeValue}></FilterView> */}
               </View>
               <View
                 opacity={0.3}
@@ -467,6 +477,16 @@ const SearchScreenDetail = (props) => {
         </SafeAreaView>
       </DismissKeyboard>
 
+      {showModal ? (
+        <ButtonOneModal
+          ShowModalChangeValue={ShowModalChangeValue}
+          navigation={props.navigation}
+          Title={
+            "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
+          }
+          BottomText={'설정하러가기'}
+          CenterButtonText={'확인'}></ButtonOneModal>
+      ) : null}
       {networkModal ? (
         <ButtonOneModal
           ShowModalChangeValue={NetworkModalChangeValue}

@@ -160,7 +160,7 @@ const HomeScreen = (props) => {
   return (
     <>
       <StatusBar
-        barStyle="dark-content"
+        barStyle={'dark-content'}
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <ScrollView
@@ -226,14 +226,28 @@ const HomeScreen = (props) => {
                 <SettingButton
                   Title={
                     reduexState.loginDataCheck.login.iu_car.length > 0 &&
-                    reduexState.loginDataCheck.login.location.legalcode
+                    reduexState.loginDataCheck.login.location.legalcode &&
+                    reduexState.loginDataCheck.login.iu_car[0]?.pickModelDetail
+                      ?.model_detail != undefined
                       ? reduexState.loginDataCheck.login.iu_car[0]
-                          .pickModelDetail.model_detail +
+                          ?.pickModelDetail?.model_detail +
                         ' / ' +
                         reduexState.loginDataCheck.login.location.legalcode
-                      : reduexState.loginDataCheck.login.iu_car.length > 0
+                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduexState.loginDataCheck.login.iu_car[0]
+                          ?.pickModelDetail?.model_detail != undefined
                       ? reduexState.loginDataCheck.login.iu_car[0]
-                          .pickModelDetail.model_detail + ' / 지역'
+                          ?.pickModelDetail?.model_detail + ' / 지역'
+                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduexState.loginDataCheck.login.iu_car[0]
+                          ?.pickModelDetail === 'all' &&
+                        reduexState.loginDataCheck.login.location.legalcode
+                      ? '전체 / ' +
+                        reduexState.loginDataCheck.login.location.legalcode
+                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduexState.loginDataCheck.login.iu_car[0]
+                          ?.pickModelDetail === 'all'
+                      ? '전체 / 지역'
                       : reduexState.loginDataCheck.login.location.legalcode
                       ? '차종 / ' +
                         reduexState.loginDataCheck.login.location.legalcode
@@ -481,7 +495,6 @@ const HomeScreen = (props) => {
           {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
-
       {networkModal ? (
         <ButtonOneModal
           ShowModalChangeValue={NetworkModalChangeValue}

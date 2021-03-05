@@ -1,6 +1,12 @@
 import React from 'react';
 import Modal from 'react-native-modal';
-import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+} from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
 import Fonts from '../Fonts.js';
@@ -9,11 +15,20 @@ import X from '../../../assets/home/x_black.svg';
 
 const LoginModal = (props) => {
   return (
-    <SafeAreaView
+    <View
       style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(32, 32, 32, 0.3)',
         justifyContent: 'center',
         alignItems: 'center',
       }}>
+      <StatusBar
+        barStyle={'light-content'}
+        backgroundColor={'rgba(32, 32, 32, 0.5)'}></StatusBar>
       <Modal
         //isVisible Props에 State 값을 물려주어 On/off control
         isVisible={true}
@@ -153,7 +168,7 @@ const LoginModal = (props) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

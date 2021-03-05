@@ -25,19 +25,8 @@ const MoreScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const LoginChk = () => {
-    try {
-      if (reduexState.loginDataCheck.login.login == true) {
-      } else {
-        setShowModal(true);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  React.useEffect(() => {
-    LoginChk();
-  }, []);
+
+  React.useEffect(() => {}, []);
   return (
     <>
       <StatusBar

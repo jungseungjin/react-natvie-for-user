@@ -6,6 +6,7 @@ import {
   Text,
   Linking,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
@@ -14,16 +15,20 @@ import Font_normalize from '../Font_normalize.js';
 
 const ButtonTwoModal = (props) => {
   return (
-    <SafeAreaView
+    <View
       style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(32, 32, 32, 0.3)',
         justifyContent: 'center',
         alignItems: 'center',
       }}>
       <StatusBar
-        translucent
-        backgroundColor="rgba(32, 32, 32, 0.3)"
-        barStyle="light-content" //dark-content
-      />
+        barStyle={'light-content'}
+        backgroundColor={'rgba(32, 32, 32, 0.5)'}></StatusBar>
       <Modal
         //isVisible Props에 State 값을 물려주어 On/off control
         isVisible={true}
@@ -106,7 +111,9 @@ const ButtonTwoModal = (props) => {
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => {
-                  Linking.openSettings();
+                  //Linking.openSettings();
+                  props.navigation.navigate('Setting');
+                  props.ShowModalChangeValue(false);
                 }}
                 style={{
                   borderBottomWidth: 1,
@@ -244,7 +251,7 @@ const ButtonTwoModal = (props) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

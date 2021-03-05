@@ -58,8 +58,10 @@ const SignUpTerms = (props) => {
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
-        barStyle="dark-content"
-        backgroundColor={'#FFFFFF'}></StatusBar>
+        barStyle={networkModal ? 'light-content' : 'dark-content'}
+        backgroundColor={
+          networkModal ? 'rgba(32, 32, 32, 0.3)' : '#FFFFFF'
+        }></StatusBar>
       <Tabbar
         Title={
           props.route.params.agreeNumber == 1

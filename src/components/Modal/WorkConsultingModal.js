@@ -20,16 +20,20 @@ const WorkConsultingModal = (props) => {
     return Platform.OS === 'ios' ? '&' : '?';
   }
   return (
-    <SafeAreaView
+    <View
       style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(32, 32, 32, 0.3)',
         justifyContent: 'center',
         alignItems: 'center',
       }}>
       <StatusBar
-        translucent
-        backgroundColor="rgba(32, 32, 32, 0.3)"
-        barStyle="light-content" //dark-content
-      />
+        barStyle={'light-content'}
+        backgroundColor={'rgba(32, 32, 32, 0.5)'}></StatusBar>
       <Modal
         //isVisible Props에 State 값을 물려주어 On/off control
         isVisible={true}
@@ -191,7 +195,7 @@ const WorkConsultingModal = (props) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -81,8 +81,8 @@ const StoreLocationScreen = (props) => {
   const CurrentPosition = () => {
     Geolocation.getCurrentPosition(
       (position) => {
-        position.coords.longitude = 126.70528; //지워야함
-        position.coords.latitude = 37.45639; //지워야함
+        // position.coords.longitude = 126.70528; //지워야함
+        // position.coords.latitude = 37.45639; //지워야함
         setP0({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,

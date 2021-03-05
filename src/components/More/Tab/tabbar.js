@@ -80,7 +80,8 @@ const TabBar = (props) => {
         props.Title == '회원가입3' ||
         props.Title == '회원가입4' ||
         props.Title == '회원가입5' ||
-        props.Title == '아이디 찾기1' ? (
+        props.Title == '아이디 찾기1' ||
+        props.Title == '로그인' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={{backgroundColor: '#FFFFFF'}}
@@ -126,6 +127,8 @@ const TabBar = (props) => {
             ? '비밀번호 찾기'
             : props.Title.indexOf('차량선택') != -1
             ? '차량선택'
+            : props.Title == '로그인'
+            ? null
             : props.Title != '공지사항 및 이벤트 보기'
             ? props.Title
             : null}

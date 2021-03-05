@@ -19,6 +19,7 @@ import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import {prototype} from 'react-native/Libraries/Image/ImageBackground';
+import Tabbar from '../../../components/More/Tab/tabbar.js';
 const LoginScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -91,7 +92,12 @@ const LoginScreen = (props) => {
           }}>
           <View
             style={{
-              marginTop: Height_convert(170),
+              height: Height_convert(170),
+            }}>
+            <Tabbar Title={'로그인'} navigation={props.navigation}></Tabbar>
+          </View>
+          <View
+            style={{
               width: Width_convert(375),
               height: Height_convert(812),
               backgroundColor: 'white',

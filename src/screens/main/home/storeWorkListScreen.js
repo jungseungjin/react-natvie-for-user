@@ -492,7 +492,7 @@ const StoreWorkList = (props) => {
             <View
               style={{
                 width: Width_convert(375),
-                height: Width_convert(162 - 24),
+                height: Width_convert(162 - 24 - 32),
                 backgroundColor: '#FFFFFF',
               }}>
               {/* <FilterView
@@ -515,11 +515,11 @@ const StoreWorkList = (props) => {
                 Title={'찜 많은 순 '}
                 nowValue={pickSort}
                 SortChangeValue={SortChangeValue}></FilterView>
-              <FilterView
+              {/* <FilterView
                 index={3}
                 Title={'우리가게공임표 공개 '}
                 nowValue={pickSort}
-                SortChangeValue={SortChangeValue}></FilterView>
+                SortChangeValue={SortChangeValue}></FilterView> */}
             </View>
             <View
               opacity={0.3}

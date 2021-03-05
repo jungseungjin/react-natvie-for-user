@@ -41,8 +41,21 @@ const SettingScreen = (props) => {
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [page, setPage] = React.useState('car');
   const [brandList, setBrandList] = React.useState([]);
-  const [category, setCategory] = React.useState('domestic');
-  const CategoryChangeValue = (text) => setCategory(text);
+  const [category, setCategory] = React.useState(
+    reduexState.loginDataCheck.login.iu_car.length > 0
+      ? reduexState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
+        ? 'all'
+        : reduexState.loginDataCheck.login.iu_car[0].brand_type == 1
+        ? 'domestic'
+        : 'import'
+      : 'domestic',
+  );
+  const CategoryChangeValue = (text) => {
+    setCategory(text);
+    setPickBrand({});
+    setPickModel({});
+    setPickModelDetail({});
+  };
   const [pickBrand, setPickBrand] = React.useState(
     reduexState.loginDataCheck.login.iu_car.length > 0
       ? reduexState.loginDataCheck.login.iu_car[0].pickBrand
@@ -60,11 +73,15 @@ const SettingScreen = (props) => {
   React.useEffect(() => {
     try {
       if (reduexState.loginDataCheck.login.iu_car.length > 0) {
-        //setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
-        setPickModel(reduexState.loginDataCheck.login.iu_car[0].pickModel);
-        setPickModelDetail(
-          reduexState.loginDataCheck.login.iu_car[0].pickModelDetail,
-        );
+        if (reduexState.loginDataCheck.login.iu_car[0].pickModel == 'all') {
+          setCategory('all');
+        } else {
+          //setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
+          setPickModel(reduexState.loginDataCheck.login.iu_car[0].pickModel);
+          setPickModelDetail(
+            reduexState.loginDataCheck.login.iu_car[0].pickModelDetail,
+          );
+        }
       }
       if (reduexState.loginDataCheck.login.location?.legalcode) {
         setPickLocation(reduexState.loginDataCheck.login.location);
@@ -80,10 +97,11 @@ const SettingScreen = (props) => {
   const PushReduxData = () => {
     try {
       if (
-        pickBrand?.brand &&
-        pickModel?.model &&
-        pickModelDetail?.model_detail &&
-        pickLocation
+        ((pickBrand?.brand &&
+          pickModel?.model &&
+          pickModelDetail?.model_detail) ||
+          category == 'all') &&
+        pickLocation.legalcode
       ) {
         if (
           pickLocation.legalcode ==
@@ -92,13 +110,23 @@ const SettingScreen = (props) => {
           setShowModal(true);
           return false;
         }
-        props.updateIuCar([
-          {
-            pickBrand: pickBrand,
-            pickModel: pickModel,
-            pickModelDetail: pickModelDetail,
-          },
-        ]);
+        if (category != 'all') {
+          props.updateIuCar([
+            {
+              pickBrand: pickBrand,
+              pickModel: pickModel,
+              pickModelDetail: pickModelDetail,
+            },
+          ]);
+        } else {
+          props.updateIuCar([
+            {
+              pickBrand: 'all',
+              pickModel: 'all',
+              pickModelDetail: 'all',
+            },
+          ]);
+        }
         props.updateLocation(pickLocation);
         props.navigation.navigate('Home');
       } else {
@@ -160,8 +188,8 @@ const SettingScreen = (props) => {
   const getNaverLocagtion = async (position) => {
     try {
       setIsLoading(true);
-      position.coords.longitude = 126.70528; //지워야함
-      position.coords.latitude = 37.45639; //지워야함
+      // position.coords.longitude = 126.70528; //지워야함
+      // position.coords.latitude = 37.45639; //지워야함
       let result = await axios.get(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
           position.coords.longitude +

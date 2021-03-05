@@ -150,14 +150,14 @@ const CategoryScreen = (props) => {
                 middle: pickMiddleCategory.work_sub_type_name,
                 small: pickSmallCategory._id,
                 iu_car:
-                  reduexState.loginDataCheck.login.iu_car[0].pickModelDetail
-                    .info_car_id || undefined,
+                  reduexState.loginDataCheck.login?.iu_car[0]?.pickModelDetail
+                    ?.info_car_id || undefined,
                 longitude:
-                  reduexState.loginDataCheck.login.location.location
-                    .longitude || undefined,
+                  reduexState.loginDataCheck.login?.location?.location
+                    ?.longitude || undefined,
                 latitude:
-                  reduexState.loginDataCheck.login.location.location.latitude ||
-                  undefined,
+                  reduexState.loginDataCheck.login?.location?.location
+                    ?.latitude || undefined,
               },
             });
             if (result.data[0].status == 'ok') {
@@ -189,7 +189,7 @@ const CategoryScreen = (props) => {
   return (
     <>
       <StatusBar
-        barStyle="dark-content"
+        barStyle={'dark-content'}
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <Tabbar

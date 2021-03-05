@@ -41,7 +41,7 @@ const TabBar = (props) => {
           activeOpacity={1}
           style={{}}
           onPress={() => {
-            navigation.goBack();
+            props.navigation.goBack();
           }}>
           <GoBack style={{marginLeft: Width_convert(22)}}></GoBack>
         </TouchableOpacity>

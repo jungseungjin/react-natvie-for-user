@@ -142,31 +142,32 @@ const WorkPick = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.info_store[0].store_badge?.indexOf('4') != -1 ? (
-          <View
-            style={{
-              borderRadius: Font_normalize(2),
-              backgroundColor: '#1A74FC',
-              marginRight: Width_convert(5),
-              textAlign: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
-              style={{
-                paddingTop: Width_convert(3),
-                paddingBottom: Width_convert(3),
-                paddingLeft: Width_convert(4),
-                paddingRight: Width_convert(4),
-                fontSize: Font_normalize(9),
-                fontWeight: '700',
-                fontFamily: Fonts?.NanumSqureRegular,
-                color: '#ffffff',
-              }}>
-              우리가게 공임표 공개
-            </Text>
-          </View>
-        ) : null}
+        {props.item.info_store[0].store_badge?.indexOf('4') != -1
+          ? // <View
+            //   style={{
+            //     borderRadius: Font_normalize(2),
+            //     backgroundColor: '#1A74FC',
+            //     marginRight: Width_convert(5),
+            //     textAlign: 'center',
+            //     justifyContent: 'center',
+            //     alignItems: 'center',
+            //   }}>
+            //   <Text
+            //     style={{
+            //       paddingTop: Width_convert(3),
+            //       paddingBottom: Width_convert(3),
+            //       paddingLeft: Width_convert(4),
+            //       paddingRight: Width_convert(4),
+            //       fontSize: Font_normalize(9),
+            //       fontWeight: '700',
+            //       fontFamily: Fonts?.NanumSqureRegular,
+            //       color: '#ffffff',
+            //     }}>
+            //     우리가게 공임표 공개
+            //   </Text>
+            // </View>
+            null
+          : null}
       </View>
       <View
         style={{

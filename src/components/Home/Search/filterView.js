@@ -16,7 +16,15 @@ const FilterView = (props) => {
     <View style={props.index == 0 ? styles.view : styles.view_2}>
       <View style={styles.view2}>
         <Text style={styles.text}>{props.Title}</Text>
-        {props.Title == '가까운 순 ' ? <QuestionRound></QuestionRound> : null}
+        {props.Title == '가까운 순 ' ? (
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.ShowModalChangeValue(true);
+            }}>
+            <QuestionRound></QuestionRound>
+          </TouchableOpacity>
+        ) : null}
       </View>
       <TouchableOpacity
         activeOpacity={1}

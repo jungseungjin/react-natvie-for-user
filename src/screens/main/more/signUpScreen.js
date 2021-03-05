@@ -181,7 +181,7 @@ const SignUp = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              setAgree2Modal(true);
+              Agree2ModalChangeValue(true);
             }}>
             <Text
               style={{
@@ -504,7 +504,6 @@ const SignUp = (props) => {
           Title={
             '정보통신망 이용촉진 및 정보보호 등에 관한 법률에는 만 14세미만 아동의 개인정보  수집시 법정대리인 동의를 받도록 규정하고 있으며, 만 14세 미만 아동이 법정대리인 동의없이 회원가입을 하는 경우 회원탈퇴 또는 서비스 이용이 제한 될 수 있습니다.'
           }
-          //BottomText={''}
           CenterButtonText={'닫기'}></ButtonOneModal>
       ) : null}
     </SafeAreaView>
