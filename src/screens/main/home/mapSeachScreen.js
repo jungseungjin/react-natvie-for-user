@@ -153,7 +153,7 @@ const MapScreen = (props) => {
               if (searchText) {
                 SearchAddr();
               } else {
-                showToast('검색어를 입력해주세요.', 500);
+                showToast('검색어를 입력해주세요.', 1000);
               }
             }}
             style={{
@@ -196,7 +196,7 @@ const MapScreen = (props) => {
               if (searchText) {
                 SearchAddr();
               } else {
-                showToast('검색어를 입력해주세요.', 500);
+                showToast('검색어를 입력해주세요.', 1000);
               }
             }}
             style={{

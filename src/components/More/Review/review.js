@@ -150,12 +150,22 @@ const Review = (props) => {
           initialNumToRender={10}
           renderItem={({item}) =>
             typeof item == 'number' ? null : (
-              <ReviewImage
-                key={item}
-                item={item}
-                index={props.item.review_reply_image.indexOf(
-                  item,
-                )}></ReviewImage>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  props.VisibleChangeValue(true);
+                  props.VisibleImageChangeValue(props.item.review_reply_image);
+                  props.VisibleIndexChangeValue(
+                    props.item.review_reply_image.indexOf(item),
+                  );
+                }}>
+                <ReviewImage
+                  key={item}
+                  item={item}
+                  index={props.item.review_reply_image.indexOf(
+                    item,
+                  )}></ReviewImage>
+              </TouchableOpacity>
             )
           }
           keyExtractor={(item) => String(item)}></FlatList>

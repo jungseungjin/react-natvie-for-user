@@ -32,7 +32,7 @@ import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
 import 'moment/locale/ko';
-
+import ImageView from 'react-native-image-viewing';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
@@ -148,6 +148,24 @@ const ReviewView = (props) => {
       console.log(err);
     }
   };
+
+  const getImageSource = (image) => {
+    let newArr = [];
+    image.map((item) => {
+      if (typeof item == 'number') {
+      } else {
+        newArr.push({
+          uri: item.toString(),
+          source:
+            'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4',
+        });
+      }
+    });
+    return newArr;
+  };
+  const [visible, setIsVisible] = React.useState(false);
+  const [visibleImage, setVisibleImage] = React.useState([]);
+  const [visibleIndex, setVisibleIndex] = React.useState(0);
   return (
     <>
       <StatusBar
@@ -333,7 +351,15 @@ const ReviewView = (props) => {
                     showsHorizontalScrollIndicator={false}>
                     {item.review_reply_image.map((imageItem) =>
                       typeof imageItem == 'number' ? null : (
-                        <View
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => {
+                            setIsVisible(true);
+                            setVisibleImage(item.review_reply_image);
+                            setVisibleIndex(
+                              item.review_reply_image.indexOf(imageItem),
+                            );
+                          }}
                           key={imageItem}
                           style={{marginRight: Width_convert(7)}}>
                           <FastImage
@@ -350,7 +376,7 @@ const ReviewView = (props) => {
                             resizeMode={
                               FastImage.resizeMode.stretch
                             }></FastImage>
-                        </View>
+                        </TouchableOpacity>
                       ),
                     )}
                   </ScrollView>
@@ -400,6 +426,12 @@ const ReviewView = (props) => {
             </TouchableOpacity>
           </View>
         ) : null}
+        <ImageView
+          images={getImageSource(visibleImage)}
+          imageIndex={visibleIndex}
+          presentationStyle="overFullScreen"
+          visible={visible}
+          onRequestClose={() => setIsVisible(false)}></ImageView>
         {networkModal ? (
           <ButtonOneModal
             ShowModalChangeValue={NetworkModalChangeValue}

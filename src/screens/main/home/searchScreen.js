@@ -138,7 +138,7 @@ const SearchScreen = ({navigation, route}) => {
                   });
                   addData(searchText);
                 } else {
-                  showToast('검색어를 입력해주세요.', 500);
+                  showToast('검색어를 입력해주세요.', 1000);
                 }
               }}
               style={{
@@ -167,7 +167,7 @@ const SearchScreen = ({navigation, route}) => {
                   });
                   addData(searchText);
                 } else {
-                  showToast('검색어를 입력해주세요.', 500);
+                  showToast('검색어를 입력해주세요.', 1000);
                 }
               }}
               style={{

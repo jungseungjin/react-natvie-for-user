@@ -173,14 +173,18 @@ const InfoScreen = (props) => {
 
   let toastRef;
   const showToast = (text, time) => {
-    toastRef.show(text, time, () => {
-      // something you want to do at close
-    });
+    if (toastRef === null) {
+      console.log('gggg');
+    } else {
+      toastRef.show(text, time, () => {
+        // something you want to do at close
+      });
+    }
   };
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
-
+  const [saveDataClick, setSaveDataClick] = React.useState(0);
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState('domestic');
   const CategoryChangeValue = (text) => setCategory(text);
@@ -307,10 +311,13 @@ const InfoScreen = (props) => {
             props.updateIuCar(result.data[0].result.iu_car);
             props.updateLocation(result.data[0].result.location);
             props.updateData(result.data[0].result);
+            let newClick = saveDataClick + 1;
+            setSaveDataClick(newClick);
+            forceUpdate();
             //변경되었으니 리덕스에 값도 변경시키기
-            props.navigation.goBack();
-            props.navigation.navigate('Home');
-            showToast('내정보가 저장되었습니다.', 500);
+            //props.navigation.goBack();
+            //props.navigation.navigate('Home');
+            //showToast('내정보가 저장되었습니다.', 1000);
           } else {
           }
         } else {
@@ -419,6 +426,11 @@ const InfoScreen = (props) => {
       setConfirmErrorModal(true);
     }
   }
+  React.useEffect(() => {
+    if (saveDataClick > 0) {
+      showToast('내정보가 저장되었습니다.', 1000);
+    }
+  }, [saveDataClick]);
   React.useEffect(() => {
     const countdown = BackgroundTimer.setTimeout(() => {
       if (parseInt(seconds) > 0) {
@@ -587,6 +599,7 @@ const InfoScreen = (props) => {
         <>
           <Tabbar
             Title={'내정보'}
+            toastRef={toastRef}
             navigation={props.navigation}
             saveData={saveData}></Tabbar>
           <KeyboardAvoidingView
@@ -1576,9 +1589,10 @@ const InfoScreen = (props) => {
             }></CarSetting>
         </>
       )}
-
       <Toast
-        ref={(toast) => (toastRef = toast)}
+        ref={(toast) => {
+          toastRef = toast;
+        }}
         style={{
           backgroundColor: '#474747',
           paddingTop: Height_convert(16),

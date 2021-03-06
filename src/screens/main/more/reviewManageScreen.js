@@ -32,6 +32,7 @@ import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
 import 'moment/locale/ko';
+import ImageView from 'react-native-image-viewing';
 const ReviewManage = (props) => {
   moment.locale('ko');
   const reduexState = useSelector((state) => state);
@@ -148,6 +149,26 @@ const ReviewManage = (props) => {
     });
   }, []);
 
+  const getImageSource = (image) => {
+    let newArr = [];
+    image.map((item) => {
+      if (typeof item == 'number') {
+      } else {
+        newArr.push({
+          uri: item.toString(),
+          source:
+            'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4',
+        });
+      }
+    });
+    return newArr;
+  };
+  const [visible, setIsVisible] = React.useState(false);
+  const VisibleChangeValue = (text) => setIsVisible(text);
+  const [visibleImage, setVisibleImage] = React.useState([]);
+  const VisibleImageChangeValue = (text) => setVisibleImage(text);
+  const [visibleIndex, setVisibleIndex] = React.useState(0);
+  const VisibleIndexChangeValue = (text) => setVisibleIndex(text);
   return (
     <>
       <StatusBar
@@ -197,9 +218,18 @@ const ReviewManage = (props) => {
               getDataAndNavigate={getDataAndNavigate}
               DeleteModalChangeValue={DeleteModalChangeValue}
               DeleteItemChangeValue={DeleteItemChangeValue}
+              VisibleChangeValue={VisibleChangeValue}
+              VisibleImageChangeValue={VisibleImageChangeValue}
+              VisibleIndexChangeValue={VisibleIndexChangeValue}
               navigation={props.navigation}></Review>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
+        <ImageView
+          images={getImageSource(visibleImage)}
+          imageIndex={visibleIndex}
+          presentationStyle="overFullScreen"
+          visible={visible}
+          onRequestClose={() => setIsVisible(false)}></ImageView>
         {deleteModal ? (
           <AlertModal2
             type={1}
