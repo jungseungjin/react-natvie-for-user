@@ -17,7 +17,7 @@ import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
 import X from '../../../../assets/home/x_black.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
@@ -190,22 +190,24 @@ const Feedback = (props) => {
           </TouchableOpacity>
         </View>
         {feedBackCompleteModel ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={2}
             ShowModalChangeValue={FeedBackCompleteModelChangeValue}
             navigation={props.navigation}
             Title={
-              '투닝에게 피드백을 해주셔서 감사합니다.\n\n사장님들과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다.'
+              '투닝에게 피드백을 해주셔서 감사합니다.\n\n여러분과 함께 튜닝시장을 변화시켜나가는 투닝이 되도록 노력하겠습니다!'
             }
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'닫기'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </DismissKeyboard>

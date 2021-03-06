@@ -31,6 +31,8 @@ import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
@@ -52,7 +54,8 @@ const PickScreen = (props) => {
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
   const PageChangeValue = (text) => setPage(text);
   //로그인 되어 있으면 찜한데이터 가져오기
-
+  const [deleteModal, setDeleteModal] = React.useState(false);
+  const DeleteModalChangeValue = (text) => setDeleteModal(text);
   React.useEffect(
     () =>
       props.navigation.addListener('focus', async () => {
@@ -102,6 +105,7 @@ const PickScreen = (props) => {
   };
   const delete_data = () => {
     try {
+      props.updateEditMode(!reduexState.editModeCheck.editMode);
       if (reduexState.loginDataCheck.login._id != '') {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
@@ -282,8 +286,7 @@ const PickScreen = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     if (reduexState.editModeCheck.editMode) {
-                      delete_data();
-                      props.updateEditMode(!reduexState.editModeCheck.editMode);
+                      setDeleteModal(true);
                     }
                   }}
                   style={{
@@ -314,13 +317,26 @@ const PickScreen = (props) => {
           </>
         ) : null}
         {/*하단 초기화 삭제하기버튼 끝*/}
+        {deleteModal ? (
+          <AlertModal2
+            type={1}
+            ShowModalChangeValue={DeleteModalChangeValue}
+            Delete={delete_data}
+            navigation={props.navigation}
+            Title={'찜한 항목을 삭제하시겠습니까?'}
+            //BottomText={''}
+            //CenterButtonText={'확인'}
+            LeftButtonTitle={'취소'}
+            RightButtonTitle={'확인'}></AlertModal2>
+        ) : null}
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
         {showModal ? (
           <LoginModal

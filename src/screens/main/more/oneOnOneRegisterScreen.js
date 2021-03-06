@@ -24,6 +24,7 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const OneOnOneRegister = (props) => {
   const reduexState = useSelector((state) => state);
   const [networkModal, setNetworkModal] = React.useState(false);
@@ -180,20 +181,22 @@ const OneOnOneRegister = (props) => {
           </TouchableOpacity>
         </View>
         {contentsLengthModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={ContentsLengthModalChangeValue}
             navigation={props.navigation}
-            Title={'내용을 10자 이상 입력해주세요'}
+            Title={'내용을 10자 이상 입력해주세요.'}
             //BottomText={''}
-            CenterButtonText={'확인'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </DismissKeyboard>

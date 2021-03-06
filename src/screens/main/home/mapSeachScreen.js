@@ -11,7 +11,7 @@ import X from '../../../../assets/home/x_black.svg';
 import XButton from '../../../../assets/home/x_button.svg';
 import Place_check from '../../../../assets/home/place_check';
 import NetInfo from '@react-native-community/netinfo';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import axios from 'axios';
 import {
   SafeAreaView,
@@ -35,6 +35,7 @@ import NaverMapView, {
   Polygon,
 } from 'react-native-nmap';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const MapScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
@@ -75,6 +76,12 @@ const MapScreen = (props) => {
       console.log(err);
       alert(err);
     }
+  };
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
   };
   return (
     <>
@@ -142,7 +149,13 @@ const MapScreen = (props) => {
               setSearchText(value);
             }}
             returnKeyType={'search'}
-            onSubmitEditing={() => {}}
+            onSubmitEditing={() => {
+              if (searchText) {
+                SearchAddr();
+              } else {
+                showToast('검색어를 입력해주세요.', 500);
+              }
+            }}
             style={{
               width: Width_convert(280),
               height: Width_convert(34),
@@ -180,7 +193,11 @@ const MapScreen = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              SearchAddr();
+              if (searchText) {
+                SearchAddr();
+              } else {
+                showToast('검색어를 입력해주세요.', 500);
+              }
             }}
             style={{
               marginRight: Width_convert(22),
@@ -255,16 +272,30 @@ const MapScreen = (props) => {
             ))}
           </ScrollView>
         )}
+        <Toast
+          ref={(toast) => (toastRef = toast)}
+          style={{
+            backgroundColor: '#474747',
+            paddingTop: Height_convert(16),
+            paddingBottom: Height_convert(16),
+            paddingRight: Width_convert(20),
+            paddingLeft: Width_convert(20),
+            borderRadius: Font_normalize(7),
+          }}
+          position="center"
+          //opacity={0.8}
+          textStyle={{color: '#FFFFFF'}}
+        />
+        {networkModal ? (
+          <AlertModal1
+            ShowModalChangeValue={NetworkModalChangeValue}
+            navigation={props.navigation}
+            Title={'인터넷 연결을 확인해주세요.'}
+            //BottomText={''}
+            CenterButtonText={'확인'}></AlertModal1>
+        ) : null}
+        {isLoading ? <IsLoading></IsLoading> : null}
       </SafeAreaView>
-      {networkModal ? (
-        <ButtonOneModal
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
-          //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
-      ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

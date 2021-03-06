@@ -36,8 +36,8 @@ import TabMore from '../../../components/Home/TabMore/tabMore.js';
 import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork';
 import RecentWork from '../../../components/Home/horizontalScroll/recentWork.js';
 import Search from '../../../components/Home/Search/search.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
@@ -501,24 +501,26 @@ const HomeScreen = (props) => {
         </ScrollView>
       </SafeAreaView>
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {showModal ? (
-        <ButtonTwoModal
+        <AlertModal2
+          type={2}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           pickButtonTitle={pickButtonTitle}
           Title={
-            '차종과 지역설정을 하지 않은 경우에는 임의의 작업이 검색됩니다.'
+            '고객님의 차종과 지역을 설정하지 않은 경우에는 임의 작업이 검색됩니다.'
           }
-          BottomText={'설정하러가기'}
+          BottomText={'설정 하러가기'}
           LeftButtonTitle={'아니오'}
-          RightButtonTitle={'네'}></ButtonTwoModal>
+          RightButtonTitle={'네'}></AlertModal2>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

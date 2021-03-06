@@ -21,7 +21,7 @@ import MiddleCategory from '../../../components/Home/Category/middleCategory.js'
 import SmallCategory from '../../../components/Home/Category/smallCategory.js';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import {useSelector} from 'react-redux';
 const CategoryScreen = (props) => {
   const reduexState = useSelector((state) => state);
@@ -29,6 +29,8 @@ const CategoryScreen = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [searchModal, setSearchModal] = React.useState(false);
+  const SearchModalChangeValue = (text) => setSearchModal(text);
   const [page, setPage] = React.useState(
     props.route.params.Title == '드레스업'
       ? 'dressup'
@@ -175,8 +177,8 @@ const CategoryScreen = (props) => {
             } else {
             }
           } else {
+            setSearchModal(true);
             //중분류도 안찍혀있음 -> 아무것도 안해  --- 나중에 모달띄우기 넣지
-            console.log('gg');
           }
         } else {
           setNetworkModal(true);
@@ -256,13 +258,23 @@ const CategoryScreen = (props) => {
           {/*카테고리 - 소분류 리스트 및 선택 끝 */}
         </View>
       </SafeAreaView>
+      {searchModal ? (
+        <AlertModal1
+          type={'1-1'}
+          ShowModalChangeValue={SearchModalChangeValue}
+          navigation={props.navigation}
+          Title={"'대분류(상단메뉴) > 중분류(좌측메뉴)'까지 선택해주세요."}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AlertModal1>
+      ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

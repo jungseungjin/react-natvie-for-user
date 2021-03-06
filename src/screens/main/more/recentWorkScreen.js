@@ -35,6 +35,8 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import StatusBarHeight from '../../../components/StatusBarHeight';
+import AlertModal1 from '../../../components/Modal/AlertModal1';
+import AlertModal2 from '../../../components/Modal/AlertModal2';
 
 const RecentWork = (props) => {
   const reduexState = useSelector((state) => state);
@@ -51,6 +53,8 @@ const RecentWork = (props) => {
   const [storeList, setStoreList] = React.useState([]);
   const [storeListDel, setStoreListDel] = React.useState([]);
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
+  const [deleteModal, setDeleteModal] = React.useState(false);
+  const DeleteModalChangeValue = (text) => setDeleteModal(text);
 
   //최근 본 작업 - 작업 데이터 가져오기
   const get_recentWorkList = async () => {
@@ -145,6 +149,7 @@ const RecentWork = (props) => {
   //데이터 삭제하기
   const delete_data = async () => {
     try {
+      props.updateEditMode(!reduexState.editModeCheck.editMode);
       let Workvalue = await AsyncStorage.getItem('recentWorkList');
       let newValue = Workvalue;
       for (var a = 0; a < workListDel.length; a++) {
@@ -310,8 +315,7 @@ const RecentWork = (props) => {
                   activeOpacity={1}
                   onPress={() => {
                     if (reduexState.editModeCheck.editMode) {
-                      delete_data();
-                      props.updateEditMode(!reduexState.editModeCheck.editMode);
+                      setDeleteModal(true);
                     }
                   }}
                   style={{
@@ -343,13 +347,26 @@ const RecentWork = (props) => {
         ) : null}
         {/*하단 초기화 삭제하기버튼 끝*/}
       </SafeAreaView>
+      {deleteModal ? (
+        <AlertModal2
+          type={1}
+          ShowModalChangeValue={DeleteModalChangeValue}
+          Delete={delete_data}
+          navigation={props.navigation}
+          Title={'최근 본 항목을 삭제하시겠습니까?'}
+          //BottomText={''}
+          //CenterButtonText={'확인'}
+          LeftButtonTitle={'취소'}
+          RightButtonTitle={'확인'}></AlertModal2>
+      ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

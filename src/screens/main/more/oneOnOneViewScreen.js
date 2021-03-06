@@ -14,12 +14,12 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
 import Enter from '../../../../assets/home/Enter.svg';
 import moment from 'moment';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 const OneOnOneView = (props) => {
   const reduexState = useSelector((state) => state);
   const [showModal, setShowModal] = React.useState(false);
@@ -313,21 +313,23 @@ const OneOnOneView = (props) => {
           </View>
         </ScrollView>
         {showModal ? (
-          <ButtonTwoModal
+          <AlertModal2
+            type={1}
             ShowModalChangeValue={ShowModalChangeValue}
             DeleteQuestion={DeleteQuestion}
             navigation={props.navigation}
             Title={'문의를 삭제하시겠습니까?'}
             LeftButtonTitle={'취소'}
-            RightButtonTitle={'확인'}></ButtonTwoModal>
+            RightButtonTitle={'확인'}></AlertModal2>
         ) : null}
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </>

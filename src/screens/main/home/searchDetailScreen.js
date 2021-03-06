@@ -31,6 +31,7 @@ import {
   Platform,
   FlatList,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
@@ -47,6 +48,9 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
+import Toast, {DURATION} from 'react-native-easy-toast';
+import AlertModal1 from '../../../components/Modal/AlertModal1';
+import AlertModal2 from '../../../components/Modal/AlertModal2';
 const SearchScreenDetail = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -250,6 +254,12 @@ const SearchScreenDetail = (props) => {
   React.useEffect(() => {
     getData(props.route?.params?.searchText, pickSort);
   }, []);
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
   return (
     <>
       <StatusBar
@@ -299,6 +309,8 @@ const SearchScreenDetail = (props) => {
                   //검색함수 ㄲ
                   addData(searchText.trim());
                   onRefresh(searchText.trim());
+                } else {
+                  showToast('검색어를 입력해주세요.', 500);
                 }
               }}
               style={{
@@ -339,8 +351,12 @@ const SearchScreenDetail = (props) => {
                 height: Height_convert(20),
               }}
               onPress={() => {
-                addData(searchText.trim());
-                onRefresh(searchText.trim());
+                if (searchText.trim()) {
+                  addData(searchText.trim());
+                  onRefresh(searchText.trim());
+                } else {
+                  showToast('검색어를 입력해주세요.', 500);
+                }
               }}>
               <Search></Search>
             </TouchableOpacity>
@@ -482,26 +498,42 @@ const SearchScreenDetail = (props) => {
               }
               keyExtractor={(item) => String(item._id)}></FlatList>
           )}
+          <Toast
+            ref={(toast) => (toastRef = toast)}
+            style={{
+              backgroundColor: '#474747',
+              paddingTop: Height_convert(16),
+              paddingBottom: Height_convert(16),
+              paddingRight: Width_convert(20),
+              paddingLeft: Width_convert(20),
+              borderRadius: Font_normalize(7),
+            }}
+            position="center"
+            //opacity={0.8}
+            textStyle={{color: '#FFFFFF'}}
+          />
         </SafeAreaView>
       </DismissKeyboard>
-
+      {networkModal ? (
+        <AlertModal1
+          type={1}
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요.'}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AlertModal1>
+      ) : null}
       {showModal ? (
-        <ButtonOneModal
+        <AlertModal2
+          type={2}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={
-            "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
+            "'홈화면 > 설정' 에서 지역설정을 해주셔야만 가까운 순 필터 사용이 가능합니다."
           }
-          BottomText={'설정하러가기'}
-          CenterButtonText={'확인'}></ButtonOneModal>
-      ) : null}
-      {networkModal ? (
-        <ButtonOneModal
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
-          //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}
+          BottomText={'설정하러가기'}></AlertModal2>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

@@ -23,8 +23,9 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import {useSelector} from 'react-redux';
+import AlertModal1 from '../../../components/Modal/AlertModal1';
+import AlertModal2 from '../../../components/Modal/AlertModal2';
 const CategoryDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -417,22 +418,25 @@ const CategoryDetailScreen = (props) => {
         )}
       </SafeAreaView>
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {showModal ? (
-        <ButtonOneModal
+        <AlertModal2
+          type={2}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={
-            "'홈화면 > 설정' 에서 지역설정을 해주셔야 가까운 순 필터 사용이 가능합니다."
+            "'홈화면 > 설정' 에서 지역설정을 해주셔야만 가까운 순 필터 사용이 가능합니다."
           }
-          BottomText={'설정하러가기'}
-          CenterButtonText={'확인'}></ButtonOneModal>
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}
+          BottomText={'설정하러가기'}></AlertModal2>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

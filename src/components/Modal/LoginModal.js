@@ -44,8 +44,8 @@ const LoginModal = (props) => {
         <View
           style={[
             {
-              width: Width_convert(337),
-              borderRadius: Font_normalize(3),
+              width: Width_convert(331),
+              borderRadius: Font_normalize(7),
               backgroundColor: '#FFFFFF',
             },
             props.Title
@@ -53,15 +53,15 @@ const LoginModal = (props) => {
                   height: Width_convert(226),
                 }
               : {
-                  height: Width_convert(205),
+                  height: Width_convert(185),
                 },
           ]}>
-          {/* 로그인하기 , X버튼 */}
+          {/* 로그인하기글씨 , X버튼 */}
           <View
             style={{
               flexDirection: 'row',
-              marginLeft: Width_convert(128),
-              marginTop: Height_convert(16),
+              marginLeft: Width_convert(125),
+              marginTop: Height_convert(24),
               alignItems: 'center',
             }}>
             <Text
@@ -79,8 +79,11 @@ const LoginModal = (props) => {
                 props.ShowModalChangeValue(false);
               }}
               style={{
-                marginLeft: Width_convert(94),
-                marginRight: Width_convert(20),
+                marginLeft: Width_convert(84),
+                marginRight: Width_convert(30),
+                paddingTop: 20,
+                paddingRight: 30,
+                marginTop: -20,
               }}>
               <X
                 fill={'#000000'}
@@ -115,7 +118,7 @@ const LoginModal = (props) => {
                     marginTop: Width_convert(28),
                   }
                 : {
-                    marginTop: Width_convert(42),
+                    marginTop: Width_convert(24),
                   },
             ]}>
             <TouchableOpacity
@@ -135,7 +138,7 @@ const LoginModal = (props) => {
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSquareExtraBold || null,
-                  fontSize: Font_normalize(14),
+                  fontSize: Font_normalize(16),
                   color: '#FFFFFF',
                 }}>
                 로그인
@@ -159,7 +162,7 @@ const LoginModal = (props) => {
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSquareExtraBold || null,
-                  fontSize: Font_normalize(14),
+                  fontSize: Font_normalize(16),
                   color: '#636363',
                 }}>
                 회원가입

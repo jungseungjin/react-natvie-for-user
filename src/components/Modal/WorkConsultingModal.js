@@ -49,13 +49,13 @@ const WorkConsultingModal = (props) => {
         <View
           style={[
             {
-              width: Width_convert(337),
-              height: Width_convert(280),
+              width: Width_convert(331),
+              height: Width_convert(296),
               backgroundColor: '#FFFFFF',
               borderRadius: Font_normalize(5),
             },
           ]}>
-          <View style={{flexDirection: 'row', marginTop: Width_convert(16)}}>
+          <View style={{flexDirection: 'row', marginTop: Width_convert(23)}}>
             <Text
               style={{
                 marginLeft: Width_convert(133),
@@ -73,26 +73,29 @@ const WorkConsultingModal = (props) => {
               }}
               style={{
                 marginLeft: 'auto',
-                marginRight: Width_convert(19),
-                marginTop: Width_convert(3),
+                paddingTop: Width_convert(3),
+                paddingRight: Width_convert(19),
               }}>
               <X fill="#000000"></X>
             </TouchableOpacity>
           </View>
           <View
             style={{
-              marginTop: Width_convert(24),
-              width: Width_convert(267),
-              marginLeft: Width_convert(35),
-              marginRight: Width_convert(35),
+              marginTop: Width_convert(20),
+              width: Width_convert(263),
+              marginLeft: Width_convert(34),
+              marginRight: Width_convert(34),
               alignItems: 'center',
             }}>
             <View
               style={{
-                width: Width_convert(267),
+                width: Width_convert(263),
                 flexDirection: 'row',
               }}>
-              <Text>
+              <Text
+                style={{
+                  lineHeight: Font_normalize(20),
+                }}>
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -110,7 +113,7 @@ const WorkConsultingModal = (props) => {
                     color: '#000000',
                   }}>
                   {props.name} 고객님의 기존차량트림, 차량상태(튜닝이력 여부
-                  등)에 따라
+                  등)에 따라{' '}
                 </Text>
                 <Text
                   style={{
@@ -127,16 +130,16 @@ const WorkConsultingModal = (props) => {
               activeOpacity={1}
               onPress={() => {}}
               style={{
-                marginTop: Width_convert(17),
+                marginTop: Width_convert(4),
                 marginLeft: 'auto',
               }}>
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSqureRegular || null,
                   fontWeight: '700',
-                  fontSize: Font_normalize(10),
+                  fontSize: Font_normalize(12),
                   color: '#53A9F8',
-
+                  lineHeight: Font_normalize(16),
                   textDecorationLine: 'underline',
                   textDecorationStyle: 'solid',
                   textDecorationColor: '#53A9F8',
@@ -145,7 +148,7 @@ const WorkConsultingModal = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{marginTop: Width_convert(19), alignItems: 'center'}}>
+          <View style={{marginTop: Width_convert(16), alignItems: 'center'}}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
@@ -163,6 +166,7 @@ const WorkConsultingModal = (props) => {
                 style={{
                   fontFamily: Fonts?.NanumSquareExtraBold || null,
                   fontSize: Font_normalize(14),
+                  lineHeight: Font_normalize(16),
                   color: '#FFFFFF',
                 }}>
                 작업 및 예약상담 전화
@@ -187,6 +191,7 @@ const WorkConsultingModal = (props) => {
                 style={{
                   fontFamily: Fonts?.NanumSquareExtraBold || null,
                   fontSize: Font_normalize(14),
+                  lineHeight: Font_normalize(16),
                   color: '#636363',
                 }}>
                 작업 및 예약상담 문자

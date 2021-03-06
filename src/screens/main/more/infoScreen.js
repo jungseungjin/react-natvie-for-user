@@ -38,7 +38,7 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
@@ -54,6 +54,7 @@ import S3 from 'aws-sdk/clients/s3';
 import fs from 'react-native-fs';
 import base64_arraybuffer from 'base64-arraybuffer';
 import {Braket} from 'aws-sdk';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const InfoScreen = (props) => {
   //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
   //저장을 해야 값이 변경됨.
@@ -170,6 +171,12 @@ const InfoScreen = (props) => {
     }
   };
 
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
@@ -303,6 +310,7 @@ const InfoScreen = (props) => {
             //변경되었으니 리덕스에 값도 변경시키기
             props.navigation.goBack();
             props.navigation.navigate('Home');
+            showToast('내정보가 저장되었습니다.', 500);
           } else {
           }
         } else {
@@ -625,6 +633,40 @@ const InfoScreen = (props) => {
                         priority: FastImage.priority.normal,
                       }}
                       resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                    <View
+                      style={{
+                        marginTop: -Width_convert(78),
+                        width: Width_convert(78),
+                        height: Width_convert(78),
+                        borderRadius: Width_convert(78),
+                        overflow: 'hidden',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                      }}>
+                      <View
+                        style={{
+                          width: Width_convert(78),
+                          height: Width_convert(56),
+                        }}></View>
+                      <View
+                        style={{
+                          backgroundColor: 'rgba(0.32,0.32,0.32,0.4)',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: Width_convert(78),
+                          height: Width_convert(22),
+                        }}>
+                        <Text
+                          style={{
+                            fontFamily: Fonts?.NanumGothicRegular || null,
+                            fontSize: Font_normalize(11),
+                            fontWeight: '700',
+                            color: '#FFFFFF',
+                          }}>
+                          편집
+                        </Text>
+                      </View>
+                    </View>
                   </TouchableOpacity>
                   {/*이름 시작 */}
                   <View
@@ -1535,31 +1577,47 @@ const InfoScreen = (props) => {
         </>
       )}
 
+      <Toast
+        ref={(toast) => (toastRef = toast)}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
       {passwordChangeModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={PasswordChangeModalChangeValue}
           navigation={props.navigation}
           Title={
             '비밀번호가 변경되어 로그아웃 되었습니다 \n로그인페이지로 이동합니다'
           }
           //BottomText={''}
-          CenterButtonText={'확인'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {confirmErrorModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={ConfirmErrorModalChangeValue}
           navigation={props.navigation}
-          Title={'인증번호를 다시 입력해주세요'}
+          Title={'인증번호를 다시 입력해주세요.'}
           //BottomText={''}
-          CenterButtonText={'확인'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {confirmModal ? (
-        <ButtonOneModal
+        <AlertModal1
           ShowModalChangeValue={ConfirmModalChangeValue}
           navigation={props.navigation}
-          Title={'본인인증이 완료되었습니다'}
+          Title={'본인인증이 완료되었습니다.'}
           //BottomText={''}
-          CenterButtonText={'확인'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {locationModal ? (
         <ButtonTwoModal
@@ -1581,12 +1639,13 @@ const InfoScreen = (props) => {
           RightButtonTitle={'네'}></ButtonTwoModal>
       ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>

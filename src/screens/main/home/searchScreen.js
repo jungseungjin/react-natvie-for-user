@@ -25,7 +25,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-
+import Toast, {DURATION} from 'react-native-easy-toast';
 const SearchScreen = ({navigation, route}) => {
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -85,6 +85,12 @@ const SearchScreen = ({navigation, route}) => {
   React.useEffect(() => {
     getData();
   }, []);
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
   const [searchText, setSearchText] = React.useState('');
   return (
     <>
@@ -132,7 +138,7 @@ const SearchScreen = ({navigation, route}) => {
                   });
                   addData(searchText);
                 } else {
-                  alert('검색어를 입력해주세요.');
+                  showToast('검색어를 입력해주세요.', 500);
                 }
               }}
               style={{
@@ -161,7 +167,7 @@ const SearchScreen = ({navigation, route}) => {
                   });
                   addData(searchText);
                 } else {
-                  alert('검색어를 입력해주세요.');
+                  showToast('검색어를 입력해주세요.', 500);
                 }
               }}
               style={{
@@ -253,9 +259,23 @@ const SearchScreen = ({navigation, route}) => {
               ))}
             </ScrollView>
           ) : null}
+          <Toast
+            ref={(toast) => (toastRef = toast)}
+            style={{
+              backgroundColor: '#474747',
+              paddingTop: Height_convert(16),
+              paddingBottom: Height_convert(16),
+              paddingRight: Width_convert(20),
+              paddingLeft: Width_convert(20),
+              borderRadius: Font_normalize(7),
+            }}
+            position="center"
+            //opacity={0.8}
+            textStyle={{color: '#FFFFFF'}}
+          />
+          {isLoading ? <IsLoading></IsLoading> : null}
         </SafeAreaView>
       </DismissKeyboard>
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

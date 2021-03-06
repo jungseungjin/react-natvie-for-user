@@ -13,7 +13,7 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 
 const SignUp = (props) => {
   const [allAgree, setAllAgree] = React.useState(false);
@@ -498,13 +498,14 @@ const SignUp = (props) => {
         </TouchableOpacity>
       </View>
       {agree2Modal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={2}
           ShowModalChangeValue={Agree2ModalChangeValue}
           navigation={props.navigation}
           Title={
             '정보통신망 이용촉진 및 정보보호 등에 관한 법률에는 만 14세미만 아동의 개인정보  수집시 법정대리인 동의를 받도록 규정하고 있으며, 만 14세 미만 아동이 법정대리인 동의없이 회원가입을 하는 경우 회원탈퇴 또는 서비스 이용이 제한 될 수 있습니다.'
           }
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
     </SafeAreaView>
   );

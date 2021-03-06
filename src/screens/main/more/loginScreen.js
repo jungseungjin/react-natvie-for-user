@@ -29,14 +29,20 @@ const LoginScreen = (props) => {
   const insets = useSafeAreaInsets();
   const [idText, setIdText] = React.useState('');
   const [passwordText, setPasswordText] = React.useState('');
-
+  const [messageShow, setMessageShow] = React.useState(false);
+  const MessageShowChangeValue = () => {
+    setMessageShow(true);
+    setTimeout(function () {
+      setMessageShow(false);
+    }, 2000);
+  };
   const LoginBack = () => {
     try {
       let result;
       let url = Domain2 + 'login';
       if (idText && passwordText) {
       } else {
-        alert('아이디 비밀번호를 모두 입력해주세요');
+        MessageShowChangeValue();
         return false;
       }
       let data = {
@@ -65,7 +71,7 @@ const LoginScreen = (props) => {
           } else {
             setIsLoading(false);
             //로그인이 안됐어
-            alert(result.data[0].message);
+            MessageShowChangeValue();
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -138,12 +144,12 @@ const LoginScreen = (props) => {
                 style={{
                   marginTop: Height_convert(26),
                   width: Width_convert(273),
-                  height: Height_convert(177),
+                  height: Height_convert(212),
                 }}>
                 <View
                   style={{
                     width: Width_convert(273),
-                    height: Height_convert(33),
+                    height: Height_convert(45),
                   }}>
                   <TextInput
                     placeholder="아이디를 입력해주세요"
@@ -153,7 +159,7 @@ const LoginScreen = (props) => {
                     autoCompleteType={'off'}
                     autoCorrect={false}
                     placeholderStyle={{
-                      fontSize: Font_normalize(11),
+                      fontSize: Font_normalize(14),
                       fontFamily: Fonts?.NanumGothicRegular || null,
                       fontWeight: '700',
                     }}
@@ -163,11 +169,11 @@ const LoginScreen = (props) => {
                       paddingLeft: Width_convert(9),
                       backgroundColor: 'rgba(196, 196, 196, 0.4)',
                       width: Width_convert(273),
-                      height: Height_convert(33),
+                      height: Height_convert(45),
                       borderRadius: Font_normalize(4),
                       paddingTop: 0,
                       paddingBottom: 0,
-                      fontSize: Font_normalize(11),
+                      fontSize: Font_normalize(14),
                       fontFamily: Fonts?.NanumGothicRegular || null,
                       fontWeight: '700',
                     }}></TextInput>
@@ -175,7 +181,7 @@ const LoginScreen = (props) => {
                 <View
                   style={{
                     width: Width_convert(273),
-                    height: Height_convert(33),
+                    height: Height_convert(45),
                     marginTop: Height_convert(11),
                   }}>
                   <TextInput
@@ -189,7 +195,7 @@ const LoginScreen = (props) => {
                     secureTextEntry={true}
                     value={passwordText}
                     placeholderStyle={{
-                      fontSize: Font_normalize(11),
+                      fontSize: Font_normalize(14),
                       fontFamily: Fonts?.NanumGothicRegular || null,
                       fontWeight: '700',
                     }}
@@ -197,11 +203,11 @@ const LoginScreen = (props) => {
                       paddingLeft: Width_convert(9),
                       backgroundColor: 'rgba(196, 196, 196, 0.4)',
                       width: Width_convert(273),
-                      height: Height_convert(33),
+                      height: Height_convert(45),
                       borderRadius: Font_normalize(4),
                       paddingTop: 0,
                       paddingBottom: 0,
-                      fontSize: Font_normalize(11),
+                      fontSize: Font_normalize(14),
                       fontFamily: Fonts?.NanumGothicRegular || null,
                       fontWeight: '700',
                     }}></TextInput>
@@ -209,8 +215,25 @@ const LoginScreen = (props) => {
                 <View
                   style={{
                     width: Width_convert(273),
+                    height: Height_convert(10),
+                    marginTop: Height_convert(6),
+                  }}>
+                  <Text
+                    style={{
+                      marginLeft: Width_convert(9),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(9),
+                      fontWeight: '400',
+                      color: '#FF0000',
+                    }}>
+                    {messageShow ? '아이디와 비밀번호를 확인해주세요' : null}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: Width_convert(273),
                     height: Height_convert(44),
-                    marginTop: Height_convert(19),
+                    marginTop: Height_convert(14),
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
@@ -241,7 +264,7 @@ const LoginScreen = (props) => {
                   style={{
                     width: Width_convert(273),
                     height: Height_convert(44),
-                    marginTop: Height_convert(25),
+                    marginTop: Height_convert(15),
                     flexDirection: 'row',
                     justifyContent: 'center',
                   }}>
@@ -250,7 +273,13 @@ const LoginScreen = (props) => {
                     onPress={() => {
                       props.navigation.navigate('IdFind');
                     }}
-                    style={{marginRight: Width_convert(15)}}>
+                    style={{
+                      marginRight: Width_convert(5),
+                      paddingTop: Height_convert(10),
+                      paddingBottom: Height_convert(10),
+                      paddingLeft: Width_convert(10),
+                      paddingRight: Width_convert(10),
+                    }}>
                     <Text
                       style={{
                         fontFamily: Fonts?.NanumGothicRegular || null,
@@ -262,9 +291,17 @@ const LoginScreen = (props) => {
                     </Text>
                   </TouchableOpacity>
                   <VirticalBar
-                    style={{marginRight: Width_convert(15)}}></VirticalBar>
+                    style={{
+                      marginRight: Width_convert(15),
+                      marginTop: Height_convert(10),
+                    }}></VirticalBar>
                   <TouchableOpacity
                     activeOpacity={1}
+                    style={{
+                      paddingTop: Height_convert(10),
+                      paddingBottom: Height_convert(10),
+                      paddingRight: Width_convert(10),
+                    }}
                     onPress={() => {
                       props.navigation.navigate('PasswordFind');
                     }}>

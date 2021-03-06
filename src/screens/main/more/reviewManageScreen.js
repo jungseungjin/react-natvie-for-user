@@ -23,8 +23,8 @@ import Star from '../../../../assets/home/star.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
 import Review from '../../../components/More/Review/review.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
@@ -201,21 +201,23 @@ const ReviewManage = (props) => {
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
         {deleteModal ? (
-          <ButtonTwoModal
+          <AlertModal2
+            type={1}
             Title={'후기를 삭제하시겠습니까?'}
             navigation={props.navigation}
             ShowModalChangeValue={DeleteModalChangeValue}
             DeleteReview={DeleteReview}
             LeftButtonTitle={'취소'}
-            RightButtonTitle={'확인'}></ButtonTwoModal>
+            RightButtonTitle={'확인'}></AlertModal2>
         ) : null}
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
       {isLoading ? <IsLoading></IsLoading> : null}

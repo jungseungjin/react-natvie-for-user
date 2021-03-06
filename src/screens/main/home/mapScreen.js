@@ -38,7 +38,8 @@ import {
   requestNotifications,
 } from 'react-native-permissions';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Geolocation from 'react-native-geolocation-service';
@@ -323,23 +324,34 @@ const MapScreen = (props) => {
         </View>
       </View>
       {locationModal ? (
-        <ButtonTwoModal
-          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+        <AlertModal2
+          type={1}
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요.'}
           navigation={props.navigation}
           ShowModalChangeValue={LocationModalChangeValue}
           LeftButtonTitle={'닫기'}
-          RightButtonTitle={'설정'}></ButtonTwoModal>
+          RightButtonTitle={'설정'}></AlertModal2>
       ) : null}
       {showModal ? (
-        <ButtonTwoModal
+        <AlertModal2
+          type={2}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={
-            '지역 설정을 위해 고객님의 권한이 필요합니다. 권한을 허용하시겠습니까?'
+            '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?'
           }
           //BottomText={'설정하러가기'}
           LeftButtonTitle={'아니오'}
-          RightButtonTitle={'네'}></ButtonTwoModal>
+          RightButtonTitle={'네'}></AlertModal2>
+      ) : null}
+      {networkModal ? (
+        <AlertModal1
+          type={1}
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요.'}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>

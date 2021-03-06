@@ -10,8 +10,8 @@ import axios from 'axios';
 import {useSelector} from 'react-redux';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import Geolocation from 'react-native-geolocation-service';
 import {
   PERMISSIONS,
@@ -45,7 +45,7 @@ const SettingScreen = (props) => {
     reduexState.loginDataCheck.login.iu_car.length > 0
       ? reduexState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
         ? 'all'
-        : reduexState.loginDataCheck.login.iu_car[0].brand_type == 1
+        : reduexState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
         ? 'domestic'
         : 'import'
       : 'domestic',
@@ -287,28 +287,31 @@ const SettingScreen = (props) => {
         )}
       </SafeAreaView>
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {locationModal ? (
-        <ButtonTwoModal
-          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+        <AlertModal2
+          type={1}
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요.'}
           navigation={props.navigation}
           ShowModalChangeValue={LocationModalChangeValue}
           LeftButtonTitle={'닫기'}
-          RightButtonTitle={'설정'}></ButtonTwoModal>
+          RightButtonTitle={'설정'}></AlertModal2>
       ) : null}
       {showModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
-          Title={'차량과 지역을 모두 선택해주세요'}
+          Title={'차종과 지역을 설정해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </>
