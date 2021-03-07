@@ -305,6 +305,7 @@ const ReviewRegister = (props) => {
                     textAlignVertical: 'top',
                   }}
                   style={{
+                    width: Width_convert(339),
                     minHeight: Height_convert(812),
                     paddingLeft: Width_convert(7),
                     fontFamily: Fonts?.NanumSqureRegular || null,

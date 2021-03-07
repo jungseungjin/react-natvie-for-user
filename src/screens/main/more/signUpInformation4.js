@@ -397,6 +397,7 @@ const SignUpInformation = (props) => {
                     lineHeight: Font_normalize(14),
                   }}
                   style={{
+                    width: Width_convert(200),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -440,6 +441,7 @@ const SignUpInformation = (props) => {
                       lineHeight: Font_normalize(14),
                     }}
                     style={{
+                      width: Width_convert(200),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -518,6 +520,7 @@ const SignUpInformation = (props) => {
                       color: '#000000',
                     }}
                     style={{
+                      width: Width_convert(200),
                       marginTop: Width_convert(35),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
@@ -576,6 +579,7 @@ const SignUpInformation = (props) => {
                       color: '#000000',
                     }}
                     style={{
+                      width: Width_convert(300),
                       marginTop: Width_convert(35),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
@@ -634,6 +638,7 @@ const SignUpInformation = (props) => {
                       color: '#000000',
                     }}
                     style={{
+                      width: Width_convert(300),
                       marginTop: Width_convert(35),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
@@ -677,6 +682,7 @@ const SignUpInformation = (props) => {
                     setBirthDay(value);
                   }}
                   style={{
+                    width: Width_convert(300),
                     marginTop: Width_convert(35),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
@@ -718,6 +724,7 @@ const SignUpInformation = (props) => {
                     color: '#000000',
                   }}
                   style={{
+                    width: Width_convert(300),
                     marginTop: Width_convert(35),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
@@ -758,6 +765,7 @@ const SignUpInformation = (props) => {
                       lineHeight: Font_normalize(14),
                     }}
                     style={{
+                      width: Width_convert(250),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,

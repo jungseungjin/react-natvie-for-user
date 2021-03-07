@@ -177,6 +177,7 @@ const IdFindScreen = (props) => {
               lineHeight: Font_normalize(14),
             }}
             style={{
+              width: Width_convert(300),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
               fontFamily: Fonts?.NanumSqureRegular || null,
@@ -234,6 +235,7 @@ const IdFindScreen = (props) => {
                   lineHeight: Font_normalize(14),
                 }}
                 style={{
+                  width: Width_convert(300),
                   height: Width_convert(40),
                   paddingLeft: Width_convert(5),
                   fontFamily: Fonts?.NanumSqureRegular || null,

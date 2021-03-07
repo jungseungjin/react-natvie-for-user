@@ -140,6 +140,7 @@ const SignUpInformation = (props) => {
               lineHeight: Font_normalize(14),
             }}
             style={{
+              width: Width_convert(200),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
               fontFamily: Fonts?.NanumSqureRegular || null,
@@ -187,6 +188,7 @@ const SignUpInformation = (props) => {
                 lineHeight: Font_normalize(14),
               }}
               style={{
+                width: Width_convert(200),
                 height: Width_convert(40),
                 paddingLeft: Width_convert(5),
                 fontFamily: Fonts?.NanumSqureRegular || null,

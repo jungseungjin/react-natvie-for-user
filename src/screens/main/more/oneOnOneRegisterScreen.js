@@ -102,6 +102,7 @@ const OneOnOneRegister = (props) => {
               textAlignVertical: 'center',
             }}
             style={{
+              width: Width_convert(305),
               paddingLeft: Width_convert(7),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontWeight: '700',
@@ -143,6 +144,7 @@ const OneOnOneRegister = (props) => {
                 textAlignVertical: 'top',
               }}
               style={{
+                width: Width_convert(305),
                 minHeight: Height_convert(812),
                 paddingLeft: Width_convert(7),
                 fontFamily: Fonts?.NanumSqureRegular || null,

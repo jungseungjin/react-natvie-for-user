@@ -143,6 +143,7 @@ const PasswordFindScreen2 = (props) => {
                 lineHeight: Font_normalize(14),
               }}
               style={{
+                width: Width_convert(327),
                 height: Width_convert(40),
                 paddingLeft: Width_convert(5),
                 fontFamily: Fonts?.NanumSqureRegular || null,
@@ -201,6 +202,7 @@ const PasswordFindScreen2 = (props) => {
                 color: '#000000',
               }}
               style={{
+                width: Width_convert(327),
                 marginTop: Width_convert(35),
                 height: Width_convert(40),
                 paddingLeft: Width_convert(5),

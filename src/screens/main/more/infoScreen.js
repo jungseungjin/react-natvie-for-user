@@ -757,6 +757,7 @@ const InfoScreen = (props) => {
                         }}
                         placeholderTextColor={'#000000'}
                         style={{
+                          width: Width_convert(300),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(16),

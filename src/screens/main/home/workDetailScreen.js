@@ -188,7 +188,7 @@ const WorkDetailScreen = (props) => {
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
           scrollEventThrottle={16}
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: offset}}}],
             {
@@ -202,7 +202,7 @@ const WorkDetailScreen = (props) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Width_convert(240 + 171),
+              height: Width_convert(240),
             }}>
             {/*상단 슬라이더 시작 */}
             <Swiper
@@ -218,19 +218,159 @@ const WorkDetailScreen = (props) => {
                   key={item}></SwiperImage>
               ))}
             </Swiper>
-            {/*상단 슬라이더 끝 */}
-            {/*작업 이름부터 가격까지 시작 */}
+          </View>
+          {/*상단 슬라이더 끝 */}
+          {/*작업 이름부터 가격까지 시작 */}
+          <View
+            style={{
+              width: Width_convert(375),
+              height: Width_convert(171),
+              justifyContent: 'center',
+            }}>
             <View
               style={{
-                width: Width_convert(375),
-                height: Width_convert(171),
-                justifyContent: 'center',
+                marginTop: Height_convert(13),
+                marginLeft: Width_convert(19),
               }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(18),
+                  fontWeight: '700',
+                  color: '#000000',
+                }}>
+                {props.route.params.item.store_work_name}
+              </Text>
+            </View>
+            <View
+              style={{
+                marginTop: Height_convert(13),
+                marginLeft: Width_convert(19),
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text
+                  style={{
+                    marginRight: Width_convert(5),
+                    fontFamily: Fonts?.NanumSqureRegular,
+                    fontWeight: '400',
+                    color: '#000000',
+                    fontSize: Font_normalize(12),
+                  }}>
+                  {props.route.params.item.info_store[0].store_name}
+                </Text>
+                <VerticalBar
+                  style={{marginRight: Width_convert(5)}}></VerticalBar>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    getDataAndNavigateFromWork(
+                      'store',
+                      props.route.params.item.info_store[0]._id,
+                    );
+                  }}>
+                  <StoreSVG></StoreSVG>
+                </TouchableOpacity>
+              </View>
               <View
                 style={{
-                  marginTop: Height_convert(13),
-                  marginLeft: Width_convert(19),
+                  marginTop: Height_convert(6),
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}>
+                <Text
+                  style={{
+                    marginRight: Width_convert(5),
+                    fontFamily: Fonts?.NanumSqureRegular,
+                    fontWeight: '400',
+                    color: '#000000',
+                    fontSize: Font_normalize(12),
+                  }}>
+                  {props.route.params.item.info_store[0].store_address}
+                </Text>
+                <VerticalBar
+                  style={{marginRight: Width_convert(5)}}></VerticalBar>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    props.navigation.navigate('StoreLocation', {
+                      item: props.route.params.item.info_store[0],
+                    });
+                  }}>
+                  <LocationSVG></LocationSVG>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  marginTop: Height_convert(8),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View>
+                  <Star
+                    width={Width_convert(13)}
+                    height={Width_convert(13)}
+                    style={{
+                      marginRight: Width_convert(2),
+                    }}></Star>
+                </View>
+                <Text
+                  style={{
+                    marginRight: Width_convert(10),
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(14),
+                    fontWeight: '700',
+                    color: '#000000',
+                  }}>
+                  {props.route.params.item.reviewCount > 0
+                    ? parseFloat(
+                        props.route.params.item.reviewTotal /
+                          props.route.params.item.reviewCount,
+                      ).toFixed(1)
+                    : '0.0'}
+                </Text>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    props.navigation.navigate('ReviewView', {
+                      item: props.route.params.item,
+                      type: 'work',
+                    });
+                  }}
+                  style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      marginRight: Width_convert(3),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontWeight: '700',
+                      fontSize: Font_normalize(14),
+                      color: '#9B6FAB',
+                    }}>
+                    후기{' '}
+                    {props.route.params.item.reviewCount
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  </Text>
+                  <PurpleTag></PurpleTag>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: Height_convert(17),
+                marginLeft: Width_convert(19),
+              }}>
+              <View>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(10),
+                    fontWeight: '700',
+                    color: '#59A3D9',
+                  }}>
+                  작업소요 {props.route.params.item.store_work_time}
+                </Text>
+              </View>
+              <View style={{marginTop: Height_convert(4)}}>
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -238,157 +378,17 @@ const WorkDetailScreen = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   }}>
-                  {props.route.params.item.store_work_name}
+                  {props.route.params.item.store_work_total_cost != null &&
+                  props.route.params.item.store_work_total_cost != 0
+                    ? props.route.params.item.store_work_total_cost
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
+                    : '업체문의'}
                 </Text>
               </View>
-              <View
-                style={{
-                  marginTop: Height_convert(13),
-                  marginLeft: Width_convert(19),
-                }}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text
-                    style={{
-                      marginRight: Width_convert(5),
-                      fontFamily: Fonts?.NanumSqureRegular,
-                      fontWeight: '400',
-                      color: '#000000',
-                      fontSize: Font_normalize(12),
-                    }}>
-                    {props.route.params.item.info_store[0].store_name}
-                  </Text>
-                  <VerticalBar
-                    style={{marginRight: Width_convert(5)}}></VerticalBar>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      getDataAndNavigateFromWork(
-                        'store',
-                        props.route.params.item.info_store[0]._id,
-                      );
-                    }}>
-                    <StoreSVG></StoreSVG>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    marginTop: Height_convert(6),
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      marginRight: Width_convert(5),
-                      fontFamily: Fonts?.NanumSqureRegular,
-                      fontWeight: '400',
-                      color: '#000000',
-                      fontSize: Font_normalize(12),
-                    }}>
-                    {props.route.params.item.info_store[0].store_address}
-                  </Text>
-                  <VerticalBar
-                    style={{marginRight: Width_convert(5)}}></VerticalBar>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      props.navigation.navigate('StoreLocation', {
-                        item: props.route.params.item.info_store[0],
-                      });
-                    }}>
-                    <LocationSVG></LocationSVG>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    marginTop: Height_convert(8),
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
-                  <View>
-                    <Star
-                      width={Width_convert(13)}
-                      height={Width_convert(13)}
-                      style={{
-                        marginRight: Width_convert(2),
-                      }}></Star>
-                  </View>
-                  <Text
-                    style={{
-                      marginRight: Width_convert(10),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    {props.route.params.item.reviewCount > 0
-                      ? parseFloat(
-                          props.route.params.item.reviewTotal /
-                            props.route.params.item.reviewCount,
-                        ).toFixed(1)
-                      : '0.0'}
-                  </Text>
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      props.navigation.navigate('ReviewView', {
-                        item: props.route.params.item,
-                        type: 'work',
-                      });
-                    }}
-                    style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text
-                      style={{
-                        marginRight: Width_convert(3),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontWeight: '700',
-                        fontSize: Font_normalize(14),
-                        color: '#9B6FAB',
-                      }}>
-                      후기{' '}
-                      {props.route.params.item.reviewCount
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    </Text>
-                    <PurpleTag></PurpleTag>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View
-                style={{
-                  marginTop: Height_convert(17),
-                  marginLeft: Width_convert(19),
-                }}>
-                <View>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(10),
-                      fontWeight: '700',
-                      color: '#59A3D9',
-                    }}>
-                    작업소요 {props.route.params.item.store_work_time}
-                  </Text>
-                </View>
-                <View style={{marginTop: Height_convert(4)}}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(18),
-                      fontWeight: '700',
-                      color: '#000000',
-                    }}>
-                    {props.route.params.item.store_work_total_cost != null &&
-                    props.route.params.item.store_work_total_cost != 0
-                      ? props.route.params.item.store_work_total_cost
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
-                      : '업체문의'}
-                  </Text>
-                </View>
-              </View>
             </View>
-            {/*작업 이름부터 가격까지 끝 */}
           </View>
+          {/*작업 이름부터 가격까지 끝 */}
           {/*상단슬라이더부터 가격까지 끝 */}
           {/*버튼 위치 맞추기 위함 시작 */}
           <View

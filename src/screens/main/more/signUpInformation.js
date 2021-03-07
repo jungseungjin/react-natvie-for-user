@@ -25,6 +25,13 @@ import PurpleChk from '../../../../assets/home/purple_chk.svg';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params);
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
+  const PhoneNumberChangeValue = (text) => {
+    if (text.length > 13) {
+    } else {
+      let newValue = InputPhoneNumber(text);
+      setPhoneNumber(newValue);
+    }
+  };
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
   const [authNumber, setAuthNumber] = React.useState(''); //코드넘버
   const [confirm, setConfirm] = React.useState(null); //인증함수
@@ -113,22 +120,10 @@ const SignUpInformation = (props) => {
             value={phoneNumber}
             keyboardType={'number-pad'}
             onChangeText={(value) => {
-              if (value.length > 13) {
-              } else {
-                let newValue = InputPhoneNumber(value);
-                setPhoneNumber(newValue);
-              }
-            }}
-            placeholderStyle={{
-              height: Width_convert(40),
-              paddingLeft: Width_convert(10),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontSize: Font_normalize(14),
-              fontWeight: '400',
-              color: '#000000',
-              lineHeight: Font_normalize(14),
+              PhoneNumberChangeValue(value);
             }}
             style={{
+              width: Width_convert(200),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
               fontFamily: Fonts?.NanumSqureRegular || null,
@@ -170,6 +165,7 @@ const SignUpInformation = (props) => {
                 value={authNumber}
                 onChangeText={(value) => {
                   if (value.length == 6) {
+                    console.log(`ㅇㅣㄴ증번호는 : ${value}`);
                     confirmCode(value);
                   }
                   if (value.length > 6) {
@@ -186,6 +182,7 @@ const SignUpInformation = (props) => {
                   lineHeight: Font_normalize(14),
                 }}
                 style={{
+                  width: Width_convert(200),
                   height: Width_convert(40),
                   paddingLeft: Width_convert(5),
                   fontFamily: Fonts?.NanumSqureRegular || null,
