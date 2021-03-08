@@ -203,7 +203,9 @@ const InfoScreen = (props) => {
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [nickname, setNickname] = React.useState('');
+  const [nickname, setNickname] = React.useState(
+    reduexState.loginDataCheck.login.data.iu_nickname,
+  );
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [location, setLocation] = React.useState({});
   const [car, setCar] = React.useState(
@@ -748,14 +750,11 @@ const InfoScreen = (props) => {
                         닉네임
                       </Text>
                       <TextInput
-                        placeholder={
-                          reduexState.loginDataCheck.login.data.iu_nickname
-                        }
                         value={nickname}
                         onChangeText={(value) => {
                           setNickname(value);
                         }}
-                        placeholderTextColor={'#000000'}
+                        placeholderTextColor={'#CCCCCC'}
                         style={{
                           width: Width_convert(300),
                           fontFamily: Fonts?.NanumSqureRegular || null,
@@ -1086,7 +1085,7 @@ const InfoScreen = (props) => {
                                   borderBottomColor: '#C1C1C1',
                                   borderRightColor: '#C1C1C1',
                                   borderLeftColor: '#C1C1C1',
-                                  borderRadius: Font_normalize(2),
+                                  borderRadius: Font_normalize(4),
                                   marginRight: Width_convert(14),
                                 },
                                 car.indexOf(item) == 0
@@ -1144,7 +1143,7 @@ const InfoScreen = (props) => {
                                 width: Width_convert(35),
                                 height: Width_convert(20),
                                 backgroundColor: '#C1C1C1',
-                                borderRadius: Font_normalize(2),
+                                borderRadius: Font_normalize(4),
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}>
@@ -1152,7 +1151,7 @@ const InfoScreen = (props) => {
                                 style={{
                                   fontFamily: Fonts?.NanumSqureRegular || null,
                                   fontWeight: '700',
-                                  fontSize: Font_normalize(9),
+                                  fontSize: Font_normalize(10),
                                   color: '#FFFFFF',
                                 }}>
                                 변경
@@ -1175,7 +1174,7 @@ const InfoScreen = (props) => {
                                 style={{
                                   fontFamily: Fonts?.NanumSqureRegular || null,
                                   fontWeight: '700',
-                                  fontSize: Font_normalize(9),
+                                  fontSize: Font_normalize(10),
                                   color: '#FFFFFF',
                                 }}>
                                 삭제

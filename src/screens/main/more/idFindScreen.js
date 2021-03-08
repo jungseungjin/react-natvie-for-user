@@ -324,7 +324,7 @@ const IdFindScreen = (props) => {
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(8),
+                    fontSize: Font_normalize(11),
                     fontWeight: '400',
                     color: '#B666DC',
                   }}>
@@ -383,7 +383,7 @@ const IdFindScreen = (props) => {
                   style={[
                     {
                       fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(8),
+                      fontSize: Font_normalize(11),
                       fontWeight: '400',
                     },
                     confirmChk === true
@@ -394,7 +394,7 @@ const IdFindScreen = (props) => {
                           color: '#2989E2',
                         },
                   ]}>
-                  인증번호 다시받기
+                  인증번호 재전송
                 </Text>
               </TouchableOpacity>
             </View>

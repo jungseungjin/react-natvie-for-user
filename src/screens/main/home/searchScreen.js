@@ -228,6 +228,7 @@ const SearchScreen = ({navigation, route}) => {
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
+                    style={{width: Width_convert(320)}}
                     onPress={() => {
                       navigation.navigate('SearchDetail', {
                         searchText: item,
@@ -247,6 +248,11 @@ const SearchScreen = ({navigation, route}) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     activeOpacity={1}
+                    style={{
+                      paddingLeft: Width_convert(10),
+                      paddingTop: Height_convert(5),
+                      paddingBottom: Height_convert(5),
+                    }}
                     onPress={() => {
                       removeData(item);
                     }}>

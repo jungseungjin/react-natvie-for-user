@@ -112,10 +112,10 @@ const AnimatedHeader = (props) => {
                 style={[
                   {
                     marginTop: 'auto',
-                    marginBottom: 0,
+                    marginBottom: -Height_convert(3),
                     fontFamily: Fonts?.NanumSquareRegular || null,
                     fontWeight: '700',
-                    fontSize: Font_normalize(6),
+                    fontSize: Font_normalize(8),
                   },
                   props.Pick
                     ? {color: '#EA5152'}

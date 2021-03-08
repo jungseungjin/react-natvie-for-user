@@ -176,9 +176,9 @@ const WorkDetailScreen = (props) => {
   const [toastShow, setToastShow] = React.useState(0);
   React.useEffect(() => {
     if (toastShow == 1) {
-      showToast('❤️ 찜한 작업에 추가', 700);
+      showToast('찜한 작업에 추가', 700);
     } else if (toastShow != 0) {
-      showToast('찜이 해제되었습니다', 700);
+      showToast('찜이 해제되었습니다.', 700);
     }
   }, [toastShow]);
   return (

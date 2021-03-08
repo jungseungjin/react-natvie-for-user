@@ -227,9 +227,11 @@ const LoginScreen = (props) => {
                     width: Width_convert(273),
                     height: Height_convert(10),
                     marginTop: Height_convert(6),
+                    marginBottom: Height_convert(6),
                   }}>
                   <Text
                     style={{
+                      lineHeight: Font_normalize(10),
                       marginLeft: Width_convert(9),
                       fontFamily: Fonts?.NanumSqureRegular || null,
                       fontSize: Font_normalize(9),
@@ -243,7 +245,7 @@ const LoginScreen = (props) => {
                   style={{
                     width: Width_convert(273),
                     height: Height_convert(44),
-                    marginTop: Height_convert(14),
+                    marginTop: Height_convert(8),
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
