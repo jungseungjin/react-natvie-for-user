@@ -18,6 +18,7 @@ import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params.agree);
   const [phoneNumber, setPhoneNumber] = React.useState(
@@ -43,10 +44,18 @@ const SignUpInformation = (props) => {
 
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        fromNav={
+          Platform.OS === 'android' && props.route.params.fromNav === 'home'
+            ? 'home'
+            : null
+        }
         Title={'회원가입2'}
         navigation={props.navigation}
         phoneNumber={phoneNumber}

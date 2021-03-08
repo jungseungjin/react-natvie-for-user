@@ -44,6 +44,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const StoreDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -71,6 +72,7 @@ const StoreDetailScreen = (props) => {
     });
   };
   const ChangeScrollValue = (text) => setScrollValue(text);
+
   const Pick = () => {
     try {
       let url = Domain2 + 'pickData_detail';
@@ -114,6 +116,7 @@ const StoreDetailScreen = (props) => {
                 props.route.params.item.userCount =
                   props.route.params.item.userCount - 1;
                 setPickCount(pickCount - 1);
+                setToastShow(2);
               } else {
                 //없으니 추가
                 props.route.params.item.info_user_id.push({
@@ -122,6 +125,7 @@ const StoreDetailScreen = (props) => {
                 props.route.params.item.userCount =
                   props.route.params.item.userCount + 1;
                 setPickCount(pickCount + 1);
+                setToastShow(1);
               }
               forceUpdate();
             } else {
@@ -136,6 +140,20 @@ const StoreDetailScreen = (props) => {
       console.log(err);
     }
   };
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
+  const [toastShow, setToastShow] = React.useState(0);
+  React.useEffect(() => {
+    if (toastShow == 1) {
+      showToast('❤️ 찜한 가게에 추가', 700);
+    } else if (toastShow != 0) {
+      showToast('찜이 해제되었습니다', 700);
+    }
+  }, [toastShow]);
   return (
     <>
       <StatusBar
@@ -520,6 +538,21 @@ const StoreDetailScreen = (props) => {
           }></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+
+      <Toast
+        ref={(toast) => (toastRef = toast)}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
       {workConsultingModal ? (
         <WorkConsultingModal
           storeNumber={props.route.params.item.store_number}
@@ -537,6 +570,7 @@ const StoreDetailScreen = (props) => {
       ) : null}
       {showModal ? (
         <LoginModal
+          fromNav={'home'}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}

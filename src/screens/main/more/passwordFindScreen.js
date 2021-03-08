@@ -26,6 +26,7 @@ import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const PasswordFindScreen = (props) => {
   const [idText, setIdText] = React.useState(''); //아이디
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -92,6 +93,7 @@ const PasswordFindScreen = (props) => {
             props.navigation.navigate('PasswordFind2', {
               phoneNumber: phoneNumber,
               idText: idText,
+              fromNav: props.route.params.fromNav,
             });
           } else {
             setIsLoading(false);
@@ -127,6 +129,9 @@ const PasswordFindScreen = (props) => {
   }, [minutes, seconds]);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>

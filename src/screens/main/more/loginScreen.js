@@ -1,11 +1,17 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import BottomSignUpButton from '../../../components/More/SignUp/bottomSignUpButton.js';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
@@ -20,6 +26,7 @@ import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import {prototype} from 'react-native/Libraries/Image/ImageBackground';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const LoginScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -66,8 +73,7 @@ const LoginScreen = (props) => {
             props.updateLocation(result.data[0].loginData.location);
             props.update_id(result.data[0].loginData._id);
             props.updateData(result.data[0].loginData);
-            props.navigation.navigate('More');
-            props.navigation.navigate('HomeTab');
+            props.navigation.goBack();
           } else {
             setIsLoading(false);
             //로그인이 안됐어
@@ -86,9 +92,6 @@ const LoginScreen = (props) => {
   };
   return (
     <View>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={'#FFFFFF'}></StatusBar>
       <DismissKeyboard>
         <SafeAreaView
           style={{
@@ -96,6 +99,13 @@ const LoginScreen = (props) => {
             width: Width_convert(375),
             height: Height_convert(812),
           }}>
+          {Platform.OS === 'android' &&
+          props.route.params.fromNav === 'home' ? (
+            <View style={{height: StatusBarHeight}}></View>
+          ) : null}
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor={'#FFFFFF'}></StatusBar>
           <View
             style={{
               height: Height_convert(170),
@@ -271,7 +281,9 @@ const LoginScreen = (props) => {
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => {
-                      props.navigation.navigate('IdFind');
+                      props.navigation.navigate('IdFind', {
+                        fromNav: props.route.params.fromNav,
+                      });
                     }}
                     style={{
                       marginRight: Width_convert(5),
@@ -303,7 +315,9 @@ const LoginScreen = (props) => {
                       paddingRight: Width_convert(10),
                     }}
                     onPress={() => {
-                      props.navigation.navigate('PasswordFind');
+                      props.navigation.navigate('PasswordFind', {
+                        fromNav: props.route.params.fromNav,
+                      });
                     }}>
                     <Text
                       style={{

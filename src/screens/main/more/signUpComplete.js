@@ -8,6 +8,7 @@ import BottomSignUpButton from '../../../components/More/SignUp/bottomSignUpButt
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpComplete = (props) => {
   const insets = useSafeAreaInsets();
   const [idText, setIdText] = React.useState('');
@@ -22,6 +23,9 @@ const SignUpComplete = (props) => {
           width: Width_convert(375),
           height: Height_convert(812),
         }}>
+        {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+          <View style={{height: StatusBarHeight}}></View>
+        ) : null}
         <View
           style={{
             marginTop: Height_convert(170),
@@ -113,7 +117,9 @@ const SignUpComplete = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.navigation.navigate('Login');
+                    props.navigation.navigate('Login', {
+                      fromNav: props.route.params.fromNav,
+                    });
                   }}
                   style={{
                     width: Width_convert(337),

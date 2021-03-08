@@ -21,6 +21,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const PasswordFindScreen2 = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState(
     props.route.params.phoneNumber,
@@ -77,7 +78,9 @@ const PasswordFindScreen2 = (props) => {
           });
           if (result.data[0].status == 'ok') {
             setIsLoading(false);
-            props.navigation.navigate('Login');
+            props.navigation.navigate('Login', {
+              fromNav: props.route.params.fromNav,
+            });
           } else {
             setIsLoading(false);
             //없어
@@ -96,6 +99,9 @@ const PasswordFindScreen2 = (props) => {
   }
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>

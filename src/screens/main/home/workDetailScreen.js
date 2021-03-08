@@ -43,6 +43,7 @@ import Domain2 from '../../../../key/Domain2.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const WorkDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -112,6 +113,7 @@ const WorkDetailScreen = (props) => {
                 props.route.params.item.userCount =
                   props.route.params.item.userCount - 1;
                 setPickCount(pickCount - 1);
+                setToastShow(2);
               } else {
                 //없으니 추가
                 props.route.params.item.info_user_id.push({
@@ -120,6 +122,7 @@ const WorkDetailScreen = (props) => {
                 props.route.params.item.userCount =
                   props.route.params.item.userCount + 1;
                 setPickCount(pickCount + 1);
+                setToastShow(1);
               }
               forceUpdate();
             } else {
@@ -164,6 +167,20 @@ const WorkDetailScreen = (props) => {
       console.log(err);
     }
   };
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
+  const [toastShow, setToastShow] = React.useState(0);
+  React.useEffect(() => {
+    if (toastShow == 1) {
+      showToast('❤️ 찜한 작업에 추가', 700);
+    } else if (toastShow != 0) {
+      showToast('찜이 해제되었습니다', 700);
+    }
+  }, [toastShow]);
   return (
     <>
       <StatusBar
@@ -188,7 +205,7 @@ const WorkDetailScreen = (props) => {
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
           scrollEventThrottle={16}
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={[2]}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: offset}}}],
             {
@@ -223,6 +240,10 @@ const WorkDetailScreen = (props) => {
           {/*작업 이름부터 가격까지 시작 */}
           <View
             style={{
+              zIndex: 2,
+              borderTopWidth: 1,
+              borderBottomWidth: 1,
+              borderColor: 'blue',
               width: Width_convert(375),
               height: Width_convert(171),
               justifyContent: 'center',
@@ -390,45 +411,17 @@ const WorkDetailScreen = (props) => {
           </View>
           {/*작업 이름부터 가격까지 끝 */}
           {/*상단슬라이더부터 가격까지 끝 */}
-          {/*버튼 위치 맞추기 위함 시작 */}
-          <View
-            style={{
-              width: Width_convert(375),
-              //height: Height_convert(0),
-              marginTop: -Height_convert(94),
-            }}></View>
-          {/*버튼 위치 맞추기 위함 끝 */}
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
-            {/*터치 안되는곳 강제로 터치 추가맞춤 시작*/}
-            <View
+            {/* <View
               style={{
-                width: Width_convert(375),
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderColor: 'red',
+
+                zIndex: 1,
                 height: Height_convert(94),
-                flexDirection: 'row',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(300),
-                  height: Height_convert(94),
-                }}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={() => {
-                    props.navigation.navigate('ReviewView', {
-                      item: props.route.params.item,
-                      type: 'work',
-                    });
-                  }}
-                  style={{
-                    marginTop: -Width_convert(10),
-                    marginLeft: Width_convert(60),
-                    width: Width_convert(60),
-                    height: Height_convert(30),
-                  }}></TouchableOpacity>
-              </View>
-            </View>
-            {/*터치 안되는곳 강제로 터치 추가맞춤 끝*/}
+              }}></View> */}
             <View
               style={{
                 width: Width_convert(375),
@@ -612,6 +605,20 @@ const WorkDetailScreen = (props) => {
           }></BottomButton>
         {/*하단 카카오채팅 전화예약버튼 끝*/}
       </View>
+      <Toast
+        ref={(toast) => (toastRef = toast)}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
       {workConsultingModal ? (
         <WorkConsultingModal
           storeNumber={props.route.params.item.info_store[0].store_number}
@@ -629,6 +636,7 @@ const WorkDetailScreen = (props) => {
       ) : null}
       {showModal ? (
         <LoginModal
+          fromNav={'home'}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}

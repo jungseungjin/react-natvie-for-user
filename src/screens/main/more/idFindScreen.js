@@ -26,6 +26,7 @@ import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const IdFindScreen = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
@@ -99,9 +100,11 @@ const IdFindScreen = (props) => {
           });
           if (result.data[0].status == 'ok') {
             setIsLoading(false);
+
             props.navigation.navigate('IdFindComplete', {
               idText: result.data[0].iu_id,
               idRegdate: result.data[0].iu_regDate,
+              fromNav: props.route.params.fromNav,
             });
           } else {
             setIsLoading(false);
@@ -121,6 +124,9 @@ const IdFindScreen = (props) => {
   }
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>

@@ -14,6 +14,7 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 
 const SignUp = (props) => {
   const [allAgree, setAllAgree] = React.useState(false);
@@ -29,6 +30,9 @@ const SignUp = (props) => {
   const [agree6, setAgree6] = React.useState(false); //투닝 혜택 알림 동의
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
@@ -125,7 +129,10 @@ const SignUp = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('SignUpTerms', {agreeNumber: 1});
+              props.navigation.navigate('SignUpTerms', {
+                agreeNumber: 1,
+                fromNav: props.route.params.fromNav,
+              });
             }}>
             <Text
               style={{
@@ -238,7 +245,10 @@ const SignUp = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('SignUpTerms', {agreeNumber: 3});
+              props.navigation.navigate('SignUpTerms', {
+                agreeNumber: 3,
+                fromNav: props.route.params.fromNav,
+              });
             }}>
             <Text
               style={{
@@ -294,7 +304,10 @@ const SignUp = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('SignUpTerms', {agreeNumber: 4});
+              props.navigation.navigate('SignUpTerms', {
+                agreeNumber: 4,
+                fromNav: props.route.params.fromNav,
+              });
             }}>
             <Text
               style={{
@@ -350,7 +363,10 @@ const SignUp = (props) => {
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => {
-              props.navigation.navigate('SignUpTerms', {agreeNumber: 5});
+              props.navigation.navigate('SignUpTerms', {
+                agreeNumber: 5,
+                fromNav: props.route.params.fromNav,
+              });
             }}>
             <Text
               style={{
@@ -468,6 +484,7 @@ const SignUp = (props) => {
                 agree4: agree4,
                 agree5: agree5,
                 agree6: agree6,
+                fromNav: props.route.params.fromNav,
               });
             }
           }}

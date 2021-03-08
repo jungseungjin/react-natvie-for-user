@@ -17,6 +17,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import moment from 'moment';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const IdFindScreen = (props) => {
   const [idText, setIdText] = React.useState(props.route.params.idText);
   const [idRegdate, setIdRegdate] = React.useState(
@@ -26,6 +27,9 @@ const IdFindScreen = (props) => {
   console.log(idRegdate);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
@@ -125,7 +129,9 @@ const IdFindScreen = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                props.navigation.navigate('Login');
+                props.navigation.navigate('Login', {
+                  fromNav: props.route.params.fromNav,
+                });
               }}
               style={{
                 width: Width_convert(337),
@@ -149,7 +155,9 @@ const IdFindScreen = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                props.navigation.navigate('PasswordFind');
+                props.navigation.navigate('PasswordFind', {
+                  fromNav: props.route.params.fromNav,
+                });
               }}
               style={{
                 width: Width_convert(337),

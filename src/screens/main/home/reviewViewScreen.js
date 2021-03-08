@@ -442,6 +442,7 @@ const ReviewView = (props) => {
         ) : null}
         {loginModal ? (
           <LoginModal
+            fromNav={'home'}
             ShowModalChangeValue={LoginModalChangeValue}
             navigation={props.navigation}
             //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}

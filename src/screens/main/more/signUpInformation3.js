@@ -22,6 +22,7 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import IsLoading from '../../../components/ActivityIndicator';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params.agree);
   const [phoneNumber, setPhoneNumber] = React.useState(
@@ -91,10 +92,18 @@ const SignUpInformation = (props) => {
   };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        fromNav={
+          Platform.OS === 'android' && props.route.params.fromNav === 'home'
+            ? 'home'
+            : null
+        }
         Title={'회원가입3'}
         navigation={props.navigation}
         phoneNumber={phoneNumber}

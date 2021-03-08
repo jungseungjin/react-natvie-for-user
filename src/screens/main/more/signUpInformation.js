@@ -22,6 +22,7 @@ import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params);
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -79,10 +80,18 @@ const SignUpInformation = (props) => {
   }, [minutes, seconds]);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        fromNav={
+          Platform.OS === 'android' && props.route.params.fromNav === 'home'
+            ? 'home'
+            : null
+        }
         Title={'회원가입1'}
         navigation={props.navigation}
         next={next}

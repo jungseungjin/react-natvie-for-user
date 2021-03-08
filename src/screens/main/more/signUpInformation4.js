@@ -37,6 +37,7 @@ import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpInformation = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
     if (props.route?.params?.PickLocation) {
@@ -315,7 +316,9 @@ const SignUpInformation = (props) => {
           });
           if (result.data[0].status == 'ok') {
             setIsLoading(false);
-            props.navigation.navigate('SignUpComplete');
+            props.navigation.navigate('SignUpComplete', {
+              fromNav: props.route.params.fromNav,
+            });
           } else {
             setIsLoading(false);
             //가입이 안됐어
@@ -334,10 +337,18 @@ const SignUpInformation = (props) => {
   };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        fromNav={
+          Platform.OS === 'android' && props.route.params.fromNav === 'home'
+            ? 'home'
+            : null
+        }
         Title={'회원가입4'}
         SignUpBack={SignUpBack}
         navigation={props.navigation}
@@ -780,6 +791,7 @@ const SignUpInformation = (props) => {
                   onPress={() => {
                     props.navigation.navigate('MapSearch_more', {
                       from: 'SignUpInformation4',
+                      fromNav: props.route.params.fromNav,
                     });
                   }}
                   style={{

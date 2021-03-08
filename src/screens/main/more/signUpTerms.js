@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -17,7 +18,7 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
-import {ScrollView} from 'react-native-gesture-handler';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const SignUpTerms = (props) => {
   const [termsText, setTermsText] = React.useState('');
   const [networkModal, setNetworkModal] = React.useState(false);
@@ -57,6 +58,9 @@ const SignUpTerms = (props) => {
   }, []);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
+        <View style={{height: StatusBarHeight}}></View>
+      ) : null}
       <StatusBar
         barStyle={networkModal ? 'light-content' : 'dark-content'}
         backgroundColor={

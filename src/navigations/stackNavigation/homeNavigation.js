@@ -17,6 +17,17 @@ import WorkVideo from '../../screens/main/home/workVideoScreen.js';
 import WorkVideoList from '../../screens/main/home/workVideoListScreen.js';
 import SignUp from '../../screens/main/more/signUpScreen.js';
 import RecentWork from '../../screens/main/more/recentWorkScreen.js';
+import SignUpTerms from '../../screens/main/more/signUpTerms.js';
+import SignUpInformation from '../../screens/main/more/signUpInformation.js';
+import SignUpInformation2 from '../../screens/main/more/signUpInformation2.js';
+import SignUpInformation3 from '../../screens/main/more/signUpInformation3.js';
+import SignUpInformation4 from '../../screens/main/more/signUpInformation4.js';
+import IdFind from '../../screens/main/more/idFindScreen.js';
+import IdFindComplete from '../../screens/main/more/idFindCompleteScreen.js';
+import PasswordFind from '../../screens/main/more/passwordFindScreen.js';
+import PasswordFind2 from '../../screens/main/more/passworkFindScreen2.js';
+import SignUpComplete from '../../screens/main/more/signUpComplete.js';
+import Login from '../../screens/main/more/loginScreen.js';
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -139,6 +150,94 @@ const HomeNavigator = (props) => {
         component={RecentWork}
         initialParams={{}}
         options={{}}
+      />
+      <Stack.Screen
+        name="SignUpTerms"
+        component={SignUpTerms}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation"
+        component={SignUpInformation}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation2"
+        component={SignUpInformation2}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation3"
+        component={SignUpInformation3}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpInformation4"
+        component={SignUpInformation4}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpComplete"
+        component={SignUpComplete}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="IdFind"
+        component={IdFind}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="IdFindComplete"
+        component={IdFindComplete}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PasswordFind"
+        component={PasswordFind}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PasswordFind2"
+        component={PasswordFind2}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );

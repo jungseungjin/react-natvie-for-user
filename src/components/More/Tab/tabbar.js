@@ -239,6 +239,7 @@ const TabBar = (props) => {
                   props.navigation.navigate('SignUpInformation2', {
                     phoneNumber: props.phoneNumber,
                     agree: props.agree,
+                    fromNav: props.fromNav || null,
                   });
                 }
               } else if (props.Title == '회원가입2') {
@@ -250,6 +251,7 @@ const TabBar = (props) => {
                     pickModel: props.pickModel,
                     pickModelDetail: props.pickModelDetail,
                     agree: props.agree,
+                    fromNav: props.fromNav || null,
                   });
                 }
               } else if (props.Title == '회원가입3') {
@@ -262,6 +264,7 @@ const TabBar = (props) => {
                     name: props.name,
                     email: props.email,
                     agree: props.agree,
+                    fromNav: props.fromNav || null,
                   });
                 }
               } else if (props.Title == '회원가입4') {

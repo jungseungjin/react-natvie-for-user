@@ -125,7 +125,11 @@ const LoginModal = (props) => {
               activeOpacity={1}
               onPress={() => {
                 props.ShowModalChangeValue(false);
-                props.navigation.navigate('Login');
+                if (props.fromNav) {
+                  props.navigation.navigate('Login', {fromNav: 'home'});
+                } else {
+                  props.navigation.navigate('Login');
+                }
               }}
               style={{
                 width: Width_convert(271),
@@ -148,7 +152,11 @@ const LoginModal = (props) => {
               activeOpacity={1}
               onPress={() => {
                 props.ShowModalChangeValue(false);
-                props.navigation.navigate('SignUp');
+                if (props.fromNav) {
+                  props.navigation.navigate('SignUp', {fromNav: 'home'});
+                } else {
+                  props.navigation.navigate('SignUp');
+                }
               }}
               style={{
                 marginTop: Width_convert(9),
