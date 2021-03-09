@@ -39,6 +39,7 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
@@ -66,34 +67,19 @@ const InfoScreen = (props) => {
   //비밀번호수정
   const ChangePassword = () => {
     try {
-      if (reduexState.loginDataCheck.login.login == false) {
+      if (password.length === 0) {
+        //비밀번호 변경시키지않음
+        setPasswordChk('');
         return false;
       }
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          let url = Domain2 + 'signUp/passwordFind/passworkchange';
-          let data = {
-            _id: reduexState.loginDataCheck.login.data._id,
-            password: password,
-          };
-          let result = await axios.post(url, data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (result.data[0].message == 'ok') {
-            await Keychain.resetGenericPassword();
-            setPasswordChangeModal(true);
-            props.updateLoginStatus(false);
-            props.updateIuCar([]);
-            props.updateLocation({});
-            props.update_id('');
-            props.updateData({}); //디바이스정보라도 넣어줘야??
-          }
-        } else {
-          setNetworkModal(true);
-        }
-      });
+      let Pass = isPassword(password);
+      if (Pass) {
+        //비밀번호 변경됨
+        setPasswordChk(true);
+      } else {
+        //빨간글씨
+        setPasswordChk(false);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -184,6 +170,7 @@ const InfoScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
+  const PageChangeValue = (text) => setPage(text);
   const [saveDataClick, setSaveDataClick] = React.useState(0);
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState('domestic');
@@ -206,19 +193,27 @@ const InfoScreen = (props) => {
   const [nickname, setNickname] = React.useState(
     reduexState.loginDataCheck.login.data.iu_nickname,
   );
+  //저장눌러서 뒷단 다녀오고 1이면 동일한닉네임 2는 닉네임 형식이 안맞음   2번은 미리 검사하자
+  const [nicknameChk, setNicknameChk] = React.useState(0);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [location, setLocation] = React.useState({});
+  const LocationChangeValue = (Object) => setLocation(Object);
   const [car, setCar] = React.useState(
     reduexState.loginDataCheck?.login?.data?.iu_car,
   );
+  const [carModal, setCarModal] = React.useState(false);
+  const CarModalChangeValue = (text) => setCarModal(text);
+
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
-
-  const PageChangeValue = (text) => setPage(text);
 
   //차량데이터 추가 or 변경
   const AddCarData = () => {
     let prevData = car.slice();
+    if (!pickBrand.brand || !pickModel.model || !pickModelDetail.model_detail) {
+      setCarModal(true);
+      return false;
+    }
     if (page == 'carAdd') {
       //차량정보 추가
       prevData.push({
@@ -261,7 +256,25 @@ const InfoScreen = (props) => {
     prevData[index] = changeData2;
     setCar(prevData);
   };
+
+  // await Keychain.resetGenericPassword();
+  // setPasswordChangeModal(true);
+  // props.updateLoginStatus(false);
+  // props.updateIuCar([]);
+  // props.updateLocation({});
+  // props.update_id('');
+  // props.updateData({}); //디바이스정보라도 넣어줘야??
   //변경된값 저장
+
+  //비밀번호 변경여부 추가 확인넣어야함
+  //비밀번호 변경됨
+  //setPasswordChk(true);
+
+  //비밀번호 변경하려고했으나 형식에 맞지 않음
+  //setPasswordChk(false);
+
+  //비밀번호 변경하지 않음
+  //setPasswordChk('');
   const saveData = () => {
     //저장 눌러서 데이터 수정하기.
     try {
@@ -712,6 +725,7 @@ const InfoScreen = (props) => {
                       </Text>
                       <Text
                         style={{
+                          width: Width_convert(300),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(16),
@@ -764,6 +778,40 @@ const InfoScreen = (props) => {
                         }}></TextInput>
                     </View>
                   </View>
+                  {nicknameChk === 1 || nicknameChk === 2 ? (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        marginTop: -Width_convert(17),
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#FFFFFF',
+                          marginRight: Width_convert(13),
+                        }}>
+                        닉네임
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '400',
+                          fontSize: Font_normalize(9),
+                          color: '#FF0202',
+                        }}>
+                        {nicknameChk === 1
+                          ? '동일한 닉네임이 존재합니다.'
+                          : nicknameChk === 2
+                          ? '한글/영문/숫자 2~10자, 띄어쓰기 불가'
+                          : null}
+                      </Text>
+                    </View>
+                  ) : null}
                   {/*닉네임 끝 */}
                   {/*휴대폰번호 시작 */}
                   <View
@@ -780,11 +828,9 @@ const InfoScreen = (props) => {
                         width: Width_convert(375 - 27),
                         height: Width_convert(57),
                         alignItems: 'center',
-                        justifyContent: 'flex-end',
                       }}>
                       <Text
                         style={{
-                          width: Width_convert(70),
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
                           fontSize: Font_normalize(15),
@@ -837,16 +883,17 @@ const InfoScreen = (props) => {
                           width: Width_convert(35),
                           height: Width_convert(20),
                           backgroundColor: '#C1C1C1',
-                          borderRadius: Font_normalize(2),
+                          borderRadius: Font_normalize(4),
                           alignItems: 'center',
-                          justifyContent: 'center',
+                          marginRight: 0,
+                          marginLeft: 'auto',
                         }}>
                         <Text
                           style={{
                             padding: Width_convert(5),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
-                            fontSize: Font_normalize(9),
+                            fontSize: Font_normalize(10),
                             color: '#FFFFFF',
                             textAlign: 'center',
                             textAlignVertical: 'center',
@@ -865,7 +912,6 @@ const InfoScreen = (props) => {
                           width: Width_convert(375 - 27),
                           height: Width_convert(57),
                           alignItems: 'center',
-                          justifyContent: 'flex-end',
                         }}>
                         <Text
                           style={{
@@ -924,7 +970,7 @@ const InfoScreen = (props) => {
                             width: Width_convert(56),
                             height: Width_convert(20),
                             backgroundColor: '#C1C1C1',
-                            borderRadius: Font_normalize(2),
+                            borderRadius: Font_normalize(4),
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}>
@@ -933,7 +979,7 @@ const InfoScreen = (props) => {
                               padding: Width_convert(5),
                               fontFamily: Fonts?.NanumSqureRegular || null,
                               fontWeight: '700',
-                              fontSize: Font_normalize(9),
+                              fontSize: Font_normalize(10),
                               color: '#FFFFFF',
                               textAlign: 'center',
                               textAlignVertical: 'center',
@@ -961,7 +1007,6 @@ const InfoScreen = (props) => {
                         width: Width_convert(375 - 27),
                         height: Width_convert(57),
                         alignItems: 'center',
-                        justifyContent: 'flex-end',
                       }}>
                       <Text
                         style={{
@@ -993,29 +1038,30 @@ const InfoScreen = (props) => {
                           if (handleLocationPermission(Platform.OS)) {
                             CurrentPosition(); //경위도 찍고
                           } else {
-                            //퍼미션 허용해달라고 모달띄우기
-                            setLocationModal(true);
+                            //권한설정해달라는 모달
+                            setShowModal(true);
                           }
                         }}
                         style={{
                           width: Width_convert(35),
                           height: Width_convert(20),
                           backgroundColor: '#C1C1C1',
-                          borderRadius: Font_normalize(2),
+                          borderRadius: Font_normalize(4),
                           alignItems: 'center',
-                          justifyContent: 'center',
+                          marginRight: 0,
+                          marginLeft: 'auto',
                         }}>
                         <Text
                           style={{
                             padding: Width_convert(5),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
-                            fontSize: Font_normalize(9),
+                            fontSize: Font_normalize(10),
                             color: '#FFFFFF',
                             textAlign: 'center',
                             textAlignVertical: 'center',
                           }}>
-                          재인증
+                          재설정
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -1104,7 +1150,7 @@ const InfoScreen = (props) => {
                                     fontFamily:
                                       Fonts?.NanumSqureRegular || null,
                                     fontWeight: '700',
-                                    fontSize: Font_normalize(9),
+                                    fontSize: Font_normalize(10),
                                     color: '#C1C1C1',
                                     paddingTop: Width_convert(5),
                                     paddingBottom: Width_convert(5),
@@ -1166,9 +1212,10 @@ const InfoScreen = (props) => {
                                 width: Width_convert(35),
                                 height: Width_convert(20),
                                 backgroundColor: '#EF6666',
-                                borderRadius: Font_normalize(2),
-                                alignItems: 'center',
+                                borderRadius: Font_normalize(4),
                                 justifyContent: 'center',
+                                marginRight: 0,
+                                marginLeft: 'auto',
                               }}>
                               <Text
                                 style={{
@@ -1176,6 +1223,7 @@ const InfoScreen = (props) => {
                                   fontWeight: '700',
                                   fontSize: Font_normalize(10),
                                   color: '#FFFFFF',
+                                  textAlign: 'center',
                                 }}>
                                 삭제
                               </Text>
@@ -1257,7 +1305,6 @@ const InfoScreen = (props) => {
                         width: Width_convert(375 - 27),
                         height: Width_convert(57),
                         alignItems: 'center',
-                        justifyContent: 'flex-end',
                       }}>
                       <Text
                         style={{
@@ -1278,11 +1325,17 @@ const InfoScreen = (props) => {
                         autoCorrect={false}
                         secureTextEntry={true}
                         onChangeText={(value) => {
+                          if (value.length === 0) {
+                            //초기값 -> 비밀번호 변경시키지 않음
+                            setPasswordChk('');
+                          }
                           if (value.indexOf(' ') != -1) {
                             value = value.replace(/ /gi, '');
                           }
                           setPassword(value);
-                          setPasswordChk(isPassword(value));
+                        }}
+                        onSubmitEditing={() => {
+                          ChangePassword();
                         }}
                         placeholderStyle={{
                           fontFamily: Fonts?.NanumSqureRegular || null,
@@ -1300,25 +1353,23 @@ const InfoScreen = (props) => {
                       <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
-                          if (passwordChk) {
-                            ChangePassword();
-                          } else {
-                          }
+                          ChangePassword();
                         }}
                         style={{
                           width: Width_convert(35),
                           height: Width_convert(20),
                           backgroundColor: '#C1C1C1',
-                          borderRadius: Font_normalize(2),
+                          borderRadius: Font_normalize(4),
                           alignItems: 'center',
-                          justifyContent: 'center',
+                          marginRight: 0,
+                          marginLeft: 'auto',
                         }}>
                         <Text
                           style={{
                             padding: Width_convert(5),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
-                            fontSize: Font_normalize(9),
+                            fontSize: Font_normalize(10),
                             color: '#FFFFFF',
                             textAlign: 'center',
                             textAlignVertical: 'center',
@@ -1330,15 +1381,15 @@ const InfoScreen = (props) => {
                     {passwordChk === false ? (
                       <View
                         style={{
+                          flexDirection: 'row',
                           marginLeft: Width_convert(16),
                           marginRight: Width_convert(11),
                           width: Width_convert(375 - 27),
-                          flexDirection: 'row',
                           marginTop: -Width_convert(20),
                         }}>
                         <Text
                           style={{
-                            width: Width_convert(58),
+                            width: Width_convert(56),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
                             fontSize: Font_normalize(15),
@@ -1354,7 +1405,7 @@ const InfoScreen = (props) => {
                             fontSize: Font_normalize(9),
                             color: '#FF0202',
                           }}>
-                          잘못된 비밀번호 형식입니다
+                          잘못된 비밀번호 형식입니다.
                         </Text>
                       </View>
                     ) : null}
@@ -1564,7 +1615,7 @@ const InfoScreen = (props) => {
             </DismissKeyboard>
           </KeyboardAvoidingView>
         </>
-      ) : (
+      ) : page == 'mapSearch' ? null : page == 'map' ? null : (
         <>
           <Tabbar
             Title={'차량선택_info'}
@@ -1605,6 +1656,15 @@ const InfoScreen = (props) => {
         //opacity={0.8}
         textStyle={{color: '#FFFFFF'}}
       />
+      {carModal ? (
+        <AlertModal1
+          type={1}
+          ShowModalChangeValue={CarModalChangeValue}
+          navigation={props.navigation}
+          Title={'고객님의 차종을 선택해주세요.'}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AlertModal1>
+      ) : null}
       {passwordChangeModal ? (
         <AlertModal1
           type={1}
@@ -1627,6 +1687,7 @@ const InfoScreen = (props) => {
       ) : null}
       {confirmModal ? (
         <AlertModal1
+          type={1}
           ShowModalChangeValue={ConfirmModalChangeValue}
           navigation={props.navigation}
           Title={'본인인증이 완료되었습니다.'}
@@ -1634,23 +1695,27 @@ const InfoScreen = (props) => {
           CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {locationModal ? (
-        <ButtonTwoModal
-          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+        <AlertModal2
+          type={1}
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요.'}
           navigation={props.navigation}
           ShowModalChangeValue={LocationModalChangeValue}
           LeftButtonTitle={'닫기'}
-          RightButtonTitle={'설정'}></ButtonTwoModal>
+          RightButtonTitle={'설정'}></AlertModal2>
       ) : null}
       {showModal ? (
-        <ButtonTwoModal
+        <AlertModal2
+          type={2}
+          LocationChangeValue={LocationChangeValue}
+          PageChangeValue={PageChangeValue}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={
-            '지역 설정을 위해 고객님의 권한이 필요합니다. 권한을 허용하시겠습니까?'
+            '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?'
           }
           //BottomText={'설정하러가기'}
           LeftButtonTitle={'아니오'}
-          RightButtonTitle={'네'}></ButtonTwoModal>
+          RightButtonTitle={'네'}></AlertModal2>
       ) : null}
       {networkModal ? (
         <AlertModal1

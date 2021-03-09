@@ -59,7 +59,20 @@ const LocationSetting = (props) => {
             width: Width_convert(297),
             height: Width_convert(35),
           }}>
-          <TextInput
+          <Text
+            style={{
+              width: Width_convert(297),
+              height: Width_convert(40),
+              paddingLeft: Width_convert(5),
+              fontFamily: Fonts?.NanumSqureRegular || null,
+              fontSize: Font_normalize(14),
+              fontWeight: '400',
+              color: '#000000',
+              lineHeight: Font_normalize(40),
+            }}>
+            {props.pickLocation?.legalcode}
+          </Text>
+          {/*<TextInput
             editable={false}
             value={props.pickLocation?.legalcode}
             onChangeText={(value) => {}}
@@ -80,7 +93,7 @@ const LocationSetting = (props) => {
               fontWeight: '400',
               color: '#000000',
               lineHeight: Font_normalize(14),
-            }}></TextInput>
+            }}></TextInput> */}
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={1}

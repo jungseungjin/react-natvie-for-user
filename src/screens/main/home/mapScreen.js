@@ -21,6 +21,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from 'react-native';
 
 import NaverMapView, {
@@ -44,6 +45,10 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Geolocation from 'react-native-geolocation-service';
 const MapScreen = (props) => {
+  const [P0, setP0] = React.useState({
+    latitude: parseFloat(props.route.params.PickLocation.y),
+    longitude: parseFloat(props.route.params.PickLocation.x),
+  });
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
@@ -51,17 +56,16 @@ const MapScreen = (props) => {
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
+  const [pageLoading, setPageLoading] = React.useState(0);
   const [searchText, setSearchText] = React.useState('');
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
   const [pickLocation, setPickLocation] = React.useState({
-    latitude: parseFloat(props.route.params.PickLocation.y),
-    longitude: parseFloat(props.route.params.PickLocation.x),
-    legalcode:
-      props.route.params?.PickLocation?.jibunAddress ||
-      props.route.params?.PickLocation?.roadAddress,
-  });
-  const [P0, setP0] = React.useState({
-    latitude: parseFloat(props.route.params.PickLocation.y),
-    longitude: parseFloat(props.route.params.PickLocation.x),
+    // latitude: parseFloat(props.route.params.PickLocation.y),
+    // longitude: parseFloat(props.route.params.PickLocation.x),
+    // legalcode:
+    //   props.route.params?.PickLocation?.jibunAddress ||
+    //   props.route.params?.PickLocation?.roadAddress,
   });
 
   //위치정보사용 퍼미션
@@ -101,7 +105,7 @@ const MapScreen = (props) => {
       (position) => {
         // position.coords.longitude = 126.70528; //지워야함
         // position.coords.latitude = 37.45639; //지워야함
-        setP0({
+        getNaverLocagtion({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
@@ -116,44 +120,59 @@ const MapScreen = (props) => {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
-  const getNaverLocagtion = async (position) => {
+  const getNaverLocagtion = (position) => {
     try {
-      setIsLoading(true);
-      let result = await axios.get(
-        'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
-          position.longitude +
-          ',' +
-          position.latitude +
-          '&orders=legalcode,admcode,addr,roadaddr&&output=json',
-        {
-          headers: {
-            'X-NCP-APIGW-API-KEY-ID': '56kfacm95e',
-            'X-NCP-APIGW-API-KEY': 'cyhAcOnJGtzyYZiQFDcOkWkJcsL5t0FAQ3bJldMR',
-          },
-        },
-      );
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          //setIsLoading(true);
+          let result = await axios.get(
+            'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
+              position.longitude +
+              ',' +
+              position.latitude +
+              '&orders=legalcode,admcode,addr,roadaddr&&output=json',
+            {
+              headers: {
+                'X-NCP-APIGW-API-KEY-ID': '56kfacm95e',
+                'X-NCP-APIGW-API-KEY':
+                  'cyhAcOnJGtzyYZiQFDcOkWkJcsL5t0FAQ3bJldMR',
+              },
+            },
+          );
 
-      //legalcode admcode addr roadaddr
-      //법정동 행정동 지번주소 도로명주소
-      if (result.data.status.message == 'done') {
-        setIsLoading(false);
-        setPickLocation({
-          ...P0,
-          legalcode:
-            result.data.results[0].region.area1.name +
-            ' ' +
-            result.data.results[0].region.area2.name +
-            ' ' +
-            result.data.results[0].region.area3.name,
-        });
-      } else {
-        setIsLoading(false);
-        setPickLocation({
-          ...P0,
-          legalcode: '요청한 데이타의 결과가 없습니다.',
-        });
-        //네이버 맵에 없음
-      }
+          //legalcode admcode addr roadaddr
+          //법정동 행정동 지번주소 도로명주소
+          if (result.data.status.message == 'done') {
+            //setIsLoading(false);
+            setPickLocation({
+              latitude: parseFloat(position.latitude),
+              longitude: parseFloat(position.longitude),
+              legalcode:
+                result.data.results[0].region.area1.name +
+                ' ' +
+                result.data.results[0].region.area2.name +
+                ' ' +
+                result.data.results[0].region.area3.name,
+            });
+            setP0({
+              latitude: parseFloat(position.latitude),
+              longitude: parseFloat(position.longitude),
+            });
+          } else {
+            //setIsLoading(false);
+            setPickLocation({
+              latitude: parseFloat(position.latitude),
+              longitude: parseFloat(position.longitude),
+              legalcode: '요청한 데이타의 결과가 없습니다.',
+            });
+            //네이버 맵에 없음
+          }
+          forceUpdate();
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
     } catch (err) {
       setIsLoading(false);
       console.log(err);
@@ -162,7 +181,8 @@ const MapScreen = (props) => {
   };
   React.useEffect(() => {
     getNaverLocagtion(P0);
-  }, [P0]);
+    setPageLoading(1);
+  }, []);
   return (
     <>
       <View style={{width: '100%', height: '100%', position: 'absolute'}}>
@@ -172,22 +192,32 @@ const MapScreen = (props) => {
           barStyle="dark-content"></StatusBar>
         <NaverMapView
           style={{width: '100%', height: '100%', position: 'absolute'}}
-          center={{...P0, zoom: 16}}
+          center={{
+            latitude: parseFloat(props.route.params.PickLocation.y),
+            longitude: parseFloat(props.route.params.PickLocation.x),
+            zoom: 16,
+          }}
           scaleBar={false}
           zoomControl={false}
           rotateGesturesEnabled={false}
           useTextureView={false}
-          // onTouch={(e) =>
-          //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
-          // }
-          onCameraChange={(e) =>
-            setP0({
-              latitude: parseFloat(e.latitude),
-              longitude: parseFloat(e.longitude),
-            })
-          }
-          //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
-        >
+          //onTouch={(e) => {}}
+          onCameraChange={(e) => {
+            if (Platform.OS === 'ios') {
+              getNaverLocagtion({
+                latitude: parseFloat(e.latitude),
+                longitude: parseFloat(e.longitude),
+              });
+            }
+          }}
+          onMapClick={(e) => {
+            if (Platform.OS === 'android') {
+              getNaverLocagtion({
+                latitude: parseFloat(e.latitude),
+                longitude: parseFloat(e.longitude),
+              });
+            }
+          }}>
           <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />
         </NaverMapView>
         <View
@@ -203,18 +233,24 @@ const MapScreen = (props) => {
               props.navigation.goBack();
             }}
             style={{
-              marginLeft: Width_convert(22),
-              marginRight: Width_convert(15),
-              width: Width_convert(14),
-              height: Height_convert(16),
+              marginRight: Width_convert(25),
+              marginTop: Height_convert(4),
+              padding: Width_convert(5),
+              marginLeft: Width_convert(17),
             }}>
-            <GoBack fill={'#000000'}></GoBack>
+            <GoBack
+              style={{
+                width: Width_convert(14),
+                height: Height_convert(16),
+              }}
+              fill={'#000000'}></GoBack>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             activeOpacity={1}
+            style={{}}
             onPress={() => {
               props.navigation.navigate('MapSearch');
-            }}></TouchableOpacity>
+            }}></TouchableOpacity> */}
         </View>
         <TouchableOpacity
           activeOpacity={1}

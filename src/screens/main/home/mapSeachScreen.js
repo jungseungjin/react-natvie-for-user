@@ -25,6 +25,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Keyboard,
 } from 'react-native';
 
 import NaverMapView, {
@@ -47,7 +48,7 @@ const MapScreen = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          //setIsLoading(true);
           let result = await axios.get(
             'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=' +
               searchText,
@@ -60,12 +61,12 @@ const MapScreen = (props) => {
             },
           );
           if (result.data.addresses) {
-            console.log(result.data);
             setSearchList(result.data.addresses);
+            Keyboard.dismiss();
           } else {
           }
           setSearchOn(true);
-          setIsLoading(false);
+          //setIsLoading(false);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
           setNetworkModal(true);
@@ -226,7 +227,7 @@ const MapScreen = (props) => {
             </Text>
           </View>
         ) : (
-          <ScrollView style={{flex: 1}}>
+          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
             {searchList.map((item) => (
               <View
                 key={item.jibunAddress || item.roadAddress}

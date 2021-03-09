@@ -13,7 +13,7 @@ import Height_convert from '../Height_convert.js';
 import Fonts from '../Fonts.js';
 import Font_normalize from '../Font_normalize.js';
 
-const AlertModal1 = (props) => {
+const AlertModal2 = (props) => {
   return (
     <>
       <View
@@ -152,7 +152,17 @@ const AlertModal1 = (props) => {
                   zIndex: 9999,
                 }}
                 onPress={() => {
-                  props.ShowModalChangeValue(false);
+                  if (
+                    props.Title ===
+                      '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?' &&
+                    props.LocationChangeValue
+                  ) {
+                    //아니오 누름 -> 주소검색창으로 이동
+                    props.ShowModalChangeValue(false);
+                    props.PageChangeValue('mapSearch');
+                  } else {
+                    props.ShowModalChangeValue(false);
+                  }
                 }}>
                 <Text
                   style={[
@@ -234,4 +244,4 @@ const AlertModal1 = (props) => {
   );
 };
 
-export default AlertModal1;
+export default AlertModal2;

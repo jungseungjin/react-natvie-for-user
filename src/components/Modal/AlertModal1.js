@@ -55,6 +55,10 @@ const AlertModal1 = (props) => {
                 ? {
                     height: Width_convert(231),
                   }
+                : props.type === 3
+                ? {
+                    height: Width_convert(185),
+                  }
                 : {},
             ]}>
             <View
@@ -93,7 +97,7 @@ const AlertModal1 = (props) => {
                       ? {
                           textAlign: 'center',
                         }
-                      : props.type === 2
+                      : props.type === 2 || props.type === 3
                       ? {
                           width: Width_convert(289),
                         }
@@ -110,15 +114,23 @@ const AlertModal1 = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.ShowModalChangeValue(false);
-                    props.navigation.navigate('Setting');
+                    if (
+                      props.Title ===
+                      "'홈화면 > 설정' 에서 지역설정을 해주셔야만 가까운 순 필터 사용이 가능합니다."
+                    ) {
+                      props.ShowModalChangeValue(false);
+                      props.navigation.navigate('Setting');
+                    } else {
+                      props.ShowModalChangeValue(false);
+                      props.navigation.navigate('Setting');
+                    }
                   }}
                   style={{
                     borderBottomWidth: 1,
                     borderBottomColor: '#946AEF',
-                    marginTop: Height_convert(6),
-                    marginLeft: Width_convert(18),
-                    marginRight: 'auto',
+                    marginTop: Height_convert(14),
+                    marginRight: Width_convert(27),
+                    marginLeft: 'auto',
                   }}>
                   <Text
                     style={{

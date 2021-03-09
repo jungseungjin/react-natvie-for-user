@@ -41,23 +41,47 @@ const SignUpInformation = (props) => {
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
+
+  const [verificationId, setVerificationId] = React.useState('');
+
+  const [user, setUser] = React.useState();
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
   async function signInWithPhoneNumber(text) {
     //3분카운트 들어가야함
     try {
       var number = text.replace(/[^0-9]/g, '');
       const confirmation = await auth().signInWithPhoneNumber('+82' + number);
+      console.log(confirmation);
       setConfirm(confirmation);
+      setVerificationId(confirmation._verificationId);
+      auth().onAuthStateChanged(onAuthStateChanged);
     } catch (err) {
       console.log(err);
     }
   }
 
-  async function confirmCode(code) {
+  async function confirmCode(verificationId, code) {
     try {
-      await confirm.confirm(code);
+      console.log(code);
+      console.log(user);
+      if (user) {
+      } else {
+        //await confirm.confirm(code);
+        const credential = auth.PhoneAuthProvider.credential(
+          verificationId,
+          code,
+        );
+      }
+      await auth().signInWithCredential(credential);
+
       setConfirmChk(true);
       setNext(true);
     } catch (error) {
+      console.log(error);
       setConfirmChk(false);
       setNext(false);
     }
@@ -129,6 +153,7 @@ const SignUpInformation = (props) => {
             value={phoneNumber}
             keyboardType={'number-pad'}
             onChangeText={(value) => {
+              console.log(value);
               PhoneNumberChangeValue(value);
             }}
             style={{
@@ -173,9 +198,10 @@ const SignUpInformation = (props) => {
                 keyboardType={'number-pad'}
                 value={authNumber}
                 onChangeText={(value) => {
+                  console.log(value);
                   if (value.length == 6) {
                     console.log(`ㅇㅣㄴ증번호는 : ${value}`);
-                    confirmCode(value);
+                    //confirmCode(value);
                   }
                   if (value.length > 6) {
                   } else {
@@ -217,6 +243,12 @@ const SignUpInformation = (props) => {
                 </Text>
               )}
             </View>
+            <TouchableOpacity
+              onPress={() => {
+                confirmCode(verificationId, authNumber);
+              }}>
+              <Text>인전ㅇ자릅지ㅏㄹㅈㄹ</Text>
+            </TouchableOpacity>
             <View style={{marginTop: Height_convert(7)}}>
               <Text
                 style={{
