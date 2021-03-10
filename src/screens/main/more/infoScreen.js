@@ -56,6 +56,10 @@ import fs from 'react-native-fs';
 import base64_arraybuffer from 'base64-arraybuffer';
 import {Braket} from 'aws-sdk';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import {LogBox} from 'react-native';
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 const InfoScreen = (props) => {
   //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
   //저장을 해야 값이 변경됨.
@@ -95,6 +99,15 @@ const InfoScreen = (props) => {
       asValue.length > 7 &&
       asValue.length < 21
     ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function isNickName(asValue) {
+    var regExp = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
+    if (regExp.test(asValue) && asValue.length > 1 && asValue.length < 9) {
       return true;
     } else {
       return false;
@@ -157,16 +170,16 @@ const InfoScreen = (props) => {
     }
   };
 
-  let toastRef;
-  const showToast = (text, time) => {
-    if (toastRef === null) {
-      console.log('gggg');
-    } else {
-      toastRef.show(text, time, () => {
-        // something you want to do at close
-      });
-    }
-  };
+  // let toastRef;
+  // const showToast = (text, time) => {
+  //   if (toastRef === null) {
+  //     console.log('gggg');
+  //   } else {
+  //     toastRef.show(text, time, () => {
+  //       // something you want to do at close
+  //     });
+  //   }
+  // };
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
@@ -277,6 +290,17 @@ const InfoScreen = (props) => {
   //setPasswordChk('');
   const saveData = () => {
     //저장 눌러서 데이터 수정하기.
+    //닉네임변경여부 확인, 닉네임 형식확인해서 틀리면 리턴하고 빨간줄,
+    //휴대폰번호 변경여부 확인,
+    //비밀번호 변경여부 확인
+    //지역변경여부 확인
+    //차량데이터 변경여부 확인
+    //유저 이미지 변경여부 확인
+    //해서 뒷단에서 변경
+    // 변경실패 - 닉네임때문이면 닉네임안내문구나오기  이거말고는 통신상태 이외에는 없을듯??
+    // 변경성공 -
+    //  비밀번호가 변경되었으면 모달띄우고 로그아웃시키고 로그인화면으로 / 비밀번호가 변경되지 않았으면 뒤로가기에 정보변경안내토스트
+
     try {
       if (reduexState.loginDataCheck.login.login == false) {
         //로그아웃상태면 아무것도 하지 않음.
@@ -294,6 +318,11 @@ const InfoScreen = (props) => {
           if (nickname.length > 0) {
             //닉네임에 값이 들어가있으면
             data.iu_nickname = nickname.trim();
+            let chkNinkname = isNickName(nickname.trim());
+            if (!chkNinkname) {
+              setNicknameChk(2);
+              return false;
+            }
           } else {
             //값이 없으면 원래값
             data.iu_nickname = reduexState.loginDataCheck.login.data.iu_nickname.trim();
@@ -310,30 +339,69 @@ const InfoScreen = (props) => {
             data.location = reduexState.loginDataCheck.login.data.location;
           }
           if (confirmChk) {
-            //휴대폰 인증이 되지 않았으면
+            //휴대폰 인증이 된거면 변호 변경
             data.iu_phone = phoneNumber.trim();
           } else {
             //원래값
             data.iu_phone = reduexState.loginDataCheck.login.data.iu_phone.trim();
           }
+          if (passwordChk === '') {
+            //비밀번호 변경시키지않음
+          } else if (passwordChk === true) {
+            //비밀번호 변경됨
+            let Pass = isPassword(password);
+            if (Pass) {
+              //비밀번호 변경됨
+              data.password = password;
+            } else {
+              //빨간글씨
+              setPasswordChk(false);
+              return false;
+            }
+          } else if (passwordChk === false) {
+            //비밀번호 변경할수없음 -> 비밀번호 변경시키지않음
+          }
+
           let url = Domain2 + 'info/changedata';
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data[0].status == 'ok' && data.password) {
+            //모달창
+            //비밀번호 변경 ->로그아웃, 모달창 띄우기 모달창에서 로그인으로 이동시키기
+            await Keychain.resetGenericPassword();
+            setPasswordChangeModal(true);
+            props.updateLoginStatus(false);
+            props.updateIuCar([]);
+            props.updateLocation({});
+            props.update_id('');
+            props.updateData({}); //디바이스정보라도 넣어줘야??
+          } else if (result.data[0].status == 'ok') {
+            //뒤로가서 토스트 해야됨
+            //페이지 뒤로가서 토스트메시지 띄우기-> 리덕스 사용??
             props.updateIuCar(result.data[0].result.iu_car);
             props.updateLocation(result.data[0].result.location);
             props.updateData(result.data[0].result);
-            let newClick = saveDataClick + 1;
-            setSaveDataClick(newClick);
-            forceUpdate();
+            props.toastMessage('내정보가 저장되었습니다.');
+            props.route.params.toastRef.show('내정보가 저장되었습니다.', 1000);
+            props.navigation.goBack();
             //변경되었으니 리덕스에 값도 변경시키기
             //props.navigation.goBack();
             //props.navigation.navigate('Home');
             //showToast('내정보가 저장되었습니다.', 1000);
+          } else if (
+            result.data[0].status == 'no' &&
+            result.data[0].message == '동일한 닉네임이 존재합니다.'
+          ) {
+            //ok
+            setNicknameChk(1);
+            return false;
           } else {
+            let newClick = saveDataClick + 1;
+            setSaveDataClick(newClick);
+            forceUpdate();
           }
         } else {
           setNetworkModal(true);
@@ -443,7 +511,7 @@ const InfoScreen = (props) => {
   }
   React.useEffect(() => {
     if (saveDataClick > 0) {
-      showToast('내정보가 저장되었습니다.', 1000);
+      showToast('잠시 후 다시 시도해주세요.', 1000);
     }
   }, [saveDataClick]);
   React.useEffect(() => {
@@ -614,7 +682,7 @@ const InfoScreen = (props) => {
         <>
           <Tabbar
             Title={'내정보'}
-            toastRef={toastRef}
+            // toastRef={toastRef}
             navigation={props.navigation}
             saveData={saveData}></Tabbar>
           <KeyboardAvoidingView
@@ -1640,7 +1708,7 @@ const InfoScreen = (props) => {
             }></CarSetting>
         </>
       )}
-      <Toast
+      {/* <Toast
         ref={(toast) => {
           toastRef = toast;
         }}
@@ -1655,7 +1723,7 @@ const InfoScreen = (props) => {
         position="center"
         //opacity={0.8}
         textStyle={{color: '#FFFFFF'}}
-      />
+      /> */}
       {carModal ? (
         <AlertModal1
           type={1}
@@ -1671,7 +1739,7 @@ const InfoScreen = (props) => {
           ShowModalChangeValue={PasswordChangeModalChangeValue}
           navigation={props.navigation}
           Title={
-            '비밀번호가 변경되어 로그아웃 되었습니다 \n로그인페이지로 이동합니다'
+            '비밀번호가 변경되어 로그아웃 되었습니다.\n 로그인 페이지로 이동합니다.'
           }
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>

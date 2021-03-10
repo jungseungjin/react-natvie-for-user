@@ -20,13 +20,27 @@ import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Menu from '../../../components/More/Menu/Menu.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import {useSelector} from 'react-redux';
+import {connect} from 'react-redux';
+import ActionCreator from '../../../actions';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const MoreScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  React.useEffect(() => {}, []);
+  const [toastRef, setToastRef] = React.useState();
+  const showToast = (text, time) => {
+    if (toastRef === null) {
+      console.log('gggg');
+    } else {
+      toastRef.show(text, time, () => {
+        // something you want to do at close
+      });
+    }
+  };
   return (
     <>
       <StatusBar
@@ -41,7 +55,10 @@ const MoreScreen = (props) => {
           }}>
           <Tabbar Title={'더보기'}></Tabbar>
           {reduexState.loginDataCheck.login.login ? (
-            <Menu Title={'내정보'} navigation={props.navigation}></Menu>
+            <Menu
+              Title={'내정보'}
+              navigation={props.navigation}
+              toastRef={toastRef}></Menu>
           ) : (
             <Menu Title={'로그인하기'} navigation={props.navigation}></Menu>
           )}
@@ -71,6 +88,22 @@ const MoreScreen = (props) => {
             navigation={props.navigation}></Menu> */}
         </View>
       </SafeAreaView>
+      <Toast
+        ref={(toast) => {
+          setToastRef(toast);
+        }}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
       {showModal ? (
         <LoginModal
           ShowModalChangeValue={ShowModalChangeValue}

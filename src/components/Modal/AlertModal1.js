@@ -163,6 +163,12 @@ const AlertModal1 = (props) => {
                 ) {
                   props.ShowModalChangeValue(false);
                   props.navigation.goBack();
+                } else if (
+                  props.Title ==
+                  '비밀번호가 변경되어 로그아웃 되었습니다.\n 로그인 페이지로 이동합니다.'
+                ) {
+                  props.ShowModalChangeValue(false);
+                  props.navigation.navigate('Login');
                 } else {
                   props.ShowModalChangeValue(false);
                 }

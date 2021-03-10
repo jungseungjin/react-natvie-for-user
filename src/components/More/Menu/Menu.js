@@ -22,7 +22,8 @@ const Menu = (props) => {
         activeOpacity={1}
         onPress={() => {
           if (props.Title == '내정보') {
-            props.navigation.navigate('Info');
+            console.log(`props.toastRef = ${props.toastRef}`);
+            props.navigation.navigate('Info', {toastRef: props.toastRef});
           } else if (props.Title == '로그인하기') {
             props.navigation.navigate('Login');
           } else if (props.Title == '후기관리') {
