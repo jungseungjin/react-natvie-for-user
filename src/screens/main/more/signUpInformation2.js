@@ -57,6 +57,8 @@ const SignUpInformation = (props) => {
             : null
         }
         Title={'회원가입2'}
+        Page={page}
+        PageChangeValue={PageChangeValue}
         navigation={props.navigation}
         phoneNumber={phoneNumber}
         pickBrand={pickBrand}
@@ -81,12 +83,34 @@ const SignUpInformation = (props) => {
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-            <View
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                setPage('car');
+              }}
               style={{
                 borderBottomWidth: 1,
                 width: Width_convert(285),
                 height: Width_convert(35),
               }}>
+              {/* <Text
+                style={{
+                  height: Width_convert(40),
+                  paddingLeft: Width_convert(5),
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(14),
+                  fontWeight: '400',
+                  color: '#000000',
+                  lineHeight: Font_normalize(14),
+                }}>
+                {pickModelDetail?.brand == undefined
+                  ? null
+                  : pickModelDetail?.model_detail == undefined
+                  ? pickModelDetail?.brand + ' ' + pickModelDetail?.model
+                  : pickModelDetail?.brand +
+                    ' ' +
+                    pickModelDetail?.model_detail}
+              </Text> */}
               <TextInput
                 placeholder="회원님의 소중한 차량은 무엇인가요?"
                 placeholderTextColor="#CCCCCC"
@@ -120,7 +144,7 @@ const SignUpInformation = (props) => {
                   color: '#000000',
                   lineHeight: Font_normalize(14),
                 }}></TextInput>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {

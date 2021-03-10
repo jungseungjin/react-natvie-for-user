@@ -86,7 +86,15 @@ const TabBar = (props) => {
           activeOpacity={1}
           style={{backgroundColor: '#FFFFFF'}}
           onPress={() => {
-            props.navigation.goBack();
+            if (props.Title == '회원가입2') {
+              if (props.page == 'car') {
+                props.PageChangeValue('SignUp');
+              } else {
+                props.navigation.goBack();
+              }
+            } else {
+              props.navigation.goBack();
+            }
           }}>
           <GoBack
             fill={'#000000'}

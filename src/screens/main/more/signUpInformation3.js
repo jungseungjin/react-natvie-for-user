@@ -23,6 +23,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params.agree);
   const [phoneNumber, setPhoneNumber] = React.useState(
@@ -271,28 +272,31 @@ const SignUpInformation = (props) => {
         ) : null}
       </View>
       {showModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
-          Title={'이미 가입된 중복 메일계정입니다'}
+          Title={'이미 가입된 중복 메일계정입니다.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {nameModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NameModalChangeValue}
           navigation={props.navigation}
-          Title={'회원님의 성함을 입력해주세요'}
+          Title={'회원님의 성함을 입력해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
 
       {isLoading ? <IsLoading></IsLoading> : null}

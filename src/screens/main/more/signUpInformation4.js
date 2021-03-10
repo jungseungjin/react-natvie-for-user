@@ -408,6 +408,7 @@ const SignUpInformation = (props) => {
                     lineHeight: Font_normalize(14),
                   }}
                   style={{
+                    marginTop: Height_convert(10),
                     width: Width_convert(200),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
@@ -452,6 +453,7 @@ const SignUpInformation = (props) => {
                       lineHeight: Font_normalize(14),
                     }}
                     style={{
+                      marginTop: Height_convert(10),
                       width: Width_convert(200),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
@@ -552,9 +554,9 @@ const SignUpInformation = (props) => {
                       color: '#FF0000',
                     }}>
                     {nickNameChk === false
-                      ? '한글+영문+숫자 2~10자, 띄어쓰기 불가'
+                      ? '한글/영문/숫자 2~10자, 띄어쓰기 불가'
                       : nickNameChk2 === false
-                      ? '동일한 닉네임이 존재합니다'
+                      ? '동일한 닉네임이 존재합니다.'
                       : null}
                   </Text>
                 ) : null}
@@ -755,14 +757,21 @@ const SignUpInformation = (props) => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                 }}>
-                <View
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    props.navigation.navigate('MapSearch_more', {
+                      from: 'SignUpInformation4',
+                      fromNav: props.route.params.fromNav,
+                    });
+                  }}
                   style={{
                     borderBottomWidth: 1,
                     width: Width_convert(285),
                     height: Width_convert(35),
                   }}>
                   <TextInput
-                    placeholder="가게와의 거리를 알기 위한 지역설정이 필요해요"
+                    placeholder="가게와의 거리를 알기 위한 지역설정이 필요해요."
                     placeholderTextColor="#CCCCCC"
                     editable={false}
                     value={locationView}
@@ -776,7 +785,7 @@ const SignUpInformation = (props) => {
                       lineHeight: Font_normalize(14),
                     }}
                     style={{
-                      width: Width_convert(250),
+                      width: Width_convert(275),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -785,7 +794,7 @@ const SignUpInformation = (props) => {
                       color: '#000000',
                       lineHeight: Font_normalize(14),
                     }}></TextInput>
-                </View>
+                </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
