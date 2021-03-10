@@ -45,11 +45,16 @@ const SignUpInformation = (props) => {
   const [verificationId, setVerificationId] = React.useState('');
 
   const [user, setUser] = React.useState();
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
+  const ChkAuth = () => {
+    auth().onAuthStateChanged((data) => {
+      console.log(data);
+      setUser({user: data});
+    });
+  };
 
+  React.useEffect(() => {
+    ChkAuth();
+  }, []);
   async function signInWithPhoneNumber(text) {
     //3분카운트 들어가야함
     try {
@@ -58,7 +63,6 @@ const SignUpInformation = (props) => {
       console.log(confirmation);
       setConfirm(confirmation);
       setVerificationId(confirmation._verificationId);
-      auth().onAuthStateChanged(onAuthStateChanged);
     } catch (err) {
       console.log(err);
     }
@@ -66,18 +70,7 @@ const SignUpInformation = (props) => {
 
   async function confirmCode(verificationId, code) {
     try {
-      console.log(code);
-      console.log(user);
-      if (user) {
-      } else {
-        //await confirm.confirm(code);
-        const credential = auth.PhoneAuthProvider.credential(
-          verificationId,
-          code,
-        );
-      }
-      await auth().signInWithCredential(credential);
-
+      await confirm.confirm(code);
       setConfirmChk(true);
       setNext(true);
     } catch (error) {
@@ -392,6 +385,7 @@ const SignUpInformation = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (phoneNumber.length == 13) {
+                  //ChkAuth();
                   setAuthButtonClick(true);
                   setMinutes(parseInt(3));
                   setSeconds(parseInt(0));
