@@ -461,39 +461,126 @@ const InfoScreen = (props) => {
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
+  const [phoneNumberChk, setPhoneNumberChk] = React.useState(0);
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
   const [authNumber, setAuthNumber] = React.useState(''); //코드넘버
   const [confirm, setConfirm] = React.useState(null); //인증함수
-  const [confirmChk, setConfirmChk] = React.useState(false); //인증함수를 거쳐서 인증이 되었는지 여부
-
+  const [confirmChk, setConfirmChk] = React.useState(''); //인증함수를 거쳐서 인증이 되었는지 여부
+  const [confirmChkM, setConfirmChkM] = React.useState(0);
   const [confirmModal, setConfirmModal] = React.useState(false);
   const ConfirmModalChangeValue = (text) => setConfirmModal(text);
   const [confirmErrorModal, setConfirmErrorModal] = React.useState(false);
   const ConfirmErrorModalChangeValue = (text) => setConfirmErrorModal(text);
-  async function signInWithPhoneNumber(text) {
-    //3분카운트 들어가야함
-    if (reduexState.loginDataCheck.login.login == false) {
-      return false;
-    }
+  //authButtonClick 가 ture면 재인증버튼 눌렀음 -> 재전송으로 문구 변경 -> ok
+  //confirmChk가 true면 인증완료 false면 아직 인증안됨 confirmChk '' 면 인증확인 아직안했음
+  //authNumber는 인증코드넘버
+  //confirmChk === false &&
+  const confirmCode = (code) => {
     try {
-      var number = text.replace(/[^0-9]/g, '');
-      const confirmation = await auth().signInWithPhoneNumber('+82' + number);
-      setConfirm(confirmation);
+      if (seconds === 0 && minutes === 0) {
+        //인증시간 초과
+        setConfirmChk(false);
+        setConfirmChkM(1);
+      } else {
+        //인증번호 확인
+        if (code == smsCode) {
+          setConfirmChk(true);
+        } else {
+          //인증번호 틀림
+          setConfirmChk(false);
+          setConfirmChkM(2);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setConfirmChk(false);
+    }
+  };
+  const [smsCode, setSmsCode] = React.useState(0);
+  const PhoneNumberChk = (Number) => {
+    try {
+      let url = Domain2 + 'info/phonechk';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.post(
+            url,
+            {
+              _id: reduexState.loginDataCheck.login.data._id,
+              Phone: Number,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          if (result.data[0].status == 'ok') {
+            if (result.data[0].message == 'ok') {
+              //인증번호받기로진행
+              NaverSMSMessageSend(Number);
+              setPhoneNumberChk(0);
+              setConfirmChkM(0);
+            } else {
+              //결과에 따라서 이미 가입한 휴대폰번호입니다.
+              setPhoneNumberChk(1);
+            }
+          } else {
+            showToast('잠시 후에 다시 시도해주세요.', 1000);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
     } catch (err) {
       console.log(err);
     }
-  }
-
-  async function confirmCode(code) {
+  };
+  const NaverSMSMessageSend = (Number) => {
     try {
-      await confirm.confirm(code);
-      setConfirmChk(true);
-      setConfirmModal(true);
-    } catch (error) {
-      setConfirmChk(false);
-      setConfirmErrorModal(true);
+      let timestamp = moment().valueOf();
+      let random = parseInt(Math.random() * 899999 + 100000);
+      let url = Domain2 + 'sendMessage';
+
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.post(
+            url,
+            {
+              Number: Number,
+              Random: random,
+              timestamp: timestamp,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          if (result.data[0].statusCode === '202') {
+            //전송 성공 시간초 흐르기
+            setSmsCode(random);
+            setMinutes(parseInt(3));
+            setSeconds(parseInt(0));
+            setConfirmChk('');
+            setAuthNumber('');
+            setAuthButtonClick(true);
+          } else {
+            //전송실패
+            showToast(
+              '인증번호 전송에 실패했습니다. 잠시 후 다시 시도해주세요.',
+              1000,
+            );
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
   React.useEffect(() => {
     if (saveDataClick > 0) {
       showToast('잠시 후 다시 시도해주세요.', 1000);
@@ -506,6 +593,7 @@ const InfoScreen = (props) => {
       }
       if (parseInt(seconds) === 0) {
         if (parseInt(minutes) === 0) {
+          setConfirmChkM(1);
           clearInterval(countdown);
         } else {
           setMinutes(parseInt(minutes) - 1);
@@ -955,6 +1043,7 @@ const InfoScreen = (props) => {
                           } else {
                             let newValue = InputPhoneNumber(value);
                             setPhoneNumber(newValue);
+                            setPhoneNumberChk(0);
                           }
                         }}
                         placeholderStyle={{
@@ -974,12 +1063,20 @@ const InfoScreen = (props) => {
                         activeOpacity={1}
                         onPress={() => {
                           if (phoneNumber.length == 13) {
-                            signInWithPhoneNumber(phoneNumber);
-                            setMinutes(parseInt(3));
-                            setSeconds(parseInt(0));
-                            setAuthButtonClick(true);
+                            if (confirmChk) {
+                            } else {
+                              if (minutes >= 2) {
+                                setVisible(true);
+                                setTimeout(() => setVisible(false), 2000);
+                              } else {
+                                PhoneNumberChk(phoneNumber);
+                              }
+                            }
                           } else {
-                            return false;
+                            showToast(
+                              '휴대폰번호 11자리를 모두 입력해주세요.',
+                              1000,
+                            );
                           }
                         }}
                         style={{
@@ -1001,10 +1098,43 @@ const InfoScreen = (props) => {
                             textAlign: 'center',
                             textAlignVertical: 'center',
                           }}>
-                          재인증
+                          {authButtonClick ? '재전송' : '재인증'}
                         </Text>
                       </TouchableOpacity>
                     </View>
+                    {/*이미 가입된 휴대폰번호입니다. phoneNumberChk시작*/}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        marginTop: -Width_convert(17),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          color: '#FFFFFF',
+                          marginRight: Width_convert(13),
+                        }}>
+                        휴대폰번호
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '400',
+                          fontSize: Font_normalize(9),
+                          color: '#FF0202',
+                        }}>
+                        {phoneNumberChk == 1
+                          ? '이미 가입된 휴대폰번호입니다.'
+                          : null}
+                      </Text>
+                    </View>
+                    {/*이미 가입된 휴대폰번호입니다. 끝*/}
                     {authButtonClick ? (
                       <View
                         style={{
@@ -1022,6 +1152,7 @@ const InfoScreen = (props) => {
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
                             fontSize: Font_normalize(15),
+                            marginRight: Width_convert(13),
                             color: '#C4C4C4',
                           }}>
                           인증번호입력
@@ -1034,6 +1165,7 @@ const InfoScreen = (props) => {
                             if (value.length > 6) {
                             } else {
                               setAuthNumber(value);
+                              setConfirmChkM(0);
                             }
                           }}
                           style={{
@@ -1047,7 +1179,10 @@ const InfoScreen = (props) => {
                           style={[
                             {
                               width: Width_convert(30),
-                              marginRight: Width_convert(16),
+                              marginRight: -Width_convert(10),
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              marginLeft: 'auto',
                               fontFamily: Fonts?.NanumSqureRegular || null,
                               fontWeight: '700',
                               fontSize: Font_normalize(11),
@@ -1070,16 +1205,17 @@ const InfoScreen = (props) => {
                             }
                           }}
                           style={{
-                            width: Width_convert(56),
+                            width: Width_convert(35),
                             height: Width_convert(20),
                             backgroundColor: '#C1C1C1',
                             borderRadius: Font_normalize(4),
                             alignItems: 'center',
                             justifyContent: 'center',
+                            marginRight: 0,
+                            marginLeft: 'auto',
                           }}>
                           <Text
                             style={{
-                              padding: Width_convert(5),
                               fontFamily: Fonts?.NanumSqureRegular || null,
                               fontWeight: '700',
                               fontSize: Font_normalize(10),
@@ -1092,6 +1228,51 @@ const InfoScreen = (props) => {
                         </TouchableOpacity>
                       </View>
                     ) : null}
+
+                    {/*안증번호입력 빨간글씨 시작*/}
+                    <View
+                      style={{
+                        marginTop: -Width_convert(17),
+                        flexDirection: 'row',
+                        marginLeft: Width_convert(16),
+                        marginRight: Width_convert(11),
+                        width: Width_convert(375 - 27),
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          width: Width_convert(83),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '700',
+                          fontSize: Font_normalize(15),
+                          marginRight: Width_convert(13),
+                          color: '#FFFFFF',
+                        }}>
+                        인증번호입력
+                      </Text>
+                      <Text
+                        style={{
+                          marginTop: -Width_convert(5),
+                          fontFamily: Fonts?.NanumSqureRegular || null,
+                          fontWeight: '400',
+                          fontSize: Font_normalize(9),
+                          color: '#FF0202',
+                        }}>
+                        {visible == true
+                          ? '인증번호는 1분간 재발송할 수 없습니다.'
+                          : confirmChk === false &&
+                            authNumber.length == 6 &&
+                            confirmChkM == 2
+                          ? '인증번호가 올바르지 않습니다.'
+                          : confirmChk === false &&
+                            minutes == 0 &&
+                            seconds == 0 &&
+                            confirmChkM == 1
+                          ? '시간이 초과되었습니다 인증번호를 다시 받아주세요.'
+                          : null}
+                      </Text>
+                    </View>
+                    {/*인증번호입력 빨간글씨 끝*/}
                   </View>
                   {/*휴대폰번호 끝 */}
                   {/*지역 시작 */}

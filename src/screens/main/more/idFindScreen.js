@@ -21,12 +21,14 @@ import moment from 'moment';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
+import Toast, {DURATION} from 'react-native-easy-toast';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const IdFindScreen = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
@@ -43,27 +45,7 @@ const IdFindScreen = (props) => {
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [resultModal, setResultModal] = React.useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
-  async function signInWithPhoneNumber(text) {
-    //3분카운트 들어가야함
-    try {
-      var number = text.replace(/[^0-9]/g, '');
-      const confirmation = await auth().signInWithPhoneNumber('+82' + number);
-      setConfirm(confirmation);
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
-  async function confirmCode(code) {
-    try {
-      await confirm.confirm(code);
-      setConfirmChk(true);
-      setNext(true);
-    } catch (error) {
-      setConfirmChk(false);
-      setNext(false);
-    }
-  }
   React.useEffect(() => {
     const countdown = BackgroundTimer.setTimeout(() => {
       if (parseInt(seconds) > 0) {
@@ -122,6 +104,83 @@ const IdFindScreen = (props) => {
       alert(err);
     }
   }
+  const confirmCode = (code) => {
+    try {
+      if (seconds === 0 && minutes === 0) {
+        //인증시간 초과
+        setConfirmChk(false);
+        setNext(false);
+      } else {
+        //인증번호 확인
+        if (code == smsCode) {
+          setConfirmChk(true);
+          setNext(true);
+        } else {
+          //인증번호 틀림
+          setConfirmChk(false);
+          setNext(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setConfirmChk(false);
+      setNext(false);
+    }
+  };
+  const [smsCode, setSmsCode] = React.useState(0);
+  const NaverSMSMessageSend = (Number) => {
+    try {
+      let timestamp = moment().valueOf();
+      let random = parseInt(Math.random() * 899999 + 100000);
+      let url = Domain2 + 'sendMessage';
+
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.post(
+            url,
+            {
+              Number: Number,
+              Random: random,
+              timestamp: timestamp,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          if (result.data[0].statusCode === '202') {
+            //전송 성공 시간초 흐르기
+            setSmsCode(random);
+            setMinutes(parseInt(3));
+            setSeconds(parseInt(0));
+            setConfirmChk('');
+            setAuthNumber('');
+            setAuthButtonClick(true);
+            setNext(false);
+          } else {
+            //전송실패
+            showToast(
+              '인증번호 전송에 실패했습니다. 잠시 후 다시 시도해주세요.',
+              1000,
+            );
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
@@ -275,11 +334,11 @@ const IdFindScreen = (props) => {
                   color: '#FF0000',
                 }}>
                 {visible == true
-                  ? '인증번호는 1분간 재발송할 수 없습니다'
+                  ? '인증번호는 1분간 재발송할 수 없습니다.'
                   : confirmChk === false && authNumber.length == 6
-                  ? '인증번호가 올바르지 않습니다'
+                  ? '인증번호가 올바르지 않습니다.'
                   : confirmChk === false && minutes == 0 && seconds == 0
-                  ? '시간이 초과되었습니다 인증번호를 다시 받아주세요'
+                  ? '시간이 초과되었습니다 인증번호를 다시 받아주세요.'
                   : null}
               </Text>
             </View>
@@ -340,11 +399,7 @@ const IdFindScreen = (props) => {
                       setVisible(true);
                       setTimeout(() => setVisible(false), 2000);
                     } else {
-                      signInWithPhoneNumber(phoneNumber);
-                      setConfirmChk('');
-                      setAuthNumber('');
-                      setMinutes(parseInt(3));
-                      setSeconds(parseInt(0));
+                      NaverSMSMessageSend(phoneNumber);
                     }
                     //인증번호 다시받기 활성화
                     //최근 인증번호 받은 시간과 비교하여 1분이내면 메시지 띄우기 ->몇초 있다가 사라져야한데, -> 시간초 카운트가 2분이상인지 아닌지 비교
@@ -409,11 +464,7 @@ const IdFindScreen = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (phoneNumber.length == 13) {
-                  setAuthButtonClick(true);
-                  setMinutes(parseInt(3));
-                  setSeconds(parseInt(0));
-                  signInWithPhoneNumber(phoneNumber);
-                  setNext(false);
+                  NaverSMSMessageSend(phoneNumber);
                 }
               }}
               style={[
@@ -464,21 +515,38 @@ const IdFindScreen = (props) => {
         )}
         {/*인증번호받기 버튼, 버튼누르면 변경되는 뷰  */}
       </View>
+
+      <Toast
+        ref={(toast) => (toastRef = toast)}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
       {resultModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={ResultModalChangeValue}
           navigation={props.navigation}
-          Title={'해당정보로 등록된 아이디가 없습니다'}
+          Title={'해당정보로 등록된 아이디가 없습니다.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>

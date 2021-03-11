@@ -48,7 +48,7 @@ const SignUpInformation = (props) => {
 
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
-  async function confirmCode(code) {
+  const confirmCode = (code) => {
     try {
       if (seconds === 0 && minutes === 0) {
         //인증시간 초과
@@ -70,9 +70,9 @@ const SignUpInformation = (props) => {
       setConfirmChk(false);
       setNext(false);
     }
-  }
+  };
   const [smsCode, setSmsCode] = React.useState(0);
-  const NaverSMSMessageSend = async (Number) => {
+  const NaverSMSMessageSend = (Number) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
@@ -289,11 +289,11 @@ const SignUpInformation = (props) => {
                   color: '#FF0000',
                 }}>
                 {visible == true
-                  ? '인증번호는 1분간 재발송할 수 없습니다'
+                  ? '인증번호는 1분간 재발송할 수 없습니다.'
                   : confirmChk === false && authNumber.length == 6
-                  ? '인증번호가 올바르지 않습니다'
+                  ? '인증번호가 올바르지 않습니다.'
                   : confirmChk === false && minutes == 0 && seconds == 0
-                  ? '시간이 초과되었습니다 인증번호를 다시 받아주세요'
+                  ? '시간이 초과되었습니다 인증번호를 다시 받아주세요.'
                   : null}
               </Text>
             </View>
@@ -473,6 +473,7 @@ const SignUpInformation = (props) => {
 
       {networkModal ? (
         <AlearModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
           Title={'인터넷 연결을 확인해주세요.'}
