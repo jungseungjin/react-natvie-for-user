@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -13,7 +14,6 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
@@ -93,57 +93,32 @@ const SignUpInformation = (props) => {
                 width: Width_convert(285),
                 height: Width_convert(35),
               }}>
-              {/* <Text
-                style={{
-                  height: Width_convert(40),
-                  paddingLeft: Width_convert(5),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontSize: Font_normalize(14),
-                  fontWeight: '400',
-                  color: '#000000',
-                  lineHeight: Font_normalize(14),
-                }}>
+              <Text
+                style={[
+                  {
+                    marginTop: Height_convert(10),
+                    height: Width_convert(40),
+                    paddingLeft: Width_convert(5),
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(14),
+                    fontWeight: '400',
+                  },
+                  pickModelDetail?.brand == undefined
+                    ? {
+                        color: '#CCCCCC',
+                      }
+                    : {
+                        color: '#000000',
+                      },
+                ]}>
                 {pickModelDetail?.brand == undefined
-                  ? null
+                  ? '회원님의 소중한 차량은 무엇인가요?'
                   : pickModelDetail?.model_detail == undefined
                   ? pickModelDetail?.brand + ' ' + pickModelDetail?.model
                   : pickModelDetail?.brand +
                     ' ' +
                     pickModelDetail?.model_detail}
-              </Text> */}
-              <TextInput
-                placeholder="회원님의 소중한 차량은 무엇인가요?"
-                placeholderTextColor="#CCCCCC"
-                editable={false}
-                value={
-                  pickModelDetail?.brand == undefined
-                    ? null
-                    : pickModelDetail?.model_detail == undefined
-                    ? pickModelDetail?.brand + ' ' + pickModelDetail?.model
-                    : pickModelDetail?.brand +
-                      ' ' +
-                      pickModelDetail?.model_detail
-                }
-                onChangeText={(value) => {
-                  //setPhoneNumber(value);
-                }}
-                placeholderStyle={{
-                  paddingLeft: Width_convert(10),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontSize: Font_normalize(14),
-                  fontWeight: '400',
-                  color: '#000000',
-                  lineHeight: Font_normalize(14),
-                }}
-                style={{
-                  height: Width_convert(40),
-                  paddingLeft: Width_convert(5),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontSize: Font_normalize(14),
-                  fontWeight: '400',
-                  color: '#000000',
-                  lineHeight: Font_normalize(14),
-                }}></TextInput>
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}

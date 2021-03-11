@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  TextInput,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -14,7 +15,6 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
@@ -147,9 +147,9 @@ const SignUpInformation = (props) => {
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}
             style={{
+              marginTop: Height_convert(10),
               width: Width_convert(200),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
@@ -157,7 +157,6 @@ const SignUpInformation = (props) => {
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}></TextInput>
         </View>
 
@@ -195,9 +194,9 @@ const SignUpInformation = (props) => {
                 fontSize: Font_normalize(14),
                 fontWeight: '400',
                 color: '#000000',
-                lineHeight: Font_normalize(14),
               }}
               style={{
+                marginTop: Height_convert(10),
                 width: Width_convert(200),
                 height: Width_convert(40),
                 paddingLeft: Width_convert(5),
@@ -205,7 +204,6 @@ const SignUpInformation = (props) => {
                 fontSize: Font_normalize(14),
                 fontWeight: '400',
                 color: '#000000',
-                lineHeight: Font_normalize(14),
               }}></TextInput>
           </View>
           <TouchableOpacity

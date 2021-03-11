@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  TextInput,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -14,7 +15,6 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
@@ -68,7 +68,7 @@ const SignUpInformation = (props) => {
     }
   }
 
-  async function confirmCode(verificationId, code) {
+  async function confirmCode(code) {
     try {
       await confirm.confirm(code);
       setConfirmChk(true);
@@ -150,6 +150,7 @@ const SignUpInformation = (props) => {
               PhoneNumberChangeValue(value);
             }}
             style={{
+              marginTop: Height_convert(10),
               width: Width_convert(200),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
@@ -157,7 +158,6 @@ const SignUpInformation = (props) => {
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}></TextInput>
           {phoneNumber && !authButtonClick ? (
             <TouchableOpacity
@@ -191,10 +191,8 @@ const SignUpInformation = (props) => {
                 keyboardType={'number-pad'}
                 value={authNumber}
                 onChangeText={(value) => {
-                  console.log(value);
                   if (value.length == 6) {
-                    console.log(`ㅇㅣㄴ증번호는 : ${value}`);
-                    //confirmCode(value);
+                    confirmCode(value);
                   }
                   if (value.length > 6) {
                   } else {
@@ -202,14 +200,15 @@ const SignUpInformation = (props) => {
                   }
                 }}
                 placeholderStyle={{
+                  marginTop: Height_convert(10),
                   paddingLeft: Width_convert(10),
                   fontFamily: Fonts?.NanumSqureRegular || null,
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
                 }}
                 style={{
+                  marginTop: Height_convert(10),
                   width: Width_convert(200),
                   height: Width_convert(40),
                   paddingLeft: Width_convert(5),
@@ -217,7 +216,6 @@ const SignUpInformation = (props) => {
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
                 }}></TextInput>
               {confirmChk === true && authNumber.length == 6 ? (
                 <PurpleChk
@@ -236,12 +234,6 @@ const SignUpInformation = (props) => {
                 </Text>
               )}
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                confirmCode(verificationId, authNumber);
-              }}>
-              <Text>인전ㅇ자릅지ㅏㄹㅈㄹ</Text>
-            </TouchableOpacity>
             <View style={{marginTop: Height_convert(7)}}>
               <Text
                 style={{
@@ -299,7 +291,7 @@ const SignUpInformation = (props) => {
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(8),
+                    fontSize: Font_normalize(11),
                     fontWeight: '400',
                     color: '#B666DC',
                   }}>
@@ -358,7 +350,7 @@ const SignUpInformation = (props) => {
                   style={[
                     {
                       fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(8),
+                      fontSize: Font_normalize(11),
                       fontWeight: '400',
                     },
                     confirmChk === true
@@ -369,7 +361,7 @@ const SignUpInformation = (props) => {
                           color: '#2989E2',
                         },
                   ]}>
-                  인증번호 다시받기
+                  인증번호 재전송
                 </Text>
               </TouchableOpacity>
             </View>

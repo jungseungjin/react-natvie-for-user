@@ -120,8 +120,8 @@ const InfoScreen = (props) => {
   }
 
   function isNickName(asValue) {
-    var regExp = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
-    if (regExp.test(asValue) && asValue.length > 1 && asValue.length < 9) {
+    var regExp = /^[가-힣|a-z|A-Z|0-9|]+$/;
+    if (regExp.test(asValue) && asValue.length > 1 && asValue.length < 11) {
       return true;
     } else {
       return false;

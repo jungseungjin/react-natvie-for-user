@@ -91,8 +91,8 @@ const SignUpInformation = (props) => {
   const [nickNameChk2, setNickNameChk2] = React.useState(''); //중복검사
 
   function isNickName(asValue) {
-    var regExp = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]+$/;
-    if (regExp.test(asValue) && asValue.length > 1 && asValue.length < 9) {
+    var regExp = /^[가-힣|a-z|A-Z|0-9|]+$/;
+    if (regExp.test(asValue) && asValue.length > 1 && asValue.length < 11) {
       return true;
     } else {
       return false;
@@ -499,13 +499,14 @@ const SignUpInformation = (props) => {
                 style={{
                   width: Width_convert(327),
                   height: Width_convert(73),
+                  borderBottomWidth: 1,
                 }}>
                 <View
                   style={{
-                    borderBottomWidth: 1,
+                    width: Width_convert(327),
                   }}>
                   <TextInput
-                    placeholder="닉네임"
+                    placeholder="닉네임_한글/영문/숫자 2~10자, 띄어쓰기 불가"
                     placeholderTextColor="#CCCCCC"
                     value={nickName}
                     autoCapitalize={'none'}
@@ -517,24 +518,19 @@ const SignUpInformation = (props) => {
                         value = value.replace(/ /gi, '');
                       }
                       setNickName(value);
+                    }}
+                    onBlur={() => {
+                      console.log(nickName);
                       //유효성검사 확인
-                      setNickNameChk(isNickName(value));
-                      if (isNickName(value)) {
+                      setNickNameChk(isNickName(nickName));
+                      if (isNickName(nickName)) {
                         //닉네임 유효성검사를 통과하면 중복검사 진행
-                        NicknameChk(value);
+                        NicknameChk(nickName);
                       }
                     }}
-                    placeholderStyle={{
-                      marginTop: Width_convert(35),
-                      paddingLeft: Width_convert(10),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}
                     style={{
-                      width: Width_convert(200),
-                      marginTop: Width_convert(35),
+                      width: Width_convert(320),
+                      marginTop: Width_convert(38),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -546,7 +542,7 @@ const SignUpInformation = (props) => {
                 {nickNameChk === false || nickNameChk2 === false ? (
                   <Text
                     style={{
-                      marginTop: Height_convert(7),
+                      marginTop: Height_convert(5),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
                       fontSize: Font_normalize(11),
@@ -570,7 +566,7 @@ const SignUpInformation = (props) => {
                 }}>
                 <View>
                   <TextInput
-                    placeholder="비밀번호"
+                    placeholder="비밀번호_영문+숫자+특수문자 8~20자"
                     placeholderTextColor="#CCCCCC"
                     value={password}
                     autoCapitalize={'none'}
@@ -581,19 +577,13 @@ const SignUpInformation = (props) => {
                         value = value.replace(/ /gi, '');
                       }
                       setPassword(value);
-                      setPasswordChk(isPassword(value));
                     }}
-                    placeholderStyle={{
-                      marginTop: Width_convert(35),
-                      paddingLeft: Width_convert(10),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '400',
-                      color: '#000000',
+                    onBlur={() => {
+                      setPasswordChk(isPassword(password));
                     }}
                     style={{
                       width: Width_convert(300),
-                      marginTop: Width_convert(35),
+                      marginTop: Width_convert(38),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -605,7 +595,7 @@ const SignUpInformation = (props) => {
                 {passwordChk === false ? (
                   <Text
                     style={{
-                      marginTop: Height_convert(7),
+                      marginTop: Height_convert(5),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
                       fontSize: Font_normalize(11),
@@ -637,22 +627,16 @@ const SignUpInformation = (props) => {
                         value = value.replace(/ /gi, '');
                       }
                       setPasswordRe(value);
-                      setPasswordReChk(isPassword(value));
-                      if (value != password) {
+                    }}
+                    onBlur={() => {
+                      setPasswordReChk(isPassword(passwordRe));
+                      if (passwordRe != password) {
                         setPasswordReChk(false);
                       }
                     }}
-                    placeholderStyle={{
-                      marginTop: Width_convert(35),
-                      paddingLeft: Width_convert(10),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '400',
-                      color: '#000000',
-                    }}
                     style={{
                       width: Width_convert(300),
-                      marginTop: Width_convert(35),
+                      marginTop: Width_convert(38),
                       height: Width_convert(40),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -664,7 +648,7 @@ const SignUpInformation = (props) => {
                 {passwordReChk === false ? (
                   <Text
                     style={{
-                      marginTop: Height_convert(7),
+                      marginTop: Height_convert(5),
                       paddingLeft: Width_convert(5),
                       fontFamily: Fonts?.NanumSqureRegular || null,
                       fontSize: Font_normalize(11),
@@ -696,7 +680,7 @@ const SignUpInformation = (props) => {
                   }}
                   style={{
                     width: Width_convert(300),
-                    marginTop: Width_convert(35),
+                    marginTop: Width_convert(45),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -738,7 +722,7 @@ const SignUpInformation = (props) => {
                   }}
                   style={{
                     width: Width_convert(300),
-                    marginTop: Width_convert(35),
+                    marginTop: Width_convert(45),
                     height: Width_convert(40),
                     paddingLeft: Width_convert(5),
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -770,30 +754,28 @@ const SignUpInformation = (props) => {
                     width: Width_convert(285),
                     height: Width_convert(35),
                   }}>
-                  <TextInput
-                    placeholder="가게와의 거리를 알기 위한 지역설정이 필요해요."
-                    placeholderTextColor="#CCCCCC"
-                    editable={false}
-                    value={locationView}
-                    onChangeText={(value) => {}}
-                    placeholderStyle={{
-                      paddingLeft: Width_convert(10),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '400',
-                      color: '#000000',
-                      lineHeight: Font_normalize(14),
-                    }}
-                    style={{
-                      width: Width_convert(275),
-                      height: Width_convert(40),
-                      paddingLeft: Width_convert(5),
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(14),
-                      fontWeight: '400',
-                      color: '#000000',
-                      lineHeight: Font_normalize(14),
-                    }}></TextInput>
+                  <Text
+                    style={[
+                      {
+                        marginTop: Height_convert(10),
+                        width: Width_convert(275),
+                        height: Width_convert(40),
+                        paddingLeft: Width_convert(5),
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontSize: Font_normalize(14),
+                        fontWeight: '400',
+                      },
+                      locationView
+                        ? {
+                            color: '#000000',
+                          }
+                        : {
+                            color: '#CCCCCC',
+                          },
+                    ]}>
+                    {locationView ||
+                      '가게와의 거리를 알기 위한 지역설정이 필요해요.'}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={1}

@@ -183,6 +183,7 @@ const IdFindScreen = (props) => {
               lineHeight: Font_normalize(14),
             }}
             style={{
+              marginTop: Height_convert(10),
               width: Width_convert(300),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
@@ -190,7 +191,6 @@ const IdFindScreen = (props) => {
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}></TextInput>
           {phoneNumber && !authButtonClick ? (
             <TouchableOpacity
@@ -238,9 +238,9 @@ const IdFindScreen = (props) => {
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
                 }}
                 style={{
+                  marginTop: Height_convert(10),
                   width: Width_convert(300),
                   height: Width_convert(40),
                   paddingLeft: Width_convert(5),
@@ -248,7 +248,6 @@ const IdFindScreen = (props) => {
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
                 }}></TextInput>
               {confirmChk === true && authNumber.length == 6 ? (
                 <PurpleChk

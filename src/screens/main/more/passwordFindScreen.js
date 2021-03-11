@@ -179,14 +179,15 @@ const PasswordFindScreen = (props) => {
               setIdText(value);
             }}
             placeholderStyle={{
+              marginTop: Height_convert(10),
               paddingLeft: Width_convert(10),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}
             style={{
+              marginTop: Height_convert(10),
               width: Width_convert(250),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
@@ -194,7 +195,6 @@ const PasswordFindScreen = (props) => {
               fontSize: Font_normalize(14),
               fontWeight: '400',
               color: '#000000',
-              lineHeight: Font_normalize(14),
             }}></TextInput>
           {idText && !authButtonClick ? (
             <TouchableOpacity
@@ -250,7 +250,7 @@ const PasswordFindScreen = (props) => {
             }}
             style={{
               width: Width_convert(250),
-              marginTop: Width_convert(35),
+              marginTop: Width_convert(45),
               height: Width_convert(40),
               paddingLeft: Width_convert(5),
               fontFamily: Fonts?.NanumSqureRegular || null,
@@ -309,7 +309,7 @@ const PasswordFindScreen = (props) => {
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
+                  marginTop: Height_convert(10),
                 }}
                 style={{
                   width: Width_convert(250),
@@ -319,7 +319,7 @@ const PasswordFindScreen = (props) => {
                   fontSize: Font_normalize(14),
                   fontWeight: '400',
                   color: '#000000',
-                  lineHeight: Font_normalize(14),
+                  marginTop: Height_convert(10),
                 }}></TextInput>
               {confirmChk === true && authNumber.length == 6 ? (
                 <PurpleChk
@@ -395,7 +395,7 @@ const PasswordFindScreen = (props) => {
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(8),
+                    fontSize: Font_normalize(11),
                     fontWeight: '400',
                     color: '#B666DC',
                   }}>
@@ -454,7 +454,7 @@ const PasswordFindScreen = (props) => {
                   style={[
                     {
                       fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(8),
+                      fontSize: Font_normalize(11),
                       fontWeight: '400',
                       color: '#2989E2',
                     },
@@ -466,7 +466,7 @@ const PasswordFindScreen = (props) => {
                           color: '#2989E2',
                         },
                   ]}>
-                  인증번호 다시받기
+                  인증번호 재전송
                 </Text>
               </TouchableOpacity>
             </View>
