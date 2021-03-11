@@ -195,12 +195,12 @@ const StoreLocationScreen = (props) => {
             // onTouch={(e) =>
             //   console.warn('onTouch', JSON.stringify(e.nativeEvent))
             // }
-            onCameraChange={(e) =>
-              setP0({
-                latitude: parseFloat(e.latitude),
-                longitude: parseFloat(e.longitude),
-              })
-            }
+            // onCameraChange={(e) =>
+            //   setP0({
+            //     latitude: parseFloat(e.latitude),
+            //     longitude: parseFloat(e.longitude),
+            //   })
+            // }
             //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
           >
             <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />

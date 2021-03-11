@@ -205,7 +205,7 @@ const WorkDetailScreen = (props) => {
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
           scrollEventThrottle={16}
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: offset}}}],
             {
@@ -241,9 +241,6 @@ const WorkDetailScreen = (props) => {
           <View
             style={{
               zIndex: 2,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: 'blue',
               width: Width_convert(375),
               height: Width_convert(171),
               justifyContent: 'center',
@@ -411,17 +408,22 @@ const WorkDetailScreen = (props) => {
           </View>
           {/*작업 이름부터 가격까지 끝 */}
           {/*상단슬라이더부터 가격까지 끝 */}
+          {scrollValue >= Width_convert(240 + 171) - Height_convert(94) ? (
+            <View
+              style={{
+                zIndex: 0,
+                marginTop: -Height_convert(94),
+              }}></View>
+          ) : null}
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
-            {/* <View
-              style={{
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderColor: 'red',
-
-                zIndex: 1,
-                height: Height_convert(94),
-              }}></View> */}
+            {scrollValue >= Width_convert(240 + 171) - Height_convert(94) ? (
+              <View
+                style={{
+                  zIndex: 1,
+                  height: Height_convert(94),
+                }}></View>
+            ) : null}
             <View
               style={{
                 width: Width_convert(375),

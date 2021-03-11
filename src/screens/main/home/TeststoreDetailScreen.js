@@ -335,23 +335,78 @@ const StoreDetailScreen = (props) => {
             {/*작업 이름부터 가격까지 끝 */}
           </View>
           {/*상단슬라이더부터 후기까지 끝 */}
-          {scrollValue >= Width_convert(240 + 89) - Height_convert(94) ? (
-            <View
-              style={{
-                zIndex: 0,
-                marginTop: -Height_convert(94),
-              }}></View>
-          ) : null}
           {/*버튼 위치 맞추기 위함 시작 =========이게 가려서 네비게이션 클릭이 안됨*/}
+          <View
+            style={{
+              marginTop: -Height_convert(94),
+            }}></View>
+          {/*버튼 위치 맞추기 위함 끝 */}
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
-            {scrollValue >= Width_convert(240 + 89) - Height_convert(94) ? (
+            {/*터치 안되는곳 강제로 터치 추가맞춤 시작*/}
+            {Platform.OS == 'ios' ? (
               <View
                 style={{
-                  zIndex: 1,
+                  marginTop: -Height_convert(10),
+                  width: Width_convert(375),
                   height: Height_convert(94),
+                  flexDirection: 'row',
+                }}>
+                <View
+                  style={{
+                    width: Width_convert(300),
+                    height: Height_convert(94),
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('StoreLocation', {
+                        item: props.route.params.item,
+                      });
+                    }}
+                    style={{
+                      height: Height_convert(25),
+                      marginTop: Height_convert(30),
+                      marginRight: Width_convert(100),
+                    }}></TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      props.navigation.navigate('ReviewView', {
+                        item: props.route.params.item,
+                        type: 'store',
+                      });
+                    }}
+                    style={{
+                      marginTop: -Height_convert(5),
+                      height: Height_convert(30),
+                      marginRight: Width_convert(150),
+                    }}></TouchableOpacity>
+                </View>
+                <View style={{marginRight: Width_convert(20)}}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    style={{
+                      width: Width_convert(55),
+                      height: Height_convert(60),
+                    }}
+                    onPress={() => {
+                      props.navigation.navigate('StoreWorkList', {
+                        item: props.route.params.item,
+                      });
+                    }}></TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <View
+                style={{
+                  marginTop: -Height_convert(10),
+                  width: Width_convert(375),
+                  height: Height_convert(94),
+                  flexDirection: 'row',
                 }}></View>
-            ) : null}
+            )}
+            {/*터치 안되는곳 강제로 터치 추가맞춤 끝*/}
             <View
               style={{
                 width: Width_convert(375),
