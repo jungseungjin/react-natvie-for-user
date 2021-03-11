@@ -23,6 +23,10 @@ import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import Domain2 from '../../../../key/Domain2.js';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Toast, {DURATION} from 'react-native-easy-toast';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params);
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -42,43 +46,85 @@ const SignUpInformation = (props) => {
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
 
-  const [verificationId, setVerificationId] = React.useState('');
-
-  const [user, setUser] = React.useState();
-  const ChkAuth = () => {
-    auth().onAuthStateChanged((data) => {
-      console.log(data);
-      setUser({user: data});
-    });
-  };
-
-  React.useEffect(() => {
-    ChkAuth();
-  }, []);
-  async function signInWithPhoneNumber(text) {
-    //3분카운트 들어가야함
-    try {
-      var number = text.replace(/[^0-9]/g, '');
-      const confirmation = await auth().signInWithPhoneNumber('+82' + number);
-      console.log(confirmation);
-      setConfirm(confirmation);
-      setVerificationId(confirmation._verificationId);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
+  const [networkModal, setNetworkModal] = React.useState(false);
+  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   async function confirmCode(code) {
     try {
-      await confirm.confirm(code);
-      setConfirmChk(true);
-      setNext(true);
+      if (seconds === 0 && minutes === 0) {
+        //인증시간 초과
+        setConfirmChk(false);
+        setNext(false);
+      } else {
+        //인증번호 확인
+        if (code == smsCode) {
+          setConfirmChk(true);
+          setNext(true);
+        } else {
+          //인증번호 틀림
+          setConfirmChk(false);
+          setNext(false);
+        }
+      }
     } catch (error) {
       console.log(error);
       setConfirmChk(false);
       setNext(false);
     }
   }
+  const [smsCode, setSmsCode] = React.useState(0);
+  const NaverSMSMessageSend = async (Number) => {
+    try {
+      let timestamp = moment().valueOf();
+      let random = parseInt(Math.random() * 899999 + 100000);
+      let url = Domain2 + 'sendMessage';
+
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.post(
+            url,
+            {
+              Number: Number,
+              Random: random,
+              timestamp: timestamp,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          if (result.data[0].statusCode === '202') {
+            //전송 성공 시간초 흐르기
+            setSmsCode(random);
+            setMinutes(parseInt(3));
+            setSeconds(parseInt(0));
+            setConfirmChk('');
+            setAuthNumber('');
+            setAuthButtonClick(true);
+            setNext(false);
+          } else {
+            //전송실패
+            showToast(
+              '인증번호 전송에 실패했습니다. 잠시 후 다시 시도해주세요.',
+              1000,
+            );
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
   React.useEffect(() => {
     const countdown = BackgroundTimer.setTimeout(() => {
       if (parseInt(seconds) > 0) {
@@ -146,7 +192,6 @@ const SignUpInformation = (props) => {
             value={phoneNumber}
             keyboardType={'number-pad'}
             onChangeText={(value) => {
-              console.log(value);
               PhoneNumberChangeValue(value);
             }}
             style={{
@@ -188,6 +233,7 @@ const SignUpInformation = (props) => {
               <TextInput
                 placeholder="인증번호를 입력해주세요"
                 placeholderTextColor="#CCCCCC"
+                editable={confirmChk ? false : true}
                 keyboardType={'number-pad'}
                 value={authNumber}
                 onChangeText={(value) => {
@@ -308,11 +354,7 @@ const SignUpInformation = (props) => {
                       setVisible(true);
                       setTimeout(() => setVisible(false), 2000);
                     } else {
-                      signInWithPhoneNumber(phoneNumber);
-                      setConfirmChk('');
-                      setAuthNumber('');
-                      setMinutes(parseInt(3));
-                      setSeconds(parseInt(0));
+                      NaverSMSMessageSend(phoneNumber);
                     }
                     //인증번호 다시받기 활성화
                     //최근 인증번호 받은 시간과 비교하여 1분이내면 메시지 띄우기 ->몇초 있다가 사라져야한데, -> 시간초 카운트가 2분이상인지 아닌지 비교
@@ -377,12 +419,7 @@ const SignUpInformation = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (phoneNumber.length == 13) {
-                  //ChkAuth();
-                  setAuthButtonClick(true);
-                  setMinutes(parseInt(3));
-                  setSeconds(parseInt(0));
-                  signInWithPhoneNumber(phoneNumber);
-                  setNext(false);
+                  NaverSMSMessageSend(phoneNumber);
                 }
               }}
               style={[
@@ -433,6 +470,29 @@ const SignUpInformation = (props) => {
         )}
         {/*인증번호받기 버튼, 버튼누르면 변경되는 뷰  */}
       </View>
+
+      {networkModal ? (
+        <AlearModal1
+          ShowModalChangeValue={NetworkModalChangeValue}
+          navigation={props.navigation}
+          Title={'인터넷 연결을 확인해주세요.'}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AlearModal1>
+      ) : null}
+      <Toast
+        ref={(toast) => (toastRef = toast)}
+        style={{
+          backgroundColor: '#474747',
+          paddingTop: Height_convert(16),
+          paddingBottom: Height_convert(16),
+          paddingRight: Width_convert(20),
+          paddingLeft: Width_convert(20),
+          borderRadius: Font_normalize(7),
+        }}
+        position="center"
+        //opacity={0.8}
+        textStyle={{color: '#FFFFFF'}}
+      />
     </SafeAreaView>
   );
 };
