@@ -153,9 +153,14 @@ const AlertModal2 = (props) => {
                 }}
                 onPress={() => {
                   if (
-                    props.Title ===
+                    (props.Title ===
                       '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?' &&
-                    props.LocationChangeValue
+                      props.LocationChangeValue &&
+                      props.P0.latitude === 0) ||
+                    (props.Title ===
+                      '지역 설정을 위해 위치서비스를 켜 주세요.' &&
+                      props.LocationChangeValue &&
+                      props.P0.latitude === 0)
                   ) {
                     //아니오 누름 -> 주소검색창으로 이동
                     props.ShowModalChangeValue(false);

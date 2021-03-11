@@ -113,8 +113,9 @@ const MapScreen = (props) => {
       (error) => {
         console.log(error.code, error.message);
         if (error.message.indexOf('permission denied') != -1) {
-          //권한은 허용되어있으나 gps가 꺼져있을때
           setLocationModal(true);
+        } else if (error.message.includes('permission not granted')) {
+          setShowModal(true);
         }
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},

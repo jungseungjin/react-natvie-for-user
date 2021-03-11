@@ -11,6 +11,14 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import NaverMapView, {
+  Circle,
+  Marker,
+  Path,
+  Polyline,
+  Polygon,
+} from 'react-native-nmap';
+import GPS from '../../../../assets/home/gps.svg';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
@@ -60,6 +68,12 @@ import {LogBox} from 'react-native';
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import X from '../../../../assets/home/x_black.svg';
+import XButton from '../../../../assets/home/x_button.svg';
+import Place_check from '../../../../assets/home/place_check';
+import Search from '../../../../assets/home/search.svg';
+import GoBack from '../../../../assets/home/goBack.svg';
 const InfoScreen = (props) => {
   //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
   //저장을 해야 값이 변경됨.
@@ -170,16 +184,6 @@ const InfoScreen = (props) => {
     }
   };
 
-  // let toastRef;
-  // const showToast = (text, time) => {
-  //   if (toastRef === null) {
-  //     console.log('gggg');
-  //   } else {
-  //     toastRef.show(text, time, () => {
-  //       // something you want to do at close
-  //     });
-  //   }
-  // };
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
@@ -270,24 +274,6 @@ const InfoScreen = (props) => {
     setCar(prevData);
   };
 
-  // await Keychain.resetGenericPassword();
-  // setPasswordChangeModal(true);
-  // props.updateLoginStatus(false);
-  // props.updateIuCar([]);
-  // props.updateLocation({});
-  // props.update_id('');
-  // props.updateData({}); //디바이스정보라도 넣어줘야??
-  //변경된값 저장
-
-  //비밀번호 변경여부 추가 확인넣어야함
-  //비밀번호 변경됨
-  //setPasswordChk(true);
-
-  //비밀번호 변경하려고했으나 형식에 맞지 않음
-  //setPasswordChk(false);
-
-  //비밀번호 변경하지 않음
-  //setPasswordChk('');
   const saveData = () => {
     //저장 눌러서 데이터 수정하기.
     //닉네임변경여부 확인, 닉네임 형식확인해서 틀리면 리턴하고 빨간줄,
@@ -384,7 +370,6 @@ const InfoScreen = (props) => {
             props.updateIuCar(result.data[0].result.iu_car);
             props.updateLocation(result.data[0].result.location);
             props.updateData(result.data[0].result);
-            props.toastMessage('내정보가 저장되었습니다.');
             props.route.params.toastRef.show('내정보가 저장되었습니다.', 1000);
             props.navigation.goBack();
             //변경되었으니 리덕스에 값도 변경시키기
@@ -617,6 +602,8 @@ const InfoScreen = (props) => {
         console.log(error.code, error.message);
         if (error.message.indexOf('permission denied') != -1) {
           setLocationModal(true);
+        } else if (error.message.includes('permission not granted')) {
+          setShowModal(true);
         }
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
@@ -628,8 +615,6 @@ const InfoScreen = (props) => {
         return false;
       }
       setIsLoading(true);
-      // position.coords.longitude = 126.70528; //지워야함
-      // position.coords.latitude = 37.45639; //지워야함
       let result = await axios.get(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
           position.coords.longitude +
@@ -659,6 +644,10 @@ const InfoScreen = (props) => {
             ' ' +
             result.data.results[0].region.area3.name,
         };
+        setP0({
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude,
+        });
         setLocation(newData);
       } else {
         setIsLoading(false);
@@ -672,7 +661,53 @@ const InfoScreen = (props) => {
       alert(err);
     }
   };
-
+  let toastRef;
+  const showToast = (text, time) => {
+    toastRef.show(text, time, () => {
+      // something you want to do at close
+    });
+  };
+  const [searchText, setSearchText] = React.useState('');
+  const [searchList, setSearchList] = React.useState([]);
+  const [searchOn, setSearchOn] = React.useState(false);
+  const SearchAddr = async () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          //setIsLoading(true);
+          let result = await axios.get(
+            'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=' +
+              searchText,
+            {
+              headers: {
+                'X-NCP-APIGW-API-KEY-ID': '56kfacm95e',
+                'X-NCP-APIGW-API-KEY':
+                  'cyhAcOnJGtzyYZiQFDcOkWkJcsL5t0FAQ3bJldMR',
+              },
+            },
+          );
+          if (result.data.addresses) {
+            setSearchList(result.data.addresses);
+            Keyboard.dismiss();
+          } else {
+          }
+          setSearchOn(true);
+          //setIsLoading(false);
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      setIsLoading(false);
+      console.log(err);
+      alert(err);
+    }
+  };
+  const [P0, setP0] = React.useState({
+    latitude: 0,
+    longitude: 0,
+  });
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar
@@ -955,10 +990,10 @@ const InfoScreen = (props) => {
                           alignItems: 'center',
                           marginRight: 0,
                           marginLeft: 'auto',
+                          justifyContent: 'center',
                         }}>
                         <Text
                           style={{
-                            padding: Width_convert(5),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
                             fontSize: Font_normalize(10),
@@ -1118,10 +1153,10 @@ const InfoScreen = (props) => {
                           alignItems: 'center',
                           marginRight: 0,
                           marginLeft: 'auto',
+                          justifyContent: 'center',
                         }}>
                         <Text
                           style={{
-                            padding: Width_convert(5),
                             fontFamily: Fonts?.NanumSqureRegular || null,
                             fontWeight: '700',
                             fontSize: Font_normalize(10),
@@ -1429,6 +1464,7 @@ const InfoScreen = (props) => {
                           backgroundColor: '#C1C1C1',
                           borderRadius: Font_normalize(4),
                           alignItems: 'center',
+                          justifyContent: 'center',
                           marginRight: 0,
                           marginLeft: 'auto',
                         }}>
@@ -1683,7 +1719,377 @@ const InfoScreen = (props) => {
             </DismissKeyboard>
           </KeyboardAvoidingView>
         </>
-      ) : page == 'mapSearch' ? null : page == 'map' ? null : (
+      ) : page == 'mapSearch' ? (
+        <>
+          <View
+            style={{
+              height: Height_convert(88) - StatusBarHeight,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                setPage('info');
+                setP0({
+                  latitude: 0,
+                  longitude: 0,
+                });
+              }}
+              style={{
+                marginLeft: Width_convert(22),
+                marginRight: Width_convert(15),
+                width: Width_convert(14),
+                height: Height_convert(16),
+              }}>
+              <X></X>
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: Font_normalize(16),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                color: '#000000',
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}>
+              주소검색
+            </Text>
+            <View
+              activeOpacity={1}
+              onPress={() => {}}
+              style={{
+                marginRight: Width_convert(22),
+                width: Width_convert(20),
+                height: Height_convert(20),
+              }}></View>
+          </View>
+          <View
+            style={{
+              height: Height_convert(88) - StatusBarHeight,
+              marginBottom: Height_convert(10),
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottomColor: 'rgba(219,219,219,0.35)',
+              borderBottomWidth: 1,
+            }}>
+            <TextInput
+              autoCapitalize={'none'}
+              autoCompleteType={'off'}
+              autoCorrect={false}
+              keyboardType="default"
+              value={searchText}
+              onChangeText={(value) => {
+                setSearchText(value);
+              }}
+              returnKeyType={'search'}
+              onSubmitEditing={() => {
+                if (searchText) {
+                  SearchAddr();
+                } else {
+                  showToast('검색어를 입력해주세요.', 1000);
+                }
+              }}
+              style={{
+                width: Width_convert(280),
+                height: Width_convert(34),
+                fontSize: Font_normalize(16),
+                marginLeft: Width_convert(22),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '400',
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+              placeholderTextColor="#A1A1A1"
+              placeholder={'읍 면 동으로 간편하게 검색해주세요'}
+              //onKeyPress={this.handleKeyDown}
+              // /handleKeyDown: function(e) {
+              //   if(e.nativeEvent.key == "Enter"){
+              //     dismissKeyboard();
+              // }
+            ></TextInput>
+            {searchText ? (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  setSearchText('');
+                }}
+                style={{
+                  height: Width_convert(34),
+                  justifyContent: 'center',
+                }}>
+                <XButton
+                  style={{
+                    marginRight: Width_convert(10),
+                  }}></XButton>
+              </TouchableOpacity>
+            ) : null}
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                if (searchText) {
+                  SearchAddr();
+                } else {
+                  showToast('검색어를 입력해주세요.', 1000);
+                }
+              }}
+              style={{
+                marginRight: Width_convert(22),
+              }}>
+              <Search></Search>
+            </TouchableOpacity>
+          </View>
+          {searchList.length == 0 ? (
+            <View
+              style={{
+                width: Width_convert(375),
+                height: Height_convert(642) + 2 * StatusBarHeight,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.Swagger || null,
+                  fontSize: Font_normalize(20),
+                  color: '#B4B4B4',
+                  textAlign: 'center',
+                }}>
+                {searchOn
+                  ? '검색 결과가 없습니다 지역을 다시 검색해주세요'
+                  : '고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요'}
+              </Text>
+            </View>
+          ) : (
+            <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+              {searchList.map((item) => (
+                <View
+                  key={item.jibunAddress || item.roadAddress}
+                  style={{
+                    height: Height_convert(44),
+                    justifyContent: 'center',
+                  }}>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => {
+                      setP0({
+                        longitude: parseFloat(item.x),
+                        latitude: parseFloat(item.y),
+                      });
+                      setLocation({
+                        legalcode: item.jibunAddress || item.roadAddress,
+                        location: {
+                          longitude: parseFloat(item.x),
+                          latitude: parseFloat(item.y),
+                        },
+                      });
+
+                      forceUpdate();
+                      setPage('map');
+                    }}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginLeft: Width_convert(15),
+                    }}>
+                    <Place_check
+                      style={{marginRight: Width_convert(12)}}></Place_check>
+                    <Text
+                      style={{
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontSize: Font_normalize(14),
+                        fontWeight: '400',
+                        color: '#000000',
+                      }}>
+                      {item.jibunAddress || item.roadAddress}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
+          )}
+        </>
+      ) : page == 'map' ? (
+        <>
+          <View style={{width: '100%', height: '100%', position: 'absolute'}}>
+            <StatusBar
+              translucent
+              backgroundColor="transparent"
+              barStyle="dark-content"></StatusBar>
+            <NaverMapView
+              style={{width: '100%', height: '100%', position: 'absolute'}}
+              center={{
+                latitude: P0.latitude,
+                longitude: P0.longitude,
+
+                zoom: 16,
+              }}
+              scaleBar={false}
+              zoomControl={false}
+              rotateGesturesEnabled={false}
+              useTextureView={false}
+              //onTouch={(e) => {}}
+              onCameraChange={(e) => {
+                if (Platform.OS === 'ios') {
+                  getNaverLocagtion({
+                    coords: {
+                      latitude: parseFloat(e.latitude),
+                      longitude: parseFloat(e.longitude),
+                    },
+                  });
+                }
+              }}
+              onMapClick={(e) => {
+                if (Platform.OS === 'android') {
+                  getNaverLocagtion({
+                    coords: {
+                      latitude: parseFloat(e.latitude),
+                      longitude: parseFloat(e.longitude),
+                    },
+                  });
+                }
+              }}>
+              <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />
+            </NaverMapView>
+            <View
+              style={{
+                height: Height_convert(88) + StatusBarHeight,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  setPage('mapSearch');
+                  setP0({
+                    latitude: 0,
+                    longitude: 0,
+                  });
+                }}
+                style={{
+                  marginRight: Width_convert(25),
+                  marginTop: Height_convert(4),
+                  padding: Width_convert(5),
+                  marginLeft: Width_convert(17),
+                }}>
+                <GoBack
+                  style={{
+                    width: Width_convert(14),
+                    height: Height_convert(16),
+                  }}
+                  fill={'#000000'}></GoBack>
+              </TouchableOpacity>
+              {/* <TouchableOpacity
+            activeOpacity={1}
+            style={{}}
+            onPress={() => {
+              props.navigation.navigate('MapSearch');
+            }}></TouchableOpacity> */}
+            </View>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                if (handleLocationPermission(Platform.OS)) {
+                  //위치정보 사용 ok 현재위치를 가져와야합니다. 어디서?? 네이버에서
+                  CurrentPosition(); //경위도 찍고
+                } else {
+                  //위치정보 켜달라는 모달 띄우기
+                  LocationModalChangeValue(true);
+                }
+              }}
+              style={{
+                zIndex: 9999,
+                width: Width_convert(42),
+                height: Width_convert(42),
+                position: 'absolute',
+                bottom: Width_convert(174),
+                right: Width_convert(22),
+                borderRadius: Width_convert(21),
+                backgroundColor: '#FFFFFF',
+                justifyContent: 'center',
+                alignItems: 'center',
+
+                shadowColor: '#000000', //그림자색
+                shadowOpacity: 0.3, //그림자 투명도
+                shadowOffset: {width: 2, height: 2}, //그림자 위치
+                //ANDROID
+                elevation: 5,
+              }}>
+              <GPS></GPS>
+            </TouchableOpacity>
+            <View
+              style={{
+                position: 'absolute',
+                bottom: Width_convert(174 - 65),
+                width: Width_convert(375),
+                height: Height_convert(65),
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {}}
+                style={{
+                  width: Width_convert(339),
+                  height: Height_convert(65),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: Font_normalize(3),
+                  backgroundColor: '#FFFFFF',
+                  marginTop: Height_convert(18),
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(19),
+                    fontWeight: '700',
+                    color: '#946AEF',
+                  }}>
+                  {location?.legalcode}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                position: 'absolute',
+                bottom: Width_convert(174 - 65 - 46 - 10),
+                width: Width_convert(375),
+                height: Height_convert(46),
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  setPage('info');
+                  setP0({
+                    latitude: 0,
+                    longitude: 0,
+                  });
+                }}
+                style={{
+                  width: Width_convert(339),
+                  height: Height_convert(46),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: Font_normalize(3),
+                  backgroundColor: '#946AEF',
+                  marginTop: Height_convert(18),
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(16),
+                    fontWeight: '700',
+                    color: '#FFFFFF',
+                  }}>
+                  설정완료
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      ) : (
         <>
           <Tabbar
             Title={'차량선택_info'}
@@ -1708,10 +2114,9 @@ const InfoScreen = (props) => {
             }></CarSetting>
         </>
       )}
-      {/* <Toast
-        ref={(toast) => {
-          toastRef = toast;
-        }}
+
+      <Toast
+        ref={(toast) => (toastRef = toast)}
         style={{
           backgroundColor: '#474747',
           paddingTop: Height_convert(16),
@@ -1723,7 +2128,7 @@ const InfoScreen = (props) => {
         position="center"
         //opacity={0.8}
         textStyle={{color: '#FFFFFF'}}
-      /> */}
+      />
       {carModal ? (
         <AlertModal1
           type={1}
@@ -1765,15 +2170,19 @@ const InfoScreen = (props) => {
       {locationModal ? (
         <AlertModal2
           type={1}
+          P0={P0}
           Title={'지역 설정을 위해 위치서비스를 켜 주세요.'}
           navigation={props.navigation}
+          LocationChangeValue={LocationChangeValue}
+          PageChangeValue={PageChangeValue}
           ShowModalChangeValue={LocationModalChangeValue}
-          LeftButtonTitle={'닫기'}
-          RightButtonTitle={'설정'}></AlertModal2>
+          LeftButtonTitle={'아니오'}
+          RightButtonTitle={'네'}></AlertModal2>
       ) : null}
       {showModal ? (
         <AlertModal2
           type={2}
+          P0={P0}
           LocationChangeValue={LocationChangeValue}
           PageChangeValue={PageChangeValue}
           ShowModalChangeValue={ShowModalChangeValue}

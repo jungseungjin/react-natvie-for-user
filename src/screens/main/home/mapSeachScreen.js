@@ -28,13 +28,6 @@ import {
   Keyboard,
 } from 'react-native';
 
-import NaverMapView, {
-  Circle,
-  Marker,
-  Path,
-  Polyline,
-  Polygon,
-} from 'react-native-nmap';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 const MapScreen = (props) => {
