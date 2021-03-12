@@ -34,7 +34,7 @@ import WorkMenu from '../../../../assets/home/work_menu.svg';
 import {useSelector} from 'react-redux';
 import AnimatedHeader from '../../../components/Home/Animate/animatedHeader.js';
 import StoreInformation from '../../../components/Home/Infomation/storeInformation.js';
-import LaborInformation from '../../../components/Home/Infomation/laborInformation.js';
+import ReviewInformation from '../../../components/Home/Infomation/reviewInformation.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
@@ -60,7 +60,6 @@ const StoreDetailScreen = (props) => {
   const [pickCount, setPickCount] = React.useState(
     props.route.params.item.userCount,
   );
-
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const insets = useSafeAreaInsets();
@@ -154,6 +153,38 @@ const StoreDetailScreen = (props) => {
       showToast('찜이 해제되었습니다.', 700);
     }
   }, [toastShow]);
+
+  const [reviewList, setReviewList] = React.useState([]);
+  const getData = () => {
+    try {
+      let result;
+      let url = Domain2 + 'reviewList/store';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              item_id: props.route.params.item._id,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setReviewList(result.data[0].result);
+          } else {
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  React.useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <StatusBar
@@ -178,7 +209,7 @@ const StoreDetailScreen = (props) => {
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
           scrollEventThrottle={16}
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: offset}}}],
             {
@@ -192,11 +223,11 @@ const StoreDetailScreen = (props) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Width_convert(240 + 89),
+              height: Width_convert(240),
             }}>
             {/*상단 이미지 시작 */}
             <FastImage
-              style={{height: Height_convert(240)}}
+              style={{height: Width_convert(240)}}
               source={{
                 uri: props.route.params.item.store_image,
                 //headers: {Authorization: 'someAuthToken'},
@@ -204,6 +235,12 @@ const StoreDetailScreen = (props) => {
               }}
               resizeMode={FastImage.resizeMode.stretch}></FastImage>
             {/*상단 이미지 끝 */}
+          </View>
+          <View
+            style={{
+              width: Width_convert(375),
+              height: Width_convert(89),
+            }}>
             {/*작업 이름부터 가격까지 시작 */}
             <View
               style={{
@@ -239,16 +276,24 @@ const StoreDetailScreen = (props) => {
                       flexDirection: 'row',
                       alignItems: 'center',
                     }}>
-                    <Text
-                      style={{
-                        marginRight: Width_convert(5),
-                        fontFamily: Fonts?.NanumSqureRegular,
-                        fontWeight: '400',
-                        color: '#000000',
-                        fontSize: Font_normalize(12),
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        props.navigation.navigate('StoreLocation', {
+                          item: props.route.params.item,
+                        });
                       }}>
-                      {props.route.params.item.store_address}
-                    </Text>
+                      <Text
+                        style={{
+                          marginRight: Width_convert(5),
+                          fontFamily: Fonts?.NanumSqureRegular,
+                          fontWeight: '400',
+                          color: '#000000',
+                          fontSize: Font_normalize(12),
+                        }}>
+                        {props.route.params.item.store_address}
+                      </Text>
+                    </TouchableOpacity>
                     <VerticalBar
                       style={{marginRight: Width_convert(5)}}></VerticalBar>
                     <TouchableOpacity
@@ -444,7 +489,11 @@ const StoreDetailScreen = (props) => {
           {page == 'store' ? (
             <StoreInformation item={props.route.params.item}></StoreInformation>
           ) : page == 'labor' ? (
-            <LaborInformation></LaborInformation>
+            <ReviewInformation
+              item={reviewList}
+              reviewGrade={
+                props.route.params.item.reviewGrade
+              }></ReviewInformation>
           ) : null}
 
           {/*하단 버튼만큼의 공간 띄우기 시작 */}

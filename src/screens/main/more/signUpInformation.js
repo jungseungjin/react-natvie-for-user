@@ -118,7 +118,42 @@ const SignUpInformation = (props) => {
       console.log(err);
     }
   };
-
+  const PhoneNumberChk = (Number) => {
+    try {
+      let url = Domain2 + 'info/phonechk';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.post(
+            url,
+            {
+              Phone: Number,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+          if (result.data[0].status == 'ok') {
+            if (result.data[0].message == 'ok') {
+              //인증번호받기로진행
+              NaverSMSMessageSend(Number);
+            } else {
+              //결과에 따라서 이미 가입된 휴대폰번호입니다.
+              showToast('이미 가입된 휴대폰번호입니다.', 1000);
+            }
+          } else {
+            showToast('잠시 후에 다시 시도해주세요.', 1000);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setNetworkModal(true);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   let toastRef;
   const showToast = (text, time) => {
     toastRef.show(text, time, () => {
@@ -354,7 +389,7 @@ const SignUpInformation = (props) => {
                       setVisible(true);
                       setTimeout(() => setVisible(false), 2000);
                     } else {
-                      NaverSMSMessageSend(phoneNumber);
+                      PhoneNumberChk(phoneNumber);
                     }
                     //인증번호 다시받기 활성화
                     //최근 인증번호 받은 시간과 비교하여 1분이내면 메시지 띄우기 ->몇초 있다가 사라져야한데, -> 시간초 카운트가 2분이상인지 아닌지 비교
@@ -419,7 +454,7 @@ const SignUpInformation = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (phoneNumber.length == 13) {
-                  NaverSMSMessageSend(phoneNumber);
+                  PhoneNumberChk(phoneNumber);
                 }
               }}
               style={[

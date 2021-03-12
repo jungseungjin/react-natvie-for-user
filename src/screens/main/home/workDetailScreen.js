@@ -266,16 +266,25 @@ const WorkDetailScreen = (props) => {
                 marginLeft: Width_convert(19),
               }}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text
-                  style={{
-                    marginRight: Width_convert(5),
-                    fontFamily: Fonts?.NanumSqureRegular,
-                    fontWeight: '400',
-                    color: '#000000',
-                    fontSize: Font_normalize(12),
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    getDataAndNavigateFromWork(
+                      'store',
+                      props.route.params.item.info_store[0]._id,
+                    );
                   }}>
-                  {props.route.params.item.info_store[0].store_name}
-                </Text>
+                  <Text
+                    style={{
+                      marginRight: Width_convert(5),
+                      fontFamily: Fonts?.NanumSqureRegular,
+                      fontWeight: '400',
+                      color: '#000000',
+                      fontSize: Font_normalize(12),
+                    }}>
+                    {props.route.params.item.info_store[0].store_name}
+                  </Text>
+                </TouchableOpacity>
                 <VerticalBar
                   style={{marginRight: Width_convert(5)}}></VerticalBar>
                 <TouchableOpacity
@@ -295,16 +304,24 @@ const WorkDetailScreen = (props) => {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <Text
-                  style={{
-                    marginRight: Width_convert(5),
-                    fontFamily: Fonts?.NanumSqureRegular,
-                    fontWeight: '400',
-                    color: '#000000',
-                    fontSize: Font_normalize(12),
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    props.navigation.navigate('StoreLocation', {
+                      item: props.route.params.item.info_store[0],
+                    });
                   }}>
-                  {props.route.params.item.info_store[0].store_address}
-                </Text>
+                  <Text
+                    style={{
+                      marginRight: Width_convert(5),
+                      fontFamily: Fonts?.NanumSqureRegular,
+                      fontWeight: '400',
+                      color: '#000000',
+                      fontSize: Font_normalize(12),
+                    }}>
+                    {props.route.params.item.info_store[0].store_address}
+                  </Text>
+                </TouchableOpacity>
                 <VerticalBar
                   style={{marginRight: Width_convert(5)}}></VerticalBar>
                 <TouchableOpacity
