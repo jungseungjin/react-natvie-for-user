@@ -11,7 +11,6 @@ import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 
 const InfoCar = (props) => {
-  console.log(props.route.name);
   const [isLoading, setIsLoading] = React.useState(false);
   const IsLoadingChangeValue = (text) => setIsLoading(text);
   const [page, setPage] = React.useState('car');

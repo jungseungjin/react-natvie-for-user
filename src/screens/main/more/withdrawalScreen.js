@@ -14,7 +14,7 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
 
@@ -197,13 +197,15 @@ const Withdrawal = (props) => {
             계정 삭제하기
           </Text>
         </TouchableOpacity>
+
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </>

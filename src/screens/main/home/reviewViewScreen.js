@@ -24,7 +24,6 @@ import StarGrey from '../../../../assets/home/star_grey.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
@@ -33,6 +32,7 @@ import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
 import 'moment/locale/ko';
 import ImageView from 'react-native-image-viewing';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
@@ -435,13 +435,15 @@ const ReviewView = (props) => {
           presentationStyle="overFullScreen"
           visible={visible}
           onRequestClose={() => setIsVisible(false)}></ImageView>
+
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
         {loginModal ? (
           <LoginModal

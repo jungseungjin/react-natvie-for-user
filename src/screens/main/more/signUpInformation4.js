@@ -32,12 +32,12 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import Geolocation from 'react-native-geolocation-service';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 const SignUpInformation = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
     if (props.route?.params?.PickLocation) {
@@ -864,21 +864,24 @@ const SignUpInformation = (props) => {
           </ScrollView>
         </DismissKeyboard>
       </KeyboardAvoidingView>
+
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {locationModal ? (
-        <ButtonTwoModal
-          Title={'지역 설정을 위해 위치서비스를 켜 주세요'}
+        <AlertModal2
+          type={1}
+          Title={'지역 설정을 위해 위치서비스를 켜 주세요.'}
           navigation={props.navigation}
           ShowModalChangeValue={LocationModalChangeValue}
           LeftButtonTitle={'닫기'}
-          RightButtonTitle={'설정'}></ButtonTwoModal>
+          RightButtonTitle={'설정'}></AlertModal2>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>

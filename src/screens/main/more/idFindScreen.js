@@ -25,7 +25,6 @@ import Toast, {DURATION} from 'react-native-easy-toast';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';

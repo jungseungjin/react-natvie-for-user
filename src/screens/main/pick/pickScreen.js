@@ -29,8 +29,6 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import axios from 'axios';

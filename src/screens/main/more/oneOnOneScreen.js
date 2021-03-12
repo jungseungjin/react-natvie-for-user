@@ -18,12 +18,12 @@ import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const OneOnOne = (props) => {
   React.useEffect(
     () => props.navigation.addListener('focus', () => onRefresh()),
@@ -234,13 +234,15 @@ const OneOnOne = (props) => {
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*문의 리스트 끝 */}
+
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </>

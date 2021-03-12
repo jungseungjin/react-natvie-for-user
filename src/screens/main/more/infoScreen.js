@@ -48,7 +48,6 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
 import Geolocation from 'react-native-geolocation-service';
@@ -1494,7 +1493,6 @@ const InfoScreen = (props) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                               activeOpacity={1}
-                              hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                               onPress={() => {
                                 DeleteCarData(car.indexOf(item));
                               }}

@@ -19,7 +19,6 @@ import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
 import X from '../../../../assets/home/x_black.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';

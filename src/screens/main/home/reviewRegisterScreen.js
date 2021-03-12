@@ -31,11 +31,11 @@ import S3 from 'aws-sdk/clients/s3';
 import fs from 'react-native-fs';
 import base64_arraybuffer from 'base64-arraybuffer';
 import {Braket} from 'aws-sdk';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const ReviewRegister = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const reduexState = useSelector((state) => state);
@@ -132,11 +132,11 @@ const ReviewRegister = (props) => {
               }
             }
             if (starValue == 0) {
-              setShowModalTitle('평점을 평가해주세요');
+              setShowModalTitle('평점을 평가해주세요.');
               setShowModal(true);
               return false;
             } else if (contents == '') {
-              setShowModalTitle('후기 내용을 입력해주세요');
+              setShowModalTitle('후기 내용을 입력해주세요.');
               setShowModal(true);
               return false;
             }
@@ -409,20 +409,23 @@ const ReviewRegister = (props) => {
           </View>
         </View>
         {showModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={ShowModalChangeValue}
             navigation={props.navigation}
             Title={showModalTitle}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
+
         {networkModal ? (
-          <ButtonOneModal
+          <AlertModal1
+            type={1}
             ShowModalChangeValue={NetworkModalChangeValue}
             navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요'}
+            Title={'인터넷 연결을 확인해주세요.'}
             //BottomText={''}
-            CenterButtonText={'닫기'}></ButtonOneModal>
+            CenterButtonText={'확인'}></AlertModal1>
         ) : null}
       </SafeAreaView>
     </DismissKeyboard>

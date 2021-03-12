@@ -15,7 +15,6 @@ import BottomSignUpButton from '../../../components/More/SignUp/bottomSignUpButt
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
@@ -27,6 +26,7 @@ import {useSelector} from 'react-redux';
 import {prototype} from 'react-native/Libraries/Image/ImageBackground';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const LoginScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -351,13 +351,15 @@ const LoginScreen = (props) => {
           </View>
         </SafeAreaView>
       </DismissKeyboard>
+
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </View>

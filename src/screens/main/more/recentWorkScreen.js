@@ -33,7 +33,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import StatusBarHeight from '../../../components/StatusBarHeight';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';

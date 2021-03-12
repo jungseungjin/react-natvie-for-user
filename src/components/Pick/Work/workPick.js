@@ -255,6 +255,7 @@ const WorkPick = (props) => {
           {props.editMode ? (
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 let newArr = props.workListDel;
                 if (props.workListDel.indexOf(props.item._id) != -1) {

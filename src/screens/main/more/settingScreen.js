@@ -16,8 +16,8 @@ import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import DeviceInfo from 'react-native-device-info';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 const Setting = (props) => {
   const reduexState = useSelector((state) => state);
   const [notificationPermission, setNotificationPermission] = React.useState(
@@ -251,24 +251,27 @@ const Setting = (props) => {
         </View>
       </View>
       {permissionModal ? (
-        <ButtonTwoModal
+        <AlertModal2
+          type={2}
           ShowModalChangeValue={PermissionModalChangeValue}
           navigation={props.navigation}
           Title={
-            '알림을 받기 위한 알림권한 설정이 필요합니다.\n권한을 허용하시겠습니까?'
+            '알림을 받기 위한 알림권한 설정이 필요합니다. 권한을 허용하시겠습니까?'
           }
           //BottomText={''}
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}
-          CenterButtonText={'닫기'}></ButtonTwoModal>
+          CenterButtonText={'닫기'}></AlertModal2>
       ) : null}
+
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
     </SafeAreaView>
   );

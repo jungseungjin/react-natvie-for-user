@@ -14,8 +14,6 @@ import BlankBox from '../../../../assets/home/blank_box.svg';
 import QuestionRound from '../../../../assets/home/question_round.svg';
 import DisabledBox from '../../../../assets/home/disabled_box.svg';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
-import ButtonTwoModal from '../../../components/Modal/ButtonTwoModal.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import {
   SafeAreaView,
   StyleSheet,

@@ -198,7 +198,9 @@ const AlertModal2 = (props) => {
                     props.Title ===
                       '지역 설정을 위해 위치서비스를 켜 주세요.' ||
                     props.Title ===
-                      '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?'
+                      '지역 설정 검색을 위해서 권한이 필요합니다. 권한을 허용하시겠습니까?' ||
+                    props.Title ===
+                      '알림을 받기 위한 알림권한 설정이 필요합니다. 권한을 허용하시겠습니까?'
                   ) {
                     props.ShowModalChangeValue(false);
                     Linking.openSettings();

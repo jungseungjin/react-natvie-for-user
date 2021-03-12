@@ -40,10 +40,10 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 const WorkDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -653,12 +653,13 @@ const WorkDetailScreen = (props) => {
           navigation={props.navigation}></WorkConsultingModal>
       ) : null}
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {showModal ? (
         <LoginModal

@@ -16,7 +16,6 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
-import ButtonOneModal from '../../../components/Modal/ButtonOneModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
