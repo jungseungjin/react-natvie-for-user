@@ -130,6 +130,7 @@ const CarSetting = (props) => {
             ]}>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 if (props.nowValue == 'domestic') {
                 } else {
@@ -162,6 +163,7 @@ const CarSetting = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 if (props.nowValue == 'import') {
                 } else {
@@ -195,6 +197,7 @@ const CarSetting = (props) => {
             {props.from == 'InfoCar' || props.from == 'SignUp' ? null : (
               <TouchableOpacity
                 activeOpacity={1}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
                   if (props.nowValue == 'all') {
                   } else {

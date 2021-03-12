@@ -9,6 +9,7 @@ const ReviewButton = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
+      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
       onPress={() => {
         if (props.Title == '수정') {
           props.navigation.navigate('ReviewRevise', {item: props.item});

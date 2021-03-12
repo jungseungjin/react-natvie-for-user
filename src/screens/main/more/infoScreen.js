@@ -1061,6 +1061,7 @@ const InfoScreen = (props) => {
                         }}></TextInput>
                       <TouchableOpacity
                         activeOpacity={1}
+                        hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                         onPress={() => {
                           if (phoneNumber.length == 13) {
                             if (confirmChk) {
@@ -1198,6 +1199,7 @@ const InfoScreen = (props) => {
                         </Text>
                         <TouchableOpacity
                           activeOpacity={1}
+                          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                           onPress={() => {
                             if (confirmChk) {
                             } else {
@@ -1318,6 +1320,7 @@ const InfoScreen = (props) => {
                       </Text>
                       <TouchableOpacity
                         activeOpacity={1}
+                        hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                         onPress={() => {
                           if (handleLocationPermission(Platform.OS)) {
                             CurrentPosition(); //경위도 찍고
@@ -1397,6 +1400,7 @@ const InfoScreen = (props) => {
                             }}>
                             <TouchableOpacity
                               activeOpacity={1}
+                              hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                               onPress={() => {
                                 if (car.indexOf(item) == 0) {
                                   //대표차량 안바꿈
@@ -1465,6 +1469,7 @@ const InfoScreen = (props) => {
                             </Text>
                             <TouchableOpacity
                               activeOpacity={1}
+                              hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                               onPress={() => {
                                 setPage('carChange' + car.indexOf(item));
                               }}
@@ -1489,6 +1494,7 @@ const InfoScreen = (props) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                               activeOpacity={1}
+                              hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                               onPress={() => {
                                 DeleteCarData(car.indexOf(item));
                               }}
@@ -1526,6 +1532,7 @@ const InfoScreen = (props) => {
                       }}>
                       <TouchableOpacity
                         activeOpacity={1}
+                        hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                         onPress={() => {
                           setPage('carAdd');
                         }}>
@@ -1636,6 +1643,7 @@ const InfoScreen = (props) => {
                         }}></TextInput>
                       <TouchableOpacity
                         activeOpacity={1}
+                        hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                         onPress={() => {
                           ChangePassword();
                         }}
@@ -1743,6 +1751,7 @@ const InfoScreen = (props) => {
                         </Text>
                         <TouchableOpacity
                           activeOpacity={1}
+                          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                           onPress={() => {
                             ChangeMarkettting('kakaotalk');
                           }}>
@@ -1778,6 +1787,7 @@ const InfoScreen = (props) => {
 
                         <TouchableOpacity
                           activeOpacity={1}
+                          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                           onPress={() => {
                             ChangeMarkettting('mail');
                           }}>
@@ -1812,6 +1822,7 @@ const InfoScreen = (props) => {
                         </Text>
                         <TouchableOpacity
                           activeOpacity={1}
+                          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                           onPress={() => {
                             ChangeMarkettting('sms');
                           }}>
@@ -1841,6 +1852,7 @@ const InfoScreen = (props) => {
                     }}>
                     <TouchableOpacity
                       activeOpacity={1}
+                      hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                       onPress={() => {
                         if (reduexState.loginDataCheck.login.login == true) {
                           logout();
@@ -1865,6 +1877,7 @@ const InfoScreen = (props) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       activeOpacity={1}
+                      hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                       onPress={() => {
                         props.navigation.navigate('Withdrawal');
                       }}

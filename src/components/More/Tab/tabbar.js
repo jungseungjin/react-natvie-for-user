@@ -51,6 +51,7 @@ const TabBar = (props) => {
         props.Title == '로그인' ? (
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
             if (props.Title == '차량선택_info') {
               props.PageChangeValue('info');
@@ -84,6 +85,7 @@ const TabBar = (props) => {
         props.Title == '아이디 찾기1' ? (
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           style={{backgroundColor: '#FFFFFF'}}
           onPress={() => {
             if (props.Title == '회원가입2') {
@@ -103,6 +105,7 @@ const TabBar = (props) => {
       ) : (
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           style={{backgroundColor: '#FFFFFF'}}
           onPress={() => {
             return false;
@@ -148,6 +151,7 @@ const TabBar = (props) => {
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.updateEditMode(!reduexState.editModeCheck.editMode);
             }}>
@@ -177,6 +181,7 @@ const TabBar = (props) => {
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               //props.navigation.navigate()
             }}>
@@ -196,6 +201,7 @@ const TabBar = (props) => {
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.saveData();
               //props.navigation.navigate()
@@ -216,6 +222,7 @@ const TabBar = (props) => {
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               //props.navigation.navigate()
               if (props.Title == '차량선택_info') {
@@ -240,6 +247,7 @@ const TabBar = (props) => {
         <View style={{backgroundColor: '#FFFFFF'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               if (props.Title == '회원가입1') {
                 if (props.next == true) {

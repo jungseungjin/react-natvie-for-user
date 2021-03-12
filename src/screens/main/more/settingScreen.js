@@ -144,6 +144,7 @@ const Setting = (props) => {
         <View style={{borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               if (review && notificationPermission) {
                 //알림 켜진상태
@@ -181,6 +182,7 @@ const Setting = (props) => {
         <View style={{borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               if (notice && notificationPermission) {
                 //알림 켜진상태

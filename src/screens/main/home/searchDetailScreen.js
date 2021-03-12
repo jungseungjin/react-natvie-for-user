@@ -282,6 +282,7 @@ const SearchScreenDetail = (props) => {
               onPress={() => {
                 props.navigation.goBack();
               }}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               style={{
                 marginLeft: Width_convert(22),
                 marginRight: Width_convert(15),
@@ -331,6 +332,7 @@ const SearchScreenDetail = (props) => {
             ></TextInput>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
               onPress={() => {
                 setPickFilter(false);
                 setSearchText('');
@@ -345,6 +347,7 @@ const SearchScreenDetail = (props) => {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               style={{
                 marginRight: Width_convert(22),
                 width: Width_convert(20),
@@ -441,6 +444,7 @@ const SearchScreenDetail = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
+                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   style={{flex: 1}}
                   onPress={() => {
                     setPickFilter(false);

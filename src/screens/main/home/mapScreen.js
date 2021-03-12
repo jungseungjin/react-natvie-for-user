@@ -230,6 +230,7 @@ const MapScreen = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.navigation.goBack();
             }}
@@ -237,6 +238,9 @@ const MapScreen = (props) => {
               marginRight: Width_convert(25),
               marginTop: Height_convert(4),
               padding: Width_convert(5),
+              paddingRight: Width_convert(15),
+              paddingTop: Width_convert(10),
+              paddingBottom: Width_convert(10),
               marginLeft: Width_convert(17),
             }}>
             <GoBack

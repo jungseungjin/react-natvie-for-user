@@ -132,6 +132,7 @@ const Withdrawal = (props) => {
           </Text>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               setWithdrawalChk(!withdrawalChk);
             }}
@@ -164,6 +165,7 @@ const Withdrawal = (props) => {
         </View>
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
             if (withdrawalChk) {
               sendData();

@@ -19,6 +19,7 @@ const FilterView = (props) => {
         {props.Title == '가까운 순 ' ? (
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.ShowModalChangeValue(true);
             }}>
@@ -28,6 +29,7 @@ const FilterView = (props) => {
       </View>
       <TouchableOpacity
         activeOpacity={1}
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
         onPress={() => {
           if (props.Title == '가까운 순 ' && props.location == null) {
             //아무것도 안해

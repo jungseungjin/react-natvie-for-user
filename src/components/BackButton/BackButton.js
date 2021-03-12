@@ -8,6 +8,7 @@ export default class BackButton extends React.Component {
     return (
       <TouchableHighlight
         onPress={this.props.onPress}
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
         style={styles.btnContainer}>
         <Image
           source={require('../../../assets/icons/backArrow.png')}

@@ -53,7 +53,12 @@ const AnimatedHeader = (props) => {
           <View>
             <TouchableOpacity
               activeOpacity={1}
-              style={{}}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+              style={{
+                paddingRight: Width_convert(10),
+                paddingTop: Width_convert(10),
+                paddingBottom: Width_convert(10),
+              }}
               onPress={() => {
                 props.navigation.goBack();
               }}>
@@ -86,8 +91,13 @@ const AnimatedHeader = (props) => {
             }}>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               style={{
                 flexDirection: 'row',
+                paddingLeft: Width_convert(10),
+                paddingTop: Width_convert(10),
+                paddingBottom: Width_convert(10),
+                borderColor: 'red',
               }}
               onPress={() => {
                 if (props.redux.login) {

@@ -313,6 +313,7 @@ const ReviewView = (props) => {
                   </View>
                   <TouchableOpacity
                     activeOpacity={1}
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                     onPress={() => {
                       getDataAndNavigate('work', item._id);
                     }}
@@ -353,6 +354,7 @@ const ReviewView = (props) => {
                       typeof imageItem == 'number' ? null : (
                         <TouchableOpacity
                           activeOpacity={1}
+                          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                           onPress={() => {
                             setIsVisible(true);
                             setVisibleImage(item.review_reply_image);
@@ -396,6 +398,7 @@ const ReviewView = (props) => {
             }}>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 if (reduexState.loginDataCheck.login.login == true) {
                   props.navigation.navigate('ReviewRegister', {

@@ -72,6 +72,7 @@ const SignUp = (props) => {
         }}>
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
           onPress={() => {
             setAllAgree(!allAgree);
             setAgree1(!allAgree);
@@ -128,6 +129,7 @@ const SignUp = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               props.navigation.navigate('SignUpTerms', {
                 agreeNumber: 1,
@@ -148,6 +150,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree1 == true) {
                 //false로 변경
@@ -187,6 +190,7 @@ const SignUp = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               Agree2ModalChangeValue(true);
             }}>
@@ -204,6 +208,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree2 == true) {
                 //false로 변경
@@ -244,6 +249,7 @@ const SignUp = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               props.navigation.navigate('SignUpTerms', {
                 agreeNumber: 3,
@@ -264,6 +270,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree3 == true) {
                 //false로 변경
@@ -303,6 +310,7 @@ const SignUp = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               props.navigation.navigate('SignUpTerms', {
                 agreeNumber: 4,
@@ -323,6 +331,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree4 == true) {
                 //false로 변경
@@ -362,6 +371,7 @@ const SignUp = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               props.navigation.navigate('SignUpTerms', {
                 agreeNumber: 5,
@@ -382,6 +392,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree5 == true) {
                 //false로 변경
@@ -419,7 +430,10 @@ const SignUp = (props) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={1} onPress={() => {}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {}}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}>
             <Text
               style={{
                 marginLeft: Width_convert(16),
@@ -433,6 +447,7 @@ const SignUp = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
               if (agree6 == true) {
                 //false로 변경
@@ -474,6 +489,7 @@ const SignUp = (props) => {
         }}>
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
           onPress={() => {
             if (agree1 && agree2 && agree3) {
               props.navigation.navigate('SignUpInformation', {

@@ -110,6 +110,7 @@ const SearchScreen = ({navigation, route}) => {
             }}>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 navigation.goBack();
               }}
@@ -159,6 +160,7 @@ const SearchScreen = ({navigation, route}) => {
             ></TextInput>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 if (searchText.trim()) {
                   navigation.navigate('SearchDetail', {
@@ -247,6 +249,7 @@ const SearchScreen = ({navigation, route}) => {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                     activeOpacity={1}
                     style={{
                       paddingLeft: Width_convert(10),

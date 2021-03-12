@@ -207,6 +207,7 @@ const StoreLocationScreen = (props) => {
           </NaverMapView>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               if (handleLocationPermission(Platform.OS)) {
                 //위치정보 사용 ok 현재위치를 가져와야합니다. 어디서?? 네이버에서

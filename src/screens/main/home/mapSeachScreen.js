@@ -100,6 +100,10 @@ const MapScreen = (props) => {
               marginRight: Width_convert(15),
               width: Width_convert(14),
               height: Height_convert(16),
+              borderLeftWidth: 1,
+              borderTopWidth: 1,
+              borderRightWidth: 1,
+              borderBottomWidth: 1,
             }}>
             <X></X>
           </TouchableOpacity>

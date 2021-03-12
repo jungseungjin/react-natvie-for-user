@@ -278,6 +278,7 @@ const StoreDetailScreen = (props) => {
                     }}>
                     <TouchableOpacity
                       activeOpacity={1}
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                       onPress={() => {
                         props.navigation.navigate('StoreLocation', {
                           item: props.route.params.item,
@@ -298,6 +299,7 @@ const StoreDetailScreen = (props) => {
                       style={{marginRight: Width_convert(5)}}></VerticalBar>
                     <TouchableOpacity
                       activeOpacity={1}
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                       onPress={() => {
                         props.navigation.navigate('StoreLocation', {
                           item: props.route.params.item,
@@ -337,6 +339,7 @@ const StoreDetailScreen = (props) => {
                     </Text>
                     <TouchableOpacity
                       activeOpacity={1}
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                       onPress={() => {
                         props.navigation.navigate('ReviewView', {
                           item: props.route.params.item,
@@ -368,6 +371,7 @@ const StoreDetailScreen = (props) => {
               <View style={{marginRight: Width_convert(20)}}>
                 <TouchableOpacity
                   activeOpacity={1}
+                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
                     props.navigation.navigate('StoreWorkList', {
                       item: props.route.params.item,
@@ -408,6 +412,7 @@ const StoreDetailScreen = (props) => {
               }}>
               <TouchableOpacity
                 //key={item.value}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 activeOpacity={1}
                 onPress={() => {
                   handleClick();
@@ -447,6 +452,7 @@ const StoreDetailScreen = (props) => {
               <TouchableOpacity
                 //key={item.value}
                 activeOpacity={1}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
                   handleClick();
                   setPage('labor');

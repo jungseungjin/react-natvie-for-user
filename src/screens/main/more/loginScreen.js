@@ -282,6 +282,7 @@ const LoginScreen = (props) => {
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                     onPress={() => {
                       props.navigation.navigate('IdFind', {
                         fromNav: props.route.params.fromNav,
@@ -311,6 +312,7 @@ const LoginScreen = (props) => {
                     }}></VirticalBar>
                   <TouchableOpacity
                     activeOpacity={1}
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                     style={{
                       paddingTop: Height_convert(10),
                       paddingBottom: Height_convert(10),

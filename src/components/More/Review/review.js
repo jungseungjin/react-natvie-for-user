@@ -55,6 +55,7 @@ const Review = (props) => {
         }}>
         <TouchableOpacity
           activeOpacity={1}
+          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
             props.getDataAndNavigate('store', props.item._id);
           }}
@@ -102,6 +103,7 @@ const Review = (props) => {
         <View style={{justifyContent: 'center'}}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.getDataAndNavigate('work', props.item._id);
             }}
@@ -152,6 +154,7 @@ const Review = (props) => {
             typeof item == 'number' ? null : (
               <TouchableOpacity
                 activeOpacity={1}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
                   props.VisibleChangeValue(true);
                   props.VisibleImageChangeValue(props.item.review_reply_image);
