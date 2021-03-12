@@ -1045,6 +1045,24 @@ const InfoScreen = (props) => {
                             setPhoneNumberChk(0);
                           }
                         }}
+                        onSubmitEditing={() => {
+                          if (phoneNumber.length == 13) {
+                            if (confirmChk) {
+                            } else {
+                              if (minutes >= 2) {
+                                setVisible(true);
+                                setTimeout(() => setVisible(false), 2000);
+                              } else {
+                                PhoneNumberChk(phoneNumber);
+                              }
+                            }
+                          } else {
+                            showToast(
+                              '휴대폰번호 11자리를 모두 입력해주세요.',
+                              1000,
+                            );
+                          }
+                        }}
                         placeholderStyle={{
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
@@ -1166,6 +1184,14 @@ const InfoScreen = (props) => {
                             } else {
                               setAuthNumber(value);
                               setConfirmChkM(0);
+                            }
+                          }}
+                          onSubmitEditing={() => {
+                            if (confirmChk) {
+                            } else {
+                              if (authNumber.length == 6) {
+                                confirmCode(authNumber);
+                              }
                             }
                           }}
                           style={{

@@ -19,11 +19,12 @@ import Black_dot from '../../../../assets/home/black_dot.svg';
 import PropTypes from 'prop-types';
 import FastImage from 'react-native-fast-image';
 import axios from 'axios';
-import Domain from '../../../../key/Domain.js';
+import Domain2 from '../../../../key/Domain2.js';
 import CarSettingBrand from './carSettingBrand.js';
 import CarSettingModel from './carSettingModel.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
+import IsLoading from '../../../components/ActivityIndicator';
 const CarSetting = (props) => {
   const insets = useSafeAreaInsets();
   const [brandList, setBrandList] = React.useState([]);
@@ -46,17 +47,18 @@ const CarSetting = (props) => {
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'brand_list/' + brandSeach;
+          setIsLoading(true);
+          let url = Domain2 + 'brand_list/' + brandSeach;
           props.IsLoadingChangeValue(true);
           let result = await axios.get(url);
-          if (result.data[0].type) {
-            //get에서 type이 있으면 잘못된거
-            alert(result.data[0].message);
+          if (result.data[0].status == 'ok') {
+            setBrandList(result.data[0].result);
             props.IsLoadingChangeValue(false);
           } else {
-            setBrandList(result.data);
+            alert(result.data[0].message);
             props.IsLoadingChangeValue(false);
           }
+          setIsLoading(false);
         } else {
           props.NetworkModalChangeValue(true);
         }
@@ -72,19 +74,19 @@ const CarSetting = (props) => {
       if (props?.PickBrandValue?.brand) {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            console.log(props.PickBrandValue.brand); //쉐보레 대우
-            let url = Domain + 'model_list/' + props.PickBrandValue.brand;
-            console.log(url);
+            setIsLoading(true);
+            let url = Domain2 + 'model_list/' + props.PickBrandValue.brand;
             //props.IsLoadingChangeValue(true);
             let result = await axios.get(url);
-            if (result.data[0].type) {
+            if (result.data[0].status == 'ok') {
+              setModelList(result.data[0].result);
+              //props.IsLoadingChangeValue(false);
+            } else {
               //get에서 type이 있으면 잘못된거
               alert(result.data[0].message);
               //props.IsLoadingChangeValue(false);
-            } else {
-              setModelList(result.data);
-              //props.IsLoadingChangeValue(false);
             }
+            setIsLoading(false);
           } else {
             props.NetworkModalChangeValue(true);
           }
@@ -95,6 +97,8 @@ const CarSetting = (props) => {
       alert('잠시 후에 다시해주세요');
     }
   };
+
+  const [isLoading, setIsLoading] = React.useState(false);
   React.useEffect(() => {
     get_brand_data(props);
   }, [props.nowValue]);
@@ -300,6 +304,7 @@ const CarSetting = (props) => {
           backgroundColor: '#FFFFFF',
         }}></View>
       {/*하단 버튼만큼의 공간 띄우기 끝 */}
+      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

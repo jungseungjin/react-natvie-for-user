@@ -37,16 +37,19 @@ const WorkVideoScreen = (props) => {
         <View
           style={{
             width: Width_convert(375),
-            height: Width_convert(291),
+            height: Width_convert(286),
             borderBottomColor: '#F3F3F3',
             borderBottomWidth: Font_normalize(3),
           }}>
           <View
             style={{
               width: Width_convert(375),
-              height: Width_convert(208),
+              height: Width_convert(220),
             }}>
-            <ScrollView alwaysBounceVertical={false} style={{flex: 1}}>
+            <ScrollView
+              alwaysBounceVertical={false}
+              showsVerticalScrollIndicator={false}
+              style={{flex: 1}}>
               <HTML
                 renderers={renderers}
                 source={{
@@ -73,7 +76,7 @@ const WorkVideoScreen = (props) => {
               style={{
                 width: Width_convert(28),
                 marginRight: Width_convert(11),
-                marginTop: Width_convert(10),
+                marginTop: Width_convert(5),
               }}>
               <FastImage
                 style={{
@@ -91,7 +94,7 @@ const WorkVideoScreen = (props) => {
             <View
               style={{
                 width: Width_convert(304),
-                marginTop: Width_convert(10),
+                marginTop: Width_convert(5),
               }}>
               <View>
                 <Text

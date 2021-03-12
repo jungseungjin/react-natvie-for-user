@@ -232,6 +232,11 @@ const IdFindScreen = (props) => {
                 setPhoneNumber(newValue);
               }
             }}
+            onSubmitEditing={() => {
+              if (phoneNumber.length == 13) {
+                PhoneNumberChk(phoneNumber);
+              }
+            }}
             placeholderStyle={{
               paddingLeft: Width_convert(10),
               fontFamily: Fonts?.NanumSqureRegular || null,
@@ -288,6 +293,11 @@ const IdFindScreen = (props) => {
                   if (value.length > 6) {
                   } else {
                     setAuthNumber(value);
+                  }
+                }}
+                onSubmitEditing={() => {
+                  if (authNumber.length == 6) {
+                    confirmCode(authNumber);
                   }
                 }}
                 placeholderStyle={{

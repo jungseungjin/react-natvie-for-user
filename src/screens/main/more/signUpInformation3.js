@@ -187,6 +187,23 @@ const SignUpInformation = (props) => {
               onChangeText={(value) => {
                 setEmail(value);
               }}
+              onSubmitEditing={() => {
+                if (isEmail(email)) {
+                  //유효성검사 통과하면 다음 중복검사 진행
+                  setEmailValid(isEmail(email));
+                  if (!name) {
+                    setNameModal(true);
+                    //이름을 입력하지 않으면 이름을 입력하라는 모달 띄우기
+                  } else {
+                    EmailChk();
+                    //중복검사 진행.
+                  }
+                } else {
+                  //유효성검사 통과 못하면 하단의 글씨 2초동안 나오기
+                  setEmailValid(isEmail(email));
+                  setTimeout(() => setEmailValid(''), 2000);
+                }
+              }}
               placeholderStyle={{
                 paddingLeft: Width_convert(10),
                 fontFamily: Fonts?.NanumSqureRegular || null,

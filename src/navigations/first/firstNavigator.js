@@ -14,7 +14,7 @@ const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 import {checkNotifications} from 'react-native-permissions';
 
-import ButtonOneModal from '../../components/Modal/ButtonOneModal.js';
+import AlertModal1 from '../../components/Modal/AlertModal1.js';
 import Domain2 from '../../../key/Domain2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
@@ -222,13 +222,15 @@ const FirstNavigator = (props) => {
   return (
     <NavigationContainer>
       <TabNavigator></TabNavigator>
+
       {networkModal ? (
-        <ButtonOneModal
+        <AlertModal1
+          type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요'}
+          Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'닫기'}></ButtonOneModal>
+          CenterButtonText={'확인'}></AlertModal1>
       ) : null}
       {isLoading ? <IsLoading></IsLoading> : null}
     </NavigationContainer>

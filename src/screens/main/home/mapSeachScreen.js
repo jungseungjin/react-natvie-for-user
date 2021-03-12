@@ -92,6 +92,7 @@ const MapScreen = (props) => {
           }}>
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               props.navigation.goBack();
             }}
@@ -100,10 +101,6 @@ const MapScreen = (props) => {
               marginRight: Width_convert(15),
               width: Width_convert(14),
               height: Height_convert(16),
-              borderLeftWidth: 1,
-              borderTopWidth: 1,
-              borderRightWidth: 1,
-              borderBottomWidth: 1,
             }}>
             <X></X>
           </TouchableOpacity>
@@ -175,6 +172,7 @@ const MapScreen = (props) => {
           {searchText ? (
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
                 setSearchText('');
               }}
@@ -190,6 +188,7 @@ const MapScreen = (props) => {
           ) : null}
           <TouchableOpacity
             activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
             onPress={() => {
               if (searchText) {
                 SearchAddr();

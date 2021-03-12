@@ -204,6 +204,9 @@ const LoginScreen = (props) => {
                     autoCorrect={false}
                     secureTextEntry={true}
                     value={passwordText}
+                    onSubmitEditing={() => {
+                      LoginBack();
+                    }}
                     placeholderStyle={{
                       fontSize: Font_normalize(14),
                       fontFamily: Fonts?.NanumGothicRegular || null,

@@ -8,12 +8,14 @@ import Width_convert from '../../Width_convert.js';
 import Purple_dot from '../../../../assets/home/purple_dot.svg';
 import Black_dot from '../../../../assets/home/black_dot.svg';
 import CarSettingModelDetail from './carSettingModelDetail.js';
-import Domain from '../../../../key/Domain.js';
+import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
+import IsLoading from '../../../components/ActivityIndicator';
 
 const CarSettingModel = (props) => {
   const [modelDetailList, setModelDetailList] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const get_model_detail_data = (props) => {
     try {
       if (props?.PickBrandValue?.brand && props?.PickModelValue?.model) {
@@ -21,19 +23,19 @@ const CarSettingModel = (props) => {
           if (state.isConnected) {
             //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
             let url =
-              Domain +
+              Domain2 +
               'model_detail_list/' +
               props?.PickBrandValue?.brand +
               '/' +
               props?.PickModelValue?.model;
             //props.IsLoadingChangeValue(true);
             let result = await axios.get(url);
-            if (result.data[0].type) {
-              //get에서 type이 있으면 잘못된거
-              alert(result.data[0].message);
+            if (result.data[0].status == 'ok') {
+              setModelDetailList(result.data[0].result);
               //props.IsLoadingChangeValue(false);
             } else {
-              setModelDetailList(result.data);
+              //get에서 type이 있으면 잘못된거
+              alert(result.data[0].message);
               //props.IsLoadingChangeValue(false);
             }
           } else {
@@ -52,80 +54,82 @@ const CarSettingModel = (props) => {
     }
   }, [props?.PickModelValue]);
   return (
-    <View>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() => {
-          props.PickModelChangeValue(props.item);
-          props.PickModelDetailChangeValue({});
-        }}
-        style={[
-          {
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginLeft: Width_convert(31),
-          },
-          props.index == 0
-            ? {marginTop: Height_convert(28)}
-            : {marginTop: Height_convert(19)},
-        ]}>
-        {props?.PickModelValue?.model == props.item.model ? (
-          <Purple_dot style={{marginRight: Width_convert(9)}}></Purple_dot>
-        ) : (
-          <Black_dot style={{marginRight: Width_convert(9)}}></Black_dot>
-        )}
-        <Text
+    <>
+      <View>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            props.PickModelChangeValue(props.item);
+            props.PickModelDetailChangeValue({});
+          }}
           style={[
             {
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontWeight: '700',
-              fontSize: Font_normalize(15),
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginLeft: Width_convert(31),
             },
-            props?.PickModelValue?.model == props.item.model
-              ? {
-                  color: '#946AEF',
-                }
-              : {
-                  color: '#000000',
-                },
+            props.index == 0
+              ? {marginTop: Height_convert(28)}
+              : {marginTop: Height_convert(19)},
           ]}>
-          {props.item.model}
-        </Text>
-      </TouchableOpacity>
-      {props?.PickModelValue?.model == props.item.model ? (
-        <View
-          style={{
-            width: Width_convert(199),
-            borderRadius: Font_normalize(4),
-            backgroundColor: '#F2EEFA',
-            marginLeft: Width_convert(40),
-            marginTop: Height_convert(5),
-          }}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            style={{flex: 1}}
-            data={modelDetailList}
-            windowSize={2}
-            initialNumToRender={10}
-            renderItem={({item}) => (
-              <CarSettingModelDetail
-                item={item}
-                PageChangeValue={props.PageChangeValue}
-                from={props.from}
-                PickModelDetail={
-                  props.PickModelDetail?._id == item?._id
-                    ? props.PickModelDetail
-                    : null
-                }
-                PickModelDetailChangeValue={
-                  props.PickModelDetailChangeValue
-                }></CarSettingModelDetail>
-            )}
-            keyExtractor={(item) => String(item._id)}></FlatList>
-        </View>
-      ) : null}
-    </View>
+          {props?.PickModelValue?.model == props.item.model ? (
+            <Purple_dot style={{marginRight: Width_convert(9)}}></Purple_dot>
+          ) : (
+            <Black_dot style={{marginRight: Width_convert(9)}}></Black_dot>
+          )}
+          <Text
+            style={[
+              {
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                fontSize: Font_normalize(15),
+              },
+              props?.PickModelValue?.model == props.item.model
+                ? {
+                    color: '#946AEF',
+                  }
+                : {
+                    color: '#000000',
+                  },
+            ]}>
+            {props.item.model}
+          </Text>
+        </TouchableOpacity>
+        {props?.PickModelValue?.model == props.item.model ? (
+          <View
+            style={{
+              width: Width_convert(199),
+              borderRadius: Font_normalize(4),
+              backgroundColor: '#F2EEFA',
+              marginLeft: Width_convert(40),
+              marginTop: Height_convert(5),
+            }}>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              style={{flex: 1}}
+              data={modelDetailList}
+              windowSize={2}
+              initialNumToRender={10}
+              renderItem={({item}) => (
+                <CarSettingModelDetail
+                  item={item}
+                  PageChangeValue={props.PageChangeValue}
+                  from={props.from}
+                  PickModelDetail={
+                    props.PickModelDetail?._id == item?._id
+                      ? props.PickModelDetail
+                      : null
+                  }
+                  PickModelDetailChangeValue={
+                    props.PickModelDetailChangeValue
+                  }></CarSettingModelDetail>
+              )}
+              keyExtractor={(item) => String(item._id)}></FlatList>
+          </View>
+        ) : null}
+      </View>
+    </>
   );
 };
 export default React.memo(CarSettingModel);

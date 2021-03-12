@@ -187,11 +187,11 @@ const PickScreen = (props) => {
               : page == 'store' && storeList.length > 0
               ? storeList
               : reduexState.loginDataCheck.login.login == false
-              ? [{message: '로그인이 필요합니다'}]
+              ? [{message: '로그인이 필요합니다.'}]
               : page == 'work'
-              ? [{message: '찜한 작업이 없습니다'}]
+              ? [{message: '찜한 작업이 없습니다.'}]
               : page == 'store'
-              ? [{message: '찜한 샵이 없습니다'}]
+              ? [{message: '찜한 샵이 없습니다.'}]
               : null
           }
           windowSize={2}

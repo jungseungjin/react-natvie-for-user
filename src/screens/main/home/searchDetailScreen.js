@@ -166,7 +166,8 @@ const SearchScreenDetail = (props) => {
     }
   };
   //검색한 값으로 데이터 가져오기
-  const getData = (searchText, sort) => {
+  const [searchRandomNumber, setSearchRandomNumber] = React.useState(0);
+  const getData = (searchText, sort, randomNumber) => {
     try {
       setPickFilter(false);
       let result;
@@ -183,7 +184,7 @@ const SearchScreenDetail = (props) => {
       } else {
         sort = '0';
       }
-      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.latitude}&sort=${sort}`;
+      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -194,6 +195,7 @@ const SearchScreenDetail = (props) => {
           if (result.data[0].message == 'ok') {
             setresultWorkList(result.data[0].WorkList);
             setresultStoreList(result.data[0].StoreList);
+            setSearchRandomNumber(result.data[0].randomNumber);
           } else {
             console.log(result.data[0]);
           }
@@ -224,14 +226,14 @@ const SearchScreenDetail = (props) => {
     () =>
       props.navigation.addListener('focus', () => {
         if (pickSort != false) {
-          getData(searchText, pickSort);
+          getData(searchText, pickSort, searchRandomNumber);
         }
       }),
     [pickSort],
   );
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback((text) => {
+  const onRefresh = (text, randomNumber) => {
     setRefreshing(true);
     setPickSort(
       reduexState.loginDataCheck?.login?.location?.legalcode
@@ -239,18 +241,18 @@ const SearchScreenDetail = (props) => {
         : false,
     );
     if (text) {
-      getData(text, false);
+      getData(text, false, randomNumber || searchRandomNumber);
     } else {
-      getData(searchText.trim(), false);
+      getData(searchText.trim(), false, randomNumber || searchRandomNumber);
     }
     setRefreshing(false);
-  }, []);
+  };
   const textInputRef = useRef();
   const handleClick = () => {
     textInputRef.current.focus();
   };
   React.useEffect(() => {
-    getData(props.route?.params?.searchText, pickSort);
+    getData(props.route?.params?.searchText, pickSort, searchRandomNumber);
   }, []);
   let toastRef;
   const showToast = (text, time) => {
@@ -307,7 +309,7 @@ const SearchScreenDetail = (props) => {
                 if (searchText.trim()) {
                   //검색함수 ㄲ
                   addData(searchText.trim());
-                  onRefresh(searchText.trim());
+                  onRefresh(searchText.trim(), searchRandomNumber);
                 } else {
                   showToast('검색어를 입력해주세요.', 500);
                 }
@@ -354,7 +356,7 @@ const SearchScreenDetail = (props) => {
               onPress={() => {
                 if (searchText.trim()) {
                   addData(searchText.trim());
-                  onRefresh(searchText.trim());
+                  onRefresh(searchText.trim(), searchRandomNumber);
                 } else {
                   showToast('검색어를 입력해주세요.', 500);
                 }

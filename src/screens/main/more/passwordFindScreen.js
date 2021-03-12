@@ -299,6 +299,11 @@ const PasswordFindScreen = (props) => {
                 setPhoneNumber(newValue);
               }
             }}
+            onSubmitEditing={() => {
+              if (phoneNumber.length == 13) {
+                PhoneNumberChk(phoneNumber);
+              }
+            }}
             placeholderStyle={{
               marginTop: Width_convert(35),
               paddingLeft: Width_convert(10),
@@ -360,6 +365,11 @@ const PasswordFindScreen = (props) => {
                   if (value.length > 6) {
                   } else {
                     setAuthNumber(value);
+                  }
+                }}
+                onSubmitEditing={() => {
+                  if (authNumber.length == 6) {
+                    confirmCode(authNumber);
                   }
                 }}
                 placeholderStyle={{

@@ -41,6 +41,9 @@ const WorkConsultingModal = (props) => {
         useNativeDriver={true}
         hideModalContentWhileAnimating={true}
         backdropColor={'#202020'}
+        onRequestClose={() => {
+          props.WorkConsultingModalChangeValue(false);
+        }}
         backdropOpacity={0.3}
         style={{
           justifyContent: 'center',
@@ -50,12 +53,16 @@ const WorkConsultingModal = (props) => {
           style={[
             {
               width: Width_convert(331),
-              height: Width_convert(296),
               backgroundColor: '#FFFFFF',
               borderRadius: Font_normalize(5),
             },
           ]}>
-          <View style={{flexDirection: 'row', marginTop: Width_convert(23)}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: Width_convert(23),
+              height: Width_convert(40),
+            }}>
             <Text
               style={{
                 marginLeft: Width_convert(133),
@@ -82,7 +89,6 @@ const WorkConsultingModal = (props) => {
           </View>
           <View
             style={{
-              marginTop: Width_convert(20),
               width: Width_convert(263),
               marginLeft: Width_convert(34),
               marginRight: Width_convert(34),
@@ -101,7 +107,7 @@ const WorkConsultingModal = (props) => {
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '400',
-                    fontSize: Font_normalize(13),
+                    fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
                   명시된 작업가격을 기준으로{' '}
@@ -110,17 +116,17 @@ const WorkConsultingModal = (props) => {
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '700',
-                    fontSize: Font_normalize(13),
+                    fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
-                  {props.name} 고객님의 기존차량트림, 차량상태(튜닝이력 여부
+                  {props.name} 고객님의 기존 차량트림, 차량상태(튜닝이력 여부
                   등)에 따라{' '}
                 </Text>
                 <Text
                   style={{
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '400',
-                    fontSize: Font_normalize(13),
+                    fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
                   작업가격이 내려갈 수도 올라갈 수도 있습니다.
@@ -129,9 +135,10 @@ const WorkConsultingModal = (props) => {
             </View>
             <TouchableOpacity
               activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {}}
               style={{
-                marginTop: Width_convert(4),
+                marginTop: Width_convert(2),
                 marginLeft: 'auto',
               }}>
               <Text
@@ -149,7 +156,12 @@ const WorkConsultingModal = (props) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{marginTop: Width_convert(16), alignItems: 'center'}}>
+          <View
+            style={{
+              marginTop: Width_convert(16),
+              height: Width_convert(118),
+              alignItems: 'center',
+            }}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {

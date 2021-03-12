@@ -38,7 +38,7 @@ const TabBar = (props) => {
         props.Title == '작업종류' ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+          hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           style={{
             paddingTop: Width_convert(10),
             paddingBottom: Width_convert(10),
@@ -60,7 +60,7 @@ const TabBar = (props) => {
         props.Title == '캠핑카' ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+          hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           style={{}}
           onPress={() => {
             props.navigation.goBack();
@@ -71,6 +71,7 @@ const TabBar = (props) => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
+          hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           activeOpacity={1}
           style={{
             paddingTop: Width_convert(10),
@@ -107,7 +108,7 @@ const TabBar = (props) => {
         props.Title == '작업종류' ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+          hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           style={{
             paddingTop: Width_convert(10),
             paddingBottom: Width_convert(10),

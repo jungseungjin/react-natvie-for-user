@@ -290,7 +290,7 @@ const SearchStore = (props) => {
         {props.editMode ? (
           <TouchableOpacity
             activeOpacity={1}
-            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+            hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
             onPress={() => {
               let newArr = props.storeListDel;
               if (props.storeListDel.indexOf(props.item._id) != -1) {

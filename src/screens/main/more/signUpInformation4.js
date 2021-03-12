@@ -15,6 +15,7 @@ import {
   RESULTS,
   requestNotifications,
   checkNotifications,
+  TextInput,
 } from 'react-native-permissions';
 import {TextInputMask} from 'react-native-masked-text';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
@@ -24,7 +25,6 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
-import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
@@ -394,7 +394,7 @@ const SignUpInformation = (props) => {
                   justifyContent: 'center',
                 }}>
                 <TextInput
-                  placeholder="회원님의 성함을 적어주세요"
+                  placeholder="회원님의 성함을 적어주세요."
                   placeholderTextColor="#CCCCCC"
                   value={name}
                   editable={false}
@@ -439,7 +439,7 @@ const SignUpInformation = (props) => {
                   }}>
                   <TextInput
                     underlineColorAndroid="transparent"
-                    placeholder="이메일 주소를 입력해주세요"
+                    placeholder="이메일 주소를 입력해주세요."
                     placeholderTextColor="#CCCCCC"
                     value={email}
                     editable={false}
@@ -655,7 +655,7 @@ const SignUpInformation = (props) => {
                       fontWeight: '400',
                       color: '#FF0000',
                     }}>
-                    영문+숫자+특수문자 8~20자 비밀번호와 동일하게 입력해주세요
+                    비밀번호와 동일하게 입력해주세요.
                   </Text>
                 ) : null}
               </View>
@@ -758,7 +758,7 @@ const SignUpInformation = (props) => {
                     style={[
                       {
                         marginTop: Height_convert(10),
-                        width: Width_convert(275),
+                        width: Width_convert(285),
                         height: Width_convert(40),
                         paddingLeft: Width_convert(5),
                         fontFamily: Fonts?.NanumSqureRegular || null,

@@ -27,6 +27,7 @@ import Domain2 from '../../../../key/Domain2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import AleartModal1 from '../../../components/Modal/AlertModal1.js';
 const SignUpInformation = (props) => {
   const [agree, setAgree] = React.useState(props.route.params);
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -46,6 +47,8 @@ const SignUpInformation = (props) => {
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
 
+  const [phoneNumberModal, setPhoneNumberModal] = React.useState(false);
+  const PhoneNumberModalChangeValue = (text) => setPhoneNumberModal(text);
   const [networkModal, setNetworkModal] = React.useState(false);
   const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const confirmCode = (code) => {
@@ -140,7 +143,7 @@ const SignUpInformation = (props) => {
               NaverSMSMessageSend(Number);
             } else {
               //결과에 따라서 이미 가입된 휴대폰번호입니다.
-              showToast('이미 가입된 휴대폰번호입니다.', 1000);
+              setPhoneNumberModal(true);
             }
           } else {
             showToast('잠시 후에 다시 시도해주세요.', 1000);
@@ -229,6 +232,11 @@ const SignUpInformation = (props) => {
             onChangeText={(value) => {
               PhoneNumberChangeValue(value);
             }}
+            onSubmitEditing={() => {
+              if (phoneNumber.length == 13) {
+                PhoneNumberChk(phoneNumber);
+              }
+            }}
             style={{
               marginTop: Height_convert(10),
               width: Width_convert(200),
@@ -278,6 +286,11 @@ const SignUpInformation = (props) => {
                   if (value.length > 6) {
                   } else {
                     setAuthNumber(value);
+                  }
+                }}
+                onSubmitEditing={() => {
+                  if (authNumber.length == 6) {
+                    confirmCode(authNumber);
                   }
                 }}
                 placeholderStyle={{
@@ -505,15 +518,23 @@ const SignUpInformation = (props) => {
         )}
         {/*인증번호받기 버튼, 버튼누르면 변경되는 뷰  */}
       </View>
-
+      {phoneNumberModal ? (
+        <AleartModal1
+          type={1}
+          ShowModalChangeValue={PhoneNumberModalChangeValue}
+          navigation={props.navigation}
+          Title={'이미 가입된 휴대폰번호입니다.'}
+          //BottomText={''}
+          CenterButtonText={'확인'}></AleartModal1>
+      ) : null}
       {networkModal ? (
-        <AlearModal1
+        <AleartModal1
           type={1}
           ShowModalChangeValue={NetworkModalChangeValue}
           navigation={props.navigation}
           Title={'인터넷 연결을 확인해주세요.'}
           //BottomText={''}
-          CenterButtonText={'확인'}></AlearModal1>
+          CenterButtonText={'확인'}></AleartModal1>
       ) : null}
       <Toast
         ref={(toast) => (toastRef = toast)}

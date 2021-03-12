@@ -35,6 +35,9 @@ const AlertModal1 = (props) => {
           //아이폰에서 모달창 동작시 깜박임이 있었는데, useNativeDriver Props를 True로 주니 해결되었다.
           useNativeDriver={true}
           hideModalContentWhileAnimating={true}
+          onRequestClose={() => {
+            props.ShowModalChangeValue(false);
+          }}
           backdropColor={'#202020'}
           backdropOpacity={0.3}
           style={{
