@@ -18,8 +18,12 @@ import CallLogo from '../../../../assets/home/CallLogo.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
-
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const CustomerServiceScreen = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const reduexState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [showModal, setShowModal] = React.useState(false);
@@ -260,6 +264,19 @@ const CustomerServiceScreen = (props) => {
             //LeftButtonTitle={'아니오'}
             //RightButtonTitle={'네'}
           ></LoginModal>
+        ) : null}
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
       </SafeAreaView>
     </>

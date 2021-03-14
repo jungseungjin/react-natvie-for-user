@@ -18,7 +18,6 @@ import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
 import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
@@ -26,14 +25,16 @@ import axios from 'axios';
 import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';
+
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const CategoryDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [page, setPage] = React.useState(props.route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
-
   const [middleList, setMiddleList] = React.useState(
     props.route.params.MiddleCategory,
   );
@@ -68,7 +69,7 @@ const CategoryDetailScreen = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          setIsLoadingAndModal(1);
           let url = `${Domain2}categoryworklist/second`;
           let result = await axios.get(url, {
             headers: {
@@ -93,9 +94,9 @@ const CategoryDetailScreen = (props) => {
             setViewWorkList(result.data[0].WorkList);
           } else {
           }
-          setIsLoading(false);
+          setIsLoadingAndModal(0);
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -418,15 +419,6 @@ const CategoryDetailScreen = (props) => {
           </View>
         )}
       </SafeAreaView>
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
       {showModal ? (
         <AlertModal1
           type={3}
@@ -440,7 +432,15 @@ const CategoryDetailScreen = (props) => {
           CenterButtonText={'확인'}
           BottomText={'설정하러가기'}></AlertModal1>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
+      ) : null}
     </>
   );
 };

@@ -44,13 +44,14 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const HomeScreen = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [pickButtonTitle, setPickButtonTitle] = React.useState('');
   const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([]);
@@ -84,7 +85,7 @@ const HomeScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -138,7 +139,7 @@ const HomeScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -503,14 +504,15 @@ const HomeScreen = (props) => {
           {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
       {showModal ? (
         <AlertModal2
@@ -525,7 +527,6 @@ const HomeScreen = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}></AlertModal2>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

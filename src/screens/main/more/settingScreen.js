@@ -18,8 +18,13 @@ import Domain2 from '../../../../key/Domain2.js';
 import DeviceInfo from 'react-native-device-info';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const Setting = (props) => {
   const reduexState = useSelector((state) => state);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [notificationPermission, setNotificationPermission] = React.useState(
     false,
   );
@@ -29,8 +34,6 @@ const Setting = (props) => {
   const [review, setReview] = React.useState(false);
   const [version, setVersion] = React.useState('1.0.0');
   const [recentVersion, setRecentVersion] = React.useState('');
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [permissionModal, setPermissionModal] = React.useState(false);
   const PermissionModalChangeValue = (text) => setPermissionModal(text);
 
@@ -116,7 +119,7 @@ const Setting = (props) => {
               }
             } else {
               //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-              setNetworkModal(true);
+              setIsLoadingAndModal(2);
             }
           });
         } else {
@@ -263,15 +266,14 @@ const Setting = (props) => {
           RightButtonTitle={'네'}
           CenterButtonText={'닫기'}></AlertModal2>
       ) : null}
-
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
     </SafeAreaView>
   );

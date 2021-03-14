@@ -21,6 +21,7 @@ const CarSettingModel = (props) => {
       if (props?.PickBrandValue?.brand && props?.PickModelValue?.model) {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
+            props.IsLoadingAndModalChangeValue(1);
             //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
             let url =
               Domain2 +
@@ -28,18 +29,19 @@ const CarSettingModel = (props) => {
               props?.PickBrandValue?.brand +
               '/' +
               props?.PickModelValue?.model;
-            //props.IsLoadingChangeValue(true);
+            //props.IsLoadingAndModalChangeValue(1);
             let result = await axios.get(url);
+            props.IsLoadingAndModalChangeValue(0);
             if (result.data[0].status == 'ok') {
               setModelDetailList(result.data[0].result);
-              //props.IsLoadingChangeValue(false);
+              //props.IsLoadingAndModalChangeValue(0);
             } else {
               //get에서 type이 있으면 잘못된거
               alert(result.data[0].message);
-              //props.IsLoadingChangeValue(false);
+              //props.IsLoadingAndModalChangeValue(0);
             }
           } else {
-            props.NetworkModalChangeValue(true);
+            props.IsLoadingAndModalChangeValue(2);
           }
         });
       }

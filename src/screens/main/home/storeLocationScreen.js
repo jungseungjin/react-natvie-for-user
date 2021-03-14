@@ -26,17 +26,19 @@ import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import GoBackWhite from '../../../../assets/home/goBackWhite.svg';
-import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GPS from '../../../../assets/home/gps.svg';
 import Geolocation from 'react-native-geolocation-service';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const StoreLocationScreen = (props) => {
-  const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [P0, setP0] = React.useState({
@@ -260,8 +262,15 @@ const StoreLocationScreen = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}></AlertModal2>
       ) : null}
-
-      {isLoading ? <IsLoading></IsLoading> : null}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
+      ) : null}
     </>
   );
 };

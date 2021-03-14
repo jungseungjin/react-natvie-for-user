@@ -17,13 +17,17 @@ import Domain2 from '../../../../key/Domain2.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const Withdrawal = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   //삭제하기 실행하면 로그아웃상태로 만들고 기기데이터로 뭘 줘야하나?
   const reduexState = useSelector((state) => state);
   const [withdrawalChk, setWithdrawalChk] = React.useState(false);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const sendData = () => {
     try {
       NetInfo.addEventListener(async (state) => {
@@ -50,7 +54,7 @@ const Withdrawal = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -198,14 +202,18 @@ const Withdrawal = (props) => {
           </Text>
         </TouchableOpacity>
 
-        {networkModal ? (
-          <AlertModal1
-            type={1}
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요.'}
-            //BottomText={''}
-            CenterButtonText={'확인'}></AlertModal1>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
       </SafeAreaView>
     </>

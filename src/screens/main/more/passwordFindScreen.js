@@ -24,10 +24,12 @@ import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const PasswordFindScreen = (props) => {
   const [idText, setIdText] = React.useState(''); //아이디
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -39,10 +41,6 @@ const PasswordFindScreen = (props) => {
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [resultModal, setResultModal] = React.useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
 
@@ -62,7 +60,7 @@ const PasswordFindScreen = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          setIsLoadingAndModal(1);
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
           let result = await axios.get(url, {
             headers: {
@@ -70,24 +68,24 @@ const PasswordFindScreen = (props) => {
             },
           });
           if (result.data[0].status == 'ok') {
-            setIsLoading(false);
+            setIsLoadingAndModal(0);
             props.navigation.navigate('PasswordFind2', {
               phoneNumber: phoneNumber,
               idText: idText,
               fromNav: props.route.params.fromNav,
             });
           } else {
-            setIsLoading(false);
+            setIsLoadingAndModal(0);
             //없어
             setResultModal(true);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(3);
       console.log(err);
       alert(err);
     }
@@ -172,7 +170,7 @@ const PasswordFindScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -603,7 +601,6 @@ const PasswordFindScreen = (props) => {
         )}
         {/*인증번호받기 버튼, 버튼누르면 변경되는 뷰  */}
       </View>
-
       <Toast
         ref={(toast) => (toastRef = toast)}
         style={{
@@ -626,17 +623,16 @@ const PasswordFindScreen = (props) => {
           Title={'해당정보로 등록된 아이디가 없습니다.'}
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
+      ) : null}{' '}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>
   );
 };

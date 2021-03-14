@@ -24,6 +24,9 @@ import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const OneOnOne = (props) => {
   React.useEffect(
     () => props.navigation.addListener('focus', () => onRefresh()),
@@ -31,8 +34,8 @@ const OneOnOne = (props) => {
   );
   const reduexState = useSelector((state) => state);
   const [dataList, setDataList] = React.useState([]);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [chkTime, setChkTime] = React.useState(moment().valueOf());
   const [chkReload, setChkReload] = React.useState(0);
   const getData = () => {
@@ -62,7 +65,7 @@ const OneOnOne = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -234,15 +237,18 @@ const OneOnOne = (props) => {
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*문의 리스트 끝 */}
-
-        {networkModal ? (
-          <AlertModal1
-            type={1}
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요.'}
-            //BottomText={''}
-            CenterButtonText={'확인'}></AlertModal1>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
       </SafeAreaView>
     </>

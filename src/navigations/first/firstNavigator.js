@@ -7,7 +7,6 @@ import TabNavigator from '../tabNavigation/tabNavigation';
 import LandingNavigator from '../stackNavigation/landingNavigation';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import IsLoading from '../../components/ActivityIndicator';
 import RNSplashScreen from 'react-native-splash-screen';
 enableScreens();
 const Stack = createStackNavigator();
@@ -23,12 +22,16 @@ import {connect} from 'react-redux';
 import ActionCreator from '../../actions';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
+import IsLoading from '../../components/ActivityIndicator';
+import NetworkErrModal from '../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../components/Modal/NormalErrModal';
+
 const FirstNavigator = (props) => {
   const [landingCheck, setLandingCheck] = React.useState(true);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const reduexState = useSelector((state) => state);
   const setData = async (value) => {
     try {
@@ -96,7 +99,7 @@ const FirstNavigator = (props) => {
             }
           } else {
             //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-            setNetworkModal(true);
+            setIsLoadingAndModal(true);
           }
         });
         RNSplashScreen.hide();
@@ -120,7 +123,8 @@ const FirstNavigator = (props) => {
               await Keychain.resetGenericPassword();
             }
           } else {
-            setNetworkModal(true);
+            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+            setIsLoadingAndModal(true);
           }
         });
         console.log(
@@ -193,7 +197,8 @@ const FirstNavigator = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(true);
         }
       });
     } catch (err) {
@@ -201,19 +206,19 @@ const FirstNavigator = (props) => {
     }
   };
   React.useEffect(() => {
-    setIsLoading(true);
+    setIsLoadingAndModal(1);
     getData();
     handlePushToken();
     AutoLogin();
-    setIsLoading(false);
+    setIsLoadingAndModal(0);
   }, []);
   React.useEffect(() => {
-    setIsLoading(true);
+    setIsLoadingAndModal(1);
     if (reduexState.landingCheck.landingCheck == true) {
       setLandingCheck(true);
       setData(true);
     }
-    setIsLoading(false);
+    setIsLoadingAndModal(0);
   }, [reduexState.landingCheck.landingCheck]);
 
   // {landingCheck ? (      ) : (
@@ -222,17 +227,15 @@ const FirstNavigator = (props) => {
   return (
     <NavigationContainer>
       <TabNavigator></TabNavigator>
-
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </NavigationContainer>
   );
 };

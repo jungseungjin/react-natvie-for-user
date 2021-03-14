@@ -16,11 +16,16 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FrequentlyQuestionMenu from '../../../components/More/Menu/frequentlyQuestionMenu.js';
 import BracketDown from '../../../../assets/home/braket_down.svg';
 import BracketUp from '../../../../assets/home/braket_up.svg';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const FrequentlyQuestionScreen = (props) => {
   const [page, setPage] = React.useState('TOP5');
   const PageChangeValue = (text) => setPage(text);
   const [dataList, setDataList] = React.useState([]);
   const [opneIndex, setOpneIndex] = React.useState(0);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   return (
     <>
       <StatusBar
@@ -233,6 +238,19 @@ const FrequentlyQuestionScreen = (props) => {
             </View>
           )}
         </ScrollView>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
+        ) : null}
       </SafeAreaView>
     </>
   );

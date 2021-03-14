@@ -22,7 +22,6 @@ import FastImage from 'react-native-fast-image';
 import Star from '../../../../assets/home/star.svg';
 import StarGrey from '../../../../assets/home/star_grey.svg';
 import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
-import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
@@ -33,16 +32,18 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import ImageView from 'react-native-image-viewing';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [loginModal, setLoginModal] = React.useState(false);
   const LoginModalChangeValue = (text) => setLoginModal(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
-
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [refreshing, setRefreshing] = React.useState(false);
   const [reviewList, setReviewList] = React.useState([]);
   const [reviewCount, setReviewCount] = React.useState(
@@ -84,7 +85,7 @@ const ReviewView = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -435,15 +436,18 @@ const ReviewView = (props) => {
           presentationStyle="overFullScreen"
           visible={visible}
           onRequestClose={() => setIsVisible(false)}></ImageView>
-
-        {networkModal ? (
-          <AlertModal1
-            type={1}
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요.'}
-            //BottomText={''}
-            CenterButtonText={'확인'}></AlertModal1>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
         {loginModal ? (
           <LoginModal
@@ -457,7 +461,6 @@ const ReviewView = (props) => {
           ></LoginModal>
         ) : null}
       </SafeAreaView>
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

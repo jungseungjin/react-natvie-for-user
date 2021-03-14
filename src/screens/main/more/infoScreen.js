@@ -39,7 +39,6 @@ import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
@@ -73,14 +72,12 @@ import XButton from '../../../../assets/home/x_button.svg';
 import Place_check from '../../../../assets/home/place_check';
 import Search from '../../../../assets/home/search.svg';
 import GoBack from '../../../../assets/home/goBack.svg';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const InfoScreen = (props) => {
-  //저장으로 값이 변경되는거라면 state잡아서 넣어주고 시작해야함
-  //저장을 해야 값이 변경됨.
-  //닉네임은 변경된거 있으면 가지고들어가고
-  //confirmChk -> 휴대폰번호 변경
-  //지역도 변경된거 있음녀 가지고 들어가고
-  //차량...
-
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   //비밀번호수정
   const ChangePassword = () => {
     try {
@@ -175,7 +172,7 @@ const InfoScreen = (props) => {
             props.updateData(prevData); //디바이스정보라도 넣어줘야??
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -198,10 +195,6 @@ const InfoScreen = (props) => {
   const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
   const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
 
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [showModal, setShowModal] = React.useState(false);
@@ -388,7 +381,7 @@ const InfoScreen = (props) => {
             forceUpdate();
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -528,7 +521,7 @@ const InfoScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -573,7 +566,7 @@ const InfoScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -629,7 +622,7 @@ const InfoScreen = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -701,7 +694,7 @@ const InfoScreen = (props) => {
       if (reduexState.loginDataCheck.login.login == false) {
         return false;
       }
-      setIsLoading(true);
+      setIsLoadingAndModal(1);
       let result = await axios.get(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
           position.coords.longitude +
@@ -718,7 +711,7 @@ const InfoScreen = (props) => {
       //legalcode admcode addr roadaddr
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
-        setIsLoading(false);
+        setIsLoadingAndModal(0);
         let newData = {
           location: {
             longitude: position.coords.longitude,
@@ -737,13 +730,13 @@ const InfoScreen = (props) => {
         });
         setLocation(newData);
       } else {
-        setIsLoading(false);
+        setIsLoadingAndModal(0);
         location.legalcode = '요청한 데이타의 결과가 없습니다.';
         setLocation(location);
         //네이버 맵에 없음
       }
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(3);
       console.log(err);
       alert(err);
     }
@@ -782,7 +775,7 @@ const InfoScreen = (props) => {
           //setIsLoading(false);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -2323,7 +2316,7 @@ const InfoScreen = (props) => {
             CategoryChangeValue={CategoryChangeValue}
             PickBrandValue={pickBrand}
             PickBrandChangeValue={PickBrandChangeValue}
-            IsLoadingChangeValue={IsLoadingChangeValue}
+            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
             PickModelValue={pickModel}
             PickModelChangeValue={PickModelChangeValue}
             PickModelDetail={pickModelDetail}
@@ -2412,16 +2405,15 @@ const InfoScreen = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}></AlertModal2>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>
   );
 };

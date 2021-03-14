@@ -29,7 +29,6 @@ import Star from '../../../../assets/home/star.svg';
 import PurpleTag from '../../../../assets/home/purple_tag.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
-import IsLoading from '../../../components/ActivityIndicator';
 import AnimatedHeader from '../../../components/Home/Animate/animatedHeader.js';
 import WorkInformation from '../../../components/Home/Infomation/workInformation.js';
 import StoreInformation from '../../../components/Home/Infomation/storeInformation.js';
@@ -44,13 +43,16 @@ import LoginModal from '../../../components/Modal/LoginModal.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const WorkDetailScreen = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const offset = useRef(new Animated.Value(0)).current;
   const [scrollValue, setScrollValue] = React.useState(0);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [workConsultingModal, setWorkConsultingModal] = React.useState(false);
   const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
   const [showModal, setShowModal] = React.useState(false);
@@ -160,7 +162,7 @@ const WorkDetailScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -652,15 +654,6 @@ const WorkDetailScreen = (props) => {
           name={reduexState.loginDataCheck.login?.data?.iu_name || null}
           navigation={props.navigation}></WorkConsultingModal>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
       {showModal ? (
         <LoginModal
           fromNav={'home'}
@@ -671,8 +664,16 @@ const WorkDetailScreen = (props) => {
           //LeftButtonTitle={'아니오'}
           //RightButtonTitle={'네'}
         ></LoginModal>
+      ) : null}{' '}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

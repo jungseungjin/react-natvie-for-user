@@ -5,7 +5,6 @@ import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
 import SignUp from '../../../components/Home/SignUp/signUp.js';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
 import LocationSetting from '../../../components/Home/Setting/locationSetting.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 import {useSelector} from 'react-redux';
 import {connect} from 'react-redux';
@@ -20,6 +19,9 @@ import {
   RESULTS,
   requestNotifications,
 } from 'react-native-permissions';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const SettingScreen = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
     if (props.route?.params?.PickLocation) {
@@ -33,8 +35,9 @@ const SettingScreen = (props) => {
     unsubscribe;
   }, [props.navigation]);
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
@@ -68,8 +71,6 @@ const SettingScreen = (props) => {
   const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
   const [pickLocation, setPickLocation] = React.useState({});
   const PickLocationChangeValue = (object) => setPickLocation(object);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   React.useEffect(() => {
     try {
       if (reduexState.loginDataCheck.login.iu_car.length > 0) {
@@ -187,7 +188,7 @@ const SettingScreen = (props) => {
   };
   const getNaverLocagtion = async (position) => {
     try {
-      setIsLoading(true);
+      setIsLoadingAndModal(1);
       // position.coords.longitude = 126.70528; //지워야함
       // position.coords.latitude = 37.45639; //지워야함
       let result = await axios.get(
@@ -206,7 +207,7 @@ const SettingScreen = (props) => {
       //legalcode admcode addr roadaddr
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
-        setIsLoading(false); ////여기부터 만져라
+        setIsLoadingAndModal(0); ////여기부터 만져라
         setPickLocation({
           location: {
             latitude: position.coords.latitude,
@@ -220,7 +221,9 @@ const SettingScreen = (props) => {
             result.data.results[0].region.area3.name,
         });
       } else {
-        setIsLoading(false);
+        setIsLosetIsLoadingAndModalading(
+          0
+        );
         setPickLocation({
           location: {
             latitude: position.coords.latitude,
@@ -232,9 +235,8 @@ const SettingScreen = (props) => {
         //네이버 맵에 없음
       }
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(3);
       console.log(err);
-      alert(err);
     }
   };
   return (
@@ -262,12 +264,13 @@ const SettingScreen = (props) => {
             CategoryChangeValue={CategoryChangeValue}
             PickBrandValue={pickBrand}
             PickBrandChangeValue={PickBrandChangeValue}
-            IsLoadingChangeValue={IsLoadingChangeValue}
+            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
             PickModelValue={pickModel}
             PickModelChangeValue={PickModelChangeValue}
             PickModelDetail={pickModelDetail}
-            PickModelDetailChangeValue={PickModelDetailChangeValue}
-            NetworkModalChangeValue={NetworkModalChangeValue}></CarSetting>
+            PickModelDetailChangeValue={
+              PickModelDetailChangeValue
+            }></CarSetting>
         ) : (
           <LocationSetting
             navigation={props.navigation}
@@ -275,25 +278,25 @@ const SettingScreen = (props) => {
             PickBrandValue={pickBrand}
             PickModelValue={pickModel}
             PickModelDetail={pickModelDetail}
+            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
             handleLocationPermission={handleLocationPermission}
             LocationModalChangeValue={LocationModalChangeValue}
             CurrentPosition={CurrentPosition}
             pickLocation={pickLocation}
-            PickLocationChangeValue={PickLocationChangeValue}
-            NetworkModalChangeValue={NetworkModalChangeValue}></LocationSetting>
+            PickLocationChangeValue={PickLocationChangeValue}></LocationSetting>
         )}
         {reduexState.loginDataCheck.login?.login ? null : (
           <SignUp navigation={props.navigation}></SignUp>
         )}
       </SafeAreaView>
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
       {locationModal ? (
         <AlertModal2
@@ -313,7 +316,6 @@ const SettingScreen = (props) => {
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

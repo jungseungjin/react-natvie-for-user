@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
@@ -44,16 +43,18 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Geolocation from 'react-native-geolocation-service';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const MapScreen = (props) => {
   const [P0, setP0] = React.useState({
     latitude: parseFloat(props.route.params.PickLocation.y),
     longitude: parseFloat(props.route.params.PickLocation.x),
   });
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [pageLoading, setPageLoading] = React.useState(0);
@@ -125,7 +126,7 @@ const MapScreen = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          //setIsLoading(true);
+          //setIsLoadingAndModal(1);
           let result = await axios.get(
             'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=' +
               position.longitude +
@@ -144,7 +145,7 @@ const MapScreen = (props) => {
           //legalcode admcode addr roadaddr
           //법정동 행정동 지번주소 도로명주소
           if (result.data.status.message == 'done') {
-            //setIsLoading(false);
+            //setIsLoadingAndModal(0);
             setPickLocation({
               latitude: parseFloat(position.latitude),
               longitude: parseFloat(position.longitude),
@@ -160,7 +161,7 @@ const MapScreen = (props) => {
               longitude: parseFloat(position.longitude),
             });
           } else {
-            //setIsLoading(false);
+            //setIsLoadingAndModal(0);
             setPickLocation({
               latitude: parseFloat(position.latitude),
               longitude: parseFloat(position.longitude),
@@ -171,11 +172,11 @@ const MapScreen = (props) => {
           forceUpdate();
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(0);
       console.log(err);
       alert(err);
     }
@@ -385,16 +386,15 @@ const MapScreen = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}></AlertModal2>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

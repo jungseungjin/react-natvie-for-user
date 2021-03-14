@@ -14,7 +14,6 @@ import Height_convert from '../../../components/Height_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 import Domain from '../../../../key/Domain.js';
 import MiddleCategory from '../../../components/Home/Category/middleCategory.js';
@@ -23,12 +22,16 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import {useSelector} from 'react-redux';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const CategoryScreen = (props) => {
   const reduexState = useSelector((state) => state);
   //완료버튼이 중분류 소분류까지 가능. 대분류는 말고!
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const [searchModal, setSearchModal] = React.useState(false);
   const SearchModalChangeValue = (text) => setSearchModal(text);
   const [page, setPage] = React.useState(
@@ -65,21 +68,20 @@ const CategoryScreen = (props) => {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             let url = Domain + 'work_findAll?work_type=' + work_type;
-            setIsLoading(true);
+            setIsLoadingAndModal(1);
             let result = await axios.get(url);
+            setIsLoadingAndModal(0);
             if (result.data[0].type) {
               //get에서 type이 있으면 잘못된거
               alert(result.data[0].message);
-              setIsLoading(false);
             } else {
               setMiddleCategoryList(result.data);
               setPickMiddleCategory({});
               setSmallCategoryList([]);
               setPickSmallCategory({});
-              setIsLoading(false);
             }
           } else {
-            setNetworkModal(true);
+            setIsLoadingAndModal(2);
           }
         });
       }
@@ -105,19 +107,18 @@ const CategoryScreen = (props) => {
         if (state.isConnected) {
           let url =
             Domain + 'work_findAll?work_sub_type_name=' + work_sub_type_name;
-          setIsLoading(true);
+          setIsLoadingAndModal(1);
           let result = await axios.get(url);
+          setIsLoadingAndModal(0);
           if (result.data[0].type) {
             //get에서 type이 있으면 잘못된거
             alert(result.data[0].message);
-            setIsLoading(false);
           } else {
             setSmallCategoryList(result.data);
             setPickSmallCategory({});
-            setIsLoading(false);
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -181,7 +182,7 @@ const CategoryScreen = (props) => {
             //중분류도 안찍혀있음 -> 아무것도 안해  --- 나중에 모달띄우기 넣지
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -267,16 +268,15 @@ const CategoryScreen = (props) => {
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

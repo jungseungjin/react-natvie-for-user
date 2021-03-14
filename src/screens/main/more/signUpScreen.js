@@ -16,7 +16,14 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const SignUp = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const [allAgree, setAllAgree] = React.useState(false);
   const [agree1, setAgree1] = React.useState(false); //이용약관 동의
   const [agree2, setAgree2] = React.useState(false); //만 14세 이상 확인
@@ -539,6 +546,15 @@ const SignUp = (props) => {
             '정보통신망 이용촉진 및 정보보호 등에 관한 법률에는 만 14세미만 아동의 개인정보  수집시 법정대리인 동의를 받도록 규정하고 있으며, 만 14세 미만 아동이 법정대리인 동의없이 회원가입을 하는 경우 회원탈퇴 또는 서비스 이용이 제한 될 수 있습니다.'
           }
           CenterButtonText={'확인'}></AlertModal1>
+      ) : null}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
     </SafeAreaView>
   );

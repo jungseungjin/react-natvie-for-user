@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
 import Height_convert_real from '../../../components/Height_convert.js';
@@ -49,13 +48,15 @@ import Domain2 from '../../../../key/Domain2.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';
+
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const SearchScreenDetail = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
-  //기본으로 데이터받아오는 검색부터 진행해야됨.
-  //데이터 받아와야하니까 로딩걸린다잉
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [showModal, setShowModel] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModel(text);
   const [searchText, setSearchText] = React.useState(
@@ -201,7 +202,7 @@ const SearchScreenDetail = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -518,15 +519,6 @@ const SearchScreenDetail = (props) => {
           />
         </SafeAreaView>
       </DismissKeyboard>
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
       {showModal ? (
         <AlertModal2
           type={2}
@@ -538,8 +530,16 @@ const SearchScreenDetail = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}
           BottomText={'설정하러가기'}></AlertModal2>
+      ) : null}{' '}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

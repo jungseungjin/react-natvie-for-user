@@ -20,12 +20,15 @@ import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const OneOnOneView = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const reduexState = useSelector((state) => state);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const DeleteQuestion = () => {
     try {
       NetInfo.addEventListener(async (state) => {
@@ -47,7 +50,7 @@ const OneOnOneView = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {

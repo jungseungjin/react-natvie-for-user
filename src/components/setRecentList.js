@@ -29,6 +29,10 @@ const SetRecentList = async (type, id) => {
         } else {
           new_str = new_str + ',' + new_data[a];
         }
+        if (a > 19) {
+          //0~19까지 최근 20개만
+          break;
+        }
       }
       if (type == 'work') {
         value = await AsyncStorage.setItem('recentWorkList', new_str);

@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
@@ -26,9 +25,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
-const SearchScreen = ({navigation, route}) => {
-  const [isLoading, setIsLoading] = React.useState(false);
 
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+const SearchScreen = ({navigation, route}) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   React.useEffect(
     () =>
       navigation.addListener('focus', async () => {
@@ -281,8 +284,20 @@ const SearchScreen = ({navigation, route}) => {
             position="center"
             //opacity={0.8}
             textStyle={{color: '#FFFFFF'}}
-          />
-          {isLoading ? <IsLoading></IsLoading> : null}
+          />{' '}
+          {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+            <IsLoading></IsLoading>
+          ) : isLoadingAndModal === 2 ? (
+            <NetworkErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NetworkErrModal>
+          ) : isLoadingAndModal === 3 ? (
+            <NormalErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NormalErrModal>
+          ) : null}
         </SafeAreaView>
       </DismissKeyboard>
     </>

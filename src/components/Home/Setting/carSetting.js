@@ -47,20 +47,17 @@ const CarSetting = (props) => {
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          props.IsLoadingAndModalChangeValue(1);
           let url = Domain2 + 'brand_list/' + brandSeach;
-          props.IsLoadingChangeValue(true);
           let result = await axios.get(url);
+          props.IsLoadingAndModalChangeValue(0);
           if (result.data[0].status == 'ok') {
             setBrandList(result.data[0].result);
-            props.IsLoadingChangeValue(false);
           } else {
             alert(result.data[0].message);
-            props.IsLoadingChangeValue(false);
           }
-          setIsLoading(false);
         } else {
-          props.NetworkModalChangeValue(true);
+          props.IsLoadingAndModalChangeValue(2);
         }
       });
     } catch (err) {
@@ -74,10 +71,11 @@ const CarSetting = (props) => {
       if (props?.PickBrandValue?.brand) {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            setIsLoading(true);
+            props.IsLoadingAndModalChangeValue(1);
             let url = Domain2 + 'model_list/' + props.PickBrandValue.brand;
             //props.IsLoadingChangeValue(true);
             let result = await axios.get(url);
+            props.IsLoadingAndModalChangeValue(0);
             if (result.data[0].status == 'ok') {
               setModelList(result.data[0].result);
               //props.IsLoadingChangeValue(false);
@@ -86,9 +84,8 @@ const CarSetting = (props) => {
               alert(result.data[0].message);
               //props.IsLoadingChangeValue(false);
             }
-            setIsLoading(false);
           } else {
-            props.NetworkModalChangeValue(true);
+            props.IsLoadingAndModalChangeValue(2);
           }
         });
       }
@@ -256,8 +253,8 @@ const CarSetting = (props) => {
                 PickBrandChangeValue={props.PickBrandChangeValue}
                 PickModelChangeValue={props.PickModelChangeValue}
                 PickModelDetailChangeValue={props.PickModelDetailChangeValue}
-                NetworkModalChangeValue={
-                  props.NetworkModalChangeValue
+                IsLoadingAndModalChangeValue={
+                  props.IsLoadingAndModalChangeValue
                 }></CarSettingBrand>
             )}
             keyExtractor={(item) => String(item._id)}></FlatList>
@@ -288,9 +285,8 @@ const CarSetting = (props) => {
               PageChangeValue={props.PageChangeValue}
               from={props.from}
               PickModelDetailChangeValue={props.PickModelDetailChangeValue}
-              IsLoadingChangeValue={props.IsLoadingChangeValue}
-              NetworkModalChangeValue={
-                props.NetworkModalChangeValue
+              IsLoadingAndModalChangeValue={
+                props.IsLoadingAndModalChangeValue
               }></CarSettingModel>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>

@@ -25,9 +25,11 @@ import Toast, {DURATION} from 'react-native-easy-toast';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import InputPhoneNumber from '../../../components/InputPhoneNumber.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const IdFindScreen = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
   const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
@@ -38,10 +40,8 @@ const IdFindScreen = (props) => {
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [resultModal, setResultModal] = React.useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
 
@@ -94,7 +94,7 @@ const IdFindScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+           setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -166,7 +166,7 @@ const IdFindScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+           setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -547,17 +547,15 @@ const IdFindScreen = (props) => {
           Title={'해당정보로 등록된 아이디가 없습니다.'}
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
+      ) : null}      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? (//0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {networkModal ? (
-        <AlertModal1
-          type={1}
-          ShowModalChangeValue={NetworkModalChangeValue}
-          navigation={props.navigation}
-          Title={'인터넷 연결을 확인해주세요.'}
-          //BottomText={''}
-          CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </SafeAreaView>
   );
 };

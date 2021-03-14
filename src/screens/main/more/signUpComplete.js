@@ -1,15 +1,26 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Text} from 'react-native';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import BottomSignUpButton from '../../../components/More/SignUp/bottomSignUpButton.js';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const SignUpComplete = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const insets = useSafeAreaInsets();
   const [idText, setIdText] = React.useState('');
   return (
@@ -144,7 +155,20 @@ const SignUpComplete = (props) => {
             </View>
             {/*로그인하기 */}
           </View>
-        </View>
+        </View>{' '}
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
+        ) : null}
       </SafeAreaView>
     </View>
   );

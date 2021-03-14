@@ -19,7 +19,6 @@ import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Star from '../../../../assets/home/star.svg';
 import StarGrey from '../../../../assets/home/star_grey.svg';
 import PicktureNestedPlus from '../../../../assets/home/pickture_nestedPlus.svg';
-import IsLoading from '../../../components/ActivityIndicator';
 import {TextInput} from 'react-native-gesture-handler';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -35,15 +34,18 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const ReviewRegister = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [starCount, setStarCount] = React.useState([]); //평점 받기
   const [imageList, setImageList] = React.useState(
     props.route.params.item.review_reply_image,
   );
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [showModalTitle, setShowModalTitle] = React.useState('');
@@ -170,7 +172,7 @@ const ReviewRegister = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -259,7 +261,6 @@ const ReviewRegister = (props) => {
               )}
             </View>
           </View>
-
           {/*  작업명, 샵이름, 별점 끝 */}
           <View
             style={{
@@ -399,7 +400,6 @@ const ReviewRegister = (props) => {
               </TouchableOpacity>
             </View>
           </View>
-
           {showModal ? (
             <AlertModal1
               type={1}
@@ -408,17 +408,20 @@ const ReviewRegister = (props) => {
               Title={showModalTitle}
               //BottomText={''}
               CenterButtonText={'확인'}></AlertModal1>
+          ) : null}{' '}
+          {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+            <IsLoading></IsLoading>
+          ) : isLoadingAndModal === 2 ? (
+            <NetworkErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NetworkErrModal>
+          ) : isLoadingAndModal === 3 ? (
+            <NormalErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NormalErrModal>
           ) : null}
-          {networkModal ? (
-            <AlertModal1
-              type={1}
-              ShowModalChangeValue={NetworkModalChangeValue}
-              navigation={props.navigation}
-              Title={'인터넷 연결을 확인해주세요.'}
-              //BottomText={''}
-              CenterButtonText={'확인'}></AlertModal1>
-          ) : null}
-          {isLoading ? <IsLoading></IsLoading> : null}
         </SafeAreaView>
       </DismissKeyboard>
     </>

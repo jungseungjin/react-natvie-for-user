@@ -15,16 +15,19 @@ const renderers = {
 };
 import OwnersWork from '../../../components/Home/horizontalScroll/ownersWork.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
-import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import FastImage from 'react-native-fast-image';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const WorkVideoScreen = (props) => {
   const contentWidth = useWindowDimensions().width;
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   return (
     <>
       <StatusBar
@@ -162,7 +165,15 @@ const WorkVideoScreen = (props) => {
             Index={1}></OwnersWork>
         </ScrollView>
       </SafeAreaView>
-      {isLoading ? <IsLoading></IsLoading> : null}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
+      ) : null}
     </>
   );
 };

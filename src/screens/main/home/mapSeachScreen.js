@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
@@ -30,18 +29,23 @@ import {
 
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
+
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const MapScreen = (props) => {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   const [searchText, setSearchText] = React.useState('');
   const [searchList, setSearchList] = React.useState([]);
   const [searchOn, setSearchOn] = React.useState(false);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const SearchAddr = async () => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          //setIsLoading(true);
+          //setIsLoadingAndModal(1);
           let result = await axios.get(
             'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=' +
               searchText,
@@ -59,16 +63,15 @@ const MapScreen = (props) => {
           } else {
           }
           setSearchOn(true);
-          //setIsLoading(false);
+          //setIsLoadingAndModal(0);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(3);
       console.log(err);
-      alert(err);
     }
   };
   let toastRef;
@@ -283,15 +286,19 @@ const MapScreen = (props) => {
           //opacity={0.8}
           textStyle={{color: '#FFFFFF'}}
         />
-        {networkModal ? (
-          <AlertModal1
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요.'}
-            //BottomText={''}
-            CenterButtonText={'확인'}></AlertModal1>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
-        {isLoading ? <IsLoading></IsLoading> : null}
       </SafeAreaView>
     </>
   );

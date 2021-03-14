@@ -1,5 +1,4 @@
 import React from 'react';
-import IsLoading from '../../../components/ActivityIndicator';
 import {
   SafeAreaView,
   StyleSheet,
@@ -23,13 +22,17 @@ import {useSelector} from 'react-redux';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import Toast, {DURATION} from 'react-native-easy-toast';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const MoreScreen = (props) => {
   const reduexState = useSelector((state) => state);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   const [toastRef, setToastRef] = React.useState();
   const showToast = (text, time) => {
@@ -113,8 +116,16 @@ const MoreScreen = (props) => {
           //LeftButtonTitle={'아니오'}
           //RightButtonTitle={'네'}
         ></LoginModal>
+      ) : null}{' '}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

@@ -16,12 +16,16 @@ import CheckBox from '../../../../assets/home/check_box.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
-import IsLoading from '../../../components/ActivityIndicator';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain2 from '../../../../key/Domain2.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
+import IsLoading from '../../../components/ActivityIndicator';
+import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
+import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const PasswordFindScreen2 = (props) => {
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [phoneNumber, setPhoneNumber] = React.useState(
     props.route.params.phoneNumber,
   );
@@ -30,10 +34,6 @@ const PasswordFindScreen2 = (props) => {
   const [passwordChk, setPasswordChk] = React.useState('');
   const [passwordRe, setPasswordRe] = React.useState('');
   const [passwordReChk, setPasswordReChk] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-  const IsLoadingChangeValue = (text) => setIsLoading(text);
-  const [networkModal, setNetworkModal] = React.useState(false);
-  const NetworkModalChangeValue = (text) => setNetworkModal(text);
   const [resultModal, setResultModal] = React.useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
   function isPassword(asValue) {
@@ -68,7 +68,7 @@ const PasswordFindScreen2 = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          setIsLoadingAndModal(1);
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
           let result = await axios.post(url, data, {
             headers: {
@@ -76,22 +76,22 @@ const PasswordFindScreen2 = (props) => {
             },
           });
           if (result.data[0].status == 'ok') {
-            setIsLoading(false);
+            setIsLoadingAndModal(0);
             props.navigation.navigate('Login', {
               fromNav: props.route.params.fromNav,
             });
           } else {
-            setIsLoading(false);
+            setIsLoadingAndModal(0);
             //없어
             setResultModal(true);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(3);
       console.log(err);
       alert(err);
     }
@@ -232,6 +232,15 @@ const PasswordFindScreen2 = (props) => {
           </View>
         </View>
       </View>
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+        <IsLoading></IsLoading>
+      ) : isLoadingAndModal === 2 ? (
+        <NetworkErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
+      ) : isLoadingAndModal === 3 ? (
+        <NormalErrModal
+          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
+      ) : null}
     </SafeAreaView>
   );
 };
