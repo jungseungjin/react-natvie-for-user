@@ -90,42 +90,46 @@ const MoreScreen = (props) => {
             Title={'투닝 가게 입점 문의'}
             navigation={props.navigation}></Menu> */}
         </View>
+        <Toast
+          ref={(toast) => {
+            setToastRef(toast);
+          }}
+          style={{
+            backgroundColor: '#474747',
+            paddingTop: Height_convert(16),
+            paddingBottom: Height_convert(16),
+            paddingRight: Width_convert(20),
+            paddingLeft: Width_convert(20),
+            borderRadius: Font_normalize(7),
+          }}
+          position="center"
+          //opacity={0.8}
+          textStyle={{color: '#FFFFFF'}}
+        />
+        {showModal ? (
+          <LoginModal
+            ShowModalChangeValue={ShowModalChangeValue}
+            navigation={props.navigation}
+            //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
+            //BottomText={'설정하러가기'}
+            //LeftButtonTitle={'아니오'}
+            //RightButtonTitle={'네'}
+          ></LoginModal>
+        ) : null}
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
+        ) : null}
       </SafeAreaView>
-      <Toast
-        ref={(toast) => {
-          setToastRef(toast);
-        }}
-        style={{
-          backgroundColor: '#474747',
-          paddingTop: Height_convert(16),
-          paddingBottom: Height_convert(16),
-          paddingRight: Width_convert(20),
-          paddingLeft: Width_convert(20),
-          borderRadius: Font_normalize(7),
-        }}
-        position="center"
-        //opacity={0.8}
-        textStyle={{color: '#FFFFFF'}}
-      />
-      {showModal ? (
-        <LoginModal
-          ShowModalChangeValue={ShowModalChangeValue}
-          navigation={props.navigation}
-          //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
-          //BottomText={'설정하러가기'}
-          //LeftButtonTitle={'아니오'}
-          //RightButtonTitle={'네'}
-        ></LoginModal>
-      ) : null}{' '}
-      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
-        <IsLoading></IsLoading>
-      ) : isLoadingAndModal === 2 ? (
-        <NetworkErrModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
-      ) : isLoadingAndModal === 3 ? (
-        <NormalErrModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
-      ) : null}
     </>
   );
 };

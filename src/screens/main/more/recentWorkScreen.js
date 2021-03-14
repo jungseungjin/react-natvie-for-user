@@ -357,7 +357,7 @@ const RecentWork = (props) => {
           //CenterButtonText={'확인'}
           LeftButtonTitle={'취소'}
           RightButtonTitle={'확인'}></AlertModal2>
-      ) : null}{' '}
+      ) : null}
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>
       ) : isLoadingAndModal === 2 ? (

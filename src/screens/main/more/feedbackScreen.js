@@ -204,7 +204,7 @@ const Feedback = (props) => {
             }
             //BottomText={''}
             CenterButtonText={'확인'}></AlertModal1>
-        ) : null}{' '}
+        ) : null}
         {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
           <IsLoading></IsLoading>
         ) : isLoadingAndModal === 2 ? (

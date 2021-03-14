@@ -325,14 +325,18 @@ const OneOnOneView = (props) => {
             LeftButtonTitle={'취소'}
             RightButtonTitle={'확인'}></AlertModal2>
         ) : null}
-        {networkModal ? (
-          <AlertModal1
-            type={1}
-            ShowModalChangeValue={NetworkModalChangeValue}
-            navigation={props.navigation}
-            Title={'인터넷 연결을 확인해주세요.'}
-            //BottomText={''}
-            CenterButtonText={'확인'}></AlertModal1>
+        {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+          <IsLoading></IsLoading>
+        ) : isLoadingAndModal === 2 ? (
+          <NetworkErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NetworkErrModal>
+        ) : isLoadingAndModal === 3 ? (
+          <NormalErrModal
+            ShowModalChangeValue={
+              IsLoadingAndModalChangeValue
+            }></NormalErrModal>
         ) : null}
       </SafeAreaView>
     </>

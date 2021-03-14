@@ -94,7 +94,7 @@ const IdFindScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-           setIsLoadingAndModal(2);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -166,7 +166,7 @@ const IdFindScreen = (props) => {
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-           setIsLoadingAndModal(2);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -547,7 +547,8 @@ const IdFindScreen = (props) => {
           Title={'해당정보로 등록된 아이디가 없습니다.'}
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
-      ) : null}      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? (//0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+      ) : null}
+      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>
       ) : isLoadingAndModal === 2 ? (
         <NetworkErrModal

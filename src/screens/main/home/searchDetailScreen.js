@@ -530,7 +530,7 @@ const SearchScreenDetail = (props) => {
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}
           BottomText={'설정하러가기'}></AlertModal2>
-      ) : null}{' '}
+      ) : null}
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>
       ) : isLoadingAndModal === 2 ? (
