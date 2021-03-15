@@ -319,11 +319,15 @@ const IdFindScreen = (props) => {
                 }}></TextInput>
               {confirmChk === true && authNumber.length == 6 ? (
                 <PurpleChk
-                  width={Width_convert(12)}
-                  height={Height_convert(9)}></PurpleChk>
+                  style={{
+                    marginTop: Height_convert(10),
+                  }}
+                  width={Width_convert(14)}
+                  height={Height_convert(14)}></PurpleChk>
               ) : (
                 <Text
                   style={{
+                    marginTop: Height_convert(10),
                     marginRight: Width_convert(3),
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontSize: Font_normalize(12),

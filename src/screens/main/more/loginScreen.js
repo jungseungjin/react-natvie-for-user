@@ -29,6 +29,7 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import DeviceInfo from 'react-native-device-info';
 const LoginScreen = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -55,6 +56,9 @@ const LoginScreen = (props) => {
       let data = {
         idText: idText,
         passwordText: passwordText,
+        getUniqueId: DeviceInfo.getUniqueId(),
+        getDeviceId: DeviceInfo.getDeviceId(),
+        getModel: DeviceInfo.getModel(),
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

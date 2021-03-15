@@ -375,13 +375,14 @@ const CategoryDetailScreen = (props) => {
               height: Height_convert(812 - 184),
             }}>
             <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              // refreshControl={
+              //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              // }
               style={{minHeight: Height_convert(812)}}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
               alwaysBounceVertical={false}
+              bounces={false}
               data={viewWorkList}
               windowSize={2}
               initialNumToRender={10}
@@ -413,8 +414,11 @@ const CategoryDetailScreen = (props) => {
                 fontSize: Font_normalize(16),
                 fontWeight: '700',
                 color: '#000000',
+                textAlign: 'center',
               }}>
-              원하시는 검색결과가 나올 수 있도록 노력하는 투닝이 되겠습니다 🔥
+              {
+                '원하시는 검색결과가 나올 수 있도록\n 노력하는 투닝이 되겠습니다 🔥'
+              }
             </Text>
           </View>
         )}

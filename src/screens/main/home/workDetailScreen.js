@@ -206,6 +206,7 @@ const WorkDetailScreen = (props) => {
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
+          bounces={false}
           scrollEventThrottle={16}
           stickyHeaderIndices={[3]}
           onScroll={Animated.event(
@@ -310,7 +311,7 @@ const WorkDetailScreen = (props) => {
                 }}>
                 <TouchableOpacity
                   activeOpacity={1}
-                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                  hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                   onPress={() => {
                     props.navigation.navigate('StoreLocation', {
                       item: props.route.params.item.info_store[0],
@@ -628,6 +629,7 @@ const WorkDetailScreen = (props) => {
 
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         <BottomButton
+          Messenger={props.route.params.item.info_store[0].store_messenger}
           WorkConsultingModalChangeValue={
             WorkConsultingModalChangeValue
           }></BottomButton>

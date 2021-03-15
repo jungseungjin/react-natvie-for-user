@@ -95,10 +95,17 @@ const WorkConsultingModal = (props) => {
               alignItems: 'center',
             }}>
             <View
-              style={{
-                width: Width_convert(263),
-                flexDirection: 'row',
-              }}>
+              style={[
+                {
+                  width: Width_convert(263),
+                  flexDirection: 'row',
+                },
+                Platform.OS == 'ios'
+                  ? {}
+                  : {
+                      height: Height_convert(100),
+                    },
+              ]}>
               <Text
                 style={{
                   lineHeight: Font_normalize(20),
@@ -138,7 +145,6 @@ const WorkConsultingModal = (props) => {
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {}}
               style={{
-                marginTop: Width_convert(2),
                 marginLeft: 'auto',
               }}>
               <Text

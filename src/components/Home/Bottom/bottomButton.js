@@ -38,7 +38,8 @@ const BottomButton = (props) => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            Linking.openURL('https://open.kakao.com/o/gNSUnzob');
+            console.log(props.Messenger);
+            Linking.openURL(props.Messenger);
           }}
           style={{
             height: Width_convert(55),

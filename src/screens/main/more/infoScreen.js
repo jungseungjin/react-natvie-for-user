@@ -604,7 +604,9 @@ const InfoScreen = (props) => {
         if (state.isConnected) {
           let url = Domain2 + 'user/logout';
           let data = {
-            uniqueId: DeviceInfo.getUniqueId(),
+            getUniqueId: DeviceInfo.getUniqueId(),
+            getDeviceId: DeviceInfo.getDeviceId(),
+            getModel: DeviceInfo.getModel(),
           };
           let result = await axios.post(url, data, {
             headers: {
@@ -988,7 +990,7 @@ const InfoScreen = (props) => {
                           color: '#FF0202',
                         }}>
                         {nicknameChk === 1
-                          ? '동일한 닉네임이 존재합니다.'
+                          ? '동일한 닉네임이 존재합니다'
                           : nicknameChk === 2
                           ? '한글/영문/숫자 2~10자, 띄어쓰기 불가'
                           : null}
@@ -1141,7 +1143,7 @@ const InfoScreen = (props) => {
                           color: '#FF0202',
                         }}>
                         {phoneNumberChk == 1
-                          ? '이미 가입된 휴대폰번호입니다.'
+                          ? '이미 가입된 휴대폰번호입니다'
                           : null}
                       </Text>
                     </View>
@@ -1742,7 +1744,7 @@ const InfoScreen = (props) => {
                         fontSize: Font_normalize(9),
                         color: '#000000',
                       }}>
-                      투닝에서 보내드리는 다양한 정보를 받으실 수 있습니다
+                      투닝에서 보내드리는 다양한 정보를 받으실 수 있습니다.
                     </Text>
                     <View
                       style={{
@@ -2068,8 +2070,8 @@ const InfoScreen = (props) => {
                   textAlign: 'center',
                 }}>
                 {searchOn
-                  ? '검색 결과가 없습니다 지역을 다시 검색해주세요'
-                  : '고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요'}
+                  ? '검색 결과가 없습니다 지역을 다시 검색해주세요.'
+                  : '고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요.'}
               </Text>
             </View>
           ) : (

@@ -212,6 +212,7 @@ const StoreDetailScreen = (props) => {
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}
+          bounces={false}
           scrollEventThrottle={16}
           stickyHeaderIndices={[3]}
           onScroll={Animated.event(
@@ -282,7 +283,7 @@ const StoreDetailScreen = (props) => {
                     }}>
                     <TouchableOpacity
                       activeOpacity={1}
-                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                      hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                       onPress={() => {
                         props.navigation.navigate('StoreLocation', {
                           item: props.route.params.item,
@@ -537,6 +538,7 @@ const StoreDetailScreen = (props) => {
           scrollValue={scrollValue}></AnimatedHeader>
         {/*하단 카카오채팅 전화예약버튼 시작*/}
         <BottomButton
+          Messenger={props.route.params.item.store_messenger}
           WorkConsultingModalChangeValue={
             WorkConsultingModalChangeValue
           }></BottomButton>

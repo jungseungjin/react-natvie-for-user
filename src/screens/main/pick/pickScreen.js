@@ -25,9 +25,8 @@ import TabBarBottom from '../../../components/Pick/Tabbar/tabbarBottom.js';
 import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {connect} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import ActionCreator from '../../../actions';
-import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import axios from 'axios';
@@ -38,8 +37,10 @@ import LoginModal from '../../../components/Modal/LoginModal.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+
 const PickScreen = (props) => {
   const reduexState = useSelector((state) => state);
+  const loginChk = useSelector((state) => state.loginDataCheck.login.login); //리덕스는 사용하는 단위로 쪼개면 좋다
 
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
@@ -58,19 +59,13 @@ const PickScreen = (props) => {
   //로그인 되어 있으면 찜한데이터 가져오기
   const [deleteModal, setDeleteModal] = React.useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
-  React.useEffect(
-    () =>
-      props.navigation.addListener('focus', async () => {
-        onRefresh();
-      }),
-    [],
-  );
+
   const get_pickData = () => {
     try {
-      if (reduexState.loginDataCheck.login._id != '') {
+      if (loginChk == true) {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            let url = Domain2 + 'pickData';
+            let url = `${Domain2}pickData`;
             let result = await axios.get(url, {
               params: {
                 _id: reduexState.loginDataCheck.login._id,
@@ -100,6 +95,10 @@ const PickScreen = (props) => {
       } else {
         //로그인모달띄우기
         setShowModal(true);
+        setWorkList([]);
+        setStoreList([]);
+        setWorkListDel();
+        setStoreListDel();
       }
     } catch (err) {
       console.log(err);
@@ -136,6 +135,10 @@ const PickScreen = (props) => {
       } else {
         //로그인모달띄우기
         setShowModal(true);
+        setWorkList([]);
+        setStoreList([]);
+        setWorkListDel();
+        setStoreListDel();
       }
     } catch (err) {
       console.log(err);
@@ -150,11 +153,9 @@ const PickScreen = (props) => {
     setRefreshing(false);
   }, []);
   React.useEffect(() => {
-    try {
-      get_pickData();
-    } catch (err) {
-      console.log(err);
-    }
+    props.navigation.addListener('focus', async () => {
+      onRefresh();
+    });
   }, []);
   return (
     <>
@@ -190,7 +191,7 @@ const PickScreen = (props) => {
               ? workList
               : page == 'store' && storeList.length > 0
               ? storeList
-              : reduexState.loginDataCheck.login.login == false
+              : loginChk == false
               ? [{message: '로그인이 필요합니다.'}]
               : page == 'work'
               ? [{message: '찜한 작업이 없습니다.'}]
@@ -362,6 +363,13 @@ const PickScreen = (props) => {
 function mapStateToProps(state) {
   return {
     editMode: state.editMode,
+    login: {
+      login: state.loginDataCheck.login.login,
+      iu_car: state.loginDataCheck.login.iu_car,
+      location: state.loginDataCheck.login.location,
+      _id: state.loginDataCheck.login._id,
+      data: state.loginDataCheck.login.data,
+    },
     //  first: state.calculator.sumInfo.first,
     //  second: state.calculator.sumInfo.second
   };
@@ -372,13 +380,6 @@ function mapDispatchToProps(dispatch) {
     updateEditMode: (boo) => {
       dispatch(ActionCreator.editModeCheck(boo));
     },
-    // updateFirst:(num) => {
-    //     dispatch(ActionCreator.updateSumValueFirst(num));
-
-    // },
-    // updateSecond:(num) => {
-    //     dispatch(ActionCreator.updateSumValueSecond(num));
-    // }
   };
 }
 export default connect(mapStateToProps, mapDispatchToProps)(PickScreen);

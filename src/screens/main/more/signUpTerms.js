@@ -64,9 +64,9 @@ const SignUpTerms = (props) => {
         <View style={{height: StatusBarHeight}}></View>
       ) : null}
       <StatusBar
-        barStyle={networkModal ? 'light-content' : 'dark-content'}
+        barStyle={isLoadingAndModal == 2 ? 'light-content' : 'dark-content'}
         backgroundColor={
-          networkModal ? 'rgba(32, 32, 32, 0.3)' : '#FFFFFF'
+          isLoadingAndModal == 2 ? 'rgba(32, 32, 32, 0.3)' : '#FFFFFF'
         }></StatusBar>
       <Tabbar
         Title={

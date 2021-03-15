@@ -233,7 +233,10 @@ const SearchScreen = ({navigation, route}) => {
                   }}>
                   <TouchableOpacity
                     activeOpacity={1}
-                    style={{width: Width_convert(320)}}
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                    style={{
+                      width: Width_convert(320),
+                    }}
                     onPress={() => {
                       navigation.navigate('SearchDetail', {
                         searchText: item,

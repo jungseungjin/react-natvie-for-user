@@ -33,7 +33,7 @@ const SignUp = (props) => {
   }; //만 14세 이상 확인 모달
   const [agree3, setAgree3] = React.useState(false); //개인정보 수집이용 동의
   const [agree4, setAgree4] = React.useState(false); //위치기반 서비스 이용약관
-  const [agree5, setAgree5] = React.useState(false); //개인정보 제3자 제공 동의
+  const [agree5, setAgree5] = React.useState(true); //개인정보 제3자 제공 동의
   const [agree6, setAgree6] = React.useState(false); //투닝 혜택 알림 동의
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -367,7 +367,7 @@ const SignUp = (props) => {
 
         {/*위치기반 서비스 이용약관(선택)*/}
         {/*개인정보 제3자 제공 동의(선택)*/}
-        <View
+        {/* <View
           style={{
             width: Width_convert(315),
             height: Width_convert(20),
@@ -424,7 +424,7 @@ const SignUp = (props) => {
                 style={{}}></CheckBox>
             )}
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/*개인정보 제3자 제공 동의(선택)*/}
         {/*투닝 혜택 알림 동의(선택)*/}

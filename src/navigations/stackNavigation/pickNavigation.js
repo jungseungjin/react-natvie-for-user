@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform, PixelRatio} from 'react-native';
+import {Platform, PixelRatio, StatusBar} from 'react-native';
 import PickScreen from '../../screens/main/pick/pickScreen.js';
 import {
   createStackNavigator,
@@ -9,7 +9,6 @@ import {enableScreens} from 'react-native-screens';
 import Fonts from '../../components/Fonts.js';
 import Height from '../../components/Height.js';
 import Width from '../../components/Width.js';
-import {StatusBar} from 'react-native';
 import Font_normalize from '../../components/Font_normalize.js';
 import Width_convert from '../../components/Width_convert.js';
 import Height_convert from '../../components/Height_convert.js';

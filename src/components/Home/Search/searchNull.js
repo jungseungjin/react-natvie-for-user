@@ -66,8 +66,9 @@ const SearchNull = (props) => {
             fontSize: Font_normalize(16),
             fontWeight: '700',
             color: '#000000',
+            textAlign: 'center',
           }}>
-          원하시는 검색결과가 나올 수 있도록 노력하는 투닝이 되겠습니다. 🔥
+          {'원하시는 검색결과가 나올 수 있도록\n 노력하는 투닝이 되겠습니다 🔥'}
         </Text>
       </View>
     </View>

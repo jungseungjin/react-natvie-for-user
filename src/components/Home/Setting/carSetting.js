@@ -121,13 +121,11 @@ const CarSetting = (props) => {
                 borderBottomWidth: 1,
                 borderBottomColor: '#DBDBDB',
               },
-              props.from == 'InfoCar' || props.from == 'SignUp'
-                ? {
-                    height: Width_convert(71),
-                  }
-                : {
-                    height: Width_convert(99),
-                  },
+              props.from == 'InfoCar' ||
+              props.from == 'SignUp' ||
+              props.from == 'info'
+                ? {}
+                : {},
             ]}>
             <TouchableOpacity
               activeOpacity={1}
@@ -171,12 +169,21 @@ const CarSetting = (props) => {
                   props.CategoryChangeValue('import');
                 }
               }}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: Height_convert(9),
-              }}>
+              style={[
+                {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: Height_convert(9),
+                },
+                props.from == 'InfoCar' ||
+                props.from == 'SignUp' ||
+                props.from == 'info'
+                  ? {
+                      marginBottom: Height_convert(14),
+                    }
+                  : null,
+              ]}>
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSqureRegular || null,
@@ -195,7 +202,9 @@ const CarSetting = (props) => {
                   style={{marginRight: Width_convert(22)}}></Gray_checkBox>
               )}
             </TouchableOpacity>
-            {props.from == 'InfoCar' || props.from == 'SignUp' ? null : (
+            {props.from == 'InfoCar' ||
+            props.from == 'SignUp' ||
+            props.from == 'info' ? null : (
               <TouchableOpacity
                 activeOpacity={1}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
@@ -208,6 +217,7 @@ const CarSetting = (props) => {
                   }
                 }}
                 style={{
+                  marginBottom: Height_convert(14),
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',

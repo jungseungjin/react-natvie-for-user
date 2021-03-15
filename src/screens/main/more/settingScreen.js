@@ -21,6 +21,7 @@ import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import Version from '../../../../key/key.js';
 const Setting = (props) => {
   const reduexState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -32,8 +33,6 @@ const Setting = (props) => {
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [notice, setNotice] = React.useState(false);
   const [review, setReview] = React.useState(false);
-  const [version, setVersion] = React.useState('1.0.0');
-  const [recentVersion, setRecentVersion] = React.useState('');
   const [permissionModal, setPermissionModal] = React.useState(false);
   const PermissionModalChangeValue = (text) => setPermissionModal(text);
 
@@ -61,20 +60,6 @@ const Setting = (props) => {
       console.log(err);
     }
   };
-  const chkVersion = () => {
-    //버전가져와야함
-    try {
-      if (version == recentVersion) {
-        console.log('최신버전이랑 같음');
-      } else {
-        console.log('버전이 다름'); //-> 뭐시기 띄우기
-        console.log(version);
-        console.log(recentVersion);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
   const dataChange = (type, typeState) => {
     try {
       chkPermission();
@@ -90,6 +75,7 @@ const Setting = (props) => {
           NetInfo.addEventListener(async (state) => {
             if (state.isConnected) {
               let prevData = reduexState.loginDataCheck.login.data;
+              console.log(reduexState.loginDataCheck);
               if (type == 'review') {
                 setReview(!typeState);
                 data.review = !typeState;
@@ -248,7 +234,7 @@ const Setting = (props) => {
                 fontWeight: '700',
                 color: '#000000',
               }}>
-              {version}
+              {Version.version}
             </Text>
           </TouchableOpacity>
         </View>

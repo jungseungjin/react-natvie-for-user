@@ -44,6 +44,9 @@ const PasswordFindScreen = (props) => {
   const [resultModal, setResultModal] = React.useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
 
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+
   async function IdchkBack() {
     try {
       let result;
@@ -228,6 +231,7 @@ const PasswordFindScreen = (props) => {
             placeholder="아이디를 입력해주세요"
             placeholderTextColor="#CCCCCC"
             value={idText}
+            editable={confirmChk === true ? false : true}
             keyboardType={'email-address'}
             autoCapitalize={'none'}
             autoCompleteType={'off'}
@@ -289,6 +293,7 @@ const PasswordFindScreen = (props) => {
             placeholderTextColor="#CCCCCC"
             value={phoneNumber}
             keyboardType={'number-pad'}
+            editable={confirmChk === true ? false : true}
             underlineColorAndroid="transparent"
             onChangeText={(value) => {
               if (value.length > 13) {
@@ -354,6 +359,7 @@ const PasswordFindScreen = (props) => {
               <TextInput
                 placeholder="인증번호를 입력해주세요"
                 placeholderTextColor="#CCCCCC"
+                editable={confirmChk === true ? false : true}
                 keyboardType={'number-pad'}
                 value={authNumber}
                 onChangeText={(value) => {
@@ -390,11 +396,15 @@ const PasswordFindScreen = (props) => {
                 }}></TextInput>
               {confirmChk === true && authNumber.length == 6 ? (
                 <PurpleChk
-                  width={Width_convert(12)}
-                  height={Height_convert(9)}></PurpleChk>
+                  style={{
+                    marginTop: Height_convert(10),
+                  }}
+                  width={Width_convert(14)}
+                  height={Height_convert(14)}></PurpleChk>
               ) : (
                 <Text
                   style={{
+                    marginTop: Height_convert(10),
                     marginRight: Width_convert(3),
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontSize: Font_normalize(12),

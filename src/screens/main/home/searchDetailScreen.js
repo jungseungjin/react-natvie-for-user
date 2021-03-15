@@ -520,16 +520,17 @@ const SearchScreenDetail = (props) => {
         </SafeAreaView>
       </DismissKeyboard>
       {showModal ? (
-        <AlertModal2
-          type={2}
+        <AlertModal1
+          type={3}
           ShowModalChangeValue={ShowModalChangeValue}
           navigation={props.navigation}
           Title={
             "'홈화면 > 설정' 에서 지역설정을 해주셔야만 가까운 순 필터 사용이 가능합니다."
           }
-          LeftButtonTitle={'아니오'}
-          RightButtonTitle={'네'}
-          BottomText={'설정하러가기'}></AlertModal2>
+          // LeftButtonTitle={'아니오'}
+          // RightButtonTitle={'네'}
+          CenterButtonText={'확인'}
+          BottomText={'설정하러가기'}></AlertModal1>
       ) : null}
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>

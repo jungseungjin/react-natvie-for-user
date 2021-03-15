@@ -63,7 +63,6 @@ const PasswordFindScreen2 = (props) => {
       };
       if (phoneNumber && idText && password && passwordChk && passwordReChk) {
       } else {
-        alert('빈칸을 모두 입력해 주세요');
         return false;
       }
       NetInfo.addEventListener(async (state) => {
@@ -137,7 +136,9 @@ const PasswordFindScreen2 = (props) => {
                   value = value.replace(/ /gi, '');
                 }
                 setPassword(value);
-                setPasswordChk(isPassword(value));
+              }}
+              onBlur={() => {
+                setPasswordChk(isPassword(password));
               }}
               placeholderStyle={{
                 paddingLeft: Width_convert(10),
@@ -168,7 +169,7 @@ const PasswordFindScreen2 = (props) => {
                 fontWeight: '400',
                 color: '#FF0000',
               }}>
-              영문+숫자+특수문자 8~20자
+              영문/숫자/특수문자 8~20자
             </Text>
           ) : null}
         </View>
@@ -193,10 +194,15 @@ const PasswordFindScreen2 = (props) => {
                   value = value.replace(/ /gi, '');
                 }
                 setPasswordRe(value);
-                setPasswordReChk(isPassword(value));
-                if (value != password) {
+              }}
+              onBlur={() => {
+                setPasswordReChk(isPassword(passwordRe));
+                if (passwordRe != password) {
                   setPasswordReChk(false);
                 }
+              }}
+              onSubmitEditing={() => {
+                PasswordChange();
               }}
               placeholderStyle={{
                 marginTop: Width_convert(35),
@@ -226,7 +232,7 @@ const PasswordFindScreen2 = (props) => {
                   fontWeight: '400',
                   color: '#FF0000',
                 }}>
-                영문+숫자+특수문자 8~20자 비밀번호와 동일하게 입력해주세요
+                비밀번호와 동일하게 입력해주세요
               </Text>
             ) : null}
           </View>

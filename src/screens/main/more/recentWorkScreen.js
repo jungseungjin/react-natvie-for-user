@@ -219,9 +219,9 @@ const RecentWork = (props) => {
               : page == 'store' && storeList.length > 0
               ? storeList
               : page == 'work'
-              ? [{message: '최근 본 작업이 없습니다'}]
+              ? [{message: '최근 본 작업이 없습니다.'}]
               : page == 'store'
-              ? [{message: '최근 본 샵이 없습니다'}]
+              ? [{message: '최근 본 샵이 없습니다.'}]
               : null
           }
           windowSize={2}
