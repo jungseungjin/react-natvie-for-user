@@ -172,6 +172,11 @@ const AlertModal1 = (props) => {
                 ) {
                   props.ShowModalChangeValue(false);
                   props.navigation.navigate('Login');
+                } else if (
+                  props.Title === '24시간 이내에는 재가입이 불가합니다.'
+                ) {
+                  props.SendData();
+                  props.ShowModalChangeValue(false);
                 } else {
                   props.ShowModalChangeValue(false);
                 }

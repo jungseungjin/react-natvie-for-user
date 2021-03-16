@@ -35,7 +35,9 @@ const Withdrawal = (props) => {
           let url = Domain2 + 'user/delete';
           let data = {
             _id: reduexState.loginDataCheck.login.data._id,
-            uniqueId: DeviceInfo.getUniqueId(),
+            getUniqueId: DeviceInfo.getUniqueId(),
+            getDeviceId: DeviceInfo.getDeviceId(),
+            getModel: DeviceInfo.getModel(),
           };
           let result = await axios.post(url, data, {
             headers: {
@@ -43,6 +45,7 @@ const Withdrawal = (props) => {
             },
           });
           if (result.data[0].message == 'ok') {
+            console.log('gdgd');
             await Keychain.resetGenericPassword();
             props.updateLoginStatus(false);
             props.updateIuCar([]);
@@ -52,6 +55,7 @@ const Withdrawal = (props) => {
             props.navigation.navigate('More');
             props.navigation.navigate('Home');
           } else {
+            console.log('dddd');
           }
         } else {
           setIsLoadingAndModal(2);
@@ -61,6 +65,8 @@ const Withdrawal = (props) => {
       console.log(err);
     }
   };
+  const [sendDataModal, setSendDataModal] = React.useState(false);
+  const SendDataModalChangeValue = (text) => setSendDataModal(text);
   return (
     <>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -76,7 +82,7 @@ const Withdrawal = (props) => {
           }}></View>
         <View
           style={{
-            width: Width_convert(341),
+            width: Width_convert(330),
             marginLeft: Width_convert(22),
             marginRight: Width_convert(22),
             marginTop: Height_convert(18),
@@ -98,25 +104,28 @@ const Withdrawal = (props) => {
               fontWeight: '700',
               color: '#946AEF',
             }}>
-            회원탈퇴 전에 꼭 확인해주세요
+            회원탈퇴 전에 꼭 확인해주세요.
           </Text>
 
           <Text
             style={{
-              marginTop: Height_convert(25),
+              marginTop: Height_convert(35),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontSize: Font_normalize(12),
+              lineHeight: Font_normalize(14),
               fontWeight: '700',
               color: '#000000',
             }}>
-            회원탈퇴 시 동일한 아이디로 재가입, 복구가 불가능합니다.
+            회원탈퇴 후 재가입하더라도 탈퇴 전 계정에 있던 모든 정보는 복구되지
+            않습니다.
           </Text>
 
           <Text
             style={{
-              marginTop: Height_convert(40),
+              marginTop: Height_convert(35),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontSize: Font_normalize(12),
+              lineHeight: Font_normalize(14),
               fontWeight: '700',
               color: '#000000',
             }}>
@@ -125,13 +134,14 @@ const Withdrawal = (props) => {
 
           <Text
             style={{
-              marginTop: Height_convert(40),
+              marginTop: Height_convert(35),
               fontFamily: Fonts?.NanumSqureRegular || null,
               fontSize: Font_normalize(12),
+              lineHeight: Font_normalize(14),
               fontWeight: '700',
               color: '#000000',
             }}>
-            회원님께서 등록한 후기는 삭제되지 않으므로, 탈퇴 전 후기 삭제 하시기
+            회원님께서 등록한 후기는 삭제되지 않으므로, 탈퇴 전 후기 삭제하시기
             바랍니다.
           </Text>
           <TouchableOpacity
@@ -141,7 +151,7 @@ const Withdrawal = (props) => {
               setWithdrawalChk(!withdrawalChk);
             }}
             style={{
-              marginTop: Height_convert(44),
+              marginTop: Height_convert(40),
               flexDirection: 'row',
               alignItems: 'center',
             }}>
@@ -172,7 +182,8 @@ const Withdrawal = (props) => {
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
             if (withdrawalChk) {
-              sendData();
+              //sendData();
+              setSendDataModal(true);
             } else {
               //
             }
@@ -201,7 +212,16 @@ const Withdrawal = (props) => {
             계정 삭제하기
           </Text>
         </TouchableOpacity>
-
+        {sendDataModal ? (
+          <AlertModal1
+            type={1}
+            ShowModalChangeValue={SendDataModalChangeValue}
+            SendData={sendData}
+            navigation={props.navigation}
+            Title={'24시간 이내에는 재가입이 불가합니다.'}
+            //BottomText={''}
+            CenterButtonText={'확인'}></AlertModal1>
+        ) : null}
         {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
           <IsLoading></IsLoading>
         ) : isLoadingAndModal === 2 ? (
