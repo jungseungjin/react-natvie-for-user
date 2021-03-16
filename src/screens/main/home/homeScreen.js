@@ -168,6 +168,9 @@ const HomeScreen = (props) => {
           showsVerticalScrollIndicator={false}
           ref={scrollRef}
           alwaysBounceVertical={false}
+          onContentSizeChange={() => {
+            handleClick();
+          }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
@@ -453,30 +456,47 @@ const HomeScreen = (props) => {
           {/*최근 본 작업 끝 */}
           {/*투닝 정보 시작 */}
           <View
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(155),
-              borderBottomColor: 'rgba(219,219,219,0.35)',
-              borderBottomWidth: 1,
-            }}>
+            style={[
+              {
+                width: Width_convert(375),
+                borderBottomColor: 'rgba(219,219,219,0.35)',
+                borderBottomWidth: 1,
+              },
+              showInformation
+                ? {
+                    height: Height_convert(155),
+                  }
+                : {
+                    height: Height_convert(70),
+                  },
+            ]}>
             <View
-              style={{
-                marginLeft: Width_convert(12),
-                marginTop: Height_convert(11),
-                width: Width_convert(351),
-                height: Height_convert(144),
-              }}>
+              style={[
+                {
+                  marginLeft: Width_convert(12),
+                  marginTop: Height_convert(11),
+                  width: Width_convert(351),
+                },
+                showInformation
+                  ? {
+                      height: Height_convert(144),
+                    }
+                  : {
+                      height: Height_convert(60),
+                    },
+              ]}>
               <TouchableOpacity
                 activeOpacity={1}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
-                  if (!showInformation) {
-                    handleClick();
-                  }
                   setShowInformation(!showInformation);
+                  if (showInformation) {
+                    //handleClick();
+                  }
                 }}
                 style={{
                   flexDirection: 'row',
+
                   alignItems: 'center',
                 }}>
                 <Text
