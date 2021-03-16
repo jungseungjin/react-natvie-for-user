@@ -47,7 +47,13 @@ const StoreLocationScreen = (props) => {
       props.route.params.item.store_location.coordinates[0],
     ),
   });
-
+  const [P1, setP1] = React.useState({
+    latitude: parseFloat(props.route.params.item.store_location.coordinates[1]),
+    longitude: parseFloat(
+      props.route.params.item.store_location.coordinates[0],
+    ),
+    show: false,
+  });
   //위치정보사용 퍼미션
   const handleLocationPermission = async (Type) => {
     if (Type == 'ios') {
@@ -85,9 +91,10 @@ const StoreLocationScreen = (props) => {
       (position) => {
         // position.coords.longitude = 126.70528; //지워야함
         // position.coords.latitude = 37.45639; //지워야함
-        setP0({
+        setP1({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
+          show: true,
         });
       },
       (error) => {
@@ -189,7 +196,7 @@ const StoreLocationScreen = (props) => {
           }}>
           <NaverMapView
             style={{width: '100%', height: '100%', position: 'absolute'}}
-            center={{...P0, zoom: 16}}
+            center={{...P1, zoom: 16}}
             scaleBar={false}
             zoomControl={false}
             rotateGesturesEnabled={false}
@@ -205,7 +212,10 @@ const StoreLocationScreen = (props) => {
             // }
             //onMapClick={(e) => console.warn('onMapClick', JSON.stringify(e))}
           >
-            <Marker coordinate={P0} pinColor={'green'} onClick={() => {}} />
+            <Marker coordinate={P0} pinColor={'red'} onClick={() => {}} />
+            {P1.show == true ? (
+              <Marker coordinate={P1} pinColor={'green'} onClick={() => {}} />
+            ) : null}
           </NaverMapView>
           <TouchableOpacity
             activeOpacity={1}
