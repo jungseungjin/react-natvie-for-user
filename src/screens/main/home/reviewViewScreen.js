@@ -425,6 +425,7 @@ const ReviewView = (props) => {
                 elevation: 5,
               }}>
               <ReviewRegister
+                style={{marginLeft: Width_convert(7)}}
                 width={Width_convert(30)}
                 height={Width_convert(30)}></ReviewRegister>
             </TouchableOpacity>
