@@ -11,7 +11,7 @@ const SignUp = (props) => {
     <View style={styles.view}>
       <Text style={styles.text}>
         회원가입시 고객님의 차종과 지역설정이 저장되어 {'\n'}원하는 튜닝작업
-        검색이 간편합니다
+        검색이 간편합니다.
       </Text>
       <TouchableOpacity
         activeOpacity={1}
@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
   },
   touchableOpacity: {
     justifyContent: 'center',
-    height: Height_convert(24),
+    height: Width_convert(30),
     marginTop: Height_convert(11),
-    marginRight: Width_convert(21),
+    marginRight: Width_convert(22),
     borderRadius: Font_normalize(4),
     borderTopColor: '#FF965A',
     borderLeftColor: '#FF965A',
@@ -61,11 +61,11 @@ const styles = StyleSheet.create({
   },
   text2: {
     fontFamily: Fonts?.NanumSqureRegular || null,
-    fontSize: Font_normalize(8),
+    fontSize: Font_normalize(12),
     paddingTop: Height_convert(8),
     paddingBottom: Height_convert(8),
-    paddingRight: Width_convert(11),
-    paddingLeft: Width_convert(11),
+    paddingRight: Width_convert(12),
+    paddingLeft: Width_convert(12),
     fontWeight: '700',
     color: '#FF965A',
   },
