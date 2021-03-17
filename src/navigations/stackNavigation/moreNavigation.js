@@ -34,6 +34,8 @@ import Withdrawal from '../../screens/main/more/withdrawalScreen.js';
 import Map_more from '../../screens/main/home/mapScreen.js';
 import MapSearch_more from '../../screens/main/home/mapSeachScreen.js';
 import PickScreen from '../../screens/main/pick/pickScreen.js';
+import ReviewView from '../../screens/main/home/reviewViewScreen.js';
+import ReviewRegister from '../../screens/main/home/reviewRegisterScreen.js';
 
 import WorkDetail from '../../screens/main/home/workDetailScreen.js';
 import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
@@ -376,6 +378,18 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="StoreLocation"
         component={StoreLocation}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="ReviewView"
+        component={ReviewView}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="ReviewRegister"
+        component={ReviewRegister}
         initialParams={{}}
         options={{}}
       />
