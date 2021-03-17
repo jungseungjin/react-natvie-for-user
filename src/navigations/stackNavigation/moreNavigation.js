@@ -5,6 +5,7 @@ import Info from '../../screens/main/more/infoScreen.js';
 import InfoCar from '../../screens/main/more/infoCarScreen.js';
 import SignUp from '../../screens/main/more/signUpScreen.js';
 import SignUpTerms from '../../screens/main/more/signUpTerms.js';
+import SignUpTerms2 from '../../screens/main/more/signUpTerms2.js';
 import SignUpInformation from '../../screens/main/more/signUpInformation.js';
 import SignUpInformation2 from '../../screens/main/more/signUpInformation2.js';
 import SignUpInformation3 from '../../screens/main/more/signUpInformation3.js';
@@ -117,6 +118,14 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="SignUpTerms"
         component={SignUpTerms}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpTerms2"
+        component={SignUpTerms2}
         initialParams={{}}
         options={{
           headerShown: false,

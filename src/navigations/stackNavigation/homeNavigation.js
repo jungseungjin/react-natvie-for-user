@@ -18,6 +18,7 @@ import WorkVideoList from '../../screens/main/home/workVideoListScreen.js';
 import SignUp from '../../screens/main/more/signUpScreen.js';
 import RecentWork from '../../screens/main/more/recentWorkScreen.js';
 import SignUpTerms from '../../screens/main/more/signUpTerms.js';
+import SignUpTerms2 from '../../screens/main/more/signUpTerms2.js';
 import SignUpInformation from '../../screens/main/more/signUpInformation.js';
 import SignUpInformation2 from '../../screens/main/more/signUpInformation2.js';
 import SignUpInformation3 from '../../screens/main/more/signUpInformation3.js';
@@ -154,6 +155,14 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="SignUpTerms"
         component={SignUpTerms}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SignUpTerms2"
+        component={SignUpTerms2}
         initialParams={{}}
         options={{
           headerShown: false,

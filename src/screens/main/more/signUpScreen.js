@@ -258,10 +258,7 @@ const SignUp = (props) => {
             activeOpacity={1}
             hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
             onPress={() => {
-              props.navigation.navigate('SignUpTerms', {
-                agreeNumber: 3,
-                fromNav: props.route.params.fromNav,
-              });
+              props.navigation.navigate('SignUpTerms2', {agreeNumber: 3});
             }}>
             <Text
               style={{
@@ -272,7 +269,7 @@ const SignUp = (props) => {
                 color: '#000000',
                 textDecorationLine: 'underline',
               }}>
-              개인정보 수집이용 동의
+              개인정보 취급방침
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

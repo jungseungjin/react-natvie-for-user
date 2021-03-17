@@ -5,15 +5,32 @@ import Width_convert from '../../Width_convert.js';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import Vertical_bar from '../../../../assets/home/vertical_bar.svg';
-const BottomInformationDefault = () => {
+const BottomInformationDefault = (props) => {
   return (
     <>
       <View style={styles.view}>
-        <Text style={styles.text}>이용약관</Text>
+        <TouchableOpacity
+          activeOpacity={1}
+          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
+          onPress={() => {
+            props.navigation.navigate('SignUpTerms', {
+              agreeNumber: 1,
+            });
+          }}>
+          <Text style={styles.text}>이용약관</Text>
+        </TouchableOpacity>
         <Vertical_bar style={styles.vertical_bar}></Vertical_bar>
         <Text style={styles.text}>사업자정보확인</Text>
         <Vertical_bar style={styles.vertical_bar}></Vertical_bar>
-        <Text style={styles.text3}>개인정보처리방침</Text>
+
+        <TouchableOpacity
+          activeOpacity={1}
+          hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
+          onPress={() => {
+            props.navigation.navigate('SignUpTerms2', {agreeNumber: 3});
+          }}>
+          <Text style={styles.text3}>개인정보 취급방침</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.view2}>
         <Text style={styles.text4}>

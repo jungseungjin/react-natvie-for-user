@@ -487,7 +487,7 @@ const HomeScreen = (props) => {
               ]}>
               <TouchableOpacity
                 activeOpacity={1}
-                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                hitSlop={{top: 10, bottom: 5, left: 10, right: 10}}
                 onPress={() => {
                   setShowInformation(!showInformation);
                   if (showInformation) {
@@ -518,7 +518,8 @@ const HomeScreen = (props) => {
               {showInformation ? (
                 <BottomInformationOpen></BottomInformationOpen>
               ) : null}
-              <BottomInformationDefault></BottomInformationDefault>
+              <BottomInformationDefault
+                navigation={props.navigation}></BottomInformationDefault>
             </View>
           </View>
           {/*투닝 정보 끝*/}

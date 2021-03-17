@@ -44,7 +44,6 @@ const TabBar = (props) => {
         props.Title == '아이디 찾기2' ||
         props.Title == '비밀번호 찾기1' ||
         props.Title == '비밀번호 찾기2' ||
-        props.Title == '투닝 이용약관' ||
         props.Title == '개인정보 수집 및 이용' ||
         props.Title == '위치기반 서비스 이용약관' ||
         props.Title == '개인정보 제3자 제공 동의' ||
@@ -68,6 +67,9 @@ const TabBar = (props) => {
           )}
         </TouchableOpacity>
       ) : props.Title == '최근 본 작업' ||
+        props.Title == '이용약관' ||
+        props.Title == '개인정보 취급방침' ||
+        props.Title == '개인정보처리방침' ||
         props.Title == '공지사항 및 이벤트' ||
         props.Title == '공지사항 및 이벤트 보기' ||
         props.Title == '고객센터' ||

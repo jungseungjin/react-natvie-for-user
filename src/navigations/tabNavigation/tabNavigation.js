@@ -56,6 +56,7 @@ const setTabBarVisible = (route, reduexState) => {
     'InfoCar',
     'SignUp',
     'SignUpTerms',
+    'SignUpTerms2',
     'SignUpInformation',
     'SignUpInformation2',
     'SignUpInformation3',
