@@ -76,6 +76,7 @@ const TabBar = (props) => {
         props.Title == '문의확인' ||
         props.Title == '투닝 입점문의' ||
         props.Title == '내정보' ||
+        props.Title == '내정보_fake' ||
         props.Title == '회원탈퇴' ||
         props.Title == '회원가입1' ||
         props.Title == '회원가입2' ||
@@ -138,6 +139,8 @@ const TabBar = (props) => {
             ? '비밀번호 찾기'
             : props.Title.indexOf('차량선택') != -1
             ? '차량선택'
+            : props.Title.indexOf('내정보') != -1
+            ? '내정보'
             : props.Title == '로그인'
             ? null
             : props.Title != '공지사항 및 이벤트 보기'

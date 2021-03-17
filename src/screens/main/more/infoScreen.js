@@ -351,7 +351,6 @@ const InfoScreen = (props) => {
             //비밀번호 변경 ->로그아웃, 모달창 띄우기 모달창에서 로그인으로 이동시키기
             await Keychain.resetGenericPassword();
             setPasswordChangeModal(true);
-            props.updateLoginStatus(false);
             props.updateIuCar([]);
             props.updateLocation({});
             props.update_id('');
@@ -444,12 +443,26 @@ const InfoScreen = (props) => {
   const [passwordChangeModal, setPasswordChangeModal] = React.useState(false);
   const PasswordChangeModalChangeValue = (text) => {
     setPasswordChangeModal(text);
+
+    props.updateLoginStatus(false);
     props.navigation.navigate('Login');
   };
   const [userImage, setUserImage] = React.useState(
     reduexState.loginDataCheck.login?.data?.review_user_iu_image || null,
   );
 
+  React.useEffect(() => {
+    //초기화
+    props.navigation.addListener('focus', async () => {
+      setPasswordChk('');
+      setPassword('');
+      setNicknameChk(0);
+      setPhoneNumber('');
+      setPhoneNumberChk(0);
+      setAuthButtonClick(false);
+      setConfirmChk('');
+    });
+  }, []);
   const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
   const [seconds, setSeconds] = React.useState(parseInt(0));
   const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
@@ -598,7 +611,13 @@ const InfoScreen = (props) => {
   const logout = async () => {
     try {
       if (reduexState.loginDataCheck.login.login == false) {
-        return false;
+        await Keychain.resetGenericPassword();
+        props.updateIuCar([]);
+        props.updateLocation({});
+        props.update_id('');
+        props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+        props.navigation.navigate('More');
+        props.updateLoginStatus(false);
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -615,12 +634,12 @@ const InfoScreen = (props) => {
           });
           if (result.data[0].message == 'ok') {
             await Keychain.resetGenericPassword();
-            props.updateLoginStatus(false);
             props.updateIuCar([]);
             props.updateLocation({});
             props.update_id('');
             props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
             props.navigation.navigate('More');
+            props.updateLoginStatus(false);
           } else {
           }
         } else {
@@ -795,7 +814,32 @@ const InfoScreen = (props) => {
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      {page == 'info' ? (
+      {reduexState.loginDataCheck.login.login != true ? (
+        <>
+          <Tabbar
+            Title={'내정보_fake'}
+            // toastRef={toastRef}
+            navigation={props.navigation}
+            saveData={saveData}></Tabbar>
+          <View
+            style={{
+              width: Width_convert(375),
+              height: Height_convert(812) - Height_convert(94 + 48),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontSize: Font_normalize(16),
+                fontWeight: '700',
+                color: '#000000',
+              }}>
+              로그인이 필요합니다.
+            </Text>
+          </View>
+        </>
+      ) : page == 'info' ? (
         <>
           <Tabbar
             Title={'내정보'}

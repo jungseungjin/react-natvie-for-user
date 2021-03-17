@@ -38,15 +38,14 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
+import Forfunction from './forFunction.js';
 const PickScreen = (props) => {
   const reduexState = useSelector((state) => state);
-  const loginChk = useSelector((state) => state.loginDataCheck.login.login); //리덕스는 사용하는 단위로 쪼개면 좋다
-
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   const insets = useSafeAreaInsets();
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [page, setPage] = React.useState('work');
   const [workList, setWorkList] = React.useState([]);
@@ -62,44 +61,40 @@ const PickScreen = (props) => {
 
   const get_pickData = () => {
     try {
-      if (loginChk == true) {
-        NetInfo.addEventListener(async (state) => {
-          if (state.isConnected) {
-            let url = `${Domain2}pickData`;
-            let result = await axios.get(url, {
-              params: {
-                _id: reduexState.loginDataCheck.login._id,
-              },
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (result.data[0].message == 'ok') {
-              if (result.data[0].workList != 0 && result.data[0].workList) {
-                setWorkList(result.data[0].workList);
-              } else {
-                setWorkList([]);
-              }
-              if (result.data[0].storeList != 0 && result.data[0].storeList) {
-                setStoreList(result.data[0].storeList);
-              } else {
-                setStoreList([]);
-              }
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          if (!reduexState.loginDataCheck.login._id) {
+            return false;
+          }
+          let url = `${Domain2}pickData`;
+          let result = await axios.get(url, {
+            params: {
+              _id: reduexState.loginDataCheck.login._id,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            if (result.data[0].workList != 0 && result.data[0].workList) {
+              setWorkList(result.data[0].workList);
             } else {
-              //setRecentWorkList([]);
+              setWorkList([]);
+            }
+            if (result.data[0].storeList != 0 && result.data[0].storeList) {
+              setStoreList(result.data[0].storeList);
+            } else {
+              setStoreList([]);
             }
           } else {
-            setIsLoadingAndModal(2);
+            //setRecentWorkList([]);
+            setWorkList([]);
+            setStoreList([]);
           }
-        });
-      } else {
-        //로그인모달띄우기
-        setShowModal(true);
-        setWorkList([]);
-        setStoreList([]);
-        setWorkListDel();
-        setStoreListDel();
-      }
+        } else {
+          setIsLoadingAndModal(2);
+        }
+      });
     } catch (err) {
       console.log(err);
     }
@@ -152,9 +147,12 @@ const PickScreen = (props) => {
     get_pickData();
     setRefreshing(false);
   }, []);
+  const [forFunctionBoo, setForFunctionBoo] = React.useState(true);
   React.useEffect(() => {
-    props.navigation.addListener('focus', async () => {
-      onRefresh();
+    props.navigation.addListener('focus', () => {
+      let m = Math.random();
+      setForFunctionBoo(m);
+      setShowModal(true);
     });
   }, []);
   return (
@@ -187,12 +185,12 @@ const PickScreen = (props) => {
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
           data={
-            page == 'work' && workList.length > 0
+            reduexState.loginDataCheck.login.login == false
+              ? [{message: '로그인이 필요합니다.'}]
+              : page == 'work' && workList.length > 0
               ? workList
               : page == 'store' && storeList.length > 0
               ? storeList
-              : loginChk == false
-              ? [{message: '로그인이 필요합니다.'}]
               : page == 'work'
               ? [{message: '찜한 작업이 없습니다.'}]
               : page == 'store'
@@ -202,7 +200,25 @@ const PickScreen = (props) => {
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>
-            page == 'work' && workList.length > 0 ? (
+            item.message ? (
+              <View
+                style={{
+                  width: Width_convert(375),
+                  height: Height_convert(812) - Height_convert(94 + 48),
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(16),
+                    fontWeight: '700',
+                    color: '#000000',
+                  }}>
+                  {item.message}
+                </Text>
+              </View>
+            ) : page == 'work' && workList.length > 0 ? (
               <WorkPick
                 navigation={props.navigation}
                 getIndex={workList.indexOf(item) + 1}
@@ -222,25 +238,7 @@ const PickScreen = (props) => {
                 key={item._id}
                 item={item}
                 editMode={reduexState.editModeCheck.editMode}></StorePick>
-            ) : (
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(812) - Height_convert(94 + 48),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#000000',
-                  }}>
-                  {item.message}
-                </Text>
-              </View>
-            )
+            ) : null
           }
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*하단 초기화 삭제하기버튼 시작*/}
@@ -332,15 +330,14 @@ const PickScreen = (props) => {
             LeftButtonTitle={'취소'}
             RightButtonTitle={'확인'}></AlertModal2>
         ) : null}
-        {showModal ? (
+        {reduexState.loginDataCheck.login.login === false && showModal ? (
           <LoginModal
             ShowModalChangeValue={ShowModalChangeValue}
-            navigation={props.navigation}
-            //Title={'우리가게공임표를 확인하려면 로그인이 필요합니다.'}
-            //BottomText={'설정하러가기'}
-            //LeftButtonTitle={'아니오'}
-            //RightButtonTitle={'네'}
-          ></LoginModal>
+            navigation={props.navigation}></LoginModal>
+        ) : reduexState.loginDataCheck.login.login === true ? (
+          <Forfunction
+            get_pickData={get_pickData}
+            Boo={forFunctionBoo}></Forfunction>
         ) : null}
         {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
           <IsLoading></IsLoading>

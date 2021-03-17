@@ -98,6 +98,12 @@ const TabNavigator = (props) => {
       <Tabs.Screen
         name="Pick"
         component={MoreNavigator}
+        // children={() => (
+        //   <MoreNavigator
+        //     name={'Pick'}
+        //     loginChk={reduexState.loginDataCheck.login}
+        //   />
+        // )}
         options={{
           tabBarIcon: ({focused}) => {
             if (focused == true) {
@@ -113,6 +119,7 @@ const TabNavigator = (props) => {
       <Tabs.Screen
         name="More"
         component={MoreNavigator}
+        //children={() => <MoreNavigator name={'More'} />}
         options={{
           tabBarIcon: ({focused}) => {
             if (focused == true) {

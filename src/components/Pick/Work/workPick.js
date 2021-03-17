@@ -53,7 +53,7 @@ const WorkPick = (props) => {
       <FastImage
         style={{width: Width_convert(375), height: Width_convert(240)}}
         source={{
-          uri: props.item?.store_thumbnail[0],
+          uri: props?.item?.store_thumbnail[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
