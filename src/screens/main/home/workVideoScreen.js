@@ -23,11 +23,47 @@ import FastImage from 'react-native-fast-image';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import Domain2 from '../../../../key/Domain2.js';
+import NetInfo from '@react-native-community/netinfo';
+import axios from 'axios';
 
 const WorkVideoScreen = (props) => {
   const contentWidth = useWindowDimensions().width;
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
+  const [relatedVideoList, setRelatedVideoList] = React.useState([]);
+  const getData = (RelatedVideo) => {
+    try {
+      let result;
+      let url = Domain2 + 'relatedVideoList';
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              RelatedVideos: RelatedVideo,
+            },
+          });
+          if (result.data[0].message == 'ok') {
+            setRelatedVideoList(result.data[0].RelatedVideoList);
+          } else {
+            console.log(result.data[0]);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  React.useEffect(() => {
+    getData(props.route.params.item.RelatedVideo);
+  }, [props.route.params.item.ownersname]);
   return (
     <>
       <StatusBar
@@ -136,33 +172,14 @@ const WorkVideoScreen = (props) => {
             }}>
             관련 추천 동영상
           </Text>
-          <OwnersWork
-            From={'workVideo'}
-            item={{
-              show: true,
-              url: 'https://unsplash.it/400/400?image=6', //사진url
-              videoUrl:
-                '<iframe width="560" height="315" src="https://www.youtube.com/embed/oOcnauhMJJE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
-              title:
-                '너도나도 같은 배기음? 소리박 제품은 달라! 소리나 한번 들어보고 가슈', //영상제목
-              ownersImage: 'https://unsplash.it/400/400?image=6', //채널이미지
-              ownersname: '배말랭', //채널명
-            }}
-            navigation={props.navigation}
-            Index={0}></OwnersWork>
-          <OwnersWork
-            From={'workVideo'}
-            item={{
-              show: true,
-              url: 'https://unsplash.it/400/400?image=7', //사진url
-              videoUrl:
-                '<iframe width="560" height="315" src="https://www.youtube.com/embed/9u2Lmc-vRHo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
-              title: '지거브모든거거거것', //영상제목
-              ownersImage: 'https://unsplash.it/400/400?image=7', //채널이미지
-              ownersname: '직모', //채널명
-            }}
-            navigation={props.navigation}
-            Index={1}></OwnersWork>
+          {relatedVideoList.map((item) => (
+            <OwnersWork
+              key={item._id}
+              From={'workVideo'}
+              item={item}
+              navigation={props.navigation}
+              Index={relatedVideoList.indexOf(item)}></OwnersWork>
+          ))}
         </ScrollView>
       </SafeAreaView>
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음

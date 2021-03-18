@@ -47,7 +47,7 @@ import messaging from '@react-native-firebase/messaging';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const HomeScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -55,7 +55,7 @@ const HomeScreen = (props) => {
   const [pickButtonTitle, setPickButtonTitle] = React.useState('');
   const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
   const [topSliderImageList, setTopSliderImageList] = React.useState([]);
-  const [ownersWokrVideoList, setOwnersWokrVideoList] = React.useState([]);
+  const [ownersWorkVideoList, setOwnersWorkVideoList] = React.useState([]);
   const [recentWorkList, setRecentWorkList] = React.useState([]);
   const [showInformation, setShowInformation] = React.useState(false);
 
@@ -79,7 +79,7 @@ const HomeScreen = (props) => {
           });
           if (result.data[0].message == 'ok') {
             setTopSliderImageList(result.data[0].SliderImageList);
-            setOwnersWokrVideoList(result.data[0].RecommendVideoList);
+            setOwnersWorkVideoList(result.data[0].RecommendVideoList);
           } else {
             console.log(result.data[0]);
           }
@@ -229,39 +229,39 @@ const HomeScreen = (props) => {
                   navigation={props.navigation}></SettingButton>
                 <SettingButton
                   Title={
-                    reduexState.loginDataCheck.login.iu_car.length > 0 &&
-                    reduexState.loginDataCheck.login.location.legalcode &&
-                    reduexState.loginDataCheck.login.iu_car[0]?.pickModelDetail
+                    reduxState.loginDataCheck.login.iu_car.length > 0 &&
+                    reduxState.loginDataCheck.login.location.legalcode &&
+                    reduxState.loginDataCheck.login.iu_car[0]?.pickModelDetail
                       ?.model_detail != undefined
-                      ? reduexState.loginDataCheck.login.iu_car[0]
+                      ? reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.brand +
                         ' ' +
-                        reduexState.loginDataCheck.login.iu_car[0]
+                        reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.model_detail +
                         ' / ' +
-                        reduexState.loginDataCheck.login.location.legalcode
-                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduexState.loginDataCheck.login.iu_car[0]
+                        reduxState.loginDataCheck.login.location.legalcode
+                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.model_detail != undefined
-                      ? reduexState.loginDataCheck.login.iu_car[0]
+                      ? reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.brand +
                         ' ' +
-                        reduexState.loginDataCheck.login.iu_car[0]
+                        reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail?.model_detail +
                         ' / 지역'
-                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduexState.loginDataCheck.login.iu_car[0]
+                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail === 'all' &&
-                        reduexState.loginDataCheck.login.location.legalcode
+                        reduxState.loginDataCheck.login.location.legalcode
                       ? '모든 차종 / ' +
-                        reduexState.loginDataCheck.login.location.legalcode
-                      : reduexState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduexState.loginDataCheck.login.iu_car[0]
+                        reduxState.loginDataCheck.login.location.legalcode
+                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
+                        reduxState.loginDataCheck.login.iu_car[0]
                           ?.pickModelDetail === 'all'
                       ? '모든 차종 / 지역'
-                      : reduexState.loginDataCheck.login.location.legalcode
+                      : reduxState.loginDataCheck.login.location.legalcode
                       ? '차종 / ' +
-                        reduexState.loginDataCheck.login.location.legalcode
+                        reduxState.loginDataCheck.login.location.legalcode
                       : '차종 / 지역'
                   }
                   Type={'car'}
@@ -368,14 +368,14 @@ const HomeScreen = (props) => {
                 marginTop: Height_convert(16),
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {ownersWokrVideoList.length > 0
-                  ? ownersWokrVideoList.map((item) => (
+                {ownersWorkVideoList.length > 0
+                  ? ownersWorkVideoList.map((item) => (
                       <OwnersWork
                         key={item.url}
                         From={'home'}
                         item={item}
                         navigation={props.navigation}
-                        Index={ownersWokrVideoList.indexOf(item)}></OwnersWork>
+                        Index={ownersWorkVideoList.indexOf(item)}></OwnersWork>
                     ))
                   : null}
               </ScrollView>

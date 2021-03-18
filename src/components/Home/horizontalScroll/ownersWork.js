@@ -39,7 +39,6 @@ const OwnersWork = (props) => {
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
       <View
         style={{
-          heigt: Height_convert(36),
           justifyContent: 'center',
         }}>
         <Text
