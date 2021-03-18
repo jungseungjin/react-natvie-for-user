@@ -39,7 +39,7 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [loginModal, setLoginModal] = React.useState(false);
   const LoginModalChangeValue = (text) => setLoginModal(text);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -401,7 +401,7 @@ const ReviewView = (props) => {
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
-                if (reduexState.loginDataCheck.login.login == true) {
+                if (reduxState.loginDataCheck.login.login == true) {
                   props.navigation.navigate('ReviewRegister', {
                     item: props.route.params.item,
                   });

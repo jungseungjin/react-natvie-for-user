@@ -26,7 +26,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const MoreScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [, updateState] = React.useState();
@@ -57,7 +57,7 @@ const MoreScreen = (props) => {
             borderBottomWidth: 1,
           }}>
           <Tabbar Title={'더보기'}></Tabbar>
-          {reduexState.loginDataCheck.login.login ? (
+          {reduxState.loginDataCheck.login.login ? (
             <Menu
               Title={'내정보'}
               navigation={props.navigation}

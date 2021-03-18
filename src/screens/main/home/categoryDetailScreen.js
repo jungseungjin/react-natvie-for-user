@@ -30,7 +30,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const CategoryDetailScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [page, setPage] = React.useState(props.route.params.Page || null);
@@ -79,13 +79,13 @@ const CategoryDetailScreen = (props) => {
               sort: sort,
               middle: text,
               iu_car:
-                reduexState.loginDataCheck?.login?.iu_car[0]?.pickModelDetail
+                reduxState.loginDataCheck?.login?.iu_car[0]?.pickModelDetail
                   ?.info_car_id || undefined,
               longitude:
-                reduexState.loginDataCheck?.login?.location?.longitude ||
+                reduxState.loginDataCheck?.login?.location?.longitude ||
                 undefined,
               latitude:
-                reduexState.loginDataCheck?.login?.location?.latitude ||
+                reduxState.loginDataCheck?.login?.location?.latitude ||
                 undefined,
             },
           });
@@ -171,7 +171,7 @@ const CategoryDetailScreen = (props) => {
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(
-    reduexState.loginDataCheck?.login?.location?.legalcode
+    reduxState.loginDataCheck?.login?.location?.legalcode
       ? '가까운 순 '
       : false,
   );
@@ -327,7 +327,7 @@ const CategoryDetailScreen = (props) => {
                 nowValue={pickSort}
                 ShowModalChangeValue={ShowModalChangeValue}
                 location={
-                  reduexState.loginDataCheck?.login?.location?.legalcode || null
+                  reduxState.loginDataCheck?.login?.location?.legalcode || null
                 }
                 SortChangeValue={SortChangeValue}></FilterView>
               <FilterView

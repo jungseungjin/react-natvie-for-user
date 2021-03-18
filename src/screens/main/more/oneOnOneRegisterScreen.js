@@ -29,7 +29,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const OneOnOneRegister = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
@@ -48,7 +48,7 @@ const OneOnOneRegister = (props) => {
         if (state.isConnected) {
           let url = Domain2 + 'question/register';
           let data = {
-            _id: reduexState.loginDataCheck.login.data._id,
+            _id: reduxState.loginDataCheck.login.data._id,
             title: title,
             contents: contents,
           };

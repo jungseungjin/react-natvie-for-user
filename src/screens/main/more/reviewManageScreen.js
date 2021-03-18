@@ -39,7 +39,7 @@ const ReviewManage = (props) => {
   moment.locale('ko');
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [loginModal, setLoginModal] = React.useState(false);
   const LoginModalChangeValue = (text) => setLoginModal(text);
   const [deleteModal, setDeleteModal] = React.useState(false);
@@ -66,7 +66,7 @@ const ReviewManage = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              _id: reduexState.loginDataCheck.login.data._id,
+              _id: reduxState.loginDataCheck.login.data._id,
             },
           });
           if (result.data[0].message == 'ok') {

@@ -54,7 +54,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const SearchScreenDetail = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [showModal, setShowModel] = React.useState(false);
@@ -79,7 +79,7 @@ const SearchScreenDetail = (props) => {
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
   const [pickSort, setPickSort] = React.useState(
-    reduexState.loginDataCheck?.login?.location?.legalcode
+    reduxState.loginDataCheck?.login?.location?.legalcode
       ? '가까운 순 '
       : false,
   );
@@ -185,7 +185,7 @@ const SearchScreenDetail = (props) => {
       } else {
         sort = '0';
       }
-      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduexState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduexState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
+      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduxState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduxState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -237,7 +237,7 @@ const SearchScreenDetail = (props) => {
   const onRefresh = (text, randomNumber) => {
     setRefreshing(true);
     setPickSort(
-      reduexState.loginDataCheck?.login?.location?.legalcode
+      reduxState.loginDataCheck?.login?.location?.legalcode
         ? '가까운 순 '
         : false,
     );
@@ -411,7 +411,7 @@ const SearchScreenDetail = (props) => {
                   nowValue={pickSort}
                   ShowModalChangeValue={ShowModalChangeValue}
                   location={
-                    reduexState.loginDataCheck?.login?.location?.legalcode ||
+                    reduxState.loginDataCheck?.login?.location?.legalcode ||
                     null
                   }
                   SortChangeValue={SortChangeValue}></FilterView>

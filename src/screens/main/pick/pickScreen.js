@@ -40,7 +40,7 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 import Forfunction from './forFunction.js';
 const PickScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
@@ -63,13 +63,13 @@ const PickScreen = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          if (!reduexState.loginDataCheck.login._id) {
+          if (!reduxState.loginDataCheck.login._id) {
             return false;
           }
           let url = `${Domain2}pickData`;
           let result = await axios.get(url, {
             params: {
-              _id: reduexState.loginDataCheck.login._id,
+              _id: reduxState.loginDataCheck.login._id,
             },
             headers: {
               'Content-Type': 'application/json',
@@ -101,13 +101,13 @@ const PickScreen = (props) => {
   };
   const delete_data = () => {
     try {
-      props.updateEditMode(!reduexState.editModeCheck.editMode);
-      if (reduexState.loginDataCheck.login._id != '') {
+      props.updateEditMode(!reduxState.editModeCheck.editMode);
+      if (reduxState.loginDataCheck.login._id != '') {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             let url = Domain2 + 'pickData';
             let data = {
-              _id: reduexState.loginDataCheck.login._id,
+              _id: reduxState.loginDataCheck.login._id,
               workListDel: workListDel,
               storeListDel: storeListDel,
             };
@@ -185,7 +185,7 @@ const PickScreen = (props) => {
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
           data={
-            reduexState.loginDataCheck.login.login == false
+            reduxState.loginDataCheck.login.login == false
               ? [{message: '로그인이 필요합니다.'}]
               : page == 'work' && workList.length > 0
               ? workList
@@ -227,7 +227,7 @@ const PickScreen = (props) => {
                 workListDel={workListDel}
                 key={item._id}
                 item={item}
-                editMode={reduexState.editModeCheck.editMode}></WorkPick>
+                editMode={reduxState.editModeCheck.editMode}></WorkPick>
             ) : page == 'store' && storeList.length > 0 ? (
               <StorePick
                 navigation={props.navigation}
@@ -237,13 +237,13 @@ const PickScreen = (props) => {
                 storeListDel={storeListDel}
                 key={item._id}
                 item={item}
-                editMode={reduexState.editModeCheck.editMode}></StorePick>
+                editMode={reduxState.editModeCheck.editMode}></StorePick>
             ) : null
           }
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
-        {reduexState.editModeCheck.editMode ? (
+        {reduxState.editModeCheck.editMode ? (
           <>
             <View
               style={{
@@ -286,7 +286,7 @@ const PickScreen = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    if (reduexState.editModeCheck.editMode) {
+                    if (reduxState.editModeCheck.editMode) {
                       setDeleteModal(true);
                     }
                   }}
@@ -330,11 +330,11 @@ const PickScreen = (props) => {
             LeftButtonTitle={'취소'}
             RightButtonTitle={'확인'}></AlertModal2>
         ) : null}
-        {reduexState.loginDataCheck.login.login === false && showModal ? (
+        {reduxState.loginDataCheck.login.login === false && showModal ? (
           <LoginModal
             ShowModalChangeValue={ShowModalChangeValue}
             navigation={props.navigation}></LoginModal>
-        ) : reduexState.loginDataCheck.login.login === true ? (
+        ) : reduxState.loginDataCheck.login.login === true ? (
           <Forfunction
             get_pickData={get_pickData}
             Boo={forFunctionBoo}></Forfunction>

@@ -27,7 +27,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const CategoryScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   //완료버튼이 중분류 소분류까지 가능. 대분류는 말고!
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
@@ -153,13 +153,13 @@ const CategoryScreen = (props) => {
                 middle: pickMiddleCategory.work_sub_type_name,
                 small: pickSmallCategory._id,
                 iu_car:
-                  reduexState.loginDataCheck.login?.iu_car[0]?.pickModelDetail
+                  reduxState.loginDataCheck.login?.iu_car[0]?.pickModelDetail
                     ?.info_car_id || undefined,
                 longitude:
-                  reduexState.loginDataCheck.login?.location?.location
+                  reduxState.loginDataCheck.login?.location?.location
                     ?.longitude || undefined,
                 latitude:
-                  reduexState.loginDataCheck.login?.location?.location
+                  reduxState.loginDataCheck.login?.location?.location
                     ?.latitude || undefined,
               },
             });

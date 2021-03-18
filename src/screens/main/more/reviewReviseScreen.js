@@ -39,7 +39,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 const ReviewRegister = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [starCount, setStarCount] = React.useState([]); //평점 받기
@@ -134,7 +134,7 @@ const ReviewRegister = (props) => {
         if (state.isConnected) {
           let data = {};
           let url = Domain2 + 'review/revise';
-          if (reduexState.loginDataCheck.login.login == true) {
+          if (reduxState.loginDataCheck.login.login == true) {
             let starValue = 0;
             for (var a = 0; a < starCount.length; a++) {
               if (starCount[a].value == 1) {
@@ -153,7 +153,7 @@ const ReviewRegister = (props) => {
             data = {
               prev_data_id: props.route.params.item._id,
               item_id: props.route.params.item.store_work[0]._id,
-              _id: reduexState.loginDataCheck.login.data._id,
+              _id: reduxState.loginDataCheck.login.data._id,
               contents: contents,
               starCount: starValue,
               prevStarCount: props.route.params.item.review_reply_grade,

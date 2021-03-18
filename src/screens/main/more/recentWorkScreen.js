@@ -41,7 +41,7 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const RecentWork = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('work');
   const PageChangeValue = (text) => setPage(text);
@@ -148,7 +148,7 @@ const RecentWork = (props) => {
   //데이터 삭제하기
   const delete_data = async () => {
     try {
-      props.updateEditMode(!reduexState.editModeCheck.editMode);
+      props.updateEditMode(!reduxState.editModeCheck.editMode);
       let Workvalue = await AsyncStorage.getItem('recentWorkList');
       let newValue = Workvalue;
       for (var a = 0; a < workListDel.length; a++) {
@@ -236,7 +236,7 @@ const RecentWork = (props) => {
                 workListDel={workListDel}
                 key={item._id}
                 item={item}
-                editMode={reduexState.editModeCheck.editMode}></WorkPick>
+                editMode={reduxState.editModeCheck.editMode}></WorkPick>
             ) : page == 'store' && storeList.length > 0 ? (
               <StorePick
                 navigation={props.navigation}
@@ -246,7 +246,7 @@ const RecentWork = (props) => {
                 storeListDel={storeListDel}
                 key={item._id}
                 item={item}
-                editMode={reduexState.editModeCheck.editMode}></StorePick>
+                editMode={reduxState.editModeCheck.editMode}></StorePick>
             ) : page == 'work' || page == 'store' ? (
               <View
                 style={{
@@ -270,7 +270,7 @@ const RecentWork = (props) => {
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
-        {reduexState.editModeCheck.editMode ? (
+        {reduxState.editModeCheck.editMode ? (
           <>
             <View
               style={{
@@ -313,7 +313,7 @@ const RecentWork = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    if (reduexState.editModeCheck.editMode) {
+                    if (reduxState.editModeCheck.editMode) {
                       setDeleteModal(true);
                     }
                   }}

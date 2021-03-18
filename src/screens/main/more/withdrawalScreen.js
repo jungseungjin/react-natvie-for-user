@@ -26,7 +26,7 @@ const Withdrawal = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   //삭제하기 실행하면 로그아웃상태로 만들고 기기데이터로 뭘 줘야하나?
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [withdrawalChk, setWithdrawalChk] = React.useState(false);
   const sendData = () => {
     try {
@@ -34,7 +34,7 @@ const Withdrawal = (props) => {
         if (state.isConnected) {
           let url = Domain2 + 'user/delete';
           let data = {
-            _id: reduexState.loginDataCheck.login.data._id,
+            _id: reduxState.loginDataCheck.login.data._id,
             getUniqueId: DeviceInfo.getUniqueId(),
             getDeviceId: DeviceInfo.getDeviceId(),
             getModel: DeviceInfo.getModel(),

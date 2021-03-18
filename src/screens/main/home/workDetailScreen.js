@@ -47,7 +47,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const WorkDetailScreen = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
@@ -77,9 +77,9 @@ const WorkDetailScreen = (props) => {
       let url = Domain2 + 'pickData_detail';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          if (reduexState.loginDataCheck.login.data) {
+          if (reduxState.loginDataCheck.login.data) {
             let data = {
-              _id: reduexState.loginDataCheck.login.data._id,
+              _id: reduxState.loginDataCheck.login.data._id,
               type: 'work',
               item_id: props.route.params.item._id,
             };
@@ -100,11 +100,11 @@ const WorkDetailScreen = (props) => {
                 );
               }
               if (
-                newArr.indexOf(reduexState.loginDataCheck.login.data._id) != -1
+                newArr.indexOf(reduxState.loginDataCheck.login.data._id) != -1
               ) {
                 //있으니 제거
                 newArr.splice(
-                  newArr.indexOf(reduexState.loginDataCheck.login.data._id),
+                  newArr.indexOf(reduxState.loginDataCheck.login.data._id),
                   1,
                 );
                 let newArr2 = [];
@@ -119,7 +119,7 @@ const WorkDetailScreen = (props) => {
               } else {
                 //없으니 추가
                 props.route.params.item.info_user_id.push({
-                  _id: reduexState.loginDataCheck.login.data._id,
+                  _id: reduxState.loginDataCheck.login.data._id,
                 });
                 props.route.params.item.userCount =
                   props.route.params.item.userCount + 1;
@@ -607,10 +607,10 @@ const WorkDetailScreen = (props) => {
         <AnimatedHeader
           Length={pickCount}
           Pick={
-            reduexState.loginDataCheck.login.login
+            reduxState.loginDataCheck.login.login
               ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
                   JSON.stringify({
-                    _id: reduexState.loginDataCheck.login.data._id,
+                    _id: reduxState.loginDataCheck.login.data._id,
                   }),
                 ) != -1
                 ? true
@@ -620,7 +620,7 @@ const WorkDetailScreen = (props) => {
           PickChangeValue={Pick}
           page={'work'}
           ShowModalChangeValue={ShowModalChangeValue}
-          redux={reduexState.loginDataCheck.login}
+          redux={reduxState.loginDataCheck.login}
           Title={props.route.params.item.info_store[0].store_name}
           navigation={props.navigation}
           animatedValue={offset}
@@ -653,7 +653,7 @@ const WorkDetailScreen = (props) => {
         <WorkConsultingModal
           storeNumber={props.route.params.item.info_store[0].store_number}
           WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
-          name={reduexState.loginDataCheck.login?.data?.iu_name || null}
+          name={reduxState.loginDataCheck.login?.data?.iu_name || null}
           navigation={props.navigation}></WorkConsultingModal>
       ) : null}
       {showModal ? (

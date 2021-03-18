@@ -23,7 +23,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import Version from '../../../../key/key.js';
 const Setting = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [notificationPermission, setNotificationPermission] = React.useState(
@@ -52,9 +52,9 @@ const Setting = (props) => {
   };
   const getData = () => {
     try {
-      if (reduexState.loginDataCheck.login?.data?.alarm) {
-        setNotice(reduexState.loginDataCheck.login.data.alarm?.notice);
-        setReview(reduexState.loginDataCheck.login.data.alarm?.review);
+      if (reduxState.loginDataCheck.login?.data?.alarm) {
+        setNotice(reduxState.loginDataCheck.login.data.alarm?.notice);
+        setReview(reduxState.loginDataCheck.login.data.alarm?.review);
       }
     } catch (err) {
       console.log(err);
@@ -74,8 +74,8 @@ const Setting = (props) => {
           let url = Domain2 + 'setting/more';
           NetInfo.addEventListener(async (state) => {
             if (state.isConnected) {
-              let prevData = reduexState.loginDataCheck.login.data;
-              console.log(reduexState.loginDataCheck);
+              let prevData = reduxState.loginDataCheck.login.data;
+              console.log(reduxState.loginDataCheck);
               if (type == 'review') {
                 setReview(!typeState);
                 data.review = !typeState;
@@ -85,9 +85,9 @@ const Setting = (props) => {
                 data.notice = !typeState;
                 prevData.alarm.notice = !typeState;
               }
-              if (reduexState.loginDataCheck.login.login == true) {
+              if (reduxState.loginDataCheck.login.login == true) {
                 //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
-                data._id = reduexState.loginDataCheck.login._id;
+                data._id = reduxState.loginDataCheck.login._id;
                 data.login = true;
               } else {
                 //로그인 안된상태 -> 디바이스정보로 조회해서 설정값 가져오기
