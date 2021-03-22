@@ -10,6 +10,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import NaverMapView, {
   Circle,
@@ -126,7 +127,7 @@ const InfoScreen = (props) => {
   //마케팅정보수신동의수정
   const ChangeMarkettting = (type) => {
     try {
-      if (reduexState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login == false) {
         return false;
       }
       NetInfo.addEventListener(async (state) => {
@@ -134,31 +135,31 @@ const InfoScreen = (props) => {
           let marketting;
           if (type == 'kakaotalk') {
             marketting = {
-              kakaotalk: !reduexState.loginDataCheck.login.data.marketting
+              kakaotalk: !reduxState.loginDataCheck.login.data.marketting
                 .kakaotalk,
-              mail: reduexState.loginDataCheck.login.data.marketting.mail,
-              sms: reduexState.loginDataCheck.login.data.marketting.sms,
+              mail: reduxState.loginDataCheck.login.data.marketting.mail,
+              sms: reduxState.loginDataCheck.login.data.marketting.sms,
             };
           } else if (type == 'mail') {
             marketting = {
               kakaotalk:
-                reduexState.loginDataCheck.login.data.marketting.kakaotalk,
-              mail: !reduexState.loginDataCheck.login.data.marketting.mail,
-              sms: reduexState.loginDataCheck.login.data.marketting.sms,
+                reduxState.loginDataCheck.login.data.marketting.kakaotalk,
+              mail: !reduxState.loginDataCheck.login.data.marketting.mail,
+              sms: reduxState.loginDataCheck.login.data.marketting.sms,
             };
           } else if (type == 'sms') {
             marketting = {
               kakaotalk:
-                reduexState.loginDataCheck.login.data.marketting.kakaotalk,
-              mail: reduexState.loginDataCheck.login.data.marketting.mail,
-              sms: !reduexState.loginDataCheck.login.data.marketting.sms,
+                reduxState.loginDataCheck.login.data.marketting.kakaotalk,
+              mail: reduxState.loginDataCheck.login.data.marketting.mail,
+              sms: !reduxState.loginDataCheck.login.data.marketting.sms,
             };
           } else {
             return;
           }
           let url = Domain2 + 'setting/info/marketting';
           let data = {
-            _id: reduexState.loginDataCheck.login.data._id,
+            _id: reduxState.loginDataCheck.login.data._id,
             marketting: marketting,
           };
           let result = await axios.post(url, data, {
@@ -167,7 +168,7 @@ const InfoScreen = (props) => {
             },
           });
           if (result.data[0].message == 'ok') {
-            let prevData = reduexState.loginDataCheck.login.data;
+            let prevData = reduxState.loginDataCheck.login.data;
             prevData.marketting = marketting;
             props.updateData(prevData); //디바이스정보라도 넣어줘야??
           }
@@ -180,7 +181,7 @@ const InfoScreen = (props) => {
     }
   };
 
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
   const [page, setPage] = React.useState('info');
   const PageChangeValue = (text) => setPage(text);
@@ -200,7 +201,7 @@ const InfoScreen = (props) => {
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [nickname, setNickname] = React.useState(
-    reduexState.loginDataCheck.login.data.iu_nickname,
+    reduxState.loginDataCheck.login.data.iu_nickname,
   );
   //저장눌러서 뒷단 다녀오고 1이면 동일한닉네임 2는 닉네임 형식이 안맞음   2번은 미리 검사하자
   const [nicknameChk, setNicknameChk] = React.useState(0);
@@ -208,7 +209,7 @@ const InfoScreen = (props) => {
   const [location, setLocation] = React.useState({});
   const LocationChangeValue = (Object) => setLocation(Object);
   const [car, setCar] = React.useState(
-    reduexState.loginDataCheck?.login?.data?.iu_car,
+    reduxState.loginDataCheck?.login?.data?.iu_car,
   );
   const [carModal, setCarModal] = React.useState(false);
   const CarModalChangeValue = (text) => setCarModal(text);
@@ -278,9 +279,8 @@ const InfoScreen = (props) => {
     // 변경실패 - 닉네임때문이면 닉네임안내문구나오기  이거말고는 통신상태 이외에는 없을듯??
     // 변경성공 -
     //  비밀번호가 변경되었으면 모달띄우고 로그아웃시키고 로그인화면으로 / 비밀번호가 변경되지 않았으면 뒤로가기에 정보변경안내토스트
-
     try {
-      if (reduexState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login == false) {
         //로그아웃상태면 아무것도 하지 않음.
         return false;
       }
@@ -290,7 +290,7 @@ const InfoScreen = (props) => {
           let data = {
             //차량데이터는 초기값이 redux에 저장된 로그인데이터값이니 그대로 이용
             iu_car: car,
-            _id: reduexState.loginDataCheck.login.data._id,
+            _id: reduxState.loginDataCheck.login.data._id,
             userImage: userImage,
           };
           if (nickname.length > 0) {
@@ -303,7 +303,7 @@ const InfoScreen = (props) => {
             }
           } else {
             //값이 없으면 원래값
-            data.iu_nickname = reduexState.loginDataCheck.login.data.iu_nickname.trim();
+            data.iu_nickname = reduxState.loginDataCheck.login.data.iu_nickname.trim();
           }
           if (location?.legalcode) {
             //지역에 값이 들어가 있으면
@@ -314,14 +314,14 @@ const InfoScreen = (props) => {
             }
           } else {
             //값이 없으면 원래값
-            data.location = reduexState.loginDataCheck.login.data.location;
+            data.location = reduxState.loginDataCheck.login.data.location;
           }
           if (confirmChk) {
             //휴대폰 인증이 된거면 변호 변경
             data.iu_phone = phoneNumber.trim();
           } else {
             //원래값
-            data.iu_phone = reduexState.loginDataCheck.login.data.iu_phone.trim();
+            data.iu_phone = reduxState.loginDataCheck.login.data.iu_phone.trim();
           }
           if (passwordChk === '') {
             //비밀번호 변경시키지않음
@@ -363,6 +363,7 @@ const InfoScreen = (props) => {
             props.updateData(result.data[0].result);
             props.route.params.toastRef.show('내정보가 저장되었습니다.', 1000);
             props.navigation.goBack();
+            props.navigation.navigate('Home');
             //변경되었으니 리덕스에 값도 변경시키기
             //props.navigation.goBack();
             //props.navigation.navigate('Home');
@@ -443,12 +444,12 @@ const InfoScreen = (props) => {
   const [passwordChangeModal, setPasswordChangeModal] = React.useState(false);
   const PasswordChangeModalChangeValue = (text) => {
     setPasswordChangeModal(text);
-
     props.updateLoginStatus(false);
-    props.navigation.navigate('Login');
+    props.navigation.goBack();
+    props.navigation.navigate('Login2', {from: 'infoScreen'});
   };
   const [userImage, setUserImage] = React.useState(
-    reduexState.loginDataCheck.login?.data?.review_user_iu_image || null,
+    reduxState.loginDataCheck.login?.data?.review_user_iu_image || null,
   );
 
   React.useEffect(() => {
@@ -490,6 +491,7 @@ const InfoScreen = (props) => {
         //인증번호 확인
         if (code == smsCode) {
           setConfirmChk(true);
+          setAuthButtonClick(false);
         } else {
           //인증번호 틀림
           setConfirmChk(false);
@@ -510,7 +512,7 @@ const InfoScreen = (props) => {
           let result = await axios.post(
             url,
             {
-              _id: reduexState.loginDataCheck.login.data._id,
+              _id: reduxState.loginDataCheck.login.data._id,
               Phone: Number,
             },
             {
@@ -610,13 +612,14 @@ const InfoScreen = (props) => {
   }, [minutes, seconds]);
   const logout = async () => {
     try {
-      if (reduexState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login == false) {
         await Keychain.resetGenericPassword();
         props.updateIuCar([]);
         props.updateLocation({});
         props.update_id('');
         props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
-        props.navigation.navigate('More');
+        props.navigation.goBack();
+        props.navigation.navigate('Home');
         props.updateLoginStatus(false);
       }
       NetInfo.addEventListener(async (state) => {
@@ -638,8 +641,9 @@ const InfoScreen = (props) => {
             props.updateLocation({});
             props.update_id('');
             props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
-            props.navigation.navigate('More');
             props.updateLoginStatus(false);
+            props.navigation.goBack();
+            props.navigation.navigate('Home');
           } else {
           }
         } else {
@@ -653,7 +657,7 @@ const InfoScreen = (props) => {
   //위치정보를 눌렀을 때 1 퍼미션 확인  2 퍼미션 허용되면 gps켜져있는지 확인해서 위치 가져오기 // gps꺼져있으면 gps켜달라고 하기. 끝 3 퍼미션이 허용되지 않았으면 퍼미션 허용해달라고 하기
   //위치정보사용 퍼미션
   const handleLocationPermission = async (Type) => {
-    if (reduexState.loginDataCheck.login.login == false) {
+    if (reduxState.loginDataCheck.login.login == false) {
       return false;
     }
     if (Type == 'ios') {
@@ -686,7 +690,7 @@ const InfoScreen = (props) => {
   };
   //위치정보 가져오기(경위도, 네이버지도에서 주소까지)
   const CurrentPosition = () => {
-    if (reduexState.loginDataCheck.login.login == false) {
+    if (reduxState.loginDataCheck.login.login == false) {
       return false;
     }
     Geolocation.getCurrentPosition(
@@ -712,7 +716,7 @@ const InfoScreen = (props) => {
   };
   const getNaverLocagtion = async (position) => {
     try {
-      if (reduexState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login == false) {
         return false;
       }
       setIsLoadingAndModal(1);
@@ -814,7 +818,7 @@ const InfoScreen = (props) => {
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      {reduexState.loginDataCheck.login.login != true ? (
+      {reduxState.loginDataCheck.login.login != true ? (
         <>
           <Tabbar
             Title={'내정보_fake'}
@@ -960,7 +964,7 @@ const InfoScreen = (props) => {
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}>
-                        {reduexState.loginDataCheck?.login?.data?.iu_name}
+                        {reduxState.loginDataCheck?.login?.data?.iu_name}
                       </Text>
                     </View>
                   </View>
@@ -1071,7 +1075,7 @@ const InfoScreen = (props) => {
                       <TextInput
                         editable={authButtonClick ? false : true}
                         placeholder={
-                          reduexState.loginDataCheck?.login?.data?.iu_phone
+                          reduxState.loginDataCheck?.login?.data?.iu_phone
                         }
                         placeholderTextColor="#CCCCCC"
                         value={phoneNumber}
@@ -1378,7 +1382,7 @@ const InfoScreen = (props) => {
                           color: '#000000',
                         }}>
                         {location.legalcode ||
-                          reduexState.loginDataCheck?.login?.data?.location
+                          reduxState.loginDataCheck?.login?.data?.location
                             ?.legalcode ||
                           null}
                       </Text>
@@ -1638,7 +1642,7 @@ const InfoScreen = (props) => {
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}>
-                        {reduexState.loginDataCheck?.login?.data?.iu_id}
+                        {reduxState.loginDataCheck?.login?.data?.iu_id}
                       </Text>
                     </View>
                   </View>
@@ -1818,7 +1822,7 @@ const InfoScreen = (props) => {
                           onPress={() => {
                             ChangeMarkettting('kakaotalk');
                           }}>
-                          {reduexState.loginDataCheck?.login?.data?.marketting
+                          {reduxState.loginDataCheck?.login?.data?.marketting
                             ?.kakaotalk ? (
                             <CheckedBox
                               width={Width_convert(14)}
@@ -1854,7 +1858,7 @@ const InfoScreen = (props) => {
                           onPress={() => {
                             ChangeMarkettting('mail');
                           }}>
-                          {reduexState.loginDataCheck?.login?.data?.marketting
+                          {reduxState.loginDataCheck?.login?.data?.marketting
                             ?.mail ? (
                             <CheckedBox
                               width={Width_convert(14)}
@@ -1889,7 +1893,7 @@ const InfoScreen = (props) => {
                           onPress={() => {
                             ChangeMarkettting('sms');
                           }}>
-                          {reduexState.loginDataCheck?.login?.data?.marketting
+                          {reduxState.loginDataCheck?.login?.data?.marketting
                             ?.sms ? (
                             <CheckedBox
                               width={Width_convert(14)}
@@ -1917,7 +1921,7 @@ const InfoScreen = (props) => {
                       activeOpacity={1}
                       hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                       onPress={() => {
-                        if (reduexState.loginDataCheck.login.login == true) {
+                        if (reduxState.loginDataCheck.login.login == true) {
                           logout();
                         } else {
                         }
@@ -2101,8 +2105,9 @@ const InfoScreen = (props) => {
           {searchList.length == 0 ? (
             <View
               style={{
-                width: Width_convert(375),
-                height: Height_convert(642) + 2 * StatusBarHeight,
+                // width: Width_convert(375),
+                // height: Height_convert(642) + 2 * StatusBarHeight,
+                flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>

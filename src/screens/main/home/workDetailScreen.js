@@ -439,7 +439,13 @@ const WorkDetailScreen = (props) => {
                 zIndex: 0,
                 marginTop: -Height_convert(94),
               }}></View>
-          ) : null}
+          ) : (
+            <View
+              style={{
+                zIndex: 0,
+                marginTop: 0,
+              }}></View>
+          )}
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
             {scrollValue >= Width_convert(240 + 171) - Height_convert(94) ? (
@@ -448,7 +454,13 @@ const WorkDetailScreen = (props) => {
                   zIndex: 1,
                   height: Height_convert(94),
                 }}></View>
-            ) : null}
+            ) : (
+              <View
+                style={{
+                  zIndex: 1,
+                  height: 0,
+                }}></View>
+            )}
             <View
               style={{
                 width: Width_convert(375),

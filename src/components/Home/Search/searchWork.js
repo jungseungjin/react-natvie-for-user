@@ -58,7 +58,7 @@ const SearchWork = (props) => {
         {props.item?.info_store[0].store_badge.indexOf(1) != -1 ? (
           <View
             style={{
-              borderRadius: Font_normalize(2),
+              borderRadius: Font_normalize(3),
               backgroundColor: '#FFA740',
               marginRight: Width_convert(5),
               textAlign: 'center',
@@ -83,7 +83,7 @@ const SearchWork = (props) => {
         {props.item?.info_store[0].store_badge.indexOf(2) != -1 ? (
           <View
             style={{
-              borderRadius: Font_normalize(2),
+              borderRadius: Font_normalize(3),
               backgroundColor: '#F7606E',
               marginRight: Width_convert(5),
               textAlign: 'center',
@@ -108,7 +108,7 @@ const SearchWork = (props) => {
         {props.item?.info_store[0].store_badge.indexOf(3) != -1 ? (
           <View
             style={{
-              borderRadius: Font_normalize(2),
+              borderRadius: Font_normalize(3),
               backgroundColor: '#4BCA90',
               marginRight: Width_convert(5),
               textAlign: 'center',
@@ -133,7 +133,7 @@ const SearchWork = (props) => {
         {props.item?.info_store[0].store_badge.indexOf(4) != -1
           ? // <View
             //   style={{
-            //     borderRadius: Font_normalize(2),
+            //  borderRadius: Font_normalize(3),
             //     backgroundColor: '#1A74FC',
             //     marginRight: Width_convert(5),
             //     textAlign: 'center',

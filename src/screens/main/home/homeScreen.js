@@ -58,9 +58,13 @@ const HomeScreen = (props) => {
   const [ownersWorkVideoList, setOwnersWorkVideoList] = React.useState([]);
   const [recentWorkList, setRecentWorkList] = React.useState([]);
   const [showInformation, setShowInformation] = React.useState(false);
-
+  const [scrollChange, setScrollChange] = React.useState(0);
   const scrollRef = useRef();
   const handleClick = () => {
+    if (scrollChange === 0) {
+      setScrollChange(1);
+      return false;
+    }
     scrollRef.current.scrollToEnd({
       animated: true,
     });
@@ -149,6 +153,9 @@ const HomeScreen = (props) => {
   React.useEffect(() => {
     get_homeData();
     get_recentWorkList();
+    // scrollRef.getDerivedStateFromProps('onContentSizeChange', () => {
+    //   handleClick();
+    // });
   }, []);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -157,6 +164,11 @@ const HomeScreen = (props) => {
     get_homeData();
     get_recentWorkList();
     setRefreshing(false);
+  }, []);
+  React.useEffect(() => {
+    props.navigation.addListener('focus', () => {
+      get_recentWorkList();
+    });
   }, []);
   return (
     <>
@@ -176,27 +188,29 @@ const HomeScreen = (props) => {
           }>
           <Tabbar Title={'투닝'}></Tabbar>
           {/*상단 슬라이드 이미지 시작 */}
-          {topSliderImageList.length > 0 ? (
-            <Swiper
-              style={{height: Height_convert(211)}}
-              autoplay={true}
-              autoplayTimeout={4.5}
-              dot={<Dot></Dot>}
-              activeDot={<ActiveDot></ActiveDot>}>
-              {topSliderImageList.map((item) => (
-                <SwiperImage
-                  key={item._id}
-                  from={'home'}
-                  image={item.url}></SwiperImage>
-              ))}
-            </Swiper>
-          ) : (
-            <View
-              style={{
-                height: Height_convert(211),
-                backgroundColor: '#FFFFFF',
-              }}></View>
-          )}
+          <View
+            style={{
+              height: Height_convert(211),
+              backgroundColor: '#FFFFFF',
+            }}>
+            {topSliderImageList.length > 0 ? (
+              <Swiper
+                style={{height: Height_convert(211)}}
+                autoplay={true}
+                autoplayTimeout={4.5}
+                dot={<Dot></Dot>}
+                activeDot={<ActiveDot></ActiveDot>}>
+                {topSliderImageList.map((item) => (
+                  <SwiperImage
+                    key={item._id}
+                    from={'home'}
+                    image={item.url}></SwiperImage>
+                ))}
+              </Swiper>
+            ) : (
+              <IsLoading></IsLoading>
+            )}
+          </View>
           {/*상단 슬라이드 이미지 끝 */}
           {/*슬라이드 이미지 아래부터 튜닝샵검색까지 시작 */}
           <View
@@ -346,7 +360,7 @@ const HomeScreen = (props) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(370),
+              height: Height_convert(335),
               borderBottomColor: 'rgba(219,219,219,0.35)',
               borderBottomWidth: 1,
             }}>
@@ -386,7 +400,7 @@ const HomeScreen = (props) => {
           <View
             style={{
               width: Width_convert(375),
-              height: Height_convert(315),
+              height: Height_convert(285),
               borderBottomColor: 'rgba(219,219,219,0.35)',
               borderBottomWidth: 1,
             }}>
@@ -459,6 +473,7 @@ const HomeScreen = (props) => {
             style={[
               {
                 width: Width_convert(375),
+                height: Height_convert(70),
                 borderBottomColor: 'rgba(219,219,219,0.35)',
                 borderBottomWidth: 1,
               },
@@ -476,6 +491,7 @@ const HomeScreen = (props) => {
                   marginLeft: Width_convert(12),
                   marginTop: Height_convert(11),
                   width: Width_convert(351),
+                  height: Height_convert(60),
                 },
                 showInformation
                   ? {

@@ -20,7 +20,7 @@ import {useSelector} from 'react-redux';
 import StatusBarHeight from '../../StatusBarHeight';
 
 const TabBar = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   return (
     <View
       style={[
@@ -47,13 +47,17 @@ const TabBar = (props) => {
         props.Title == '개인정보 수집 및 이용' ||
         props.Title == '위치기반 서비스 이용약관' ||
         props.Title == '개인정보 제3자 제공 동의' ||
-        props.Title == '로그인' ? (
+        props.Title == '작업비용이 변동하는 이유?' ||
+        props.Title == '로그인' ||
+        props.Title == '로그인info' ? (
         <TouchableOpacity
           activeOpacity={1}
           hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
           onPress={() => {
             if (props.Title == '차량선택_info') {
               props.PageChangeValue('info');
+            } else if (props.Title == '로그인info') {
+              props.navigation.navigate('More');
             } else {
               props.navigation.goBack();
             }
@@ -143,7 +147,7 @@ const TabBar = (props) => {
             ? '차량선택'
             : props.Title.indexOf('내정보') != -1
             ? '내정보'
-            : props.Title == '로그인'
+            : props.Title.indexOf('로그인') != -1
             ? null
             : props.Title != '공지사항 및 이벤트 보기'
             ? props.Title
@@ -158,11 +162,11 @@ const TabBar = (props) => {
             activeOpacity={1}
             hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
             onPress={() => {
-              props.updateEditMode(!reduexState.editModeCheck.editMode);
+              props.updateEditMode(!reduxState.editModeCheck.editMode);
             }}>
             <Text
               style={
-                reduexState.editModeCheck.editMode
+                reduxState.editModeCheck.editMode
                   ? {
                       marginRight: Width_convert(22),
                       fontFamily: Fonts?.NanumSqureRegular || null,
@@ -178,7 +182,7 @@ const TabBar = (props) => {
                       color: '#946AEF',
                     }
               }>
-              {reduexState.editModeCheck.editMode ? '취소' : '편집'}
+              {reduxState.editModeCheck.editMode ? '취소' : '편집'}
             </Text>
           </TouchableOpacity>
         </View>

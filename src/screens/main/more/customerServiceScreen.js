@@ -6,13 +6,14 @@ import {
   Text,
   Linking,
   Platform,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';

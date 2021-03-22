@@ -576,11 +576,12 @@ const StoreWorkList = (props) => {
         ) : (
           <View
             style={{
-              width: Width_convert(245),
-              height: Height_convert(812 - 184),
+              // width: Width_convert(245),
+              // height: Height_convert(812 - 184),
+              // marginLeft: Width_convert(65),
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              marginLeft: Width_convert(65),
             }}>
             <Text
               style={{

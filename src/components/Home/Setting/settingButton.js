@@ -7,7 +7,7 @@ import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import {useSelector} from 'react-redux';
 const SettingButton = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -28,8 +28,8 @@ const SettingButton = (props) => {
           return false;
         } else if (props.Type == 'workDetail') {
           if (
-            reduexState.loginDataCheck.login?.iu_car?.length == 0 ||
-            !reduexState.loginDataCheck.login?.location?.legalcode
+            reduxState.loginDataCheck.login?.iu_car?.length == 0 ||
+            !reduxState.loginDataCheck.login?.location?.legalcode
           ) {
             props.PickButtonTitleChangeValue(props.Title);
             props.ShowModalChangeValue(true);
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     shadowColor: '#000000', //그림자색
     shadowOpacity: 0.2, //그림자 투명도
-    shadowOffset: {width: 0.5, height: 0.5}, //그림자 위치
+    shadowOffset: {width: 0.3, height: 0.3}, //그림자 위치
     //ANDROID
     elevation: 2,
   },

@@ -154,6 +154,9 @@ const PickScreen = (props) => {
       setForFunctionBoo(m);
       setShowModal(true);
     });
+    props.navigation.addListener('blur', () => {
+      setShowModal(false);
+    });
   }, []);
   return (
     <>

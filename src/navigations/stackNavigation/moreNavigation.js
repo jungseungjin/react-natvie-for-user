@@ -46,6 +46,7 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 import {enableScreens} from 'react-native-screens';
+import CostChangeScreen from '../../screens/main/more/costChangeScreen.js';
 
 enableScreens();
 const Stack = createStackNavigator();
@@ -211,6 +212,15 @@ const MoreNavigator = (props) => {
         initialParams={{}}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Login2"
+        component={Login}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
@@ -390,6 +400,12 @@ const MoreNavigator = (props) => {
       <Stack.Screen
         name="ReviewRegister"
         component={ReviewRegister}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="CostChangeScreen"
+        component={CostChangeScreen}
         initialParams={{}}
         options={{}}
       />

@@ -35,7 +35,7 @@ const FirstNavigator = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [serverModalMessage, setServerModalMessage] = React.useState({});
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const setData = async (value) => {
     try {
       await AsyncStorage.setItem('landingCheck', value.toString());
@@ -163,7 +163,7 @@ const FirstNavigator = (props) => {
         console.log(
           'No credentials stored 저장된 아이디 비밀번호 정보가 없으면 여기로나옴.',
         ); //저장된 정보가 없으면 여기로나옴. 디바이스아이디로 조회해서 알림값 물고있어라
-        console.log(reduexState.loginDataCheck.login);
+        console.log(reduxState.loginDataCheck.login);
         setTimeout(() => {
           RNSplashScreen.hide();
         }, 1000);
@@ -270,12 +270,12 @@ const FirstNavigator = (props) => {
   }, []);
   React.useEffect(() => {
     setIsLoadingAndModal(1);
-    if (reduexState.landingCheck.landingCheck == true) {
+    if (reduxState.landingCheck.landingCheck == true) {
       setLandingCheck(true);
       setData(true);
     }
     setIsLoadingAndModal(0);
-  }, [reduexState.landingCheck.landingCheck]);
+  }, [reduxState.landingCheck.landingCheck]);
 
   // {landingCheck ? (      ) : (
   //   <LandingNavigator></LandingNavigator>

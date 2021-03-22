@@ -34,6 +34,7 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 import {enableScreens} from 'react-native-screens';
+import CostChangeScreen from '../../screens/main/more/costChangeScreen.js';
 enableScreens();
 const Stack = createStackNavigator();
 import {View, Text} from 'react-native';
@@ -243,6 +244,23 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="Login"
         component={Login}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Login2"
+        component={Login}
+        initialParams={{}}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="CostChangeScreen"
+        component={CostChangeScreen}
         initialParams={{}}
         options={{
           headerShown: false,

@@ -174,6 +174,7 @@ const CategoryScreen = (props) => {
                 WorkList: result.data[0].WorkList,
                 PickMiddle: pickMiddleCategory.work_sub_type_name,
                 PickSmall: pickSmallCategory._id,
+                random: result.data[0].randomNumber,
               });
             } else {
             }

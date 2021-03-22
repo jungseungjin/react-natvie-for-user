@@ -208,8 +208,9 @@ const MapScreen = (props) => {
         {searchList.length == 0 ? (
           <View
             style={{
-              width: Width_convert(375),
-              height: Height_convert(642) + 2 * StatusBarHeight,
+              // width: Width_convert(375),
+              // height: Height_convert(642) + 2 * StatusBarHeight,
+              flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
@@ -221,8 +222,8 @@ const MapScreen = (props) => {
                 textAlign: 'center',
               }}>
               {searchOn
-                ? '검색 결과가 없습니다 지역을 다시 검색해주세요'
-                : '고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요'}
+                ? '검색 결과가 없습니다 지역을 다시 검색해주세요.'
+                : '고객님이 튜닝작업 받기 원하시는 지역을 검색해주세요.'}
             </Text>
           </View>
         ) : (

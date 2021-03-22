@@ -87,6 +87,7 @@ const CategoryDetailScreen = (props) => {
               latitude:
                 reduxState.loginDataCheck?.login?.location?.latitude ||
                 undefined,
+              random: props.route.params.random,
             },
           });
           if (result.data[0].status == 'ok') {
@@ -402,11 +403,12 @@ const CategoryDetailScreen = (props) => {
         ) : (
           <View
             style={{
-              width: Width_convert(245),
-              height: Height_convert(812 - 184),
+              // width: Width_convert(245),
+              // height: Height_convert(812 - 184),
+              // marginLeft: Width_convert(65),
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              marginLeft: Width_convert(65),
             }}>
             <Text
               style={{

@@ -47,7 +47,6 @@ const CarSettingModel = (props) => {
       }
     } catch (err) {
       console.log(err);
-      alert('잠시 후에 다시해주세요');
     }
   };
   React.useEffect(() => {

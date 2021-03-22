@@ -38,18 +38,20 @@ const SearchNull = (props) => {
   return (
     <View
       style={[
-        Platform.OS == 'android'
-          ? {
-              height:
-                Height_convert_real(818) -
-                Height_convert(139) -
-                StatusBarHeight,
-            }
-          : {
-              height: Height_convert_real(818) - Height_convert(139),
-            },
         {
-          width: Width_convert(375),
+          // Platform.OS == 'android'
+          //   ? {
+          //       height:
+          //         Height_convert_real(818) -
+          //         Height_convert(139) -
+          //         StatusBarHeight,
+          //     }
+          //   : {
+          //       height: Height_convert_real(818) - Height_convert(139),
+          //     },
+          // {
+          //   width: Width_convert(375),
+          flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
         },

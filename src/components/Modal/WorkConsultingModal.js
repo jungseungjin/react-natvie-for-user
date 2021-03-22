@@ -117,7 +117,7 @@ const WorkConsultingModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
-                  명시된 작업가격을 기준으로{' '}
+                  명시된 작업비용을 기준으로{' '}
                 </Text>
                 <Text
                   style={{
@@ -136,17 +136,25 @@ const WorkConsultingModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
-                  작업가격이 내려갈 수도 올라갈 수도 있습니다.
+                  작업비용이 내려갈 수도 올라갈 수도 있습니다.
                 </Text>
               </Text>
             </View>
             <TouchableOpacity
               activeOpacity={1}
-              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-              onPress={() => {}}
-              style={{
-                marginLeft: 'auto',
-              }}>
+              hitSlop={{top: 20, bottom: 10, left: 10, right: 10}}
+              onPress={() => {
+                props.WorkConsultingModalChangeValue(false);
+                props.navigation.navigate('CostChangeScreen');
+              }}
+              style={[
+                {
+                  marginLeft: 'auto',
+                },
+                Platform.OS === 'ios' && {
+                  marginTop: Height_convert(5),
+                },
+              ]}>
               <Text
                 style={{
                   fontFamily: Fonts?.NanumSqureRegular || null,
@@ -158,7 +166,7 @@ const WorkConsultingModal = (props) => {
                   textDecorationStyle: 'solid',
                   textDecorationColor: '#53A9F8',
                 }}>
-                작업가격 변동사례 보러가기
+                작업비용 변동사례 보러가기
               </Text>
             </TouchableOpacity>
           </View>

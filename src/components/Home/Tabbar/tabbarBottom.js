@@ -30,7 +30,12 @@ const TabBarBottom = (props) => {
               }}
               style={[
                 {
-                  width: Width_convert(375 / props.Title.length),
+                  width:
+                    props.Title.length === 2
+                      ? '50%'
+                      : props.Title.length === 4
+                      ? '25%'
+                      : null,
                   height: Height_convert(48),
                   borderBottomWidth: 3,
                   justifyContent: 'center',
@@ -172,6 +177,7 @@ const TabBarBottom = (props) => {
                               paddingTop: Height_convert(5),
                               paddingBottom: Height_convert(5),
                               borderRadius: Font_normalize(3),
+                              overflow: 'hidden',
                             },
                             props.PickSmall === item._id
                               ? {

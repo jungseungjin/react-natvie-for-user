@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
@@ -76,7 +77,13 @@ const LoginScreen = (props) => {
             props.updateLocation(result.data[0].loginData.location);
             props.update_id(result.data[0].loginData._id);
             props.updateData(result.data[0].loginData);
-            props.navigation.goBack();
+            if (props?.route?.params?.from === 'infoScreen') {
+              props.navigation.goBack();
+              props.navigation.goBack();
+              props.navigation.navigate('Home');
+            } else {
+              props.navigation.goBack();
+            }
           } else {
             setIsLoadingAndModal(0);
             //로그인이 안됐어
@@ -93,6 +100,21 @@ const LoginScreen = (props) => {
       alert(err);
     }
   };
+  //
+  React.useEffect(() => {
+    if (props?.route?.params?.from === 'infoScreen') {
+      BackHandler.addEventListener('hardwareBackPress', () => {
+        return true;
+      });
+      BackHandler.removeEventListener('hardwareBackPress', () => {
+        return true;
+      });
+      // props.navigation.addListener('beforeRemove', (e) => {
+      //   e.preventDefault();
+      // });
+    }
+  }, []);
+
   return (
     <View>
       <DismissKeyboard>
@@ -113,7 +135,13 @@ const LoginScreen = (props) => {
             style={{
               height: Height_convert(170),
             }}>
-            <Tabbar Title={'로그인'} navigation={props.navigation}></Tabbar>
+            <Tabbar
+              Title={
+                props?.route?.params?.from === 'infoScreen'
+                  ? '로그인info'
+                  : '로그인'
+              }
+              navigation={props.navigation}></Tabbar>
           </View>
           <View
             style={{
@@ -231,9 +259,9 @@ const LoginScreen = (props) => {
                 <View
                   style={{
                     width: Width_convert(273),
-                    height: Height_convert(10),
-                    marginTop: Height_convert(6),
-                    marginBottom: Height_convert(6),
+                    height: Height_convert(12),
+                    marginTop: Height_convert(5),
+                    marginBottom: Height_convert(5),
                   }}>
                   <Text
                     style={{

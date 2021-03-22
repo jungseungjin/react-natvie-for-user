@@ -37,6 +37,7 @@ const setTabBarVisible = (route, reduexState) => {
     'ReviewRegister',
     'WorkVideo',
     'Login',
+    'Login2',
     'ReviewManage',
     'ReviewRevise',
     'RecentWork',
@@ -68,6 +69,7 @@ const setTabBarVisible = (route, reduexState) => {
     'PasswordFind2',
     'Map_more',
     'MapSearch_more',
+    'CostChangeScreen',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

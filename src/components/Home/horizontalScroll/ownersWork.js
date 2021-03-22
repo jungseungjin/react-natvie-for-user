@@ -45,7 +45,7 @@ const OwnersWork = (props) => {
           style={{
             fontFamily: Fonts?.NanumSqureRegular || null,
             fontWeight: '400',
-            fontSize: Font_normalize(13),
+            fontSize: Font_normalize(14),
             marginTop: Height_convert(11),
             color: '#000000',
             lineHeight: Height_convert(17),

@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
@@ -36,6 +37,8 @@ const AlertModal1 = (props) => {
           useNativeDriver={true}
           hideModalContentWhileAnimating={true}
           onRequestClose={() => {
+            props.Title === '24시간 이내에는 재가입이 불가합니다.' &&
+              props.SendData();
             props.ShowModalChangeValue(false);
           }}
           backdropColor={'#202020'}
@@ -171,7 +174,6 @@ const AlertModal1 = (props) => {
                   '비밀번호가 변경되어 로그아웃 되었습니다.\n 로그인 페이지로 이동합니다.'
                 ) {
                   props.ShowModalChangeValue(false);
-                  props.navigation.navigate('Login');
                 } else if (
                   props.Title === '24시간 이내에는 재가입이 불가합니다.'
                 ) {
