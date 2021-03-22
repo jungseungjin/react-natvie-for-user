@@ -1695,6 +1695,9 @@ const InfoScreen = (props) => {
                         onSubmitEditing={() => {
                           ChangePassword();
                         }}
+                        onBlur={() => {
+                          ChangePassword();
+                        }}
                         placeholderStyle={{
                           fontFamily: Fonts?.NanumSqureRegular || null,
                           fontWeight: '700',
