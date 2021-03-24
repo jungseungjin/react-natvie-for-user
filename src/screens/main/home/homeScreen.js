@@ -153,9 +153,6 @@ const HomeScreen = (props) => {
   React.useEffect(() => {
     get_homeData();
     get_recentWorkList();
-    // scrollRef.getDerivedStateFromProps('onContentSizeChange', () => {
-    //   handleClick();
-    // });
   }, []);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -461,7 +458,7 @@ const HomeScreen = (props) => {
                       fontWeight: '700',
                       color: '#C0C0C0',
                     }}>
-                    최근 본 작업이 없습니다
+                    최근 본 작업이 없습니다.
                   </Text>
                 </View>
               </View>

@@ -19,7 +19,7 @@ import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import StatusBarHeight from '../../StatusBarHeight';
 const TabBar = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   return (
     <View
       style={[
@@ -68,11 +68,13 @@ const TabBar = (props) => {
           activeOpacity={1}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
-            props.updateEditMode(!reduexState.editModeCheck.editMode);
+            props.WorkListDelChangeValue([]);
+            props.StoreListDelChangeValue([]);
+            props.updateEditMode(!reduxState.editModeCheck.editMode);
           }}>
           <Text
             style={
-              reduexState.editModeCheck.editMode
+              reduxState.editModeCheck.editMode
                 ? {
                     marginRight: Width_convert(22),
                     fontFamily: Fonts?.NanumSqureRegular || null,
@@ -88,7 +90,7 @@ const TabBar = (props) => {
                     color: '#946AEF',
                   }
             }>
-            {reduexState.editModeCheck.editMode ? '취소' : '편집'}
+            {reduxState.editModeCheck.editMode ? '취소' : '편집'}
           </Text>
         </TouchableOpacity>
       ) : null}

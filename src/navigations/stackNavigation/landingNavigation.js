@@ -6,7 +6,6 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 import {enableScreens} from 'react-native-screens';
-import {Button} from 'react-native';
 enableScreens();
 const Stack = createStackNavigator();
 

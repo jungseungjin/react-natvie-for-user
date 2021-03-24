@@ -162,6 +162,8 @@ const TabBar = (props) => {
             activeOpacity={1}
             hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
             onPress={() => {
+              props.WorkListDelChangeValue([]);
+              props.StoreListDelChangeValue([]);
               props.updateEditMode(!reduxState.editModeCheck.editMode);
             }}>
             <Text

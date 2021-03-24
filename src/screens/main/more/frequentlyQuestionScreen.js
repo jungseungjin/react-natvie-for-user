@@ -23,7 +23,7 @@ const FrequentlyQuestionScreen = (props) => {
   const [page, setPage] = React.useState('TOP5');
   const PageChangeValue = (text) => setPage(text);
   const [dataList, setDataList] = React.useState([]);
-  const [opneIndex, setOpneIndex] = React.useState(0);
+  const [openIndex, setOpenIndex] = React.useState(0);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   return (
@@ -101,7 +101,7 @@ const FrequentlyQuestionScreen = (props) => {
           style={{
             marginTop: Height_convert(20),
           }}>
-          {opneIndex == 0 ? (
+          {openIndex == 0 ? (
             <>
               <View
                 style={{
@@ -116,7 +116,7 @@ const FrequentlyQuestionScreen = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    setOpneIndex(1);
+                    setOpenIndex(1);
                   }}
                   style={{
                     width: Width_convert(340),
@@ -151,7 +151,7 @@ const FrequentlyQuestionScreen = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    setOpneIndex(1);
+                    setOpenIndex(1);
                   }}
                   style={{
                     width: Width_convert(340),
@@ -187,7 +187,7 @@ const FrequentlyQuestionScreen = (props) => {
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => {
-                  setOpneIndex(0);
+                  setOpenIndex(0);
                 }}
                 style={{
                   width: Width_convert(340),

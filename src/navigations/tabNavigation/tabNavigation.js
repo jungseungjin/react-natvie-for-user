@@ -16,10 +16,10 @@ enableScreens();
 const Tabs = createBottomTabNavigator();
 import {useSelector} from 'react-redux';
 
-const setTabBarVisible = (route, reduexState) => {
+const setTabBarVisible = (route, reduxState) => {
   //특정스크린 바텀네비게이션 숨기기
   const routeName = getFocusedRouteNameFromRoute(route);
-  if (reduexState.editModeCheck.editMode == true && route.name == 'Pick') {
+  if (reduxState.editModeCheck.editMode == true && route.name == 'Pick') {
     //찜한작업 페이지에서만 걸리도록 해야하는데..?
     return false;
   }
@@ -75,14 +75,14 @@ const setTabBarVisible = (route, reduexState) => {
   return true;
 };
 const TabNavigator = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   return (
     <Tabs.Navigator
       tabBarOptions={{
         showLabel: false,
       }}
       screenOptions={({route}) => ({
-        tabBarVisible: setTabBarVisible(route, reduexState),
+        tabBarVisible: setTabBarVisible(route, reduxState),
       })}>
       <Tabs.Screen
         name="HomeTab"
@@ -104,7 +104,7 @@ const TabNavigator = (props) => {
         // children={() => (
         //   <MoreNavigator
         //     name={'Pick'}
-        //     loginChk={reduexState.loginDataCheck.login}
+        //     loginChk={reduxState.loginDataCheck.login}
         //   />
         // )}
         options={{

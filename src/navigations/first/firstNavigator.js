@@ -31,11 +31,10 @@ import VersionModal from '../../components/Modal/VersionModal';
 
 const FirstNavigator = (props) => {
   const [landingCheck, setLandingCheck] = React.useState(true);
-
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [serverModalMessage, setServerModalMessage] = React.useState({});
-  const reduxState = useSelector((state) => state);
   const setData = async (value) => {
     try {
       await AsyncStorage.setItem('landingCheck', value.toString());

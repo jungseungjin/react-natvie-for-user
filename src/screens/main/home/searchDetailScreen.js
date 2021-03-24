@@ -50,6 +50,7 @@ import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';
 
 import IsLoading from '../../../components/ActivityIndicator';
+import Lottie from '../../../components/Lottie';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
@@ -188,6 +189,7 @@ const SearchScreenDetail = (props) => {
       let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduxState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduxState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
+          setIsLoadingAndModal(1);
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
@@ -200,6 +202,8 @@ const SearchScreenDetail = (props) => {
           } else {
             console.log(result.data[0]);
           }
+
+          setIsLoadingAndModal(0);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
           setIsLoadingAndModal(2);
@@ -533,7 +537,7 @@ const SearchScreenDetail = (props) => {
           BottomText={'설정하러가기'}></AlertModal1>
       ) : null}
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
-        <IsLoading></IsLoading>
+        <Lottie></Lottie>
       ) : isLoadingAndModal === 2 ? (
         <NetworkErrModal
           ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>

@@ -190,7 +190,11 @@ const RecentWork = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'최근 본 작업'} navigation={props.navigation}></Tabbar>
+        <Tabbar
+          Title={'최근 본 작업'}
+          navigation={props.navigation}
+          WorkListDelChangeValue={WorkListDelChangeValue}
+          StoreListDelChangeValue={StoreListDelChangeValue}></Tabbar>
         <TabBarBottom
           from={'category'}
           Title={[

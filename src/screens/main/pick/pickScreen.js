@@ -164,7 +164,10 @@ const PickScreen = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'찜한작업'}></Tabbar>
+        <Tabbar
+          Title={'찜한작업'}
+          WorkListDelChangeValue={WorkListDelChangeValue}
+          StoreListDelChangeValue={StoreListDelChangeValue}></Tabbar>
         <TabBarBottom
           from={'category'}
           Title={[

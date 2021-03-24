@@ -1768,7 +1768,7 @@ const InfoScreen = (props) => {
                             fontSize: Font_normalize(9),
                             color: '#FF0202',
                           }}>
-                          잘못된 비밀번호 형식입니다.
+                          잘못된 비밀번호 형식입니다
                         </Text>
                       </View>
                     ) : null}
