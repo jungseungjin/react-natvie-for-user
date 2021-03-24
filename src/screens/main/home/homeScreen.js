@@ -94,7 +94,8 @@ const HomeScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
-      alert(err);
+    } finally {
+      setIsLoadingAndModal(0);
     }
   };
   //홈화면 최근 본 작업 데이터 가져오기
@@ -148,6 +149,8 @@ const HomeScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoadingAndModal(0);
     }
   };
   React.useEffect(() => {
