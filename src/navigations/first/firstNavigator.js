@@ -128,9 +128,9 @@ const FirstNavigator = (props) => {
             setIsLoadingAndModal(2);
           }
         });
-        setTimeout(() => {
-          RNSplashScreen.hide();
-        }, 1000);
+        // setTimeout(() => {
+        //   RNSplashScreen.hide();
+        // }, 1000);
       } else {
         let url = `${Domain2}deviceLogin`;
         let data = {
@@ -163,14 +163,14 @@ const FirstNavigator = (props) => {
           'No credentials stored 저장된 아이디 비밀번호 정보가 없으면 여기로나옴.',
         ); //저장된 정보가 없으면 여기로나옴. 디바이스아이디로 조회해서 알림값 물고있어라
         console.log(reduxState.loginDataCheck.login);
-        setTimeout(() => {
-          RNSplashScreen.hide();
-        }, 1000);
+        // setTimeout(() => {
+        //   RNSplashScreen.hide();
+        // }, 1000);
       }
     } catch (error) {
-      setTimeout(() => {
-        RNSplashScreen.hide();
-      }, 1000);
+      // setTimeout(() => {
+      //   RNSplashScreen.hide();
+      // }, 1000);
 
       console.log("Keychain couldn't be accessed!", error);
     }
@@ -266,6 +266,10 @@ const FirstNavigator = (props) => {
     handlePushToken();
     AutoLogin();
     setIsLoadingAndModal(0);
+
+    setTimeout(() => {
+      RNSplashScreen.hide();
+    }, 1000);
   }, []);
   React.useEffect(() => {
     setIsLoadingAndModal(1);

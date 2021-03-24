@@ -73,6 +73,10 @@ const setTabBarVisible = (route, reduxState) => {
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;
+
+  // setTimeout(() => {
+  //   RNSplashScreen.hide();
+  // }, 1000);
 };
 const TabNavigator = (props) => {
   const reduxState = useSelector((state) => state);
