@@ -202,7 +202,6 @@ const SearchScreenDetail = (props) => {
           } else {
             console.log(result.data[0]);
           }
-
           setIsLoadingAndModal(0);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요

@@ -433,34 +433,34 @@ const WorkDetailScreen = (props) => {
           </View>
           {/*작업 이름부터 가격까지 끝 */}
           {/*상단슬라이더부터 가격까지 끝 */}
-          {scrollValue >= Width_convert(240 + 171) - Height_convert(94) ? (
-            <View
-              style={{
+          <View
+            style={[
+              {
                 zIndex: 0,
-                marginTop: -Height_convert(94),
-              }}></View>
-          ) : (
-            <View
-              style={{
-                zIndex: 0,
-                marginTop: 0,
-              }}></View>
-          )}
+              },
+              scrollValue >= Width_convert(240 + 171) - Height_convert(94)
+                ? {
+                    marginTop: -Height_convert(94),
+                  }
+                : {
+                    marginTop: 0,
+                  },
+            ]}></View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
-            {scrollValue >= Width_convert(240 + 171) - Height_convert(94) ? (
-              <View
-                style={{
+            <View
+              style={[
+                {
                   zIndex: 1,
-                  height: Height_convert(94),
-                }}></View>
-            ) : (
-              <View
-                style={{
-                  zIndex: 1,
-                  height: 0,
-                }}></View>
-            )}
+                },
+                scrollValue >= Width_convert(240 + 171) - Height_convert(94)
+                  ? {
+                      height: Height_convert(94),
+                    }
+                  : {
+                      height: 0,
+                    },
+              ]}></View>
             <View
               style={{
                 width: Width_convert(375),
