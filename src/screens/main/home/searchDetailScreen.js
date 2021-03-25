@@ -44,7 +44,7 @@ import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';
@@ -186,7 +186,7 @@ const SearchScreenDetail = (props) => {
       } else {
         sort = '0';
       }
-      let url = `${Domain2}searchlist/?searchText=${searchText}&longitude=${reduxState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduxState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
+      let url = `${Domain}searchlist/?searchText=${searchText}&longitude=${reduxState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduxState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           setIsLoadingAndModal(1);

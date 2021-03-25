@@ -13,7 +13,7 @@ import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import * as Keychain from 'react-native-keychain';
 import DeviceInfo from 'react-native-device-info';
@@ -32,7 +32,7 @@ const Withdrawal = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'user/delete';
+          let url = Domain + 'user/delete';
           let data = {
             _id: reduxState.loginDataCheck.login.data._id,
             getUniqueId: DeviceInfo.getUniqueId(),

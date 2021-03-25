@@ -31,7 +31,7 @@ import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import StatusBarHeight from '../../../components/StatusBarHeight';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
 import AlertModal2 from '../../../components/Modal/AlertModal2';
@@ -73,7 +73,7 @@ const RecentWork = (props) => {
           }
         }
         let result;
-        let url = Domain2 + 'recentWorkList';
+        let url = Domain + 'recentWorkList';
 
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
@@ -118,7 +118,7 @@ const RecentWork = (props) => {
           }
         }
         let result;
-        let url = Domain2 + 'recentStoreList';
+        let url = Domain + 'recentStoreList';
 
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {

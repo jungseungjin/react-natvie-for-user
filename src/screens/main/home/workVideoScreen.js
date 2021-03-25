@@ -23,7 +23,7 @@ import FastImage from 'react-native-fast-image';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import NetInfo from '@react-native-community/netinfo';
 import axios from 'axios';
 
@@ -35,7 +35,7 @@ const WorkVideoScreen = (props) => {
   const getData = (RelatedVideo) => {
     try {
       let result;
-      let url = Domain2 + 'relatedVideoList';
+      let url = Domain + 'relatedVideoList';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

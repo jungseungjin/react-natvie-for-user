@@ -30,7 +30,7 @@ import Search from '../../../../assets/home/search.svg';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import Geolocation from 'react-native-geolocation-service';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
@@ -102,7 +102,7 @@ const SignUpInformation = (props) => {
   const NicknameChk = async (text) => {
     try {
       let result;
-      let url = Domain2 + 'signUp/nicknamechk';
+      let url = Domain + 'signUp/nicknamechk';
       let data = {
         nickName: text,
       };
@@ -259,7 +259,7 @@ const SignUpInformation = (props) => {
   const SignUpBack = () => {
     try {
       let result;
-      let url = Domain2 + 'signUp/complete';
+      let url = Domain + 'signUp/complete';
       if (
         phoneNumber &&
         pickBrand &&
@@ -332,7 +332,7 @@ const SignUpInformation = (props) => {
       });
     } catch (err) {
       setIsLoadingAndModal(3);
-      console.log(err)
+      console.log(err);
     }
   };
   return (

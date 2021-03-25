@@ -20,7 +20,7 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
@@ -51,7 +51,7 @@ const OneOnOne = (props) => {
       setChkReload(parseInt(chkReload) + 1);
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'question_list';
+          let url = Domain + 'question_list';
           let result = await axios.get(url, {
             params: {
               _id: reduxState.loginDataCheck.login.data._id,

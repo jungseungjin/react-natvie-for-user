@@ -16,7 +16,7 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import moment from 'moment';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -30,7 +30,7 @@ const NoticeBoardScreen = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = `${Domain2}noticelist`;
+          let url = `${Domain}noticelist`;
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',

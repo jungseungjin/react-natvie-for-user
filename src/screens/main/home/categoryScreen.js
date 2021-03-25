@@ -15,11 +15,10 @@ import Font_normalize from '../../../components/Font_normalize.js';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
 import axios from 'axios';
-import Domain from '../../../../key/Domain.js';
 import MiddleCategory from '../../../components/Home/Category/middleCategory.js';
 import SmallCategory from '../../../components/Home/Category/smallCategory.js';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import {useSelector} from 'react-redux';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -71,14 +70,13 @@ const CategoryScreen = (props) => {
             setIsLoadingAndModal(1);
             let result = await axios.get(url);
             setIsLoadingAndModal(0);
-            if (result.data[0].type) {
-              //get에서 type이 있으면 잘못된거
-              alert(result.data[0].message);
-            } else {
-              setMiddleCategoryList(result.data);
+
+            if (result.data[0].message == 'ok') {
+              setMiddleCategoryList(result.data[0].result);
               setPickMiddleCategory({});
               setSmallCategoryList([]);
               setPickSmallCategory({});
+            } else {
             }
           } else {
             setIsLoadingAndModal(2);
@@ -110,12 +108,11 @@ const CategoryScreen = (props) => {
           setIsLoadingAndModal(1);
           let result = await axios.get(url);
           setIsLoadingAndModal(0);
-          if (result.data[0].type) {
-            //get에서 type이 있으면 잘못된거
-            alert(result.data[0].message);
-          } else {
-            setSmallCategoryList(result.data);
+          if (result.data[0].message == 'ok') {
+            console.log(result.data[0].result);
+            setSmallCategoryList(result.data[0].result);
             setPickSmallCategory({});
+          } else {
           }
         } else {
           setIsLoadingAndModal(2);
@@ -143,7 +140,7 @@ const CategoryScreen = (props) => {
         if (state.isConnected) {
           if (pickMiddleCategory._id) {
             //중분류 찍혀있음
-            let url = `${Domain2}categoryworklist/first`;
+            let url = `${Domain}categoryworklist/first`;
             let result = await axios.get(url, {
               headers: {
                 'Content-Type': 'application/json',

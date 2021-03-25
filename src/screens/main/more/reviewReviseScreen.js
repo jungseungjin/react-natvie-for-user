@@ -31,7 +31,7 @@ import base64_arraybuffer from 'base64-arraybuffer';
 import {Braket} from 'aws-sdk';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -133,7 +133,7 @@ const ReviewRegister = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let data = {};
-          let url = Domain2 + 'review/revise';
+          let url = Domain + 'review/revise';
           if (reduxState.loginDataCheck.login.login == true) {
             let starValue = 0;
             for (var a = 0; a < starCount.length; a++) {

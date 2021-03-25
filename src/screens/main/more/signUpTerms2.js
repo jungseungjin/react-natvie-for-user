@@ -16,7 +16,7 @@ import CheckedBox from '../../../../assets/home/checked_box.svg';
 import CheckBox from '../../../../assets/home/check_box.svg';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -33,7 +33,7 @@ const SignUpTerms2 = (props) => {
     try {
       let result;
       let url =
-        Domain2 + 'signUp/terms?agreeNumber=' + props.route.params.agreeNumber;
+        Domain + 'signUp/terms?agreeNumber=' + props.route.params.agreeNumber;
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

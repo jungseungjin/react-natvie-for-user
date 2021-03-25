@@ -20,7 +20,7 @@ import DismissKeyboard from '../../../components/DismissKeyboard.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -42,7 +42,7 @@ const Feedback = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'feedback/register';
+          let url = Domain + 'feedback/register';
           let data = {};
           if (reduxState.loginDataCheck.login.login == true) {
             data = {

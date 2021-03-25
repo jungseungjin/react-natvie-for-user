@@ -22,7 +22,7 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
@@ -174,7 +174,7 @@ const StoreWorkList = (props) => {
       } else {
         sort = '0';
       }
-      let url = `${Domain2}storeworklist`;
+      let url = `${Domain}storeworklist`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

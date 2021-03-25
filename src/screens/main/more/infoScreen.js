@@ -45,7 +45,7 @@ import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import * as Keychain from 'react-native-keychain';
@@ -157,7 +157,7 @@ const InfoScreen = (props) => {
           } else {
             return;
           }
-          let url = Domain2 + 'setting/info/marketting';
+          let url = Domain + 'setting/info/marketting';
           let data = {
             _id: reduxState.loginDataCheck.login.data._id,
             marketting: marketting,
@@ -340,7 +340,7 @@ const InfoScreen = (props) => {
             //비밀번호 변경할수없음 -> 비밀번호 변경시키지않음
           }
 
-          let url = Domain2 + 'info/changedata';
+          let url = Domain + 'info/changedata';
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
@@ -506,7 +506,7 @@ const InfoScreen = (props) => {
   const [smsCode, setSmsCode] = React.useState(0);
   const PhoneNumberChk = (Number) => {
     try {
-      let url = Domain2 + 'info/phonechk';
+      let url = Domain + 'info/phonechk';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.post(
@@ -547,7 +547,7 @@ const InfoScreen = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain2 + 'sendMessage';
+      let url = Domain + 'sendMessage';
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -624,7 +624,7 @@ const InfoScreen = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'user/logout';
+          let url = Domain + 'user/logout';
           let data = {
             getUniqueId: DeviceInfo.getUniqueId(),
             getDeviceId: DeviceInfo.getDeviceId(),

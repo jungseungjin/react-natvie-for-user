@@ -20,7 +20,7 @@ import auth from '@react-native-firebase/auth';
 import moment from 'moment';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
@@ -64,7 +64,7 @@ const IdFindScreen = (props) => {
   async function idFindBack() {
     try {
       let result;
-      let url = Domain2 + 'signUp/idFind/?phoneNumber=' + phoneNumber;
+      let url = Domain + 'signUp/idFind/?phoneNumber=' + phoneNumber;
       if (phoneNumber) {
       } else {
         alert('빈칸을 모두 입력해 주세요');
@@ -131,7 +131,7 @@ const IdFindScreen = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain2 + 'sendMessage';
+      let url = Domain + 'sendMessage';
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

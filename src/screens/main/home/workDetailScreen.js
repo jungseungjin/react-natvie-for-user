@@ -38,7 +38,7 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
@@ -74,7 +74,7 @@ const WorkDetailScreen = (props) => {
   const ChangeScrollValue = (text) => setScrollValue(text);
   const Pick = () => {
     try {
-      let url = Domain2 + 'pickData_detail';
+      let url = Domain + 'pickData_detail';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           if (reduxState.loginDataCheck.login.data) {
@@ -143,7 +143,7 @@ const WorkDetailScreen = (props) => {
   const getDataAndNavigateFromWork = (type, item_id) => {
     try {
       let result;
-      let url = Domain2 + 'detail/navigate/' + type;
+      let url = Domain + 'detail/navigate/' + type;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

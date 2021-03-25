@@ -19,7 +19,7 @@ import Search from '../../../../assets/home/search.svg';
 import auth from '@react-native-firebase/auth';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
@@ -51,7 +51,7 @@ const PasswordFindScreen = (props) => {
     try {
       let result;
       let url =
-        Domain2 +
+        Domain +
         'signUp/passwordFind/idchk?phoneNumber=' +
         phoneNumber +
         '&idText=' +
@@ -138,7 +138,7 @@ const PasswordFindScreen = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain2 + 'sendMessage';
+      let url = Domain + 'sendMessage';
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {

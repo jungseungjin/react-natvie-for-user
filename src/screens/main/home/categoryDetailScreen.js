@@ -20,7 +20,7 @@ import SearchWork from '../../../components/Home/Search/searchWork.js';
 import FilterView from '../../../components/Home/Search/filterView.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
 import {useSelector} from 'react-redux';
 import AlertModal1 from '../../../components/Modal/AlertModal1';
@@ -70,7 +70,7 @@ const CategoryDetailScreen = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           setIsLoadingAndModal(1);
-          let url = `${Domain2}categoryworklist/second`;
+          let url = `${Domain}categoryworklist/second`;
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',

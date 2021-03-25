@@ -19,7 +19,7 @@ import Black_dot from '../../../../assets/home/black_dot.svg';
 import PropTypes from 'prop-types';
 import FastImage from 'react-native-fast-image';
 import axios from 'axios';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import CarSettingBrand from './carSettingBrand.js';
 import CarSettingModel from './carSettingModel.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -48,7 +48,7 @@ const CarSetting = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           props.IsLoadingAndModalChangeValue(1);
-          let url = Domain2 + 'brand_list/' + brandSeach;
+          let url = Domain + 'brand_list/' + brandSeach;
           let result = await axios.get(url);
           props.IsLoadingAndModalChangeValue(0);
           if (result.data[0].status == 'ok') {
@@ -72,7 +72,7 @@ const CarSetting = (props) => {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             props.IsLoadingAndModalChangeValue(1);
-            let url = Domain2 + 'model_list/' + props.PickBrandValue.brand;
+            let url = Domain + 'model_list/' + props.PickBrandValue.brand;
             //props.IsLoadingChangeValue(true);
             let result = await axios.get(url);
             props.IsLoadingAndModalChangeValue(0);

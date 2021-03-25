@@ -25,7 +25,7 @@ import ReviewRegister from '../../../../assets/home/reviewRegister.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
@@ -67,7 +67,7 @@ const ReviewView = (props) => {
   const getData = () => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/' + props.route.params.type;
+      let url = Domain + 'reviewList/' + props.route.params.type;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -123,7 +123,7 @@ const ReviewView = (props) => {
   const getDataAndNavigate = (type, item_id) => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/navigate/' + type;
+      let url = Domain + 'reviewList/navigate/' + type;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

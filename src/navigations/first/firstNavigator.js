@@ -14,7 +14,7 @@ const Tabs = createBottomTabNavigator();
 import {checkNotifications} from 'react-native-permissions';
 
 import AlertModal1 from '../../components/Modal/AlertModal1.js';
-import Domain2 from '../../../key/Domain2.js';
+import Domain from '../../../key/Domain.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import * as Keychain from 'react-native-keychain';
@@ -28,7 +28,7 @@ import NormalErrModal from '../../components/Modal/NormalErrModal';
 import Version from '../../../key/key.js';
 import ServerModal from '../../components/Modal/ServerModal';
 import VersionModal from '../../components/Modal/VersionModal';
-
+import moment from 'moment';
 const FirstNavigator = (props) => {
   const [landingCheck, setLandingCheck] = React.useState(true);
   const reduxState = useSelector((state) => state);
@@ -61,7 +61,7 @@ const FirstNavigator = (props) => {
         //로그인해서 리덕스에 정보 넣기,
         //로그인이 실패하면? 디바이스정보로 가져와보자
         let result;
-        let url = `${Domain2}login`;
+        let url = `${Domain}login`;
         let data = {};
         if (credentials.username && credentials.password) {
           data = {
@@ -72,7 +72,7 @@ const FirstNavigator = (props) => {
             getModel: DeviceInfo.getModel(),
           };
         } else {
-          url = `${Domain2}deviceLogin`;
+          url = `${Domain}deviceLogin`;
           data = {
             getUniqueId: DeviceInfo.getUniqueId(),
             getDeviceId: DeviceInfo.getDeviceId(),
@@ -104,7 +104,7 @@ const FirstNavigator = (props) => {
               //로그인이 안됐어
               await Keychain.resetGenericPassword();
 
-              url = `${Domain2}deviceLogin`;
+              url = `${Domain}deviceLogin`;
               data = {
                 getUniqueId: DeviceInfo.getUniqueId(),
                 getDeviceId: DeviceInfo.getDeviceId(),
@@ -132,7 +132,7 @@ const FirstNavigator = (props) => {
         //   RNSplashScreen.hide();
         // }, 1000);
       } else {
-        let url = `${Domain2}deviceLogin`;
+        let url = `${Domain}deviceLogin`;
         let data = {
           getUniqueId: DeviceInfo.getUniqueId(),
           getDeviceId: DeviceInfo.getDeviceId(),
@@ -168,10 +168,6 @@ const FirstNavigator = (props) => {
         // }, 1000);
       }
     } catch (error) {
-      // setTimeout(() => {
-      //   RNSplashScreen.hide();
-      // }, 1000);
-
       console.log("Keychain couldn't be accessed!", error);
     }
   };
@@ -206,7 +202,7 @@ const FirstNavigator = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain2 + 'token';
+          let url = Domain + 'token';
           let push_arr = [];
           let alarm = false;
           push_arr.push({getUniqueId: DeviceInfo.getUniqueId()});
@@ -266,10 +262,9 @@ const FirstNavigator = (props) => {
     handlePushToken();
     AutoLogin();
     setIsLoadingAndModal(0);
-
     setTimeout(() => {
       RNSplashScreen.hide();
-    }, 1000);
+    }, 1500);
   }, []);
   React.useEffect(() => {
     setIsLoadingAndModal(1);

@@ -8,7 +8,7 @@ import Width_convert from '../../Width_convert.js';
 import Purple_dot from '../../../../assets/home/purple_dot.svg';
 import Black_dot from '../../../../assets/home/black_dot.svg';
 import CarSettingModelDetail from './carSettingModelDetail.js';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -24,7 +24,7 @@ const CarSettingModel = (props) => {
             props.IsLoadingAndModalChangeValue(1);
             //이 요청이 많이들어온다 수정해야됨 -> 이 페이지 자체가 여러번 렌더돼서 그래.
             let url =
-              Domain2 +
+              Domain +
               'model_detail_list/' +
               props?.PickBrandValue?.brand +
               '/' +

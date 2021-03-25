@@ -26,7 +26,7 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
@@ -58,7 +58,7 @@ const ReviewManage = (props) => {
   const getData = () => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/user';
+      let url = Domain + 'reviewList/user';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -85,7 +85,7 @@ const ReviewManage = (props) => {
   };
   const DeleteReview = () => {
     try {
-      let url = Domain2 + 'review/delete';
+      let url = Domain + 'review/delete';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let data = {
@@ -112,7 +112,7 @@ const ReviewManage = (props) => {
   const getDataAndNavigate = (type, item_id) => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/navigate/' + type;
+      let url = Domain + 'reviewList/navigate/' + type;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

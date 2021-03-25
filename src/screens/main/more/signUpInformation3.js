@@ -19,7 +19,7 @@ import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
@@ -57,7 +57,7 @@ const SignUpInformation = (props) => {
   const EmailChk = async (text) => {
     try {
       let result;
-      let url = Domain2 + 'signUp/emailchk';
+      let url = Domain + 'signUp/emailchk';
       let data = {
         name: name,
         email: email,

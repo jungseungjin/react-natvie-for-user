@@ -16,7 +16,7 @@ import BottomSignUpButton from '../../../components/More/SignUp/bottomSignUpButt
 import VirticalBar from '../../../../assets/home/vertical_bar.svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DismissKeyboard from '../../../components/DismissKeyboard.js';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import * as Keychain from 'react-native-keychain';
@@ -47,7 +47,7 @@ const LoginScreen = (props) => {
   const LoginBack = () => {
     try {
       let result;
-      let url = Domain2 + 'login';
+      let url = Domain + 'login';
       if (idText && passwordText) {
       } else {
         MessageShowChangeValue();

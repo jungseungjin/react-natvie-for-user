@@ -18,7 +18,7 @@ import XButton from '../../../../assets/home/x_button.svg';
 import Search from '../../../../assets/home/search.svg';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
@@ -55,7 +55,7 @@ const PasswordFindScreen2 = (props) => {
   async function PasswordChange() {
     try {
       let result;
-      let url = Domain2 + 'signUp/passwordFind/passworkchange';
+      let url = Domain + 'signUp/passwordFind/passworkchange';
       let data = {
         phoneNumber: phoneNumber,
         idText: idText,

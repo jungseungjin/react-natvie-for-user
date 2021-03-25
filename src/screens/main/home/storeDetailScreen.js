@@ -41,7 +41,7 @@ import LoginModal from '../../../components/Modal/LoginModal.js';
 import FastImage from 'react-native-fast-image';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import WorkConsultingModal from '../../../components/Modal/WorkConsultingModal.js';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
@@ -78,7 +78,7 @@ const StoreDetailScreen = (props) => {
 
   const Pick = () => {
     try {
-      let url = Domain2 + 'pickData_detail';
+      let url = Domain + 'pickData_detail';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           if (reduxState.loginDataCheck.login.data) {
@@ -162,7 +162,7 @@ const StoreDetailScreen = (props) => {
   const getData = () => {
     try {
       let result;
-      let url = Domain2 + 'reviewList/store';
+      let url = Domain + 'reviewList/store';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {

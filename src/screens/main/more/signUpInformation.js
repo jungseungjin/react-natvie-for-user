@@ -23,7 +23,7 @@ import moment from 'moment';
 import BackgroundTimer from 'react-native-background-timer';
 import PurpleChk from '../../../../assets/home/purple_chk.svg';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Toast, {DURATION} from 'react-native-easy-toast';
@@ -83,7 +83,7 @@ const SignUpInformation = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain2 + 'sendMessage';
+      let url = Domain + 'sendMessage';
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -127,7 +127,7 @@ const SignUpInformation = (props) => {
   };
   const PhoneNumberChk = (Number) => {
     try {
-      let url = Domain2 + 'info/phonechk';
+      let url = Domain + 'info/phonechk';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.post(

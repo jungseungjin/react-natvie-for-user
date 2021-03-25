@@ -14,7 +14,7 @@ import {useSelector} from 'react-redux';
 import {checkNotifications} from 'react-native-permissions';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import Domain2 from '../../../../key/Domain2.js';
+import Domain from '../../../../key/Domain.js';
 import DeviceInfo from 'react-native-device-info';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import AlertModal2 from '../../../components/Modal/AlertModal2.js';
@@ -71,7 +71,7 @@ const Setting = (props) => {
       checkNotifications().then(({status, settings}) => {
         //console.log(status); //blocked
         if (status == 'granted') {
-          let url = Domain2 + 'setting/more';
+          let url = Domain + 'setting/more';
           NetInfo.addEventListener(async (state) => {
             if (state.isConnected) {
               let prevData = reduxState.loginDataCheck.login.data;
