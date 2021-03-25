@@ -180,7 +180,7 @@ const OneOnOneView = (props) => {
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '700',
                     fontSize: Font_normalize(14),
-                    lineHeight: Font_normalize(14),
+                    lineHeight: Font_normalize(16),
                     color: '#000000',
                   }}>
                   {props.route.params.item.title}
@@ -190,7 +190,7 @@ const OneOnOneView = (props) => {
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '400',
                     fontSize: Font_normalize(8),
-                    lineHeight: Font_normalize(8),
+                    lineHeight: Font_normalize(10),
                     color: '#9F9F9F',
                   }}>
                   {moment(props.route.params.item.regDate).format(
