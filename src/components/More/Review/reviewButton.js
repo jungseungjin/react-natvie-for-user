@@ -9,7 +9,7 @@ const ReviewButton = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
-      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+      hitSlop={{top: 10, bottom: 10, left: 5, right: 5}}
       onPress={() => {
         if (props.Title == '수정') {
           props.navigation.navigate('ReviewRevise', {item: props.item});
@@ -42,7 +42,7 @@ const ReviewButton = (props) => {
           paddingLeft: Width_convert(7),
           paddingRight: Width_convert(7),
           fontFamily: Fonts?.NanumSqureRegular || null,
-          fontSize: Font_normalize(7),
+          fontSize: Font_normalize(9),
           fontWeight: '700',
           color: '#FFFFFF',
         }}>

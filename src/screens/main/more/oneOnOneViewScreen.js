@@ -14,6 +14,7 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import GoBack from '../../../../assets/home/goBack.svg';
 import Enter from '../../../../assets/home/Enter.svg';
 import moment from 'moment';
+import 'moment/locale/ko';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import Domain from '../../../../key/Domain.js';
@@ -24,6 +25,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const OneOnOneView = (props) => {
+  moment.locale('ko');
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const reduxState = useSelector((state) => state);
@@ -152,6 +154,7 @@ const OneOnOneView = (props) => {
         </View>
         {/*탑바 대체 끝 */}
         <ScrollView
+          bounces={false}
           showsVerticalScrollIndicator={false}
           style={{
             marginTop: Height_convert(20),
@@ -177,6 +180,7 @@ const OneOnOneView = (props) => {
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '700',
                     fontSize: Font_normalize(14),
+                    lineHeight: Font_normalize(14),
                     color: '#000000',
                   }}>
                   {props.route.params.item.title}
@@ -186,9 +190,10 @@ const OneOnOneView = (props) => {
                     fontFamily: Fonts?.NanumSqureRegular || null,
                     fontWeight: '400',
                     fontSize: Font_normalize(8),
+                    lineHeight: Font_normalize(8),
                     color: '#9F9F9F',
                   }}>
-                  {moment(props.route.params.item.redDate).format(
+                  {moment(props.route.params.item.regDate).format(
                     'YYYY년 MM월 DD일',
                   )}
                 </Text>

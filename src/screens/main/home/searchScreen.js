@@ -19,6 +19,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -104,7 +105,10 @@ const SearchScreen = ({navigation, route}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <View
             style={{
-              height: Height_convert(88) - StatusBarHeight,
+              height:
+                StatusBarHeight < 40
+                  ? Height_convert(88) - 44
+                  : Height_convert(88) - StatusBarHeight,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',

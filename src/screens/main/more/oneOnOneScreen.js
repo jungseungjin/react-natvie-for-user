@@ -23,11 +23,13 @@ import NetInfo from '@react-native-community/netinfo';
 import Domain from '../../../../key/Domain.js';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import 'moment/locale/ko';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const OneOnOne = (props) => {
+  moment.locale('ko');
   React.useEffect(
     () => props.navigation.addListener('focus', () => onRefresh()),
     [],

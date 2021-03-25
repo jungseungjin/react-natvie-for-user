@@ -273,7 +273,10 @@ const SearchScreenDetail = (props) => {
         <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <View
             style={{
-              height: Height_convert(88) - StatusBarHeight,
+              height:
+                StatusBarHeight < 40
+                  ? Height_convert(88) - 44
+                  : Height_convert(88) - StatusBarHeight,
               width: Width_convert(375),
               flexDirection: 'row',
               alignItems: 'center',

@@ -130,7 +130,7 @@ const OneOnOneRegister = (props) => {
             borderLeftColor: '#000000',
             borderRightColor: '#000000',
           }}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
             <TextInput
               multiline={true}
               placeholder="문의 내용을 10자 이상 입력해주세요"
@@ -148,9 +148,11 @@ const OneOnOneRegister = (props) => {
                 textAlignVertical: 'top',
               }}
               style={{
+                paddingTop: Height_convert(15),
+                paddingLeft: Width_convert(10),
+                paddingRight: Width_convert(10),
                 width: Width_convert(305),
-                minHeight: Height_convert(812),
-                paddingLeft: Width_convert(7),
+                minHeight: '100%',
                 fontFamily: Fonts?.NanumSqureRegular || null,
                 fontWeight: '700',
                 fontSize: Font_normalize(15),
@@ -159,21 +161,21 @@ const OneOnOneRegister = (props) => {
               }}></TextInput>
           </ScrollView>
         </View>
-        <View
-          style={{
-            width: Width_convert(305),
-            marginLeft: Width_convert(35),
-            height: Width_convert(46),
-            marginTop: Height_convert(22),
-            backgroundColor: '#946AEF',
-            borderRadius: Font_normalize(5),
-            justifyContent: 'center',
-            alignItems: 'center',
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            sendData();
           }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              sendData();
+          <View
+            style={{
+              width: Width_convert(305),
+              marginLeft: Width_convert(35),
+              height: Width_convert(46),
+              marginTop: Height_convert(22),
+              backgroundColor: '#946AEF',
+              borderRadius: Font_normalize(5),
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
             <Text
               style={{
@@ -184,8 +186,8 @@ const OneOnOneRegister = (props) => {
               }}>
               작성완료
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
         {contentsLengthModal ? (
           <AlertModal1
             type={1}
