@@ -145,7 +145,7 @@ const AlertModal2 = (props) => {
                 activeOpacity={1}
                 style={{
                   borderBottomLeftRadius: Font_normalize(7),
-                  width: Width_convert(331) / 2,
+                  width: '50%',
                   height: Width_convert(56),
                   backgroundColor: '#FFFFFF',
                   justifyContent: 'center',
@@ -186,7 +186,7 @@ const AlertModal2 = (props) => {
                 activeOpacity={1}
                 style={{
                   borderBottomRightRadius: Font_normalize(7),
-                  width: Width_convert(331) / 2,
+                  width: '50%',
                   height: Width_convert(56),
                   borderLeftWidth: 1,
                   borderLeftColor: '#DBDBDB',
