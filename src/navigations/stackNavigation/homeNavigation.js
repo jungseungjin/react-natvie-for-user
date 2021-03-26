@@ -6,7 +6,7 @@ import Setting from '../../screens/main/home/settingScreen.js';
 import Category from '../../screens/main/home/categoryScreen.js';
 import CategoryDetail from '../../screens/main/home/categoryDetailScreen.js';
 import Map from '../../screens/main/home/mapScreen.js';
-import MapSearch from '../../screens/main/home/mapSeachScreen.js';
+import MapSearch from '../../screens/main/home/mapSearchScreen.js';
 import WorkDetail from '../../screens/main/home/workDetailScreen.js';
 import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
 import StoreDetail from '../../screens/main/home/storeDetailScreen.js';
@@ -26,7 +26,7 @@ import SignUpInformation4 from '../../screens/main/more/signUpInformation4.js';
 import IdFind from '../../screens/main/more/idFindScreen.js';
 import IdFindComplete from '../../screens/main/more/idFindCompleteScreen.js';
 import PasswordFind from '../../screens/main/more/passwordFindScreen.js';
-import PasswordFind2 from '../../screens/main/more/passworkFindScreen2.js';
+import PasswordFind2 from '../../screens/main/more/passwordFindScreen2.js';
 import SignUpComplete from '../../screens/main/more/signUpComplete.js';
 import Login from '../../screens/main/more/loginScreen.js';
 import {

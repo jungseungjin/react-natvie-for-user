@@ -6,7 +6,7 @@ import {
   Text,
   LayoutAnimation,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -32,7 +32,10 @@ const FrequentlyQuestionScreen = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'자주 묻는 질문'} navigation={props.navigation}></Tabbar>
+        <Tabbar
+          left={'back'}
+          Title={'자주 묻는 질문'}
+          navigation={props.navigation}></Tabbar>
         {/*상단 TOP5~기타 버튼 시작 */}
         <View
           style={{

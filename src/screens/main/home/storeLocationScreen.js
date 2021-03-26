@@ -33,6 +33,7 @@ import AlertModal2 from '../../../components/Modal/AlertModal2.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 
 const StoreLocationScreen = (props) => {
   const [showModal, setShowModal] = React.useState(false);
@@ -118,74 +119,11 @@ const StoreLocationScreen = (props) => {
           backgroundColor="#FFFFFF"
           barStyle="dark-content"
         />
-        <View
-          style={{
-            width: Width_convert(375),
-            height: Height_convert(94) - StatusBarHeight,
-            position: 'absolute',
-            flexDirection: 'row',
-            top: StatusBarHeight,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: '#FFFFFF',
-          }}>
-          <View>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{}}
-              onPress={() => {
-                props.navigation.goBack();
-              }}>
-              <GoBackWhite
-                fill={'#000000'}
-                style={{
-                  marginLeft: Width_convert(22),
-                }}></GoBackWhite>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text
-              style={{
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontSize: Font_normalize(16),
-                fontWeight: '700',
-                color: '#000000',
-                textAlign: 'center',
-              }}>
-              {props.route.params.item.store_name}
-            </Text>
-          </View>
-          <View
-            style={{
-              marginRight: Width_convert(17),
-            }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              style={{
-                flexDirection: 'row',
-              }}
-              onPress={() => {}}>
-              <Text style={{color: '#ffffff'}}>완료</Text>
-              {/* <HeartWhite
-          fill={'#000000'}></HeartWhite>
-        <Text
-          style={[
-            {
-              marginTop: 'auto',
-              marginBottom: 0,
-              fontFamily: Fonts?.NanumSquareRegular || null,
-              fontWeight: '700',
-              fontSize: Font_normalize(6),
-            },
-            scrollValue > Width_convert(240) - StatusBarHeight
-              ? {color: '#000000'}
-              : {color: '#FFFFFF'},
-          ]}>
-          123
-        </Text> */}
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Tabbar
+          left={'back'}
+          Title={props.route.params.item.store_name}
+          StoreName={props.route.params.item.store_name}
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             width: Width_convert(375),

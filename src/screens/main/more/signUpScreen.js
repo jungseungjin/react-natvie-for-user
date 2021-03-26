@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -43,7 +43,10 @@ const SignUp = (props) => {
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <Tabbar Title={'회원가입'} navigation={props.navigation}></Tabbar>
+      <Tabbar
+        left={'X'}
+        Title={'회원가입'}
+        navigation={props.navigation}></Tabbar>
       <View
         style={{
           borderTopColor: 'rgba(219, 219, 219, 0.35);',

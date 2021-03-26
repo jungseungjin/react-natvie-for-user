@@ -8,7 +8,7 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -98,6 +98,7 @@ const SignUpInformation = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        left={'back'}
         fromNav={
           Platform.OS === 'android' && props.route.params.fromNav === 'home'
             ? 'home'

@@ -6,23 +6,61 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  TouchableOpacity,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import FastImage from 'react-native-fast-image';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
+import X from '../../../../assets/home/x_black.svg';
+import StatusBarHeight from '../../../components/StatusBarHeight.js';
 const CostChangeScreen = (props) => {
   return (
     <>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar
-          Title={'작업비용이 변동하는 이유?'}
-          navigation={props.navigation}></Tabbar>
+      <View
+        style={{height: StatusBarHeight, backgroundColor: '#FFFFFF'}}></View>
+      <SafeAreaView
+        style={{
+          backgroundColor: 'white',
+          flex: 1,
+        }}>
+        <View
+          style={{
+            width: '100%',
+            height: Height_convert(94) - StatusBarHeight,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '25%',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+              onPress={() => {
+                props.navigation.goBack();
+              }}>
+              <X fill={'#000000'} style={{marginLeft: Width_convert(22)}}></X>
+            </TouchableOpacity>
+          </View>
+          <View style={{width: '50%', alignItems: 'center'}}>
+            <Text
+              style={{
+                fontSize: Font_normalize(16),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                color: '#000000',
+              }}>
+              작업비용이 변동하는 이유?
+            </Text>
+          </View>
+          <View style={{width: '25%'}}></View>
+        </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}

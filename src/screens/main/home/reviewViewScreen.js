@@ -178,6 +178,7 @@ const ReviewView = (props) => {
             style={{width: Width_convert(375), height: StatusBarHeight}}></View>
         ) : null}
         <Tabbar
+          left={'back'}
           Title={
             props.route.params.type == 'work'
               ? props.route.params.item?.info_store[0]?.store_name

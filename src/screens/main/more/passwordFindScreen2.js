@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -104,6 +104,7 @@ const PasswordFindScreen2 = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        left={'back'}
         Title={'비밀번호 찾기2'}
         navigation={props.navigation}
         PasswordChange={PasswordChange}

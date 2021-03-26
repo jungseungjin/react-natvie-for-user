@@ -186,7 +186,10 @@ const ReviewRegister = (props) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <DismissKeyboard>
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-          <Tabbar Title={'후기작성'} navigation={props.navigation}></Tabbar>
+          <Tabbar
+            left={'back'}
+            Title={'후기작성'}
+            navigation={props.navigation}></Tabbar>
           {/*  작업명, 샵이름, 별점 시작 */}
           <View style={{alignItems: 'center', width: Width_convert(375)}}>
             <View>

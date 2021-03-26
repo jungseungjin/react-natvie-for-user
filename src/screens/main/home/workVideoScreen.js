@@ -71,6 +71,7 @@ const WorkVideoScreen = (props) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <Tabbar
+          left={'back'}
           Title={'사장님의 작업영상'}
           navigation={props.navigation}></Tabbar>
         <View

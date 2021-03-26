@@ -91,7 +91,7 @@ const SignUpComplete = (props) => {
                   color: '#000000',
                 }}>
                 투닝 회원가입을{'\n'}
-                축하드립니다
+                축하드립니다.
               </Text>
             </View>
             <View

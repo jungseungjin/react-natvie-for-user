@@ -261,6 +261,7 @@ const StoreWorkList = (props) => {
                 },
           ]}></View>
         <Tabbar
+          left={'back'}
           Title={props.route.params.item.store_name}
           navigation={props.navigation}></Tabbar>
         <View

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StatusBar, SafeAreaView, Text} from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -65,94 +65,12 @@ const OneOnOneView = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        {/* <Tabbar Title={'문의내역'} navigation={props.navigation}></Tabbar> */}
-        {/*탑바 대체 시작 */}
-        <View
-          style={{
-            height: Height_convert(94) - StatusBarHeight,
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#FFFFFF',
-          }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            style={{
-              width: Width_convert(90),
-            }}
-            onPress={() => {
-              props.navigation.goBack();
-            }}>
-            <GoBack
-              fill={'#000000'}
-              style={{marginLeft: Width_convert(22)}}></GoBack>
-          </TouchableOpacity>
-          <View
-            style={{
-              width: Width_convert(195),
-            }}>
-            <Text
-              style={{
-                marginRight: Width_convert(7),
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontSize: Font_normalize(16),
-                fontWeight: '700',
-                color: 'black',
-                textAlign: 'center',
-              }}>
-              문의확인
-            </Text>
-          </View>
-          <View
-            style={{
-              width: Width_convert(90),
-              backgroundColor: '#FFFFFF',
-              marginRight: 0,
-              marginLeft: 'auto',
-              flexDirection: 'row',
-            }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => {
-                if (props.route.params.item.status == 0) {
-                  props.navigation.navigate('OneOnOneRevise', {
-                    item: props.route.params.item,
-                  });
-                }
-              }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  marginRight: Width_convert(12),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(14),
-                  color: '#63BEDB',
-                }}>
-                {props.route.params.item.status == 0 ? '수정' : null}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => {
-                if (props.route.params.item.status == 0) {
-                  setShowModal(true);
-                }
-              }}>
-              <Text
-                style={{
-                  textAlign: 'right',
-                  marginRight: Width_convert(22),
-                  fontFamily: Fonts?.NanumSqureRegular || null,
-                  fontWeight: '700',
-                  fontSize: Font_normalize(14),
-                  color: '#FF0000',
-                }}>
-                {props.route.params.item.status == 0 ? '삭제' : null}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/*탑바 대체 끝 */}
+        <Tabbar
+          left={'back'}
+          Title={'문의확인'}
+          navigation={props.navigation}
+          item={props.route.params.item}
+          ShowModalChangeValue={ShowModalChangeValue}></Tabbar>
         <ScrollView
           bounces={false}
           showsVerticalScrollIndicator={false}

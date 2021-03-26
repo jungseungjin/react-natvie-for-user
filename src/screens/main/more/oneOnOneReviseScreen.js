@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -29,6 +29,8 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const OneOnOneRevise = (props) => {
   const reduxState = useSelector((state) => state);
+  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [contentsLengthModal, setContentsLengthModal] = React.useState(false);
   const ContentsLengthModalChangeValue = (text) => setContentsLengthModal(text);
   const [title, setTitle] = React.useState(props.route.params.item.title);
@@ -74,7 +76,10 @@ const OneOnOneRevise = (props) => {
         <StatusBar
           barStyle="dark-content"
           backgroundColor={'#FFFFFF'}></StatusBar>
-        <Tabbar Title={'1:1문의'} navigation={props.navigation}></Tabbar>
+        <Tabbar
+          left={'X'}
+          Title={'1:1문의'}
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             borderBottomColor: 'rgba(219, 219, 219, 0.35)',

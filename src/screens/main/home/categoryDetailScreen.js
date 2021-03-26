@@ -272,6 +272,7 @@ const CategoryDetailScreen = (props) => {
                 },
           ]}></View>
         <Tabbar
+          left={'back'}
           Title={
             page == 'dressup'
               ? '드레스업'

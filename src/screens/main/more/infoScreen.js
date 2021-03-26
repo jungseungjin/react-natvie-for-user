@@ -20,7 +20,7 @@ import NaverMapView, {
   Polygon,
 } from 'react-native-nmap';
 import GPS from '../../../../assets/home/gps.svg';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -821,6 +821,7 @@ const InfoScreen = (props) => {
       {reduxState.loginDataCheck.login.login != true ? (
         <>
           <Tabbar
+            left={'back'}
             Title={'내정보_fake'}
             // toastRef={toastRef}
             navigation={props.navigation}
@@ -846,6 +847,7 @@ const InfoScreen = (props) => {
       ) : page == 'info' ? (
         <>
           <Tabbar
+            left={'back'}
             Title={'내정보'}
             // toastRef={toastRef}
             navigation={props.navigation}
@@ -2357,6 +2359,7 @@ const InfoScreen = (props) => {
       ) : (
         <>
           <Tabbar
+            left={'X'}
             Title={'차량선택_info'}
             navigation={props.navigation}
             PageChangeValue={PageChangeValue}

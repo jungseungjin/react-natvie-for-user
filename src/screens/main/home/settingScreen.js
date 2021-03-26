@@ -34,7 +34,7 @@ const SettingScreen = (props) => {
   React.useEffect(() => {
     unsubscribe;
   }, [props.navigation]);
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
@@ -45,10 +45,10 @@ const SettingScreen = (props) => {
   const [page, setPage] = React.useState('car');
   const [brandList, setBrandList] = React.useState([]);
   const [category, setCategory] = React.useState(
-    reduexState.loginDataCheck.login.iu_car.length > 0
-      ? reduexState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
+    reduxState.loginDataCheck.login.iu_car.length > 0
+      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
         ? 'all'
-        : reduexState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
+        : reduxState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
         ? 'domestic'
         : 'import'
       : 'domestic',
@@ -60,8 +60,8 @@ const SettingScreen = (props) => {
     setPickModelDetail({});
   };
   const [pickBrand, setPickBrand] = React.useState(
-    reduexState.loginDataCheck.login.iu_car.length > 0
-      ? reduexState.loginDataCheck.login.iu_car[0].pickBrand
+    reduxState.loginDataCheck.login.iu_car.length > 0
+      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand
       : {},
   ); //디비에서 가져온 브랜드값
   const PickBrandChangeValue = (object) => setPickBrand(object);
@@ -73,19 +73,19 @@ const SettingScreen = (props) => {
   const PickLocationChangeValue = (object) => setPickLocation(object);
   React.useEffect(() => {
     try {
-      if (reduexState.loginDataCheck.login.iu_car.length > 0) {
-        if (reduexState.loginDataCheck.login.iu_car[0].pickModel == 'all') {
+      if (reduxState.loginDataCheck.login.iu_car.length > 0) {
+        if (reduxState.loginDataCheck.login.iu_car[0].pickModel == 'all') {
           setCategory('all');
         } else {
-          //setPickBrand(reduexState.loginDataCheck.login.iu_car[0].pickBrand);
-          setPickModel(reduexState.loginDataCheck.login.iu_car[0].pickModel);
+          //setPickBrand(reduxState.loginDataCheck.login.iu_car[0].pickBrand);
+          setPickModel(reduxState.loginDataCheck.login.iu_car[0].pickModel);
           setPickModelDetail(
-            reduexState.loginDataCheck.login.iu_car[0].pickModelDetail,
+            reduxState.loginDataCheck.login.iu_car[0].pickModelDetail,
           );
         }
       }
-      if (reduexState.loginDataCheck.login.location?.legalcode) {
-        setPickLocation(reduexState.loginDataCheck.login.location);
+      if (reduxState.loginDataCheck.login.location?.legalcode) {
+        setPickLocation(reduxState.loginDataCheck.login.location);
       }
     } catch (err) {
       console.log(err);
@@ -221,9 +221,7 @@ const SettingScreen = (props) => {
             result.data.results[0].region.area3.name,
         });
       } else {
-        setIsLosetIsLoadingAndModalading(
-          0
-        );
+        setIsLoadingAndModal(0);
         setPickLocation({
           location: {
             latitude: position.coords.latitude,
@@ -246,6 +244,7 @@ const SettingScreen = (props) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <Tabbar
+          left={'back'}
           Title={'설정'}
           navigation={props.navigation}
           PushReduxData={PushReduxData}></Tabbar>
@@ -285,7 +284,7 @@ const SettingScreen = (props) => {
             pickLocation={pickLocation}
             PickLocationChangeValue={PickLocationChangeValue}></LocationSetting>
         )}
-        {reduexState.loginDataCheck.login?.login ? null : (
+        {reduxState.loginDataCheck.login?.login ? null : (
           <SignUp navigation={props.navigation}></SignUp>
         )}
       </SafeAreaView>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StatusBar, SafeAreaView, Text} from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -20,6 +20,7 @@ const NoticeBoardViewScreen = (props) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}></SafeAreaView>
       <Tabbar
+        left={'back'}
         Title={'공지사항 및 이벤트 보기'}
         navigation={props.navigation}></Tabbar>
       <View

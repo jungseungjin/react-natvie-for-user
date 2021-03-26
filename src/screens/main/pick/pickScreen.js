@@ -20,7 +20,7 @@ import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import Tabbar from '../../../components/Pick/Tabbar/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import TabBarBottom from '../../../components/Pick/Tabbar/tabbarBottom.js';
 import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';

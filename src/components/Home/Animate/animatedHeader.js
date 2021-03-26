@@ -46,19 +46,13 @@ const AnimatedHeader = (props) => {
             position: 'absolute',
             flexDirection: 'row',
             top: StatusBarHeight,
-            justifyContent: 'space-between',
             alignItems: 'center',
             backgroundColor: background,
           }}>
-          <View>
+          <View style={{width: '30%'}}>
             <TouchableOpacity
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-              style={{
-                paddingRight: Width_convert(10),
-                paddingTop: Width_convert(10),
-                paddingBottom: Width_convert(10),
-              }}
               onPress={() => {
                 props.navigation.goBack();
               }}>
@@ -73,7 +67,7 @@ const AnimatedHeader = (props) => {
                 }}></GoBackWhite>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{width: '40%', alignItems: 'center'}}>
             <Animated.Text
               style={{
                 fontFamily: Fonts?.NanumSqureRegular || null,
@@ -87,12 +81,14 @@ const AnimatedHeader = (props) => {
           </View>
           <View
             style={{
-              marginRight: Width_convert(17),
+              alignItems: 'flex-end',
+              width: '30%',
             }}>
             <TouchableOpacity
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               style={{
+                marginRight: Width_convert(17),
                 flexDirection: 'row',
                 paddingLeft: Width_convert(10),
                 paddingTop: Width_convert(10),

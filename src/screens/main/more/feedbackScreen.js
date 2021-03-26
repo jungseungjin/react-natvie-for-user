@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StatusBar, SafeAreaView, Text} from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -70,7 +70,7 @@ const Feedback = (props) => {
           } else {
           }
         } else {
-          setNetworkModal(true);
+          setIsLoadingAndModal(2);
         }
       });
     } catch (err) {
@@ -83,7 +83,10 @@ const Feedback = (props) => {
         <StatusBar
           barStyle="dark-content"
           backgroundColor={'#FFFFFF'}></StatusBar>
-        <Tabbar Title={'피드백주기'} navigation={props.navigation}></Tabbar>
+        <Tabbar
+          left={'X'}
+          Title={'피드백주기'}
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             borderBottomColor: 'rgba(219, 219, 219, 0.35)',

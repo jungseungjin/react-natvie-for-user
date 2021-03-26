@@ -183,17 +183,8 @@ const ReviewRegister = (props) => {
             }}></View>
         ) : null}
         <Tabbar
-          Title={
-            page == 'dressup'
-              ? '드레스업'
-              : page == 'perfomance'
-              ? '퍼포먼스'
-              : page == 'convenience'
-              ? '편의장치'
-              : page == 'camping'
-              ? '캠핑카'
-              : '후기작성'
-          }
+          left={'back'}
+          Title={'후기작성'}
           navigation={props.navigation}></Tabbar>
         {/*  작업명, 샵이름, 별점 시작 */}
         <View style={{alignItems: 'center', width: Width_convert(375)}}>

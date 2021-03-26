@@ -176,7 +176,10 @@ const ReviewManage = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        <Tabbar Title={'후기관리'} navigation={props.navigation}></Tabbar>
+        <Tabbar
+          left={'back'}
+          Title={'후기관리'}
+          navigation={props.navigation}></Tabbar>
         <View
           style={{
             width: Width_convert(375),

@@ -24,7 +24,7 @@ import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
 import {useSelector} from 'react-redux';
 import {prototype} from 'react-native/Libraries/Image/ImageBackground';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
@@ -136,6 +136,7 @@ const LoginScreen = (props) => {
               height: Height_convert(170),
             }}>
             <Tabbar
+              left={'X'}
               Title={
                 props?.route?.params?.from === 'infoScreen'
                   ? '로그인info'

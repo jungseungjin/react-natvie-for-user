@@ -8,7 +8,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -171,7 +171,10 @@ const SignUpTerms = (props) => {
         backgroundColor={
           isLoadingAndModal == 2 ? 'rgba(32, 32, 32, 0.3)' : '#FFFFFF'
         }></StatusBar>
-      <Tabbar Title={'이용약관'} navigation={props.navigation}></Tabbar>
+      <Tabbar
+        left={'back'}
+        Title={'이용약관'}
+        navigation={props.navigation}></Tabbar>
       <View
         style={{
           height: Height_convert(48),

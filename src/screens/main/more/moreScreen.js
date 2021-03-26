@@ -15,7 +15,7 @@ import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Menu from '../../../components/More/Menu/Menu.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import {useSelector} from 'react-redux';

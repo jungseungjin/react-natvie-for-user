@@ -194,6 +194,7 @@ const CategoryScreen = (props) => {
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <Tabbar
+          left={'X'}
           Title={'작업종류'}
           navigation={props.navigation}
           getDataAndNavigate={getDataAndNavigate}

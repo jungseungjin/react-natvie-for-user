@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, SafeAreaView, StatusBar, Text} from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -29,7 +29,10 @@ const InfoCar = (props) => {
       <StatusBar
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <Tabbar Title={'차량선택'} navigation={props.navigation}></Tabbar>
+      <Tabbar
+        left={'X'}
+        Title={'차량선택'}
+        navigation={props.navigation}></Tabbar>
       <View style={{borderTopWidth: 1, borderTopColor: '#DBDBDB'}}></View>
 
       <CarSetting

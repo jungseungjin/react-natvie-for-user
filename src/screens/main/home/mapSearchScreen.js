@@ -88,44 +88,41 @@ const MapScreen = (props) => {
       <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
         <View
           style={{
-            height: Height_convert(88) - StatusBarHeight,
+            width: '100%',
+            height:
+              StatusBarHeight < 40
+                ? Height_convert(88) - 44
+                : Height_convert(88) - StatusBarHeight,
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
           }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-            onPress={() => {
-              props.navigation.goBack();
-            }}
-            style={{
-              marginLeft: Width_convert(22),
-              marginRight: Width_convert(15),
-              width: Width_convert(14),
-              height: Height_convert(16),
-            }}>
-            <X></X>
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: Font_normalize(16),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontWeight: '700',
-              color: '#000000',
-              paddingTop: 0,
-              paddingBottom: 0,
-            }}>
-            주소검색
-          </Text>
           <View
-            activeOpacity={1}
-            onPress={() => {}}
             style={{
-              marginRight: Width_convert(22),
-              width: Width_convert(20),
-              height: Height_convert(20),
-            }}></View>
+              width: '30%',
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+              onPress={() => {
+                props.navigation.goBack();
+              }}>
+              <X fill={'#000000'} style={{marginLeft: Width_convert(22)}}></X>
+            </TouchableOpacity>
+          </View>
+          <View style={{width: '40%', alignItems: 'center'}}>
+            <Text
+              style={{
+                fontSize: Font_normalize(16),
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontWeight: '700',
+                color: '#000000',
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}>
+              주소검색
+            </Text>
+          </View>
+          <View style={{width: '30%'}}></View>
         </View>
         <View
           style={{

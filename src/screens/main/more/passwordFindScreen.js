@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import Tabbar from '../../../components/More/Tab/tabbar.js';
+import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Height_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -47,7 +47,7 @@ const PasswordFindScreen = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
-  async function IdchkBack() {
+  const idChkBack = async () => {
     try {
       let result;
       let url =
@@ -92,7 +92,7 @@ const PasswordFindScreen = (props) => {
       console.log(err);
       alert(err);
     }
-  }
+  };
   React.useEffect(() => {
     const countdown = BackgroundTimer.setTimeout(() => {
       if (parseInt(seconds) > 0) {
@@ -196,12 +196,13 @@ const PasswordFindScreen = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <Tabbar
+        left={'back'}
         Title={'비밀번호 찾기1'}
         navigation={props.navigation}
         next={next}
         phoneNumber={phoneNumber}
         idText={idText}
-        IdchkBack={IdchkBack}></Tabbar>
+        idChkBack={idChkBack}></Tabbar>
       <View
         style={{
           marginLeft: Width_convert(24),
