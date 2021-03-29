@@ -30,6 +30,7 @@ import Toast, {DURATION} from 'react-native-easy-toast';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const PasswordFindScreen = (props) => {
   const [idText, setIdText] = React.useState(''); //아이디
   const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
@@ -181,6 +182,13 @@ const PasswordFindScreen = (props) => {
     }
   };
 
+  const debouncePhoneNumber = React.useCallback(
+    _.debounce((Number) => NaverSMSMessageSend(Number), 2000, {
+      leading: true,
+      trailing: false,
+    }),
+    [],
+  );
   let toastRef;
   const showToast = (text, time) => {
     toastRef.show(text, time, () => {
@@ -490,7 +498,7 @@ const PasswordFindScreen = (props) => {
                       setVisible(true);
                       setTimeout(() => setVisible(false), 2000);
                     } else {
-                      NaverSMSMessageSend(phoneNumber);
+                      debouncePhoneNumber(phoneNumber);
                     }
                     //인증번호 다시받기 활성화
                     //최근 인증번호 받은 시간과 비교하여 1분이내면 메시지 띄우기 ->몇초 있다가 사라져야한데, -> 시간초 카운트가 2분이상인지 아닌지 비교
@@ -556,7 +564,7 @@ const PasswordFindScreen = (props) => {
               activeOpacity={1}
               onPress={() => {
                 if (phoneNumber.length == 13) {
-                  NaverSMSMessageSend(phoneNumber);
+                  debouncePhoneNumber(phoneNumber);
                 }
               }}
               style={[

@@ -23,6 +23,7 @@
     "aws-sdk": "^2.851.0",
     "axios": "^0.21.1",
     "base64-arraybuffer": "^0.2.0",
+    "lodash": "^4.17.21",
     "lottie-ios": "^3.1.8",
     "lottie-react-native": "^3.5.0",
     "moment": "^2.29.1",
