@@ -41,7 +41,26 @@ const CategoryDetailScreen = (props) => {
   const [pickMiddle, setPickMiddle] = React.useState(
     props.route.params.PickMiddle,
   );
-
+  const [smallList, setSmallList] = React.useState(
+    props.route.params.SmallCategory,
+  );
+  const [pickSmall, setPickSmall] = React.useState(
+    props.route.params.PickSmall,
+  );
+  const [resultWorkList, setresultWorkList] = React.useState(
+    props.route.params.WorkList,
+  );
+  const [viewWorkList, setViewWorkList] = React.useState([]);
+  const [pickFilter, setPickFilter] = React.useState(false);
+  const PickChangeValue = () => setPickFilter(!pickFilter);
+  const [pickSort, setPickSort] = React.useState(
+    reduxState.loginDataCheck?.login?.location?.legalcode
+      ? '가까운 순 '
+      : false,
+  );
+  const [showModal, setShowModel] = React.useState(false);
+  const ShowModalChangeValue = (text) => setShowModel(text);
+  const [refreshing, setRefreshing] = React.useState(false);
   ///중분류 새로 선택하면 그에 맞게 값 나오게 -> 뒤에서 데이터 가져오기
   const PickMiddleChangeValue = (text) => {
     setPickMiddle(text);
@@ -104,12 +123,6 @@ const CategoryDetailScreen = (props) => {
       console.log(err);
     }
   };
-  const [smallList, setSmallList] = React.useState(
-    props.route.params.SmallCategory,
-  );
-  const [pickSmall, setPickSmall] = React.useState(
-    props.route.params.PickSmall,
-  );
   ///소분류 새로 선택하면 한바퀴 둘러
   const PickSmallChangeValue = (text) => {
     setPickSmall(text);
@@ -163,19 +176,6 @@ const CategoryDetailScreen = (props) => {
     }
     setViewWorkList(newArr);
   };
-
-  const [resultWorkList, setresultWorkList] = React.useState(
-    props.route.params.WorkList,
-  );
-  const [viewWorkList, setViewWorkList] = React.useState([]);
-
-  const [pickFilter, setPickFilter] = React.useState(false);
-  const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(
-    reduxState.loginDataCheck?.login?.location?.legalcode
-      ? '가까운 순 '
-      : false,
-  );
   //필터로 정렬값 변경되면 -> 지금보여지는것 값도 변경시키고
   const SortChangeValue = (text) => {
     setPickSort(text);
@@ -223,10 +223,6 @@ const CategoryDetailScreen = (props) => {
     }
     setViewWorkList(newArr);
   };
-  const [showModal, setShowModel] = React.useState(false);
-  const ShowModalChangeValue = (text) => setShowModel(text);
-
-  const [refreshing, setRefreshing] = React.useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setRefreshing(false);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -24,16 +24,20 @@ import {useSelector} from 'react-redux';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
-
+const tabbarBottomValue = [
+  {title: '드레스업', value: 'dressup'},
+  {title: '퍼포먼스', value: 'perfomance'},
+  {title: '편의장치', value: 'convenience'},
+  {title: '캠핑카', value: 'camping'},
+];
 const CategoryScreen = (props) => {
   const reduxState = useSelector((state) => state);
   //완료버튼이 중분류 소분류까지 가능. 대분류는 말고!
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-
-  const [searchModal, setSearchModal] = React.useState(false);
+  const [searchModal, setSearchModal] = useState(false);
   const SearchModalChangeValue = (text) => setSearchModal(text);
-  const [page, setPage] = React.useState(
+  const [page, setPage] = useState(
     props.route.params.Title == '드레스업'
       ? 'dressup'
       : props.route.params.Title == '퍼포먼스'
@@ -44,8 +48,8 @@ const CategoryScreen = (props) => {
       ? 'camping'
       : 'dressup',
   );
-  const [middleCategoryList, setMiddleCategoryList] = React.useState([]);
-  const [pickMiddleCategory, setPickMiddleCategory] = React.useState({});
+  const [middleCategoryList, setMiddleCategoryList] = useState([]);
+  const [pickMiddleCategory, setPickMiddleCategory] = useState({});
   const PickMiddleCategoryChangeValue = (object) =>
     setPickMiddleCategory(object);
   const get_middle_category_data = async (props) => {
@@ -89,8 +93,8 @@ const CategoryScreen = (props) => {
       alert('잠시 후에 다시해주세요');
     }
   };
-  const [smallCategoryList, setSmallCategoryList] = React.useState([]);
-  const [pickSmallCategory, setPickSmallCategory] = React.useState({});
+  const [smallCategoryList, setSmallCategoryList] = useState([]);
+  const [pickSmallCategory, setPickSmallCategory] = useState({});
   const PickSmallCategoryChangeValue = (object) => setPickSmallCategory(object);
   const get_small_category_data = async (props) => {
     try {
@@ -124,10 +128,10 @@ const CategoryScreen = (props) => {
       alert('잠시 후에 다시해주세요');
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     get_middle_category_data(props);
   }, [page]);
-  React.useEffect(() => {
+  useEffect(() => {
     get_small_category_data(props);
   }, [pickMiddleCategory]);
   const PageChangeValue = (text) => setPage(text);
@@ -201,12 +205,7 @@ const CategoryScreen = (props) => {
           Page={page}></Tabbar>
         <TabBarBottom
           from={'category'}
-          Title={[
-            {title: '드레스업', value: 'dressup'},
-            {title: '퍼포먼스', value: 'perfomance'},
-            {title: '편의장치', value: 'convenience'},
-            {title: '캠핑카', value: 'camping'},
-          ]}
+          Title={tabbarBottomValue}
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <View style={{flex: 1, flexDirection: 'row'}}>
@@ -258,7 +257,7 @@ const CategoryScreen = (props) => {
           {/*카테고리 - 소분류 리스트 및 선택 끝 */}
         </View>
       </SafeAreaView>
-      {searchModal ? (
+      {searchModal && (
         <AlertModal1
           type={'1-1'}
           ShowModalChangeValue={SearchModalChangeValue}
@@ -266,7 +265,7 @@ const CategoryScreen = (props) => {
           Title={"'대분류(상단메뉴) > 중분류(좌측메뉴)'까지 선택해주세요."}
           //BottomText={''}
           CenterButtonText={'확인'}></AlertModal1>
-      ) : null}
+      )}
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>
       ) : isLoadingAndModal === 2 ? (

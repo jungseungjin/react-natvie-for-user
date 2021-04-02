@@ -6,20 +6,11 @@ import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import FastImage from 'react-native-fast-image';
-
 const OwnersWork = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={1}
-      style={
-        props.From == 'home'
-          ? props.Index == 0
-            ? styles.home_view_index0
-            : styles.home_view
-          : props.Index == 0
-          ? styles.workVideo_view_index0
-          : styles.workVideo_view
-      }
+      style={touchStyle(props)}
       onPress={() => {
         if (props.From == 'home' || props.From == 'workVideo') {
           props.navigation.navigate('WorkVideo', {item: props.item});
@@ -41,17 +32,7 @@ const OwnersWork = (props) => {
         style={{
           justifyContent: 'center',
         }}>
-        <Text
-          style={{
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontWeight: '400',
-            fontSize: Font_normalize(14),
-            marginTop: Height_convert(11),
-            color: '#000000',
-            lineHeight: Height_convert(17),
-          }}>
-          {props.item.title}
-        </Text>
+        <Text style={styles.titleText}>{props.item.title}</Text>
       </View>
       <View
         style={{
@@ -71,18 +52,20 @@ const OwnersWork = (props) => {
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.stretch}></FastImage>
-        <Text
-          style={{
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontWeight: '400',
-            fontSize: Font_normalize(10),
-            color: '#000000',
-          }}>
-          {props.item.ownersname}
-        </Text>
+        <Text style={styles.ownersnameText}>{props.item.ownersname}</Text>
       </View>
     </TouchableOpacity>
   );
+};
+
+const touchStyle = (props) => {
+  if (props.From == 'home') {
+    if (props.Index == 0) return styles.home_view_index0;
+    return styles.home_view;
+  } else {
+    if (props.Index == 0) return styles.workVideo_view_index0;
+    return styles.workVideo_view;
+  }
 };
 const styles = StyleSheet.create({
   home_view: {
@@ -107,7 +90,20 @@ const styles = StyleSheet.create({
     borderRadius: Font_normalize(16),
     marginRight: Width_convert(3),
   },
-
+  titleText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '400',
+    fontSize: Font_normalize(14),
+    marginTop: Height_convert(11),
+    color: '#000000',
+    lineHeight: Height_convert(17),
+  },
+  ownersnameText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '400',
+    fontSize: Font_normalize(10),
+    color: '#000000',
+  },
   workVideo_view: {
     width: Width_convert(348),
     height: Height_convert(264),

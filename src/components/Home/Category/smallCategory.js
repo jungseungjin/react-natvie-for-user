@@ -1,5 +1,5 @@
-import React from 'react';
-import {TouchableOpacity, Text, View} from 'react-native';
+import React, {memo} from 'react';
+import {TouchableOpacity, Text, View, StyleSheet} from 'react-native';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Height_convert from '../../../components/Height_convert.js';
@@ -18,17 +18,10 @@ const SmallCategory = (props) => {
             }
           }}
           activeOpacity={1}
-          style={{
-            marginTop: Height_convert(20),
-            marginBottom: Height_convert(5),
-          }}>
+          style={styles.touch}>
           <Text
             style={[
-              {
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontWeight: '400',
-                fontSize: Font_normalize(14),
-              },
+              styles.text,
               props.PickSmallCategory == props.item
                 ? {color: '#946AEF'}
                 : {color: '#000000'},
@@ -40,4 +33,15 @@ const SmallCategory = (props) => {
     </>
   );
 };
-export default React.memo(SmallCategory);
+const styles = StyleSheet.create({
+  touch: {
+    marginTop: Height_convert(20),
+    marginBottom: Height_convert(5),
+  },
+  text: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '400',
+    fontSize: Font_normalize(14),
+  },
+});
+export default memo(SmallCategory);

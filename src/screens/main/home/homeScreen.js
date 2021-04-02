@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect, useCallback, memo} from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import {
   SafeAreaView,
@@ -9,8 +9,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  ShadowPropTypesIOS,
-  Platform,
   RefreshControl,
 } from 'react-native';
 import Height from '../../../components/Height.js';
@@ -20,11 +18,8 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import Swiper from 'react-native-swiper';
 import Width_convert from '../../../components/Width_convert';
-import Star from '../../../../assets/home/star.svg';
 import BraketUp from '../../../../assets/home/braket_up.svg';
 import BraketDown from '../../../../assets/home/braket_down.svg';
-import Vertical_bar from '../../../../assets/home/vertical_bar.svg';
-
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import Dot from '../../../components/Home/Swiper/dot.js';
 import ActiveDot from '../../../components/Home/Swiper/activeDot.js';
@@ -46,29 +41,54 @@ import AsyncStorage from '@react-native-community/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import FastImage from 'react-native-fast-image';
+
+const ButtonArray = [
+  {
+    Title: '드레스업',
+    Type: 'workDetail',
+    SubTitle: '내 차의 외장을 꾸미고 싶을 때',
+  },
+  {
+    Title: '퍼포먼스',
+    Type: 'workDetail',
+    SubTitle: '내 차의 성능을 높이고 싶을 때',
+  },
+  {
+    Title: '편의장치',
+    Type: 'workDetail',
+    SubTitle: '내 차의 풍부한 옵션이 필요할 때',
+  },
+  {
+    Title: '캠핑카 튜닝',
+    Type: 'workDetail',
+    SubTitle: '캠핑을 위한 튜닝을 하고 싶을 때',
+  },
+];
 const HomeScreen = (props) => {
   const reduxState = useSelector((state) => state);
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [pickButtonTitle, setPickButtonTitle] = React.useState('');
+  const [pickButtonTitle, setPickButtonTitle] = useState('');
   const PickButtonTitleChangeValue = (text) => setPickButtonTitle(text);
-  const [topSliderImageList, setTopSliderImageList] = React.useState([]);
-  const [ownersWorkVideoList, setOwnersWorkVideoList] = React.useState([]);
-  const [recentWorkList, setRecentWorkList] = React.useState([]);
-  const [showInformation, setShowInformation] = React.useState(false);
-  const [scrollChange, setScrollChange] = React.useState(0);
+  const [topSliderImageList, setTopSliderImageList] = useState([]);
+  const [ownersWorkVideoList, setOwnersWorkVideoList] = useState([]);
+  const [recentWorkList, setRecentWorkList] = useState([]);
+  const [showInformation, setShowInformation] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const scrollChange = useRef(0);
   const scrollRef = useRef();
-  const handleClick = () => {
-    if (scrollChange === 0) {
-      setScrollChange(1);
+  const handleClick = useCallback(() => {
+    if (scrollChange.current === 0) {
+      scrollChange.current = 1;
       return false;
     }
     scrollRef.current.scrollToEnd({
       animated: true,
     });
-  };
+  }, [scrollChange.current]);
   //홈화면 상단 슬라이드 이미지, 사장님의 작업영상 가져오기
   const get_homeData = () => {
     try {
@@ -153,29 +173,65 @@ const HomeScreen = (props) => {
       setIsLoadingAndModal(0);
     }
   };
-  React.useEffect(() => {
-    get_homeData();
-    get_recentWorkList();
-  }, []);
-  const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     get_homeData();
     get_recentWorkList();
     setRefreshing(false);
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
+    get_homeData();
+    get_recentWorkList();
     props.navigation.addListener('focus', () => {
       get_recentWorkList();
     });
   }, []);
+
+  const MakeButton = (element) => {
+    return (
+      <SettingButton
+        Title={element.Title}
+        Type={element.Type}
+        SubTitle={element.SubTitle}
+        ShowModalChangeValue={ShowModalChangeValue}
+        PickButtonTitleChangeValue={PickButtonTitleChangeValue}
+        navigation={props.navigation}></SettingButton>
+    );
+  };
+  const CarLocation = (reduxState) => {
+    const {iu_car, location} = reduxState.loginDataCheck.login;
+    if (
+      iu_car.length > 0 &&
+      location.legalcode &&
+      iu_car[0]?.pickModelDetail?.model_detail != undefined
+    ) {
+      return `${iu_car[0]?.pickModelDetail?.brand} ${iu_car[0]?.pickModelDetail?.model_detail} / ${location.legalcode}`;
+    } else if (
+      iu_car.length > 0 &&
+      iu_car[0]?.pickModelDetail?.model_detail != undefined
+    ) {
+      return `${iu_car[0]?.pickModelDetail?.brand} ${iu_car[0]?.pickModelDetail?.model_detail} / 지역`;
+    } else if (
+      iu_car.length > 0 &&
+      iu_car[0]?.pickModelDetail === 'all' &&
+      location.legalcode
+    ) {
+      return `모든 차종 / ${location.legalcode}`;
+    } else if (iu_car.length > 0 && iu_car[0]?.pickModelDetail === 'all') {
+      return `모든 차종 / 지역`;
+    } else if (location.legalcode) {
+      return `차종 / ${location.legalcode}`;
+    } else {
+      return `차종 / 지역`;
+    }
+  };
   return (
     <>
       <StatusBar
         barStyle={'dark-content'}
         backgroundColor={'#FFFFFF'}></StatusBar>
-      <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
+      <SafeAreaView style={styles.safeAreaView}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           ref={scrollRef}
@@ -188,11 +244,7 @@ const HomeScreen = (props) => {
           }>
           <Tabbar Title={'투닝'}></Tabbar>
           {/*상단 슬라이드 이미지 시작 */}
-          <View
-            style={{
-              height: Height_convert(211),
-              backgroundColor: '#FFFFFF',
-            }}>
+          <View style={styles.sliderView}>
             {topSliderImageList.length > 0 ? (
               <Swiper
                 style={{height: Height_convert(211)}}
@@ -208,146 +260,39 @@ const HomeScreen = (props) => {
                 ))}
               </Swiper>
             ) : (
-              <IsLoading></IsLoading>
+              defaultImage()
             )}
           </View>
           {/*상단 슬라이드 이미지 끝 */}
           {/*슬라이드 이미지 아래부터 튜닝샵검색까지 시작 */}
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(313),
-              borderBottomColor: 'rgba(219,219,219,0.35)',
-              borderBottomWidth: 1,
-            }}>
+          <View style={styles.settingView}>
             {/*슬라이드 이미지 밑 설정버튼 차종/지역 시작 */}
-            <View
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(18),
-                marginTop: Height_convert(32),
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(337),
-                  height: Height_convert(18),
-                  flexDirection: 'row',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                }}>
+            <View style={styles.settingViewBottomView}>
+              <View style={styles.settingViewBottomNestedView}>
                 <SettingButton
                   Title={'설정'}
                   Type={'car/location'}
                   navigation={props.navigation}></SettingButton>
                 <SettingButton
-                  Title={
-                    reduxState.loginDataCheck.login.iu_car.length > 0 &&
-                    reduxState.loginDataCheck.login.location.legalcode &&
-                    reduxState.loginDataCheck.login.iu_car[0]?.pickModelDetail
-                      ?.model_detail != undefined
-                      ? reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.brand +
-                        ' ' +
-                        reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.model_detail +
-                        ' / ' +
-                        reduxState.loginDataCheck.login.location.legalcode
-                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.model_detail != undefined
-                      ? reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.brand +
-                        ' ' +
-                        reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail?.model_detail +
-                        ' / 지역'
-                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail === 'all' &&
-                        reduxState.loginDataCheck.login.location.legalcode
-                      ? '모든 차종 / ' +
-                        reduxState.loginDataCheck.login.location.legalcode
-                      : reduxState.loginDataCheck.login.iu_car.length > 0 &&
-                        reduxState.loginDataCheck.login.iu_car[0]
-                          ?.pickModelDetail === 'all'
-                      ? '모든 차종 / 지역'
-                      : reduxState.loginDataCheck.login.location.legalcode
-                      ? '차종 / ' +
-                        reduxState.loginDataCheck.login.location.legalcode
-                      : '차종 / 지역'
-                  }
+                  Title={CarLocation(reduxState)}
                   Type={'car'}
                   navigation={props.navigation}></SettingButton>
               </View>
             </View>
             {/*슬라이드 이미지 밑 설정버튼 차종/지역 끝 */}
             {/*드레스업 퍼포먼스 버튼 시작 */}
-            <View
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(74),
-                marginTop: Height_convert(20),
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(337),
-                  height: Height_convert(74),
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <SettingButton
-                  Title={'드레스업'}
-                  Type={'workDetail'}
-                  SubTitle={'내 차의 외장을 꾸미고 싶을 때'}
-                  ShowModalChangeValue={ShowModalChangeValue}
-                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
-                  navigation={props.navigation}></SettingButton>
-                <SettingButton
-                  Title={'퍼포먼스'}
-                  Type={'workDetail'}
-                  SubTitle={'내 차의 성능을 높이고 싶을 때'}
-                  ShowModalChangeValue={ShowModalChangeValue}
-                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
-                  navigation={props.navigation}></SettingButton>
+            <View style={styles.buttonView}>
+              <View style={styles.selectButtonView}>
+                {MakeButton(ButtonArray[0])}
+                {MakeButton(ButtonArray[1])}
               </View>
             </View>
             {/*드레스업 퍼포먼스 버튼 끝 */}
             {/*편의장치 캠핑카 튜닝 버튼 시작 */}
-            <View
-              style={{
-                width: Width_convert(375),
-                height: Height_convert(74),
-                marginTop: Height_convert(12),
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: Width_convert(337),
-                  height: Height_convert(74),
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <SettingButton
-                  Title={'편의장치'}
-                  Type={'workDetail'}
-                  SubTitle={'내 차의 풍부한 옵션이 필요할 때'}
-                  ShowModalChangeValue={ShowModalChangeValue}
-                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
-                  navigation={props.navigation}></SettingButton>
-                <SettingButton
-                  Title={'캠핑카 튜닝'}
-                  Type={'workDetail'}
-                  SubTitle={'캠핑을 위한 튜닝을 하고 싶을 때'}
-                  ShowModalChangeValue={ShowModalChangeValue}
-                  PickButtonTitleChangeValue={PickButtonTitleChangeValue}
-                  navigation={props.navigation}></SettingButton>
+            <View style={styles.buttonView2}>
+              <View style={styles.selectButtonView}>
+                {MakeButton(ButtonArray[2])}
+                {MakeButton(ButtonArray[3])}
               </View>
             </View>
             {/*편의장치 캠핑카 튜닝 버튼 끝 */}
@@ -357,21 +302,8 @@ const HomeScreen = (props) => {
           </View>
           {/*슬라이드 이미지 아래부터 튜닝샵검색까지 끝 */}
           {/*사장님의 작업영상 시작 */}
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(335),
-              borderBottomColor: 'rgba(219,219,219,0.35)',
-              borderBottomWidth: 1,
-            }}>
-            <View
-              style={{
-                marginTop: Height_convert(32),
-                width: Width_convert(375),
-                height: Height_convert(20),
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+          <View style={styles.videoView}>
+            <View style={styles.sideButton}>
               <TabMore
                 Title={'사장님의 작업영상'}
                 navigation={props.navigation}></TabMore>
@@ -382,36 +314,22 @@ const HomeScreen = (props) => {
                 marginTop: Height_convert(16),
               }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {ownersWorkVideoList.length > 0
-                  ? ownersWorkVideoList.map((item) => (
-                      <OwnersWork
-                        key={item.url}
-                        From={'home'}
-                        item={item}
-                        navigation={props.navigation}
-                        Index={ownersWorkVideoList.indexOf(item)}></OwnersWork>
-                    ))
-                  : null}
+                {ownersWorkVideoList.length > 0 &&
+                  ownersWorkVideoList.map((item) => (
+                    <OwnersWork
+                      key={item.url}
+                      From={'home'}
+                      item={item}
+                      navigation={props.navigation}
+                      Index={ownersWorkVideoList.indexOf(item)}></OwnersWork>
+                  ))}
               </ScrollView>
             </View>
           </View>
           {/*사장님의 작업영상 끝 */}
           {/*최근 본 작업 시작 */}
-          <View
-            style={{
-              width: Width_convert(375),
-              height: Height_convert(285),
-              borderBottomColor: 'rgba(219,219,219,0.35)',
-              borderBottomWidth: 1,
-            }}>
-            <View
-              style={{
-                marginTop: Height_convert(32),
-                width: Width_convert(375),
-                height: Height_convert(20),
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+          <View style={styles.recentView}>
+            <View style={styles.sideButton}>
               <TabMore
                 Title={'최근 본 작업'}
                 navigation={props.navigation}></TabMore>
@@ -420,11 +338,7 @@ const HomeScreen = (props) => {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(185),
-                  marginTop: Height_convert(16),
-                }}>
+                style={styles.recentWorkListScroll}>
                 {recentWorkList.map((item) => (
                   <RecentWork
                     key={item.store_thumbnail[0]}
@@ -434,106 +348,38 @@ const HomeScreen = (props) => {
                 ))}
               </ScrollView>
             ) : (
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(185),
-                  marginTop: Height_convert(16),
-                  marginLeft: Width_convert(19),
-                }}>
-                <View
-                  style={{
-                    width: Width_convert(160),
-                    height: Height_convert(90),
-                    borderRadius: Font_normalize(6),
-                    borderColor: '#DBDBDB',
-                    borderTopWidth: 1,
-                    borderBottomWidth: 1,
-                    borderRightWidth: 1,
-                    borderLeftWidth: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumSqureRegular || null,
-                      fontSize: Font_normalize(10),
-                      fontWeight: '700',
-                      color: '#C0C0C0',
-                    }}>
-                    최근 본 작업이 없습니다.
-                  </Text>
-                </View>
-              </View>
+              recentDefault()
             )}
           </View>
           {/*최근 본 작업 끝 */}
           {/*투닝 정보 시작 */}
           <View
             style={[
-              {
-                width: Width_convert(375),
-                height: Height_convert(70),
-                borderBottomColor: 'rgba(219,219,219,0.35)',
-                borderBottomWidth: 1,
-              },
-              showInformation
-                ? {
-                    height: Height_convert(155),
-                  }
-                : {
-                    height: Height_convert(70),
-                  },
+              styles.tuuningInfoView,
+              tuuningInfoStyle(showInformation, 'view'),
             ]}>
             <View
               style={[
-                {
-                  marginLeft: Width_convert(12),
-                  marginTop: Height_convert(11),
-                  width: Width_convert(351),
-                  height: Height_convert(60),
-                },
-                showInformation
-                  ? {
-                      height: Height_convert(144),
-                    }
-                  : {
-                      height: Height_convert(60),
-                    },
+                styles.tuuningInfoNestedView,
+                tuuningInfoStyle(showInformation, 'nestedView'),
               ]}>
               <TouchableOpacity
                 activeOpacity={1}
                 hitSlop={{top: 10, bottom: 5, left: 10, right: 10}}
                 onPress={() => {
                   setShowInformation(!showInformation);
-                  if (showInformation) {
-                    //handleClick();
-                  }
                 }}
-                style={{
-                  flexDirection: 'row',
-
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontWeight: '700',
-                    fontSize: Font_normalize(9),
-                    color: '#3F3F3F',
-                    marginRight: Width_convert(5),
-                  }}>
-                  투닝
-                </Text>
+                style={styles.tuuningInfoNestedViewTouch}>
+                <Text style={styles.tuuningInfoNestedViewText}>투닝</Text>
                 {showInformation ? (
                   <BraketDown></BraketDown>
                 ) : (
                   <BraketUp></BraketUp>
                 )}
               </TouchableOpacity>
-              {showInformation ? (
+              {showInformation && (
                 <BottomInformationOpen></BottomInformationOpen>
-              ) : null}
+              )}
               <BottomInformationDefault
                 navigation={props.navigation}></BottomInformationDefault>
             </View>
@@ -541,7 +387,6 @@ const HomeScreen = (props) => {
           {/*투닝 정보 끝*/}
         </ScrollView>
       </SafeAreaView>
-
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>
       ) : isLoadingAndModal === 2 ? (
@@ -551,7 +396,7 @@ const HomeScreen = (props) => {
         <NormalErrModal
           ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-      {showModal ? (
+      {showModal && (
         <AlertModal2
           type={2}
           ShowModalChangeValue={ShowModalChangeValue}
@@ -563,9 +408,178 @@ const HomeScreen = (props) => {
           BottomText={'설정 하러가기'}
           LeftButtonTitle={'아니오'}
           RightButtonTitle={'네'}></AlertModal2>
-      ) : null}
+      )}
     </>
   );
 };
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  safeAreaView: {
+    backgroundColor: 'white',
+    flex: 1,
+  },
+  sliderView: {
+    height: Height_convert(211),
+    backgroundColor: '#FFFFFF',
+  },
+  fastImage: {
+    width: Width_convert(375),
+    height: Width_convert(211),
+  },
+  settingView: {
+    width: Width_convert(375),
+    height: Height_convert(313),
+    borderBottomColor: 'rgba(219,219,219,0.35)',
+    borderBottomWidth: 1,
+  },
+  settingViewBottomView: {
+    width: Width_convert(375),
+    height: Height_convert(18),
+    marginTop: Height_convert(32),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingViewBottomNestedView: {
+    width: Width_convert(337),
+    height: Height_convert(18),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  buttonView: {
+    width: Width_convert(375),
+    height: Height_convert(74),
+    marginTop: Height_convert(12),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonView2: {
+    width: Width_convert(375),
+    height: Height_convert(74),
+    marginTop: Height_convert(12),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectButtonView: {
+    width: Width_convert(337),
+    height: Height_convert(74),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  videoView: {
+    width: Width_convert(375),
+    height: Height_convert(335),
+    borderBottomColor: 'rgba(219,219,219,0.35)',
+    borderBottomWidth: 1,
+  },
+  recentView: {
+    width: Width_convert(375),
+    height: Height_convert(285),
+    borderBottomColor: 'rgba(219,219,219,0.35)',
+    borderBottomWidth: 1,
+  },
+  sideButton: {
+    marginTop: Height_convert(32),
+    width: Width_convert(375),
+    height: Height_convert(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  recentWorkListScroll: {
+    width: Width_convert(375),
+    height: Height_convert(185),
+    marginTop: Height_convert(16),
+  },
+  recentViewDefault: {
+    width: Width_convert(375),
+    height: Height_convert(185),
+    marginTop: Height_convert(16),
+    marginLeft: Width_convert(19),
+  },
+  recentNestedViewDefault: {
+    width: Width_convert(160),
+    height: Height_convert(90),
+    borderRadius: Font_normalize(6),
+    borderColor: '#DBDBDB',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  recentNestedViewDefaultText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(10),
+    fontWeight: '700',
+    color: '#C0C0C0',
+  },
+  tuuningInfoView: {
+    width: Width_convert(375),
+    height: Height_convert(70),
+    borderBottomColor: 'rgba(219,219,219,0.35)',
+    borderBottomWidth: 1,
+  },
+  tuuningInfoNestedView: {
+    marginLeft: Width_convert(12),
+    marginTop: Height_convert(11),
+    width: Width_convert(351),
+    height: Height_convert(60),
+  },
+  tuuningInfoNestedViewTouch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tuuningInfoNestedViewText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '700',
+    fontSize: Font_normalize(9),
+    color: '#3F3F3F',
+    marginRight: Width_convert(5),
+  },
+});
+const tuuningInfoStyle = (showInformation, Type) => {
+  if (Type === 'view') {
+    return showInformation
+      ? {
+          height: Height_convert(155),
+        }
+      : {
+          height: Height_convert(70),
+        };
+  }
+  return showInformation
+    ? {
+        height: Height_convert(144),
+      }
+    : {
+        height: Height_convert(60),
+      };
+};
+
+const defaultImage = () => {
+  return (
+    <FastImage
+      style={styles.fastImage}
+      source={{
+        uri:
+          'https://motory.s3.ap-northeast-2.amazonaws.com/homeBanner/banner1.png',
+        headers: {Authorization: 'someAuthToken'},
+        priority: FastImage.priority.normal,
+      }}
+      resizeMode={FastImage.resizeMode.stretch}></FastImage>
+  );
+};
+
+const recentDefault = () => {
+  return (
+    <View style={styles.recentViewDefault}>
+      <View style={styles.recentNestedViewDefault}>
+        <Text style={styles.recentNestedViewDefaultText}>
+          최근 본 작업이 없습니다.
+        </Text>
+      </View>
+    </View>
+  );
+};
 export default HomeScreen;
