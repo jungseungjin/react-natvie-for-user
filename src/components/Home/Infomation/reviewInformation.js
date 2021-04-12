@@ -1,5 +1,12 @@
-import React from 'react';
-import {View, Text, FlatList, TouchableOpacity, ScrollView} from 'react-native';
+import React, {memo} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
@@ -10,7 +17,89 @@ import StarGrey from '../../../../assets/home/star_grey.svg';
 import moment from 'moment';
 import 'moment/locale/ko';
 import ImageView from 'react-native-image-viewing';
-
+const styles = StyleSheet.create({
+  view: {
+    minHeight: Height_convert(812),
+  },
+  viewNested: {
+    marginTop: Height_convert(20),
+    width: Width_convert(375),
+    height: Height_convert(161 - 94),
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    flexDirection: 'row',
+  },
+  viewNestedNested: {
+    justifyContent: 'center',
+    marginBottom: Height_convert(12),
+  },
+  viewText: {
+    marginLeft: Width_convert(19),
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '700',
+    fontSize: Font_normalize(20),
+    color: '#000000',
+    textAlign: 'right',
+    lineHeight: Font_normalize(23),
+    marginRight: Width_convert(8),
+  },
+  viewScore: {
+    marginBottom: Height_convert(12),
+  },
+  viewScoreText: {
+    borderRadius: Font_normalize(4),
+    overflow: 'hidden',
+    backgroundColor: '#FFC187',
+    padding: Width_convert(10),
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontWeight: '700',
+    fontSize: Font_normalize(22),
+    color: '#FFFFFF',
+  },
+  itemView: {
+    width: Width_convert(375),
+    paddingBottom: Height_convert(35),
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  itemViewNested: {
+    marginTop: Height_convert(17),
+    marginLeft: Width_convert(16),
+    flexDirection: 'row',
+  },
+  itemViewNestedNested: {
+    width: Width_convert(34),
+    height: Width_convert(34),
+    marginRight: Width_convert(7),
+  },
+  itemFastImage: {
+    width: Width_convert(34),
+    height: Width_convert(34),
+    borderRadius: Width_convert(34),
+  },
+  itemText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(14),
+    fontWeight: '700',
+    color: '#000000',
+  },
+  starView: {
+    flexDirection: 'row',
+    marginTop: Height_convert(4),
+  },
+  starText: {
+    fontFamily: Fonts?.NanumGothicRegular || null,
+    fontWeight: '400',
+    fontSize: Font_normalize(9),
+    color: '#8D8D8D',
+  },
+  starTouchText: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(9),
+    fontWeight: '700',
+    color: '#A1A1A1',
+  },
+});
 const ReviewInformation = (props) => {
   moment.locale('ko');
 
@@ -88,54 +177,16 @@ const ReviewInformation = (props) => {
     return newArr;
   };
   return (
-    <View
-      style={{
-        minHeight: Height_convert(812),
-      }}>
-      <View
-        style={{
-          marginTop: Height_convert(20),
-          width: Width_convert(375),
-          height: Height_convert(161 - 94),
-          borderBottomWidth: 1,
-          borderBottomColor: '#EEEEEE',
-          flexDirection: 'row',
-        }}>
-        <View
-          style={{
-            justifyContent: 'center',
-            marginBottom: Height_convert(12),
-          }}>
-          <Text
-            style={{
-              marginLeft: Width_convert(19),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontWeight: '700',
-              fontSize: Font_normalize(20),
-              color: '#000000',
-              textAlign: 'right',
-              lineHeight: Font_normalize(23),
-              marginRight: Width_convert(8),
-            }}>
+    <View style={styles.view}>
+      <View style={styles.viewNested}>
+        <View style={styles.viewNestedNested}>
+          <Text style={styles.viewText}>
             작업후기{'\n'}
             {props.item.length}개
           </Text>
         </View>
-        <View
-          style={{
-            marginBottom: Height_convert(12),
-          }}>
-          <Text
-            style={{
-              borderRadius: Font_normalize(4),
-              overflow: 'hidden',
-              backgroundColor: '#FFC187',
-              padding: Width_convert(10),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontWeight: '700',
-              fontSize: Font_normalize(22),
-              color: '#FFFFFF',
-            }}>
+        <View style={styles.viewScore}>
+          <Text style={styles.viewScoreText}>
             {props.reviewGrade
               ? props.reviewGrade % 1 === 0
                 ? props.reviewGrade + '.0'
@@ -144,143 +195,7 @@ const ReviewInformation = (props) => {
           </Text>
         </View>
       </View>
-      {props.item.map((item) => (
-        <View
-          key={item._id}
-          style={{
-            width: Width_convert(375),
-            paddingBottom: Height_convert(35),
-            borderBottomWidth: 1,
-            borderBottomColor: '#EEEEEE',
-          }}>
-          <View
-            style={{
-              marginTop: Height_convert(17),
-              marginLeft: Width_convert(16),
-              flexDirection: 'row',
-            }}>
-            <View
-              style={{
-                width: Width_convert(34),
-                height: Width_convert(34),
-                marginRight: Width_convert(7),
-              }}>
-              <FastImage
-                style={{
-                  width: Width_convert(34),
-                  height: Width_convert(34),
-                  borderRadius: Width_convert(34),
-                }}
-                source={{
-                  uri: item.info_user[0].review_user_iu_image,
-                  //headers: {Authorization: 'someAuthToken'},
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.stretch}></FastImage>
-            </View>
-            <View>
-              <View>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(14),
-                    fontWeight: '700',
-                    color: '#000000',
-                  }}>
-                  {item.info_user[0].iu_nickname}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: Height_convert(4),
-                }}>
-                {StarRender(item.review_reply_grade)}
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumGothicRegular || null,
-                    fontWeight: '400',
-                    fontSize: Font_normalize(9),
-                    color: '#8D8D8D',
-                  }}>
-                  {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
-                    .add(9, 'h')
-                    .fromNow()}
-                </Text>
-              </View>
-              <TouchableOpacity
-                activeOpacity={1}
-                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                onPress={() => {
-                  getDataAndNavigate('work', item._id);
-                }}
-                style={{marginTop: Height_convert(8)}}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(9),
-                    fontWeight: '700',
-                    color: '#A1A1A1',
-                  }}>
-                  {item.store_work[0].store_work_name}
-                </Text>
-              </TouchableOpacity>
-              <View
-                style={{
-                  width: Width_convert(265),
-                  marginTop: Height_convert(8),
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(12),
-                    fontWeight: '400',
-                    color: '#000000',
-                  }}>
-                  {item.review_reply_contents}
-                </Text>
-              </View>
-              <ScrollView
-                style={{
-                  marginTop: Height_convert(21),
-                  minWidth: Width_convert(375),
-                }}
-                horizontal
-                showsHorizontalScrollIndicator={false}>
-                {item.review_reply_image.map((imageItem) =>
-                  typeof imageItem == 'number' ? null : (
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                      onPress={() => {
-                        setIsVisible(true);
-                        setVisibleImage(item.review_reply_image);
-                        setVisibleIndex(
-                          item.review_reply_image.indexOf(imageItem),
-                        );
-                      }}
-                      key={imageItem}
-                      style={{marginRight: Width_convert(7)}}>
-                      <FastImage
-                        style={{
-                          width: Width_convert(134),
-                          height: Width_convert(88),
-                          borderRadius: Width_convert(3),
-                        }}
-                        source={{
-                          uri: imageItem,
-                          //headers: {Authorization: 'someAuthToken'},
-                          priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                    </TouchableOpacity>
-                  ),
-                )}
-              </ScrollView>
-            </View>
-          </View>
-        </View>
-      ))}
+      {props.item.map((item) => propsItem(item))}
       <ImageView
         images={getImageSource(visibleImage)}
         imageIndex={visibleIndex}
@@ -290,4 +205,97 @@ const ReviewInformation = (props) => {
     </View>
   );
 };
-export default ReviewInformation;
+export default memo(ReviewInformation);
+
+const propsItem = (item) => {
+  return (
+    <View key={item._id} style={styles.itemView}>
+      <View style={styles.itemViewNested}>
+        <View style={styles.itemViewNestedNested}>
+          <FastImage
+            style={styles.itemFastImage}
+            source={{
+              uri: item.info_user[0].review_user_iu_image,
+              //headers: {Authorization: 'someAuthToken'},
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.stretch}></FastImage>
+        </View>
+        <View>
+          <View>
+            <Text style={styles.itemText}>{item.info_user[0].iu_nickname}</Text>
+          </View>
+          <View style={styles.starView}>
+            {StarRender(item.review_reply_grade)}
+            <Text style={styles.starText}>
+              {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
+                .add(9, 'h')
+                .fromNow()}
+            </Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={1}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+            onPress={() => {
+              getDataAndNavigate('work', item._id);
+            }}
+            style={{marginTop: Height_convert(8)}}>
+            <Text style={styles.starTouchText}>
+              {item.store_work[0].store_work_name}
+            </Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              width: Width_convert(265),
+              marginTop: Height_convert(8),
+            }}>
+            <Text
+              style={{
+                fontFamily: Fonts?.NanumSqureRegular || null,
+                fontSize: Font_normalize(12),
+                fontWeight: '400',
+                color: '#000000',
+              }}>
+              {item.review_reply_contents}
+            </Text>
+          </View>
+          <ScrollView
+            style={{
+              marginTop: Height_convert(21),
+              minWidth: Width_convert(375),
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}>
+            {item.review_reply_image.map((imageItem) =>
+              typeof imageItem === 'number' ? null : (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                  onPress={() => {
+                    setIsVisible(true);
+                    setVisibleImage(item.review_reply_image);
+                    setVisibleIndex(item.review_reply_image.indexOf(imageItem));
+                  }}
+                  key={imageItem}
+                  style={{marginRight: Width_convert(7)}}>
+                  <FastImage
+                    style={{
+                      width: Width_convert(134),
+                      height: Width_convert(88),
+                      borderRadius: Width_convert(3),
+                    }}
+                    source={{
+                      uri: imageItem,
+                      //headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                </TouchableOpacity>
+              ),
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    </View>
+  );
+};

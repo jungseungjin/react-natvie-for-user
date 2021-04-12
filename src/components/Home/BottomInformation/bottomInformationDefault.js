@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Height_convert from '../../Width_convert.js';
 import Width_convert from '../../Width_convert.js';
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
     marginRight: Width_convert(6),
   },
 });
-export default BottomInformationDefault;
+export default memo(BottomInformationDefault);

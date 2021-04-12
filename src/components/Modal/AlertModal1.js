@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import Modal from 'react-native-modal';
 import {
   SafeAreaView,
@@ -6,27 +6,102 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  StyleSheet,
   Platform,
 } from 'react-native';
 import Width_convert from '../Width_convert.js';
 import Height_convert from '../Height_convert.js';
 import Fonts from '../Fonts.js';
 import Font_normalize from '../Font_normalize.js';
-
+const styles = StyleSheet.create({
+  view: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(32, 32, 32, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  viewNested: (type) => {
+    return {
+      width: Width_convert(331),
+      height:
+        type === 1 || type === '1-1'
+          ? Width_convert(158)
+          : type === 2
+          ? Width_convert(231)
+          : type === 3 && Width_convert(185),
+    };
+  },
+  viewNestedNested: (type) => {
+    return {
+      borderTopRightRadius: Font_normalize(7),
+      borderTopLeftRadius: Font_normalize(7),
+      width: Width_convert(331),
+      height: Width_convert(102),
+      backgroundColor: '#FFFFFF',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderBottomColor: '#DBDBDB',
+      borderBottomWidth: 1,
+      height:
+        type === 1 ? Width_convert(102) : type === 2 && Width_convert(175),
+    };
+  },
+  viewNestedNestedText: (type) => {
+    return {
+      fontFamily: Fonts?.NanumGothicRegular || null,
+      fontWeight: '400',
+      fontSize: Font_normalize(16),
+      color: '#000000',
+      textAlign: type === 1 && 'center',
+      width:
+        type === 2 || type === 3
+          ? Width_convert(289)
+          : type === '1-1' && Width_convert(289),
+    };
+  },
+  touch: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#946AEF',
+    marginTop: Height_convert(14),
+    marginRight: Width_convert(27),
+    marginLeft: 'auto',
+  },
+  text: {
+    fontFamily: Fonts?.NanumGothicRegular || null,
+    fontSize: Font_normalize(12),
+    fontWeight: '400',
+    color: '#946AEF',
+  },
+  touch2: {
+    borderBottomRightRadius: Font_normalize(7),
+    borderBottomLeftRadius: Font_normalize(7),
+    width: Width_convert(331),
+    height: Width_convert(56),
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  text2: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(16),
+    fontWeight: '700',
+    color: '#53A9F8',
+  },
+});
 const AlertModal1 = (props) => {
   return (
     <>
-      <View
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(32, 32, 32, 0.3)',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+      <View style={styles.view}>
         <StatusBar
           barStyle={'light-content'}
           backgroundColor={'rgba(32, 32, 32, 0.5)'}></StatusBar>
@@ -43,80 +118,15 @@ const AlertModal1 = (props) => {
           }}
           backdropColor={'#202020'}
           backdropOpacity={0.3}
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <View
-            style={[
-              {
-                width: Width_convert(331),
-              },
-              props.type === 1 || props.type === '1-1'
-                ? {
-                    height: Width_convert(158),
-                  }
-                : props.type === 2
-                ? {
-                    height: Width_convert(231),
-                  }
-                : props.type === 3
-                ? {
-                    height: Width_convert(185),
-                  }
-                : {},
-            ]}>
-            <View
-              style={[
-                {
-                  borderTopRightRadius: Font_normalize(7),
-                  borderTopLeftRadius: Font_normalize(7),
-                  width: Width_convert(331),
-                  height: Width_convert(102),
-                  backgroundColor: '#FFFFFF',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderBottomColor: '#DBDBDB',
-                  borderBottomWidth: 1,
-                },
-                props.type === 1
-                  ? {
-                      height: Width_convert(102),
-                    }
-                  : props.type === 2
-                  ? {
-                      height: Width_convert(175),
-                    }
-                  : {},
-              ]}>
+          style={styles.modal}>
+          <View style={styles.viewNested(props.type)}>
+            <View style={styles.viewNestedNested(props.type)}>
               <View>
-                <Text
-                  style={[
-                    {
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontWeight: '400',
-                      fontSize: Font_normalize(16),
-                      color: '#000000',
-                    },
-                    props.type === 1
-                      ? {
-                          textAlign: 'center',
-                        }
-                      : props.type === 2 || props.type === 3
-                      ? {
-                          width: Width_convert(289),
-                        }
-                      : props.type === '1-1'
-                      ? {
-                          width: Width_convert(289),
-                        }
-                      : {},
-                  ]}>
+                <Text style={styles.viewNestedNestedText(props.type)}>
                   {props.Title}
                 </Text>
               </View>
-              {props.BottomText ? (
+              {props.BottomText && (
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
@@ -131,37 +141,14 @@ const AlertModal1 = (props) => {
                       props.navigation.navigate('Setting');
                     }
                   }}
-                  style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#946AEF',
-                    marginTop: Height_convert(14),
-                    marginRight: Width_convert(27),
-                    marginLeft: 'auto',
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: Fonts?.NanumGothicRegular || null,
-                      fontSize: Font_normalize(12),
-                      fontWeight: '400',
-                      color: '#946AEF',
-                    }}>
-                    {props.BottomText}
-                  </Text>
+                  style={styles.touch}>
+                  <Text style={styles.text}>{props.BottomText}</Text>
                 </TouchableOpacity>
-              ) : null}
+              )}
             </View>
             <TouchableOpacity
               activeOpacity={1}
-              style={{
-                borderBottomRightRadius: Font_normalize(7),
-                borderBottomLeftRadius: Font_normalize(7),
-                width: Width_convert(331),
-                height: Width_convert(56),
-                backgroundColor: '#FFFFFF',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 9999,
-              }}
+              style={styles.touch2}
               onPress={() => {
                 if (
                   props.Title ==
@@ -183,17 +170,7 @@ const AlertModal1 = (props) => {
                   props.ShowModalChangeValue(false);
                 }
               }}>
-              <Text
-                style={[
-                  {
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#53A9F8',
-                  },
-                ]}>
-                {props.CenterButtonText}
-              </Text>
+              <Text style={styles.text2}>{props.CenterButtonText}</Text>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -202,4 +179,4 @@ const AlertModal1 = (props) => {
   );
 };
 
-export default AlertModal1;
+export default memo(AlertModal1);

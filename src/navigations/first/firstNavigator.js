@@ -169,6 +169,11 @@ const FirstNavigator = (props) => {
       }
     } catch (error) {
       console.log("Keychain couldn't be accessed!", error);
+    } finally {
+      setIsLoadingAndModal(0);
+      setTimeout(() => {
+        RNSplashScreen.hide();
+      }, 1000);
     }
   };
   //토큰값 가져오기 및 저장.  알림이 허용된 상태면 디바이스정보도 저장함. 알림이 거절되면 디바이스정보,토큰값이 저장되지 않음
@@ -261,10 +266,6 @@ const FirstNavigator = (props) => {
     getData();
     handlePushToken();
     AutoLogin();
-    setIsLoadingAndModal(0);
-    setTimeout(() => {
-      RNSplashScreen.hide();
-    }, 1500);
   }, []);
   React.useEffect(() => {
     setIsLoadingAndModal(1);
@@ -275,9 +276,6 @@ const FirstNavigator = (props) => {
     setIsLoadingAndModal(0);
   }, [reduxState.landingCheck.landingCheck]);
 
-  // {landingCheck ? (      ) : (
-  //   <LandingNavigator></LandingNavigator>
-  // )}
   return (
     <NavigationContainer>
       <TabNavigator></TabNavigator>

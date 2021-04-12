@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
   View,
   Text,
@@ -425,4 +425,4 @@ function mapDispatchToProps(dispatch) {
     },
   };
 }
-export default connect(mapStateToProps, mapDispatchToProps)(TabBar);
+export default connect(mapStateToProps, mapDispatchToProps)(memo(TabBar));

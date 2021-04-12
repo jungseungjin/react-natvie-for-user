@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, Text, View, FlatList} from 'react-native';
+import {TouchableOpacity, Text, View, FlatList, StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Fonts from '../../Fonts';
 import Font_normalize from '../../Font_normalize.js';
@@ -12,7 +12,37 @@ import Domain from '../../../../key/Domain.js';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 import IsLoading from '../../../components/ActivityIndicator';
-
+const styles = StyleSheet.create({
+  dot: {
+    marginRight: Width_convert(9),
+  },
+  touch: (props) => {
+    return {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: Width_convert(31),
+      marginTop: props.index === 0 ? Height_convert(28) : Height_convert(19),
+    };
+  },
+  text: (props) => {
+    return {
+      fontFamily: Fonts?.NanumSqureRegular || null,
+      fontWeight: '700',
+      fontSize: Font_normalize(15),
+      color:
+        props?.PickModelValue?.model === props.item.model
+          ? '#946AEF'
+          : '#000000',
+    };
+  },
+  view: {
+    width: Width_convert(199),
+    borderRadius: Font_normalize(4),
+    backgroundColor: '#F2EEFA',
+    marginLeft: Width_convert(40),
+    marginTop: Height_convert(5),
+  },
+});
 const CarSettingModel = (props) => {
   const [modelDetailList, setModelDetailList] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -50,7 +80,7 @@ const CarSettingModel = (props) => {
     }
   };
   React.useEffect(() => {
-    if (props?.PickModelValue?.model == props?.item?.model) {
+    if (props?.PickModelValue?.model === props?.item?.model) {
       get_model_detail_data(props);
     }
   }, [props?.PickModelValue]);
@@ -63,48 +93,16 @@ const CarSettingModel = (props) => {
             props.PickModelChangeValue(props.item);
             props.PickModelDetailChangeValue({});
           }}
-          style={[
-            {
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginLeft: Width_convert(31),
-            },
-            props.index == 0
-              ? {marginTop: Height_convert(28)}
-              : {marginTop: Height_convert(19)},
-          ]}>
-          {props?.PickModelValue?.model == props.item.model ? (
-            <Purple_dot style={{marginRight: Width_convert(9)}}></Purple_dot>
+          style={styles.touch(props)}>
+          {props?.PickModelValue?.model === props.item.model ? (
+            <Purple_dot style={styles.dot}></Purple_dot>
           ) : (
-            <Black_dot style={{marginRight: Width_convert(9)}}></Black_dot>
+            <Black_dot style={styles.dot}></Black_dot>
           )}
-          <Text
-            style={[
-              {
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontWeight: '700',
-                fontSize: Font_normalize(15),
-              },
-              props?.PickModelValue?.model == props.item.model
-                ? {
-                    color: '#946AEF',
-                  }
-                : {
-                    color: '#000000',
-                  },
-            ]}>
-            {props.item.model}
-          </Text>
+          <Text style={styles.text(props)}>{props.item.model}</Text>
         </TouchableOpacity>
-        {props?.PickModelValue?.model == props.item.model ? (
-          <View
-            style={{
-              width: Width_convert(199),
-              borderRadius: Font_normalize(4),
-              backgroundColor: '#F2EEFA',
-              marginLeft: Width_convert(40),
-              marginTop: Height_convert(5),
-            }}>
+        {props?.PickModelValue?.model === props.item.model && (
+          <View style={styles.view}>
             <FlatList
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
@@ -118,9 +116,8 @@ const CarSettingModel = (props) => {
                   PageChangeValue={props.PageChangeValue}
                   from={props.from}
                   PickModelDetail={
-                    props.PickModelDetail?._id == item?._id
-                      ? props.PickModelDetail
-                      : null
+                    props.PickModelDetail?._id === item?._id &&
+                    props.PickModelDetail
                   }
                   PickModelDetailChangeValue={
                     props.PickModelDetailChangeValue
@@ -128,7 +125,7 @@ const CarSettingModel = (props) => {
               )}
               keyExtractor={(item) => String(item._id)}></FlatList>
           </View>
-        ) : null}
+        )}
       </View>
     </>
   );

@@ -236,9 +236,7 @@ const HomeScreen = (props) => {
           showsVerticalScrollIndicator={false}
           ref={scrollRef}
           alwaysBounceVertical={false}
-          onContentSizeChange={() => {
-            handleClick();
-          }}
+          onContentSizeChange={() => handleClick()}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
@@ -366,9 +364,7 @@ const HomeScreen = (props) => {
               <TouchableOpacity
                 activeOpacity={1}
                 hitSlop={{top: 10, bottom: 5, left: 10, right: 10}}
-                onPress={() => {
-                  setShowInformation(!showInformation);
-                }}
+                onPress={() => setShowInformation(!showInformation)}
                 style={styles.tuuningInfoNestedViewTouch}>
                 <Text style={styles.tuuningInfoNestedViewText}>투닝</Text>
                 {showInformation ? (

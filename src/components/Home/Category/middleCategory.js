@@ -13,29 +13,24 @@ const MiddleCategory = (props) => {
         onPress={() => {
           props.PickMiddleCategoryChangeValue(props.item);
         }}
-        style={[
-          styles.touch,
-          props.PickMiddleCategory == props.item
-            ? {
-                backgroundColor: '#DBDBDB',
-              }
-            : {
-                backgroundColor: '#F1F1F1',
-              },
-        ]}>
+        style={styles.touch(props)}>
         <Text style={styles.text}>{props.item.work_sub_type_name}</Text>
       </TouchableOpacity>
     </>
   );
 };
 const styles = StyleSheet.create({
-  touch: {
-    width: Width_convert(125),
-    height: Width_convert(52),
-    borderBottomColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  touch: (props) => {
+    return {
+      width: Width_convert(125),
+      height: Width_convert(52),
+      borderBottomColor: '#FFFFFF',
+      borderBottomWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor:
+        props.PickMiddleCategory === props.item ? '#DBDBDB' : '#F1F1F1',
+    };
   },
   text: {
     fontFamily: Fonts?.NanumSqureRegular || null,

@@ -12,16 +12,12 @@ const OwnersWork = (props) => {
       activeOpacity={1}
       style={touchStyle(props)}
       onPress={() => {
-        if (props.From == 'home' || props.From == 'workVideo') {
+        if (props.From === 'home' || props.From === 'workVideo') {
           props.navigation.navigate('WorkVideo', {item: props.item});
         }
       }}>
       <FastImage
-        style={
-          props.From == 'home'
-            ? styles.home_fastImage
-            : styles.workVideo_fastImage
-        }
+        style={FastImageStyle(props.From, 1)}
         source={{
           uri: props.item.url,
           headers: {Authorization: 'someAuthToken'},
@@ -34,18 +30,9 @@ const OwnersWork = (props) => {
         }}>
         <Text style={styles.titleText}>{props.item.title}</Text>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: Height_convert(10),
-          alignItems: 'center',
-        }}>
+      <View style={styles.view}>
         <FastImage
-          style={
-            props.From == 'home'
-              ? styles.home_fastImage2
-              : styles.workVideo_fastImage2
-          }
+          style={FastImageStyle(props.From, 2)}
           source={{
             uri: props.item.ownersImage,
             headers: {Authorization: 'someAuthToken'},
@@ -57,7 +44,18 @@ const OwnersWork = (props) => {
     </TouchableOpacity>
   );
 };
-
+const FastImageStyle = (From, Number) => {
+  if (Number === 1) {
+    if (From === 'home') {
+      return styles.home_fastImage;
+    }
+    return styles.workVideo_fastImage;
+  }
+  if (From === 'home') {
+    return styles.home_fastImage2;
+  }
+  return styles.workVideo_fastImage2;
+};
 const touchStyle = (props) => {
   if (props.From == 'home') {
     if (props.Index == 0) return styles.home_view_index0;
@@ -129,6 +127,11 @@ const styles = StyleSheet.create({
     height: Width_convert(16),
     borderRadius: Font_normalize(16),
     marginRight: Width_convert(3),
+  },
+  view: {
+    flexDirection: 'row',
+    marginTop: Height_convert(10),
+    alignItems: 'center',
   },
 });
 OwnersWork.propTypes = {};

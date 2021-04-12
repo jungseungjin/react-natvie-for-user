@@ -1,23 +1,39 @@
-import React from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
+import React, {memo} from 'react';
+import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import Height_convert from '../../Height_convert.js';
 import Width_convert from '../../Width_convert.js';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
 import PropTypes from 'prop-types';
-
 import {useSelector} from 'react-redux';
+
+const styles = StyleSheet.create({
+  view: {
+    width: Width_convert(375),
+    height: Height_convert(72),
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    alignItems: 'center',
+  },
+  touch: {
+    width: Width_convert(375),
+    height: Height_convert(72),
+    justifyContent: 'center',
+  },
+  text: {
+    marginLeft: Width_convert(28),
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(16),
+    fontWeight: '700',
+    color: '#000000',
+  },
+});
+
 const Menu = (props) => {
-  const reduexState = useSelector((state) => state);
+  const reduxState = useSelector((state) => state);
+  const TouchOnPress = () => {};
   return (
-    <View
-      style={{
-        width: Width_convert(375),
-        height: Height_convert(72),
-        borderBottomWidth: 1,
-        borderBottomColor: '#EEEEEE',
-        alignItems: 'center',
-      }}>
+    <View style={styles.view}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
@@ -27,7 +43,7 @@ const Menu = (props) => {
           } else if (props.Title == '로그인하기') {
             props.navigation.navigate('Login');
           } else if (props.Title == '후기관리') {
-            if (reduexState.loginDataCheck.login.login) {
+            if (reduxState.loginDataCheck.login.login) {
               props.navigation.navigate('ReviewManage');
             } else {
               props.ShowModalChangeValue(true);
@@ -46,21 +62,8 @@ const Menu = (props) => {
             return false;
           }
         }}
-        style={{
-          width: Width_convert(375),
-          height: Height_convert(72),
-          justifyContent: 'center',
-        }}>
-        <Text
-          style={{
-            marginLeft: Width_convert(28),
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontSize: Font_normalize(16),
-            fontWeight: '700',
-            color: '#000000',
-          }}>
-          {props.Title}
-        </Text>
+        style={styles.touch}>
+        <Text style={styles.text}>{props.Title}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -69,4 +72,4 @@ const Menu = (props) => {
 Menu.propTypes = {
   Title: PropTypes.string.isRequired,
 };
-export default Menu;
+export default memo(Menu);

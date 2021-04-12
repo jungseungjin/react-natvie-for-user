@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, memo} from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
@@ -34,46 +34,47 @@ import Star from '../../../../assets/home/star.svg';
 import SearchStore from '../../../components/Home/Search/searchStore.js';
 import StatusBarHeight from '../../StatusBarHeight';
 
+const styles = StyleSheet.create({
+  view: {
+    // Platform.OS == 'android'
+    //   ? {
+    //       height:
+    //         Height_convert_real(818) -
+    //         Height_convert(139) -
+    //         StatusBarHeight,
+    //     }
+    //   : {
+    //       height: Height_convert_real(818) - Height_convert(139),
+    //     },
+    // {
+    //   width: Width_convert(375),
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  viewNested: {
+    width: Width_convert(245),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontFamily: Fonts?.NanumSqureRegular || null,
+    fontSize: Font_normalize(16),
+    fontWeight: '700',
+    color: '#000000',
+    textAlign: 'center',
+  },
+});
+
 const SearchNull = (props) => {
   return (
-    <View
-      style={[
-        {
-          // Platform.OS == 'android'
-          //   ? {
-          //       height:
-          //         Height_convert_real(818) -
-          //         Height_convert(139) -
-          //         StatusBarHeight,
-          //     }
-          //   : {
-          //       height: Height_convert_real(818) - Height_convert(139),
-          //     },
-          // {
-          //   width: Width_convert(375),
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-      ]}>
-      <View
-        style={{
-          width: Width_convert(245),
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            fontFamily: Fonts?.NanumSqureRegular || null,
-            fontSize: Font_normalize(16),
-            fontWeight: '700',
-            color: '#000000',
-            textAlign: 'center',
-          }}>
+    <View style={styles.view}>
+      <View style={styles.viewNested}>
+        <Text style={styles.text}>
           {'원하시는 검색결과가 나올 수 있도록\n 노력하는 투닝이 되겠습니다 🔥'}
         </Text>
       </View>
     </View>
   );
 };
-export default SearchNull;
+export default memo(SearchNull);

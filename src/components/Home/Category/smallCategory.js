@@ -11,7 +11,7 @@ const SmallCategory = (props) => {
       <View style={{marginLeft: Width_convert(28)}}>
         <TouchableOpacity
           onPress={() => {
-            if (props.PickSmallCategory == props.item) {
+            if (props.PickSmallCategory === props.item) {
               props.PickSmallCategoryChangeValue({});
             } else {
               props.PickSmallCategoryChangeValue(props.item);
@@ -19,15 +19,7 @@ const SmallCategory = (props) => {
           }}
           activeOpacity={1}
           style={styles.touch}>
-          <Text
-            style={[
-              styles.text,
-              props.PickSmallCategory == props.item
-                ? {color: '#946AEF'}
-                : {color: '#000000'},
-            ]}>
-            {props.item.work_name}
-          </Text>
+          <Text style={styles.text(props)}>{props.item.work_name}</Text>
         </TouchableOpacity>
       </View>
     </>
@@ -38,10 +30,13 @@ const styles = StyleSheet.create({
     marginTop: Height_convert(20),
     marginBottom: Height_convert(5),
   },
-  text: {
-    fontFamily: Fonts?.NanumSqureRegular || null,
-    fontWeight: '400',
-    fontSize: Font_normalize(14),
+  text: (props) => {
+    return {
+      fontFamily: Fonts?.NanumSqureRegular || null,
+      fontWeight: '400',
+      fontSize: Font_normalize(14),
+      color: props.PickSmallCategory === props.item ? '#946AEF' : '#000000',
+    };
   },
 });
 export default memo(SmallCategory);
