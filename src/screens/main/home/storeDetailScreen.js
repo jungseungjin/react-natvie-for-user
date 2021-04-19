@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  LayoutAnimation,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -389,23 +388,25 @@ const StoreDetailScreen = (props) => {
             {/*작업 이름부터 가격까지 끝 */}
           </View>
           {/*상단슬라이더부터 후기까지 끝 */}
-          {scrollValue >= Width_convert(240 + 89) - Height_convert(94) ? (
-            <View
-              style={{
-                zIndex: 0,
-                marginTop: -Height_convert(94),
-              }}></View>
-          ) : null}
+          <View
+            style={{
+              zIndex: 0,
+              marginTop:
+                scrollValue >= Width_convert(240 + 89) - Height_convert(94)
+                  ? -Height_convert(94)
+                  : 0,
+            }}></View>
           {/*버튼 위치 맞추기 위함 시작 =========이게 가려서 네비게이션 클릭이 안됨*/}
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 시작 */}
           <View>
-            {scrollValue >= Width_convert(240 + 89) - Height_convert(94) ? (
-              <View
-                style={{
-                  zIndex: 1,
-                  height: Height_convert(94),
-                }}></View>
-            ) : null}
+            <View
+              style={{
+                zIndex: 1,
+                height:
+                  scrollValue >= Width_convert(240 + 89) - Height_convert(94)
+                    ? Height_convert(94)
+                    : 0,
+              }}></View>
             <View
               style={{
                 width: Width_convert(375),

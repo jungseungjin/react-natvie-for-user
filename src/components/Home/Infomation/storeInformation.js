@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -6,6 +6,7 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import moment from 'moment';
 import 'moment/locale/ko';
+import MiniMap from '../Search/miniMap.js';
 
 const WorkInformation = (props) => {
   moment.locale('ko');
@@ -338,7 +339,8 @@ const WorkInformation = (props) => {
         </View>
       </View>
       {/*사업자정보 끝 */}
+      <MiniMap coordinates={props.item.store_location.coordinates}></MiniMap>
     </View>
   );
 };
-export default WorkInformation;
+export default memo(WorkInformation);

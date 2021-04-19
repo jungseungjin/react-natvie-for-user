@@ -227,8 +227,7 @@ const WorkDetailScreen = (props) => {
             {/*상단 슬라이더 시작 */}
             <Swiper
               style={{height: Width_convert(240)}}
-              autoplay={true}
-              autoplayTimeout={4.5}
+              autoplay={false}
               dot={<Dot></Dot>}
               activeDot={<ActiveDot></ActiveDot>}>
               {props.route.params.item.store_thumbnail.map((item) => (
