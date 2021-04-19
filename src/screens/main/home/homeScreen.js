@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -245,9 +246,15 @@ const HomeScreen = (props) => {
           <View style={styles.sliderView}>
             {topSliderImageList.length > 0 ? (
               <Swiper
-                style={{height: Height_convert(211)}}
+                style={{
+                  height: Height_convert(211),
+                }}
                 autoplay={true}
+                loop
                 autoplayTimeout={4.5}
+                autoplayDirection
+                index={0}
+                removeClippedSubviews={false}
                 dot={<Dot></Dot>}
                 activeDot={<ActiveDot></ActiveDot>}>
                 {topSliderImageList.map((item) => (
