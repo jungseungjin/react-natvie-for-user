@@ -8,24 +8,27 @@ import Font_normalize from '../../../components/Font_normalize.js';
 const SmallCategory = (props) => {
   return (
     <>
-      <View style={{marginLeft: Width_convert(28)}}>
+      <View style={styles.view}>
         <TouchableOpacity
           onPress={() => {
-            if (props.PickSmallCategory === props.item) {
-              props.PickSmallCategoryChangeValue({});
+            if (props.PickThirdCategory === props.item.item._id) {
+              props.PickThirdCategoryChangeValue({});
             } else {
-              props.PickSmallCategoryChangeValue(props.item);
+              props.PickThirdCategoryChangeValue(props.item.item);
             }
           }}
           activeOpacity={1}
           style={styles.touch}>
-          <Text style={styles.text(props)}>{props.item.work_name}</Text>
+          <Text style={styles.text(props)}>{props.item.item.name}</Text>
         </TouchableOpacity>
       </View>
     </>
   );
 };
 const styles = StyleSheet.create({
+  view: {
+    marginLeft: Width_convert(28),
+  },
   touch: {
     marginTop: Height_convert(20),
     marginBottom: Height_convert(5),
@@ -35,7 +38,8 @@ const styles = StyleSheet.create({
       fontFamily: Fonts?.NanumSqureRegular || null,
       fontWeight: '400',
       fontSize: Font_normalize(14),
-      color: props.PickSmallCategory === props.item ? '#946AEF' : '#000000',
+      color:
+        props.PickThirdCategory === props.item.item._id ? '#946AEF' : '#000000',
     };
   },
 });

@@ -89,7 +89,7 @@ const SignUpTerms = (props) => {
   //   handleClick(1);
   // }
   const handleClick = (value) => {
-    scrollRef.current?.scrollToIndex({index: value});
+    scrollRef.current?.scrollToIndex({animated: false, index: value});
   };
   const renderItem = (item) => {
     return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -21,6 +21,9 @@ import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import axios from 'axios';
+import NetInfo from '@react-native-community/netinfo';
+import Domain from '../../../../key/Domain.js';
 const SignUpInformation = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
@@ -34,16 +37,55 @@ const SignUpInformation = (props) => {
   };
   const [car, setCar] = React.useState('');
 
-  const [brandList, setBrandList] = React.useState([]);
-  const [category, setCategory] = React.useState('domestic');
-  const CategoryChangeValue = (text) => setCategory(text);
-  const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
-  const PickBrandChangeValue = (object) => setPickBrand(object);
-  const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
-  const PickModelChangeValue = (object) => setPickModel(object);
-  const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
-  const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
+  // const [brandList, setBrandList] = React.useState([]);
+  // const [category, setCategory] = React.useState('domestic');
+  // const CategoryChangeValue = (text) => setCategory(text);
+  // const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
+  // const PickBrandChangeValue = (object) => setPickBrand(object);
+  // const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
+  // const PickModelChangeValue = (object) => setPickModel(object);
+  // const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
+  // const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
 
+  const [brandList1, setBrandList1] = useState([]);
+  const [brandList2, setBrandList2] = useState([]);
+  const [categoryPick, setCategoryPick] = useState('domestic');
+  const CategoryPickChangeValue = (text) => setCategoryPick(text);
+  const [brandPick, setBrandPick] = useState();
+  const BrandPickChangeValue = (object) => setBrandPick(object);
+  const [modelPick, setModelPick] = useState({});
+  const ModelPickChangeValue = (object) => setModelPick(object);
+  const [modelDetailPick, setModelDetailPick] = useState({});
+  const ModelDetailPickChangeValue = (object) => setModelDetailPick(object);
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let Data = await axios.get(`${Domain}api/car/getdata/all`, {
+            headers: {'Content-Type': 'application/json'},
+          });
+          let type1 = [];
+          let type2 = [];
+          Data.data.result.map((item, index) => {
+            if (item.view !== 2) {
+              if (item.type === 1) type1.push(item);
+              else if (item.type === 2) type2.push(item);
+            }
+          });
+          setBrandList1(type1);
+          setBrandList2(type2);
+        } else {
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       {Platform.OS === 'android' && props.route.params.fromNav === 'home' ? (
@@ -64,9 +106,9 @@ const SignUpInformation = (props) => {
         PageChangeValue={PageChangeValue}
         navigation={props.navigation}
         phoneNumber={phoneNumber}
-        pickBrand={pickBrand}
-        pickModel={pickModel}
-        pickModelDetail={pickModelDetail}
+        pickBrand={brandPick}
+        pickModel={modelPick}
+        pickModelDetail={modelDetailPick}
         agree={agree}></Tabbar>
       {page == 'SignUp' ? (
         <View
@@ -106,7 +148,7 @@ const SignUpInformation = (props) => {
                     fontSize: Font_normalize(14),
                     fontWeight: '400',
                   },
-                  pickModelDetail?.brand == undefined
+                  brandPick?.brand == undefined
                     ? {
                         color: '#CCCCCC',
                       }
@@ -114,13 +156,11 @@ const SignUpInformation = (props) => {
                         color: '#000000',
                       },
                 ]}>
-                {pickModelDetail?.brand == undefined
+                {brandPick?.brand == undefined
                   ? '회원님의 소중한 차량은 무엇인가요?'
-                  : pickModelDetail?.model_detail == undefined
-                  ? pickModelDetail?.brand + ' ' + pickModelDetail?.model
-                  : pickModelDetail?.brand +
-                    ' ' +
-                    pickModelDetail?.model_detail}
+                  : modelDetailPick?.modelDetail == undefined
+                  ? brandPick?.brand + ' ' + modelPick?.model
+                  : brandPick?.brand + ' ' + modelDetailPick?.modelDetail}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -154,16 +194,30 @@ const SignUpInformation = (props) => {
           <CarSetting
             from={'SignUp'}
             PageChangeValue={PageChangeValue}
-            nowValue={category}
-            CategoryChangeValue={CategoryChangeValue}
-            PickBrandValue={pickBrand}
-            PickBrandChangeValue={PickBrandChangeValue}
-            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
-            PickModelValue={pickModel}
-            PickModelChangeValue={PickModelChangeValue}
-            PickModelDetail={pickModelDetail}
-            PickModelDetailChangeValue={
-              PickModelDetailChangeValue
+            // nowValue={category}
+            // CategoryChangeValue={CategoryChangeValue}
+            // PickBrandValue={pickBrand}
+            // PickBrandChangeValue={PickBrandChangeValue}
+            // IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
+            // PickModelValue={pickModel}
+            // PickModelChangeValue={PickModelChangeValue}
+            // PickModelDetail={pickModelDetail}
+            // PickModelDetailChangeValue={
+            //   PickModelDetailChangeValue
+            // }
+
+            BrandPick={brandPick}
+            BrandPickChangeValue={BrandPickChangeValue}
+            BrandList1={brandList1}
+            BrandList2={brandList2}
+            CategoryPickChangeValue={CategoryPickChangeValue}
+            CategoryPick={categoryPick}
+            from={props?.route?.name}
+            ModelPick={modelPick}
+            ModelPickChangeValue={ModelPickChangeValue}
+            ModelDetailPick={modelDetailPick}
+            ModelDetailPickChangeValue={
+              ModelDetailPickChangeValue
             }></CarSetting>
         </>
       )}

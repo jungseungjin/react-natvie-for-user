@@ -1,7 +1,8 @@
-import React from 'react';
-import {StatusBar, SafeAreaView} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {StatusBar, SafeAreaView, ScrollView, View} from 'react-native';
 import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import TabBarBottom from '../../../components/Home/Tabbar/tabbarBottom.js';
+import Width_convert from '../../../components/Width_convert.js';
 import SignUp from '../../../components/Home/SignUp/signUp.js';
 import CarSetting from '../../../components/Home/Setting/carSetting.js';
 import LocationSetting from '../../../components/Home/Setting/locationSetting.js';
@@ -22,6 +23,8 @@ import {
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import Domain from '../../../../key/Domain.js';
+import NetInfo from '@react-native-community/netinfo';
 const SettingScreen = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
     if (props.route?.params?.PickLocation) {
@@ -31,7 +34,7 @@ const SettingScreen = (props) => {
       setPickModelDetail(props.route.params.PickModelDetail);
     }
   });
-  React.useEffect(() => {
+  useEffect(() => {
     unsubscribe;
   }, [props.navigation]);
   const reduxState = useSelector((state) => state);
@@ -42,44 +45,17 @@ const SettingScreen = (props) => {
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
-  const [page, setPage] = React.useState('car');
-  const [brandList, setBrandList] = React.useState([]);
-  const [category, setCategory] = React.useState(
-    reduxState.loginDataCheck.login.iu_car.length > 0
-      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
-        ? 'all'
-        : reduxState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
-        ? 'domestic'
-        : 'import'
-      : 'domestic',
-  );
-  const CategoryChangeValue = (text) => {
-    setCategory(text);
-    setPickBrand({});
-    setPickModel({});
-    setPickModelDetail({});
-  };
-  const [pickBrand, setPickBrand] = React.useState(
-    reduxState.loginDataCheck.login.iu_car.length > 0
-      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand
-      : {},
-  ); //디비에서 가져온 브랜드값
-  const PickBrandChangeValue = (object) => setPickBrand(object);
-  const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
-  const PickModelChangeValue = (object) => setPickModel(object);
-  const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
-  const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
   const [pickLocation, setPickLocation] = React.useState({});
   const PickLocationChangeValue = (object) => setPickLocation(object);
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       if (reduxState.loginDataCheck.login.iu_car.length > 0) {
         if (reduxState.loginDataCheck.login.iu_car[0].pickModel == 'all') {
-          setCategory('all');
+          setCategoryPick('all');
         } else {
           //setPickBrand(reduxState.loginDataCheck.login.iu_car[0].pickBrand);
-          setPickModel(reduxState.loginDataCheck.login.iu_car[0].pickModel);
-          setPickModelDetail(
+          setModelPick(reduxState.loginDataCheck.login.iu_car[0].pickModel);
+          setModelDetailPick(
             reduxState.loginDataCheck.login.iu_car[0].pickModelDetail,
           );
         }
@@ -94,29 +70,28 @@ const SettingScreen = (props) => {
   {
     /*선택하면 여기에서는 국산인지 수입인지 // 선택한 브랜드가 무엇인지 // 선택한 모델이 무엇인지 // 선택한 디테일모델이 무엇인지까지 가져옴. */
   }
-  const PageChangeValue = (text) => setPage(text);
   const PushReduxData = () => {
     try {
       if (
-        ((pickBrand?.brand &&
-          pickModel?.model &&
-          pickModelDetail?.model_detail) ||
-          category == 'all') &&
+        ((brandPick?.brand &&
+          modelPick?.model &&
+          modelDetailPick?.modelDetail) ||
+          categoryPick == 'all') &&
         pickLocation.legalcode
       ) {
         if (
           pickLocation.legalcode ==
-          '요청한 데이타의 결과가 없습니다. 지역을 직접 입력해주세요.'
+          '요청한 데이터의 결과가 없습니다. 지역을 직접 입력해주세요.'
         ) {
           setShowModal(true);
           return false;
         }
-        if (category != 'all') {
+        if (categoryPick != 'all') {
           props.updateIuCar([
             {
-              pickBrand: pickBrand,
-              pickModel: pickModel,
-              pickModelDetail: pickModelDetail,
+              pickBrand: brandPick,
+              pickModel: modelPick,
+              pickModelDetail: modelDetailPick,
             },
           ]);
         } else {
@@ -228,7 +203,7 @@ const SettingScreen = (props) => {
             longitude: position.coords.longitude,
           },
           legalcode:
-            '요청한 데이타의 결과가 없습니다. 지역을 직접 입력해주세요.',
+            '요청한 데이터의 결과가 없습니다. 지역을 직접 입력해주세요.',
         });
         //네이버 맵에 없음
       }
@@ -237,6 +212,70 @@ const SettingScreen = (props) => {
       console.log(err);
     }
   };
+
+  const [brandList1, setBrandList1] = useState([]);
+  const [brandList2, setBrandList2] = useState([]);
+  const [categoryPick, setCategoryPick] = useState(
+    reduxState.loginDataCheck.login.iu_car.length > 0
+      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
+        ? 'all'
+        : reduxState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
+        ? 'domestic'
+        : 'import'
+      : 'domestic',
+  );
+  const CategoryPickChangeValue = (text) => setCategoryPick(text);
+  const [brandPick, setBrandPick] = useState(
+    reduxState.loginDataCheck.login.iu_car.length > 0
+      ? reduxState.loginDataCheck.login.iu_car[0].pickBrand
+      : {},
+  );
+  const BrandPickChangeValue = (object) => setBrandPick(object);
+  const [modelPick, setModelPick] = useState({});
+  const ModelPickChangeValue = (object) => setModelPick(object);
+  const [modelDetailPick, setModelDetailPick] = useState({});
+  const ModelDetailPickChangeValue = (object) => setModelDetailPick(object);
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let Data = await axios.get(`${Domain}api/car/getdata/all`, {
+            headers: {'Content-Type': 'application/json'},
+          });
+          let type1 = [];
+          let type2 = [];
+          Data.data.result.map((item, index) => {
+            if (item.view !== 2) {
+              if (item.type === 1) type1.push(item);
+              else if (item.type === 2) type2.push(item);
+            }
+          });
+          setBrandList1(type1);
+          setBrandList2(type2);
+        } else {
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  const [page, setPage] = React.useState(0);
+  const PageChangeValue = (Number) => {
+    if (Number === 0) scrollRef.current.scrollTo({x: 0, animated: false});
+    else scrollRef.current.scrollTo({x: Width_convert(375), animated: false});
+    setPage(Number);
+  };
+  const scrollRef = useRef();
+  const handleScroll = function (event) {
+    if (event.nativeEvent.contentOffset.x < Width_convert(375) / 2) setPage(0);
+    if (event.nativeEvent.contentOffset.x > Width_convert(375) / 2) setPage(1);
+  };
+
   return (
     <>
       <StatusBar
@@ -251,39 +290,54 @@ const SettingScreen = (props) => {
         <TabBarBottom
           from={'category'}
           Title={[
-            {title: '차량선택', value: 'car'},
-            {title: '지역설정', value: 'location'},
+            {title: '차량선택', value: 'car', _id: 0},
+            {title: '지역설정', value: 'location', _id: 1},
           ]}
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
-        {page == 'car' ? (
-          <CarSetting
-            from={props?.route?.name}
-            nowValue={category}
-            CategoryChangeValue={CategoryChangeValue}
-            PickBrandValue={pickBrand}
-            PickBrandChangeValue={PickBrandChangeValue}
-            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
-            PickModelValue={pickModel}
-            PickModelChangeValue={PickModelChangeValue}
-            PickModelDetail={pickModelDetail}
-            PickModelDetailChangeValue={
-              PickModelDetailChangeValue
-            }></CarSetting>
-        ) : (
-          <LocationSetting
-            navigation={props.navigation}
-            from={'Setting'}
-            PickBrandValue={pickBrand}
-            PickModelValue={pickModel}
-            PickModelDetail={pickModelDetail}
-            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
-            handleLocationPermission={handleLocationPermission}
-            LocationModalChangeValue={LocationModalChangeValue}
-            CurrentPosition={CurrentPosition}
-            pickLocation={pickLocation}
-            PickLocationChangeValue={PickLocationChangeValue}></LocationSetting>
-        )}
+        <View style={{flex: 1, flexDirection: 'row'}}>
+          <ScrollView
+            ref={scrollRef}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            showsHorizontalScrollIndicator={false}
+            alwaysBounceVertical={false}
+            horizontal={true}
+            pagingEnabled>
+            <View style={{width: Width_convert(375)}}>
+              <CarSetting
+                BrandPick={brandPick}
+                BrandPickChangeValue={BrandPickChangeValue}
+                BrandList1={brandList1}
+                BrandList2={brandList2}
+                CategoryPickChangeValue={CategoryPickChangeValue}
+                CategoryPick={categoryPick}
+                from={props?.route?.name}
+                ModelPick={modelPick}
+                ModelPickChangeValue={ModelPickChangeValue}
+                ModelDetailPick={modelDetailPick}
+                ModelDetailPickChangeValue={
+                  ModelDetailPickChangeValue
+                }></CarSetting>
+            </View>
+            <View style={{width: Width_convert(375)}}>
+              <LocationSetting
+                navigation={props.navigation}
+                from={'Setting'}
+                PickBrandValue={brandPick}
+                PickModelValue={modelPick}
+                PickModelDetail={modelDetailPick}
+                IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
+                handleLocationPermission={handleLocationPermission}
+                LocationModalChangeValue={LocationModalChangeValue}
+                CurrentPosition={CurrentPosition}
+                pickLocation={pickLocation}
+                PickLocationChangeValue={
+                  PickLocationChangeValue
+                }></LocationSetting>
+            </View>
+          </ScrollView>
+        </View>
         {reduxState.loginDataCheck.login?.login ? null : (
           <SignUp navigation={props.navigation}></SignUp>
         )}

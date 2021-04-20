@@ -65,7 +65,9 @@ const styles = StyleSheet.create({
       width:
         type === 2 || type === 3
           ? Width_convert(289)
-          : type === '1-1' && Width_convert(289),
+          : type === '1-1'
+          ? Width_convert(289)
+          : null,
     };
   },
   touch: {

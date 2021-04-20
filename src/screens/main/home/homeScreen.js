@@ -205,14 +205,14 @@ const HomeScreen = (props) => {
     if (
       iu_car.length > 0 &&
       location.legalcode &&
-      iu_car[0]?.pickModelDetail?.model_detail != undefined
+      iu_car[0]?.pickModelDetail?.modelDetail != undefined
     ) {
-      return `${iu_car[0]?.pickModelDetail?.brand} ${iu_car[0]?.pickModelDetail?.model_detail} / ${location.legalcode}`;
+      return `${iu_car[0]?.pickBrand?.brand} ${iu_car[0]?.pickModelDetail?.modelDetail} / ${location.legalcode}`;
     } else if (
       iu_car.length > 0 &&
-      iu_car[0]?.pickModelDetail?.model_detail != undefined
+      iu_car[0]?.pickModelDetail?.modelDetail != undefined
     ) {
-      return `${iu_car[0]?.pickModelDetail?.brand} ${iu_car[0]?.pickModelDetail?.model_detail} / 지역`;
+      return `${iu_car[0]?.pickBrand?.brand} ${iu_car[0]?.pickModelDetail?.modelDetail} / 지역`;
     } else if (
       iu_car.length > 0 &&
       iu_car[0]?.pickModelDetail === 'all' &&

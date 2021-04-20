@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -215,9 +215,10 @@ const SignUpInformation = (props) => {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   };
+
   const getNaverLocagtion = async (position) => {
     try {
-      setIsLoading(true);
+      setIsLoadingAndModal(1);
       // position.coords.longitude = 126.70528; //지워야함
       // position.coords.latitude = 37.45639; //지워야함
       let result = await axios.get(
@@ -236,7 +237,7 @@ const SignUpInformation = (props) => {
       //legalcode admcode addr roadaddr
       //법정동 행정동 지번주소 도로명주소
       if (result.data.status.message == 'done') {
-        setIsLoading(false);
+        setIsLoadingAndModal(0);
         setLocationView(
           result.data.results[0].region.area1.name +
             ' ' +
@@ -245,12 +246,12 @@ const SignUpInformation = (props) => {
             result.data.results[0].region.area3.name,
         );
       } else {
-        setIsLoading(false);
-        setLocationView('요청한 데이타의 결과가 없습니다.');
+        setIsLoadingAndModal(0);
+        setLocationView('요청한 데이터의 결과가 없습니다.');
         //네이버 맵에 없음
       }
     } catch (err) {
-      setIsLoading(false);
+      setIsLoadingAndModal(0);
       console.log(err);
       alert(err);
     }
@@ -272,7 +273,7 @@ const SignUpInformation = (props) => {
         birthDay &&
         locationView
       ) {
-        if (locationView == '요청한 데이타의 결과가 없습니다.') {
+        if (locationView == '요청한 데이터의 결과가 없습니다.') {
           alert('위치정보를 확인해 주세요');
           return false;
         }
@@ -704,13 +705,11 @@ const SignUpInformation = (props) => {
                   placeholderTextColor="#CCCCCC"
                   editable={false}
                   value={
-                    pickModelDetail?.brand == undefined
+                    pickBrand?.brand == undefined
                       ? null
-                      : pickModelDetail?.model_detail == undefined
-                      ? pickModelDetail?.brand + ' ' + pickModelDetail?.model
-                      : pickModelDetail?.brand +
-                        ' ' +
-                        pickModelDetail?.model_detail
+                      : pickModelDetail?.modelDetail == undefined
+                      ? pickBrand?.brand + ' ' + pickModel?.model
+                      : pickBrand?.brand + ' ' + pickModelDetail?.modelDetail
                   }
                   onChangeText={(value) => {}}
                   placeholderStyle={{

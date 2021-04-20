@@ -4,14 +4,13 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-  TouchableOpacityBase,
+  TextInput,
 } from 'react-native';
 import Fonts from '../../Fonts';
 import Font_normalize from '../../Font_normalize.js';
 import Height_convert from '../../Height_convert.js';
 import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
-import {TextInput} from 'react-native-gesture-handler';
 import Search from '../../../../assets/home/search.svg';
 
 const LocationSetting = (props) => {

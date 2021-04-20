@@ -199,7 +199,7 @@ const rightViewNested = (props) => {
               });
             }
           } else if (props.Title == '회원가입2') {
-            if (props.pickModelDetail?.brand) {
+            if (props.pickModelDetail?.modelDetail) {
               //?.brand 를 빼면 넘어감
               props.navigation.navigate('SignUpInformation3', {
                 phoneNumber: props.phoneNumber,
@@ -280,11 +280,11 @@ const rightViewNested = (props) => {
                   color: '#946AEF',
                 }
               : props.Title == '회원가입2' &&
-                props.pickModelDetail?.brand == undefined
+                props.pickModelDetail?.modelDetail == undefined
               ? {
                   color: '#CCCCCC',
                 }
-              : props.Title == '회원가입2' && props.pickModelDetail?.brand
+              : props.Title == '회원가입2' && props.pickModelDetail?.modelDetail
               ? {
                   color: '#946AEF',
                 }

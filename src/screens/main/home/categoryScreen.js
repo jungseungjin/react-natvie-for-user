@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -25,10 +25,10 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const tabbarBottomValue = [
-  {title: '드레스업', value: 'dressup'},
-  {title: '퍼포먼스', value: 'perfomance'},
-  {title: '편의장치', value: 'convenience'},
-  {title: '캠핑카', value: 'camping'},
+  {_id: 0, title: '드레스업', value: 'dressup'},
+  {_id: 1, title: '퍼포먼스', value: 'perfomance'},
+  {_id: 2, title: '편의장치', value: 'convenience'},
+  {_id: 3, title: '캠핑카', value: 'camping'},
 ];
 const CategoryScreen = (props) => {
   const reduxState = useSelector((state) => state);
@@ -37,112 +37,13 @@ const CategoryScreen = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [searchModal, setSearchModal] = useState(false);
   const SearchModalChangeValue = (text) => setSearchModal(text);
-  const [page, setPage] = useState(
-    props.route.params.Title == '드레스업'
-      ? 'dressup'
-      : props.route.params.Title == '퍼포먼스'
-      ? 'perfomance'
-      : props.route.params.Title == '편의장치'
-      ? 'convenience'
-      : props.route.params.Title == '캠핑카 튜닝'
-      ? 'camping'
-      : 'dressup',
-  );
-  const [middleCategoryList, setMiddleCategoryList] = useState([]);
-  const [pickMiddleCategory, setPickMiddleCategory] = useState({});
-  const PickMiddleCategoryChangeValue = (object) =>
-    setPickMiddleCategory(object);
-  const get_middle_category_data = async (props) => {
-    try {
-      if (page) {
-        let work_type;
-        if (page == 'dressup') {
-          work_type = 1;
-        } else if (page == 'perfomance') {
-          work_type = 2;
-        } else if (page == 'convenience') {
-          work_type = 3;
-        } else if (page == 'camping') {
-          work_type = 4;
-        } else {
-          return false;
-        }
-
-        NetInfo.addEventListener(async (state) => {
-          if (state.isConnected) {
-            let url = Domain + 'work_findAll?work_type=' + work_type;
-            setIsLoadingAndModal(1);
-            let result = await axios.get(url);
-            setIsLoadingAndModal(0);
-
-            if (result.data[0].message == 'ok') {
-              setMiddleCategoryList(result.data[0].result);
-              setPickMiddleCategory({});
-              setSmallCategoryList([]);
-              setPickSmallCategory({});
-            } else {
-            }
-          } else {
-            setIsLoadingAndModal(2);
-          }
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      setMiddleCategoryList([]);
-      alert('잠시 후에 다시해주세요');
-    }
-  };
-  const [smallCategoryList, setSmallCategoryList] = useState([]);
-  const [pickSmallCategory, setPickSmallCategory] = useState({});
-  const PickSmallCategoryChangeValue = (object) => setPickSmallCategory(object);
-  const get_small_category_data = async (props) => {
-    try {
-      let work_sub_type_name;
-      if (pickMiddleCategory?.work_sub_type_name) {
-        work_sub_type_name = pickMiddleCategory.work_sub_type_name;
-      } else {
-        return false;
-      }
-
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          let url =
-            Domain + 'work_findAll?work_sub_type_name=' + work_sub_type_name;
-          setIsLoadingAndModal(1);
-          let result = await axios.get(url);
-          setIsLoadingAndModal(0);
-          if (result.data[0].message == 'ok') {
-            console.log(result.data[0].result);
-            setSmallCategoryList(result.data[0].result);
-            setPickSmallCategory({});
-          } else {
-          }
-        } else {
-          setIsLoadingAndModal(2);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-      setSmallCategoryList([]);
-      alert('잠시 후에 다시해주세요');
-    }
-  };
-  useEffect(() => {
-    get_middle_category_data(props);
-  }, [page]);
-  useEffect(() => {
-    get_small_category_data(props);
-  }, [pickMiddleCategory]);
-  const PageChangeValue = (text) => setPage(text);
-
   const getDataAndNavigate = () => {
-    //props.route.params.Title 값으로 서버에서 작업데이터 가져오기.
     try {
       //선택한 작업종류를 가지고 백에서 데이터 받아서 ㄲ  필요한 데이터 -> 작업종류나열된것, 작업리스트
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          if (pickMiddleCategory._id) {
+          console.log(pickSecondCategory);
+          if (pickSecondCategory._id) {
             //중분류 찍혀있음
             let url = `${Domain}categoryworklist/first`;
             let result = await axios.get(url, {
@@ -191,6 +92,112 @@ const CategoryScreen = (props) => {
       console.log(err);
     }
   };
+
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let Data = await axios.get(`${Domain}api/category/getdata/all`, {
+            headers: {'Content-Type': 'application/json'},
+          });
+          setPages(Data.data.result);
+        } else {
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  const [page, setPage] = React.useState(0);
+  const [pages, setPages] = React.useState([
+    {_id: 0, name: '드레스업', category: [{}]},
+    {_id: 1, name: '퍼포먼스', category: [{}]},
+    {_id: 2, name: '편의장치', category: [{}]},
+    {_id: 3, name: '캠핑카 튜닝', category: [{}]},
+  ]);
+  const scrollRef = useRef();
+  const onScroll = (e) => {
+    const newPage = Math.round(
+      e.nativeEvent.contentOffset.x / Width_convert(375),
+    );
+    setPage(newPage);
+  };
+
+  const PageChangeValue = (Number) => {
+    scrollRef.current?.scrollToIndex({animated: false, index: Number});
+  };
+  const [pickSecondCategory, setPickSecondCategory] = useState({});
+  const PickSecondCategoryChangeValue = (object) => {
+    setPickThirdCategory({});
+    setPickSecondCategory(object);
+  };
+  const [pickThirdCategory, setPickThirdCategory] = useState({});
+  const PickThirdCategoryChangeValue = (object) => {
+    setPickThirdCategory(object);
+  };
+  const renderItem = (item) => {
+    return (
+      <>
+        <View style={{width: Width_convert(125), backgroundColor: '#F1F1F1'}}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            alwaysBounceVertical={false}
+            style={{flex: 1}}
+            data={pages[item.index]?.category}
+            windowSize={2}
+            initialNumToRender={10}
+            renderItem={(item2) => (
+              <MiddleCategory
+                item={item2}
+                topIndex={item.index}
+                pickSecondCategory={
+                  pickSecondCategory?._id === item2.item._id
+                    ? pickSecondCategory._id
+                    : null
+                }
+                PickSecondCategoryChangeValue={
+                  PickSecondCategoryChangeValue
+                }></MiddleCategory>
+            )}
+            keyExtractor={(item) => String(item._id)}></FlatList>
+        </View>
+        <View style={{width: Width_convert(250), backgroundColor: '#FFFFFF'}}>
+          {pickSecondCategory.index === item.index && (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              alwaysBounceVertical={false}
+              style={{flex: 1}}
+              data={
+                pickSecondCategory.index === item.index &&
+                pickSecondCategory.category
+              }
+              windowSize={2}
+              initialNumToRender={10}
+              renderItem={(item3) => (
+                <SmallCategory
+                  item={item3}
+                  PickThirdCategory={
+                    pickThirdCategory?._id === item3.item._id
+                      ? pickThirdCategory?._id
+                      : null
+                  }
+                  PickThirdCategoryChangeValue={
+                    PickThirdCategoryChangeValue
+                  }></SmallCategory>
+              )}
+              keyExtractor={(item) => String(item._id)}></FlatList>
+          )}
+        </View>
+      </>
+    );
+  };
   return (
     <>
       <StatusBar
@@ -209,52 +216,38 @@ const CategoryScreen = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <View style={{flex: 1, flexDirection: 'row'}}>
-          {/*카테고리 - 중분류 리스트 및 선택 시작 */}
-          <View style={{width: Width_convert(125), backgroundColor: '#F1F1F1'}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              alwaysBounceVertical={false}
-              style={{flex: 1}}
-              data={middleCategoryList}
-              windowSize={2}
-              initialNumToRender={10}
-              renderItem={({item}) => (
-                <MiddleCategory
-                  item={item}
-                  PickMiddleCategory={
-                    pickMiddleCategory == item ? pickMiddleCategory : null
-                  }
-                  PickMiddleCategoryChangeValue={
-                    PickMiddleCategoryChangeValue
-                  }></MiddleCategory>
-              )}
-              keyExtractor={(item) => String(item._id)}></FlatList>
-          </View>
-          {/*카테고리 - 중분류 리스트 및 선택 끝 */}
-          {/*카테고리 - 소분류 리스트 및 선택 시작 */}
-          <View style={{width: Width_convert(250), backgroundColor: '#FFFFFF'}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              alwaysBounceVertical={false}
-              style={{flex: 1}}
-              data={smallCategoryList}
-              windowSize={2}
-              initialNumToRender={10}
-              renderItem={({item}) => (
-                <SmallCategory
-                  item={item}
-                  PickSmallCategory={
-                    pickSmallCategory == item ? pickSmallCategory : null
-                  }
-                  PickSmallCategoryChangeValue={
-                    PickSmallCategoryChangeValue
-                  }></SmallCategory>
-              )}
-              keyExtractor={(item) => String(item._id)}></FlatList>
-          </View>
-          {/*카테고리 - 소분류 리스트 및 선택 끝 */}
+          <FlatList
+            ref={scrollRef}
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            automaticallyAdjustContentInsets={false}
+            data={pages}
+            decelerationRate="fast"
+            horizontal
+            keyExtractor={(item) => String(item._id)}
+            onScroll={onScroll}
+            pagingEnabled
+            renderItem={renderItem}
+            snapToAlignment="start"
+            showsHorizontalScrollIndicator={false}
+            getItemLayout={(data, index) => ({
+              length: Width_convert(375),
+              offset: Width_convert(375) * index,
+              index,
+            })}
+            initialScrollIndex={
+              props.route.params.Title === '드레스업'
+                ? 0
+                : props.route.params.Title === '퍼포먼스'
+                ? 1
+                : props.route.params.Title === '편의장치'
+                ? 2
+                : props.route.params.Title === '캠핑카 튜닝'
+                ? 3
+                : 0
+            }></FlatList>
         </View>
       </SafeAreaView>
       {searchModal && (

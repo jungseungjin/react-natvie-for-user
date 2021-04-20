@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   SafeAreaView,
@@ -186,15 +186,55 @@ const InfoScreen = (props) => {
   const [page, setPage] = React.useState('info');
   const PageChangeValue = (text) => setPage(text);
   const [saveDataClick, setSaveDataClick] = React.useState(0);
-  const [brandList, setBrandList] = React.useState([]);
-  const [category, setCategory] = React.useState('domestic');
-  const CategoryChangeValue = (text) => setCategory(text);
-  const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
-  const PickBrandChangeValue = (object) => setPickBrand(object);
-  const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
-  const PickModelChangeValue = (object) => setPickModel(object);
-  const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
-  const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
+  // const [brandList, setBrandList] = React.useState([]);
+  // const [category, setCategory] = React.useState('domestic');
+  // const CategoryChangeValue = (text) => setCategory(text);
+  // const [pickBrand, setPickBrand] = React.useState({}); //디비에서 가져온 브랜드값
+  // const PickBrandChangeValue = (object) => setPickBrand(object);
+  // const [pickModel, setPickModel] = React.useState({}); //디비에서 가져온 모델값
+  // const PickModelChangeValue = (object) => setPickModel(object);
+  // const [pickModelDetail, setPickModelDetail] = React.useState({}); //디비에서 가져온 상세모델값
+  // const PickModelDetailChangeValue = (object) => setPickModelDetail(object);
+
+  const [brandList1, setBrandList1] = useState([]);
+  const [brandList2, setBrandList2] = useState([]);
+  const [categoryPick, setCategoryPick] = useState('domestic');
+  const CategoryPickChangeValue = (text) => setCategoryPick(text);
+  const [brandPick, setBrandPick] = useState();
+  const BrandPickChangeValue = (object) => setBrandPick(object);
+  const [modelPick, setModelPick] = useState({});
+  const ModelPickChangeValue = (object) => setModelPick(object);
+  const [modelDetailPick, setModelDetailPick] = useState({});
+  const ModelDetailPickChangeValue = (object) => setModelDetailPick(object);
+  const getData = () => {
+    try {
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let Data = await axios.get(`${Domain}api/car/getdata/all`, {
+            headers: {'Content-Type': 'application/json'},
+          });
+          let type1 = [];
+          let type2 = [];
+          Data.data.result.map((item, index) => {
+            if (item.view !== 2) {
+              if (item.type === 1) type1.push(item);
+              else if (item.type === 2) type2.push(item);
+            }
+          });
+          setBrandList1(type1);
+          setBrandList2(type2);
+        } else {
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
@@ -220,30 +260,33 @@ const InfoScreen = (props) => {
   //차량데이터 추가 or 변경
   const AddCarData = () => {
     let prevData = car.slice();
-    if (!pickBrand.brand || !pickModel.model || !pickModelDetail.model_detail) {
+    if (!brandPick.brand || !modelPick.model || !modelDetailPick.modelDetail) {
       setCarModal(true);
       return false;
     }
     if (page == 'carAdd') {
       //차량정보 추가
       prevData.push({
-        pickBrand: pickBrand,
-        pickModel: pickModel,
-        pickModelDetail: pickModelDetail,
+        pickBrand: brandPick,
+        pickModel: modelPick,
+        pickModelDetail: modelDetailPick,
       });
     } else if (page.indexOf('carChange') != -1) {
       //차량정보 변경
       let index = page.replace('carChange', '');
       prevData[index] = {
-        pickBrand: pickBrand,
-        pickModel: pickModel,
-        pickModelDetail: pickModelDetail,
+        pickBrand: brandPick,
+        pickModel: modelPick,
+        pickModelDetail: modelDetailPick,
       };
     }
     setCar(prevData);
-    setPickBrand({});
-    setPickModel({});
-    setPickModelDetail({});
+    // setPickBrand({});
+    // setPickModel({});
+    // setPickModelDetail({});
+    setBrandPick({});
+    setModelPick({});
+    setModelDetailPick({});
     setPage('info');
   };
   //차량데이터 삭제
@@ -1533,9 +1576,9 @@ const InfoScreen = (props) => {
                                 fontSize: Font_normalize(16),
                                 color: '#000000',
                               }}>
-                              {item?.pickModelDetail?.brand +
+                              {item?.pickBrand?.brand +
                                 ' ' +
-                                item?.pickModelDetail?.model_detail}
+                                item?.pickModelDetail?.modelDetail}
                             </Text>
                             <TouchableOpacity
                               activeOpacity={1}
@@ -2368,17 +2411,31 @@ const InfoScreen = (props) => {
           <CarSetting
             page={page}
             from={'info'}
-            PageChangeValue={PageChangeValue}
-            nowValue={category}
-            CategoryChangeValue={CategoryChangeValue}
-            PickBrandValue={pickBrand}
-            PickBrandChangeValue={PickBrandChangeValue}
-            IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
-            PickModelValue={pickModel}
-            PickModelChangeValue={PickModelChangeValue}
-            PickModelDetail={pickModelDetail}
-            PickModelDetailChangeValue={
-              PickModelDetailChangeValue
+            //PageChangeValue={PageChangeValue}
+            // nowValue={category}
+            // CategoryChangeValue={CategoryChangeValue}
+            // PickBrandValue={pickBrand}
+            // PickBrandChangeValue={PickBrandChangeValue}
+            // IsLoadingAndModalChangeValue={IsLoadingAndModalChangeValue}
+            // PickModelValue={pickModel}
+            // PickModelChangeValue={PickModelChangeValue}
+            // PickModelDetail={pickModelDetail}
+            // PickModelDetailChangeValue={
+            //   PickModelDetailChangeValue
+            // }
+
+            BrandPick={brandPick}
+            BrandPickChangeValue={BrandPickChangeValue}
+            BrandList1={brandList1}
+            BrandList2={brandList2}
+            CategoryPickChangeValue={CategoryPickChangeValue}
+            CategoryPick={categoryPick}
+            from={props?.route?.name}
+            ModelPick={modelPick}
+            ModelPickChangeValue={ModelPickChangeValue}
+            ModelDetailPick={modelDetailPick}
+            ModelDetailPickChangeValue={
+              ModelDetailPickChangeValue
             }></CarSetting>
         </>
       )}

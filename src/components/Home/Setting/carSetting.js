@@ -27,82 +27,6 @@ import NetInfo from '@react-native-community/netinfo';
 import IsLoading from '../../../components/ActivityIndicator';
 const CarSetting = (props) => {
   const insets = useSafeAreaInsets();
-  const [brandList, setBrandList] = React.useState([]);
-  const [modelList, setModelList] = React.useState([]);
-  const get_brand_data = async function (props) {
-    try {
-      let brandSeach;
-      if (props.nowValue == 'domestic') {
-        //국산차 브랜드 조회
-        brandSeach = '1';
-      } else if (props.nowValue == 'import') {
-        //수입차 브랜드 조회
-        brandSeach = '2';
-      } else {
-        //전체
-        setBrandList([]);
-        return false;
-      }
-      setModelList([]);
-
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          props.IsLoadingAndModalChangeValue(1);
-          let url = Domain + 'brand_list/' + brandSeach;
-          let result = await axios.get(url);
-          props.IsLoadingAndModalChangeValue(0);
-          if (result.data[0].status == 'ok') {
-            setBrandList(result.data[0].result);
-          } else {
-            alert(result.data[0].message);
-          }
-        } else {
-          props.IsLoadingAndModalChangeValue(2);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-      alert('잠시 후에 다시해주세요');
-    }
-  };
-
-  const get_model_data = async function (props) {
-    try {
-      if (props?.PickBrandValue?.brand) {
-        NetInfo.addEventListener(async (state) => {
-          if (state.isConnected) {
-            props.IsLoadingAndModalChangeValue(1);
-            let url = Domain + 'model_list/' + props.PickBrandValue.brand;
-            //props.IsLoadingChangeValue(true);
-            let result = await axios.get(url);
-            props.IsLoadingAndModalChangeValue(0);
-            if (result.data[0].status == 'ok') {
-              setModelList(result.data[0].result);
-              //props.IsLoadingChangeValue(false);
-            } else {
-              //get에서 type이 있으면 잘못된거
-              alert(result.data[0].message);
-              //props.IsLoadingChangeValue(false);
-            }
-          } else {
-            props.IsLoadingAndModalChangeValue(2);
-          }
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      alert('잠시 후에 다시해주세요');
-    }
-  };
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  React.useEffect(() => {
-    get_brand_data(props);
-  }, [props.nowValue]);
-  React.useEffect(() => {
-    get_model_data(props);
-  }, [props.PickBrandValue]);
-
   return (
     <>
       <View style={{flex: 1, flexDirection: 'row'}}>
@@ -131,9 +55,9 @@ const CarSetting = (props) => {
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
-                if (props.nowValue == 'domestic') {
+                if (props.CategoryPick === 'domestic') {
                 } else {
-                  props.CategoryChangeValue('domestic');
+                  props.CategoryPickChangeValue('domestic');
                 }
               }}
               style={{
@@ -152,7 +76,7 @@ const CarSetting = (props) => {
                 }}>
                 국산
               </Text>
-              {props.nowValue == 'domestic' ? (
+              {props.CategoryPick == 'domestic' ? (
                 <Purple_checkBox
                   style={{marginRight: Width_convert(22)}}></Purple_checkBox>
               ) : (
@@ -164,9 +88,9 @@ const CarSetting = (props) => {
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
-                if (props.nowValue == 'import') {
+                if (props.CategoryPick === 'import') {
                 } else {
-                  props.CategoryChangeValue('import');
+                  props.CategoryPickChangeValue('import');
                 }
               }}
               style={[
@@ -194,7 +118,7 @@ const CarSetting = (props) => {
                 }}>
                 수입
               </Text>
-              {props.nowValue == 'import' ? (
+              {props.CategoryPick == 'import' ? (
                 <Purple_checkBox
                   style={{marginRight: Width_convert(22)}}></Purple_checkBox>
               ) : (
@@ -209,11 +133,10 @@ const CarSetting = (props) => {
                 activeOpacity={1}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
-                  if (props.nowValue == 'all') {
+                  if (props.CategoryPick == 'all') {
                   } else {
-                    props.CategoryChangeValue('all');
-                    setBrandList([]);
-                    setModelList([]);
+                    props.CategoryPickChangeValue('all');
+                    props.BrandPickChangeValue([]);
                   }
                 }}
                 style={{
@@ -233,7 +156,7 @@ const CarSetting = (props) => {
                   }}>
                   전체
                 </Text>
-                {props.nowValue == 'all' ? (
+                {props.CategoryPick == 'all' ? (
                   <Purple_checkBox
                     style={{marginRight: Width_convert(22)}}></Purple_checkBox>
                 ) : (
@@ -249,22 +172,25 @@ const CarSetting = (props) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             style={{flex: 1}}
-            data={brandList}
+            data={
+              props.CategoryPick === 'domestic'
+                ? props.BrandList1
+                : props.CategoryPick === 'import'
+                ? props.BrandList2
+                : []
+            }
             windowSize={2}
             initialNumToRender={10}
             renderItem={({item}) => (
               <CarSettingBrand
                 item={item}
-                PickBrandValue={
-                  props.PickBrandValue?._id == item?._id
-                    ? props.PickBrandValue
-                    : null
+                BrandPick={
+                  props.BrandPick?._id === item?._id && props.BrandPick
                 }
-                PickBrandChangeValue={props.PickBrandChangeValue}
-                PickModelChangeValue={props.PickModelChangeValue}
-                PickModelDetailChangeValue={props.PickModelDetailChangeValue}
-                IsLoadingAndModalChangeValue={
-                  props.IsLoadingAndModalChangeValue
+                BrandPickChangeValue={props.BrandPickChangeValue}
+                ModelPickChangeValue={props.ModelPickChangeValue}
+                ModelDetailPickChangeValue={
+                  props.ModelDetailPickChangeValue
                 }></CarSettingBrand>
             )}
             keyExtractor={(item) => String(item._id)}></FlatList>
@@ -277,27 +203,19 @@ const CarSetting = (props) => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
-          data={modelList}
+          data={props.BrandPick && props.BrandPick.model}
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) => (
             <CarSettingModel
-              index={brandList.indexOf(item)}
+              index={props.BrandPick.model.indexOf(item)}
               item={item}
-              PickBrandValue={props.PickBrandValue}
-              PickModelValue={
-                props.PickModelValue?._id == item?._id
-                  ? props.PickModelValue
-                  : null
-              }
-              PickModelChangeValue={props.PickModelChangeValue}
-              PickModelDetail={props.PickModelDetail}
-              PageChangeValue={props.PageChangeValue}
-              from={props.from}
-              PickModelDetailChangeValue={props.PickModelDetailChangeValue}
-              IsLoadingAndModalChangeValue={
-                props.IsLoadingAndModalChangeValue
-              }></CarSettingModel>
+              BrandPick={props.BrandPick}
+              ModelPick={props.ModelPick._id === item._id && props.ModelPick}
+              ModelPickChangeValue={props.ModelPickChangeValue}
+              ModelDetailPick={props.ModelDetailPick}
+              ModelDetailPickChangeValue={props.ModelDetailPickChangeValue}
+              from={props.from}></CarSettingModel>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
         {/*오른쪽 뷰 끝 */}
@@ -309,8 +227,6 @@ const CarSetting = (props) => {
           height: Height_convert(insets.bottom),
           backgroundColor: '#FFFFFF',
         }}></View>
-      {/*하단 버튼만큼의 공간 띄우기 끝 */}
-      {isLoading ? <IsLoading></IsLoading> : null}
     </>
   );
 };

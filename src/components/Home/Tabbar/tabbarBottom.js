@@ -67,16 +67,16 @@ const CategoryViewNested = (props, item) => {
       key={item.value}
       activeOpacity={1}
       onPress={() => {
-        props.PageChangeValue(item.value);
+        props.PageChangeValue(item._id);
       }}
       style={[
         styles.CategoryViewNestedTouch(props.Title),
-        props.nowValue == item.value ? styles.pickView : styles.unPickView,
+        props.nowValue === item._id ? styles.pickView : styles.unPickView,
       ]}>
       <Text
         style={[
           styles.CategoryViewNestedText,
-          props.nowValue == item.value ? styles.pickText : styles.unPickText,
+          props.nowValue === item._id ? styles.pickText : styles.unPickText,
         ]}>
         {item.title}
       </Text>
@@ -261,4 +261,4 @@ TabBarBottom.propTypes = {
   from: PropTypes.string.isRequired,
 };
 
-export default TabBarBottom;
+export default memo(TabBarBottom);

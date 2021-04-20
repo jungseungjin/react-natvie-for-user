@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
   View,
   Platform,
   ScrollView,
+  StyleSheet,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -17,7 +18,9 @@ import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 import KakaoTalkLogo from '../../../../assets/home/KakaoTalkLogo.svg';
 import CallLogo from '../../../../assets/home/CallLogo.svg';
-
+const styles = StyleSheet.create({
+  view: {},
+});
 const BottomButton = (props) => {
   const insets = useSafeAreaInsets();
   return (
@@ -98,4 +101,4 @@ const BottomButton = (props) => {
     </View>
   );
 };
-export default BottomButton;
+export default memo(BottomButton);

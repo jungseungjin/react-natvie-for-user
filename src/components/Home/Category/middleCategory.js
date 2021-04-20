@@ -11,10 +11,13 @@ const MiddleCategory = (props) => {
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          props.PickMiddleCategoryChangeValue(props.item);
+          props.PickSecondCategoryChangeValue({
+            ...props.item.item,
+            index: props.topIndex,
+          });
         }}
         style={styles.touch(props)}>
-        <Text style={styles.text}>{props.item.work_sub_type_name}</Text>
+        <Text style={styles.text}>{props.item.item.name}</Text>
       </TouchableOpacity>
     </>
   );
@@ -29,7 +32,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor:
-        props.PickMiddleCategory === props.item ? '#DBDBDB' : '#F1F1F1',
+        props.pickSecondCategory === props.item.item._id
+          ? '#DBDBDB'
+          : '#F1F1F1',
     };
   },
   text: {

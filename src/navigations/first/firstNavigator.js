@@ -29,8 +29,11 @@ import Version from '../../../key/key.js';
 import ServerModal from '../../components/Modal/ServerModal';
 import VersionModal from '../../components/Modal/VersionModal';
 import moment from 'moment';
+import {SafeAreaView, Image, StatusBar} from 'react-native';
+
 const FirstNavigator = (props) => {
   const [landingCheck, setLandingCheck] = React.useState(true);
+  const [networkCheck, setNetworkCheck] = React.useState(true);
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
@@ -171,9 +174,7 @@ const FirstNavigator = (props) => {
       console.log("Keychain couldn't be accessed!", error);
     } finally {
       setIsLoadingAndModal(0);
-      setTimeout(() => {
-        RNSplashScreen.hide();
-      }, 1000);
+      RNSplashScreen.hide();
     }
   };
   //토큰값 가져오기 및 저장.  알림이 허용된 상태면 디바이스정보도 저장함. 알림이 거절되면 디바이스정보,토큰값이 저장되지 않음
@@ -261,12 +262,27 @@ const FirstNavigator = (props) => {
       console.log(err);
     }
   };
+
+  const NetWorkCheck = () => {
+    NetInfo.addEventListener(async (state) => {
+      if (state.isConnected) {
+        setNetworkCheck(true);
+        // setIsLoadingAndModal(2);
+        // RNSplashScreen.hide();
+      } else {
+        setIsLoadingAndModal(2);
+        RNSplashScreen.hide();
+      }
+    });
+  };
   React.useEffect(() => {
+    NetWorkCheck();
+    if (networkCheck === false) return;
     setIsLoadingAndModal(1);
     getData();
     handlePushToken();
     AutoLogin();
-  }, []);
+  }, [networkCheck]);
   React.useEffect(() => {
     setIsLoadingAndModal(1);
     if (reduxState.landingCheck.landingCheck == true) {
@@ -277,26 +293,56 @@ const FirstNavigator = (props) => {
   }, [reduxState.landingCheck.landingCheck]);
 
   return (
-    <NavigationContainer>
-      <TabNavigator></TabNavigator>
-      {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
-        <IsLoading></IsLoading>
-      ) : isLoadingAndModal === 2 ? (
-        <NetworkErrModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NetworkErrModal>
-      ) : isLoadingAndModal === 3 ? (
-        <NormalErrModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
-      ) : isLoadingAndModal === 4 ? (
-        <ServerModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}
-          Title={serverModalMessage}></ServerModal>
-      ) : isLoadingAndModal === 5 ? (
-        <VersionModal
-          ShowModalChangeValue={IsLoadingAndModalChangeValue}
-          Title={serverModalMessage}></VersionModal>
-      ) : null}
-    </NavigationContainer>
+    <>
+      {networkCheck ? (
+        <NavigationContainer>
+          <TabNavigator></TabNavigator>
+          {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
+            <IsLoading></IsLoading>
+          ) : isLoadingAndModal === 2 ? (
+            <NetworkErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NetworkErrModal>
+          ) : isLoadingAndModal === 3 ? (
+            <NormalErrModal
+              ShowModalChangeValue={
+                IsLoadingAndModalChangeValue
+              }></NormalErrModal>
+          ) : isLoadingAndModal === 4 ? (
+            <ServerModal
+              ShowModalChangeValue={IsLoadingAndModalChangeValue}
+              Title={serverModalMessage}></ServerModal>
+          ) : isLoadingAndModal === 5 ? (
+            <VersionModal
+              ShowModalChangeValue={IsLoadingAndModalChangeValue}
+              Title={serverModalMessage}></VersionModal>
+          ) : null}
+        </NavigationContainer>
+      ) : (
+        <>
+          <StatusBar hidden={true}></StatusBar>
+          <SafeAreaView
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#FFFFFF',
+            }}>
+            <Image
+              style={{width: 248, height: 132}}
+              resizeMode="contain"
+              source={require('./../../../assets/home/icon.png')}></Image>
+            {isLoadingAndModal === 2 && (
+              <NetworkErrModal
+                ShowModalChangeValue={
+                  IsLoadingAndModalChangeValue
+                }></NetworkErrModal>
+            )}
+          </SafeAreaView>
+        </>
+      )}
+    </>
   );
 };
 function mapStateToProps(state) {

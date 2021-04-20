@@ -100,6 +100,31 @@ const styles = StyleSheet.create({
     color: '#A1A1A1',
   },
 });
+const StarRender = (grade) => {
+  let newArr = [];
+  for (var a = 1; a < 6; a++) {
+    if (a <= grade) {
+      newArr.push({value: 1, index: a - 1});
+    } else {
+      newArr.push({value: 0, index: a - 1});
+    }
+  }
+  return newArr.map((item) =>
+    item.value == 1 ? (
+      <Star
+        key={item.index}
+        width={Width_convert(9)}
+        height={Width_convert(9)}
+        style={{marginRight: Width_convert(4)}}></Star>
+    ) : (
+      <StarGrey
+        key={item.index}
+        width={Width_convert(9)}
+        height={Width_convert(9)}
+        style={{marginRight: Width_convert(4)}}></StarGrey>
+    ),
+  );
+};
 const ReviewInformation = (props) => {
   moment.locale('ko');
 
@@ -133,31 +158,6 @@ const ReviewInformation = (props) => {
     }
   };
 
-  const StarRender = (grade) => {
-    let newArr = [];
-    for (var a = 1; a < 6; a++) {
-      if (a <= grade) {
-        newArr.push({value: 1, index: a - 1});
-      } else {
-        newArr.push({value: 0, index: a - 1});
-      }
-    }
-    return newArr.map((item) =>
-      item.value == 1 ? (
-        <Star
-          key={item.index}
-          width={Width_convert(9)}
-          height={Width_convert(9)}
-          style={{marginRight: Width_convert(4)}}></Star>
-      ) : (
-        <StarGrey
-          key={item.index}
-          width={Width_convert(9)}
-          height={Width_convert(9)}
-          style={{marginRight: Width_convert(4)}}></StarGrey>
-      ),
-    );
-  };
   const [visible, setIsVisible] = React.useState(false);
   const [visibleImage, setVisibleImage] = React.useState([]);
   const [visibleIndex, setVisibleIndex] = React.useState(0);
@@ -195,7 +195,100 @@ const ReviewInformation = (props) => {
           </Text>
         </View>
       </View>
-      {props.item.map((item) => propsItem(item))}
+      {props.item.map((item) => (
+        <View key={item._id} style={styles.itemView}>
+          <View style={styles.itemViewNested}>
+            <View style={styles.itemViewNestedNested}>
+              <FastImage
+                style={styles.itemFastImage}
+                source={{
+                  uri: item.info_user[0].review_user_iu_image,
+                  //headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.stretch}></FastImage>
+            </View>
+            <View>
+              <View>
+                <Text style={styles.itemText}>
+                  {item.info_user[0].iu_nickname}
+                </Text>
+              </View>
+              <View style={styles.starView}>
+                {StarRender(item?.review_reply_grade)}
+                <Text style={styles.starText}>
+                  {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
+                    .add(9, 'h')
+                    .fromNow()}
+                </Text>
+              </View>
+              <TouchableOpacity
+                activeOpacity={1}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                onPress={() => {
+                  getDataAndNavigate('work', item._id);
+                }}
+                style={{marginTop: Height_convert(8)}}>
+                <Text style={styles.starTouchText}>
+                  {item.store_work[0].store_work_name}
+                </Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  width: Width_convert(265),
+                  marginTop: Height_convert(8),
+                }}>
+                <Text
+                  style={{
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontSize: Font_normalize(12),
+                    fontWeight: '400',
+                    color: '#000000',
+                  }}>
+                  {item.review_reply_contents}
+                </Text>
+              </View>
+              <ScrollView
+                style={{
+                  marginTop: Height_convert(21),
+                  minWidth: Width_convert(375),
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}>
+                {item.review_reply_image.map((imageItem) =>
+                  typeof imageItem === 'number' ? null : (
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                      onPress={() => {
+                        setIsVisible(true);
+                        setVisibleImage(item.review_reply_image);
+                        setVisibleIndex(
+                          item.review_reply_image.indexOf(imageItem),
+                        );
+                      }}
+                      key={imageItem}
+                      style={{marginRight: Width_convert(7)}}>
+                      <FastImage
+                        style={{
+                          width: Width_convert(134),
+                          height: Width_convert(88),
+                          borderRadius: Width_convert(3),
+                        }}
+                        source={{
+                          uri: imageItem,
+                          //headers: {Authorization: 'someAuthToken'},
+                          priority: FastImage.priority.normal,
+                        }}
+                        resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                    </TouchableOpacity>
+                  ),
+                )}
+              </ScrollView>
+            </View>
+          </View>
+        </View>
+      ))}
       <ImageView
         images={getImageSource(visibleImage)}
         imageIndex={visibleIndex}
@@ -207,95 +300,7 @@ const ReviewInformation = (props) => {
 };
 export default memo(ReviewInformation);
 
-const propsItem = (item) => {
-  return (
-    <View key={item._id} style={styles.itemView}>
-      <View style={styles.itemViewNested}>
-        <View style={styles.itemViewNestedNested}>
-          <FastImage
-            style={styles.itemFastImage}
-            source={{
-              uri: item.info_user[0].review_user_iu_image,
-              //headers: {Authorization: 'someAuthToken'},
-              priority: FastImage.priority.normal,
-            }}
-            resizeMode={FastImage.resizeMode.stretch}></FastImage>
-        </View>
-        <View>
-          <View>
-            <Text style={styles.itemText}>{item.info_user[0].iu_nickname}</Text>
-          </View>
-          <View style={styles.starView}>
-            {StarRender(item.review_reply_grade)}
-            <Text style={styles.starText}>
-              {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
-                .add(9, 'h')
-                .fromNow()}
-            </Text>
-          </View>
-          <TouchableOpacity
-            activeOpacity={1}
-            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-            onPress={() => {
-              getDataAndNavigate('work', item._id);
-            }}
-            style={{marginTop: Height_convert(8)}}>
-            <Text style={styles.starTouchText}>
-              {item.store_work[0].store_work_name}
-            </Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              width: Width_convert(265),
-              marginTop: Height_convert(8),
-            }}>
-            <Text
-              style={{
-                fontFamily: Fonts?.NanumSqureRegular || null,
-                fontSize: Font_normalize(12),
-                fontWeight: '400',
-                color: '#000000',
-              }}>
-              {item.review_reply_contents}
-            </Text>
-          </View>
-          <ScrollView
-            style={{
-              marginTop: Height_convert(21),
-              minWidth: Width_convert(375),
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}>
-            {item.review_reply_image.map((imageItem) =>
-              typeof imageItem === 'number' ? null : (
-                <TouchableOpacity
-                  activeOpacity={1}
-                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                  onPress={() => {
-                    setIsVisible(true);
-                    setVisibleImage(item.review_reply_image);
-                    setVisibleIndex(item.review_reply_image.indexOf(imageItem));
-                  }}
-                  key={imageItem}
-                  style={{marginRight: Width_convert(7)}}>
-                  <FastImage
-                    style={{
-                      width: Width_convert(134),
-                      height: Width_convert(88),
-                      borderRadius: Width_convert(3),
-                    }}
-                    source={{
-                      uri: imageItem,
-                      //headers: {Authorization: 'someAuthToken'},
-                      priority: FastImage.priority.normal,
-                    }}
-                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                </TouchableOpacity>
-              ),
-            )}
-          </ScrollView>
-        </View>
-      </View>
-    </View>
-  );
-};
+// const propsItem = (item) => {
+//   return (
+//   );
+// };

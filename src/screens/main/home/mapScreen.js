@@ -165,7 +165,7 @@ const MapScreen = (props) => {
             setPickLocation({
               latitude: parseFloat(position.latitude),
               longitude: parseFloat(position.longitude),
-              legalcode: '요청한 데이타의 결과가 없습니다.',
+              legalcode: '요청한 데이터의 결과가 없습니다.',
             });
             //네이버 맵에 없음
           }
