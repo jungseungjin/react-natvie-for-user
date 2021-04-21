@@ -37,59 +37,22 @@ const CategoryScreen = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [searchModal, setSearchModal] = useState(false);
   const SearchModalChangeValue = (text) => setSearchModal(text);
-  const getDataAndNavigate = () => {
+  const nextPage = () => {
     try {
-      //선택한 작업종류를 가지고 백에서 데이터 받아서 ㄲ  필요한 데이터 -> 작업종류나열된것, 작업리스트
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          console.log(pickSecondCategory);
-          if (pickSecondCategory._id) {
-            //중분류 찍혀있음
-            let url = `${Domain}categoryworklist/first`;
-            let result = await axios.get(url, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              params: {
-                page: page,
-                middle: pickMiddleCategory.work_sub_type_name,
-                small: pickSmallCategory._id,
-                iu_car:
-                  reduxState.loginDataCheck.login?.iu_car[0]?.pickModelDetail
-                    ?.info_car_id || undefined,
-                longitude:
-                  reduxState.loginDataCheck.login?.location?.location
-                    ?.longitude || undefined,
-                latitude:
-                  reduxState.loginDataCheck.login?.location?.location
-                    ?.latitude || undefined,
-              },
-            });
-            if (result.data[0].status == 'ok') {
-              //무슨페이지인지
-              //찍은 중분류가 무엇인지  나머지 중분류는 무엇인지
-              //소분류 찍혔는지  찍혓다면 어떤??  나머지 소분류는 무엇인지
-              props.navigation.navigate('CategoryDetail', {
-                Page: page,
-                SmallCategory: result.data[0].SmallCategory,
-                MiddleCategory: result.data[0].MiddleCategory,
-                WorkList: result.data[0].WorkList,
-                PickMiddle: pickMiddleCategory.work_sub_type_name,
-                PickSmall: pickSmallCategory._id,
-                random: result.data[0].randomNumber,
-              });
-            } else {
-            }
-          } else {
-            setSearchModal(true);
-            //중분류도 안찍혀있음 -> 아무것도 안해  --- 나중에 모달띄우기 넣지
-          }
-        } else {
-          setIsLoadingAndModal(2);
-        }
-      });
+      if (pickSecondCategory._id !== undefined) {
+        //중분류 찍혀있음 넘어가도됨.
+        props.navigation.navigate('CategoryDetail', {
+          Page: pages[page],
+          SmallCategory: pickThirdCategory,
+          MiddleCategory: pickSecondCategory,
+        });
+      } else {
+        setSearchModal(true);
+        //중분류도 안찍혀있음 -> 아무것도 안해  --- 나중에 모달띄우기 넣지
+      }
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
 
@@ -208,7 +171,7 @@ const CategoryScreen = (props) => {
           left={'X'}
           Title={'작업종류'}
           navigation={props.navigation}
-          getDataAndNavigate={getDataAndNavigate}
+          nextPage={nextPage}
           Page={page}></Tabbar>
         <TabBarBottom
           from={'category'}

@@ -313,12 +313,12 @@ const SearchScreenDetail = (props) => {
               defaultValue={searchText}
               returnKeyType={'search'}
               onSubmitEditing={() => {
-                if (searchText.trim()) {
-                  //검색함수 ㄲ
-                  addData(searchText.trim());
-                  onRefresh(searchText.trim(), searchRandomNumber);
+                let text = searchText.trim();
+                if (text.length > 1) {
+                  addData(text);
+                  onRefresh(text, searchRandomNumber);
                 } else {
-                  showToast('검색어를 입력해주세요.', 500);
+                  showToast('검색어를 두 글자 이상 입력해주세요.', 500);
                 }
               }}
               style={{
@@ -361,11 +361,12 @@ const SearchScreenDetail = (props) => {
                 height: Height_convert(20),
               }}
               onPress={() => {
-                if (searchText.trim()) {
-                  addData(searchText.trim());
-                  onRefresh(searchText.trim(), searchRandomNumber);
+                let text = searchText.trim();
+                if (text.length > 1) {
+                  addData(text);
+                  onRefresh(text, searchRandomNumber);
                 } else {
-                  showToast('검색어를 입력해주세요.', 500);
+                  showToast('검색어를 두 글자 이상 입력해주세요.', 500);
                 }
               }}>
               <Search></Search>

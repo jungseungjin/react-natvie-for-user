@@ -139,14 +139,15 @@ const SearchScreen = ({navigation, route}) => {
               }}
               returnKeyType={'search'}
               onSubmitEditing={() => {
-                if (searchText.trim()) {
+                let text = searchText.trim();
+                if (text.length > 1) {
                   navigation.navigate('SearchDetail', {
                     searchText: searchText,
                     resentSearch: resentSearch,
                   });
                   addData(searchText);
                 } else {
-                  showToast('검색어를 입력해주세요.', 1000);
+                  showToast('검색어를 두 글자 이상 입력해주세요.', 1000);
                 }
               }}
               style={{
@@ -169,14 +170,15 @@ const SearchScreen = ({navigation, route}) => {
               activeOpacity={1}
               hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
               onPress={() => {
-                if (searchText.trim()) {
+                let text = searchText.trim();
+                if (text.length > 1) {
                   navigation.navigate('SearchDetail', {
                     searchText: searchText,
                     resentSearch: resentSearch,
                   });
                   addData(searchText);
                 } else {
-                  showToast('검색어를 입력해주세요.', 1000);
+                  showToast('검색어를 두 글자 이상 입력해주세요.', 1000);
                 }
               }}
               style={{

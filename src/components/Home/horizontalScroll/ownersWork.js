@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Height_convert from '../../Width_convert.js';
 import Width_convert from '../../Width_convert.js';
@@ -19,7 +19,7 @@ const OwnersWork = (props) => {
       <FastImage
         style={FastImageStyle(props.From, 1)}
         source={{
-          uri: props.item.url,
+          uri: props.item.image,
           headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
@@ -34,12 +34,12 @@ const OwnersWork = (props) => {
         <FastImage
           style={FastImageStyle(props.From, 2)}
           source={{
-            uri: props.item.ownersImage,
+            uri: props.item.owner.image,
             headers: {Authorization: 'someAuthToken'},
             priority: FastImage.priority.normal,
           }}
           resizeMode={FastImage.resizeMode.stretch}></FastImage>
-        <Text style={styles.ownersnameText}>{props.item.ownersname}</Text>
+        <Text style={styles.ownersnameText}>{props.item.owner.name}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -135,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 OwnersWork.propTypes = {};
-export default OwnersWork;
+export default memo(OwnersWork);

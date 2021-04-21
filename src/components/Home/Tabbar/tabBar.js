@@ -94,7 +94,7 @@ const rightViewNested = (props) => {
         hitSlop={{top: 10, bottom: 10, left: 20, right: 20}}
         onPress={() => {
           if (props.Title === '작업종류') {
-            props.getDataAndNavigate();
+            props.nextPage();
           } else if (props.Title === '설정') {
             props.PushReduxData();
           } else if (

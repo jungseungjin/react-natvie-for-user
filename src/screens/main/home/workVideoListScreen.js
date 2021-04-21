@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StatusBar,
@@ -17,26 +17,44 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 
 const WorkVideoListScreen = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [refreshing, setRefreshing] = React.useState(false);
   const [viewWorkList, setViewWorkList] = React.useState([]);
-  const getData = () => {
+  const [backendPage, setBackendPage] = useState(1);
+  const throttleGetData = _.throttle((Number) => getData(true), 300, {
+    leading: true,
+    trailing: false,
+  });
+  const getData = (scrolling) => {
     try {
+      let page;
+      if (scrolling) page = backendPage;
+      else page = 0;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = `${Domain}videolist`;
+          let url = `${Domain}api/home/get/video`;
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              page: page,
+            },
           });
-          if (result.data[0].message == 'ok') {
-            setViewWorkList(result.data[0].RecommendVideoList);
+          if (result.data.success === true) {
+            setViewWorkList([...viewWorkList, ...result.data.result]);
+            if (scrolling) {
+              setBackendPage((prevState) => {
+                return prevState + 1;
+              });
+            }
           } else {
-            console.log(result.data[0]);
+            console.log(result.data);
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -76,21 +94,16 @@ const WorkVideoListScreen = (props) => {
           data={viewWorkList}
           windowSize={2}
           initialNumToRender={10}
+          onEndReached={throttleGetData}
+          onEndReachedThreshold={50}
           renderItem={({item}) => (
             <>
               <OwnersWork
                 From={'workVideo'}
-                item={{
-                  show: true,
-                  url: item.url, //사진url
-                  videoUrl: item.videoUrl,
-                  title: item.Title, //영상제목
-                  ownersImage: item.ownersImage, //채널이미지
-                  ownersname: item.ownersname, //채널명
-                }}
+                item={item}
                 navigation={props.navigation}
                 Index={viewWorkList.indexOf(item)}></OwnersWork>
-              {viewWorkList.indexOf(item) == viewWorkList.length - 1 ? (
+              {viewWorkList.indexOf(item) === viewWorkList.length - 1 ? (
                 <View style={{height: Height_convert(390)}}></View>
               ) : null}
             </>

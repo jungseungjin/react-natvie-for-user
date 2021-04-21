@@ -35,21 +35,26 @@ const CategoryDetailScreen = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [page, setPage] = React.useState(props.route.params.Page || null);
   const PageChangeValue = (text) => setPage(text);
-  const [middleList, setMiddleList] = React.useState(
-    props.route.params.MiddleCategory,
-  );
-  const [pickMiddle, setPickMiddle] = React.useState(
-    props.route.params.PickMiddle,
-  );
-  const [smallList, setSmallList] = React.useState(
-    props.route.params.SmallCategory,
-  );
-  const [pickSmall, setPickSmall] = React.useState(
-    props.route.params.PickSmall,
-  );
-  const [resultWorkList, setresultWorkList] = React.useState(
-    props.route.params.WorkList,
-  );
+  const [middleList, setMiddleList] = React
+    .useState
+    //props.route.params.MiddleCategory,
+    ();
+  const [pickMiddle, setPickMiddle] = React
+    .useState
+    //props.route.params.PickMiddle,
+    ();
+  const [smallList, setSmallList] = React
+    .useState
+    //props.route.params.SmallCategory,
+    ();
+  const [pickSmall, setPickSmall] = React
+    .useState
+    //props.route.params.PickSmall,
+    ();
+  const [resultWorkList, setresultWorkList] = React
+    .useState
+    //props.route.params.WorkList,
+    ();
   const [viewWorkList, setViewWorkList] = React.useState([]);
   const [pickFilter, setPickFilter] = React.useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
@@ -230,7 +235,7 @@ const CategoryDetailScreen = (props) => {
   React.useEffect(() => {
     //중분류만 찍혀있으면 찍힌 중분류 모두 나오게 -> 받은 값 모두 나옴
     if (props.route.params.PickSmall === undefined) {
-      setViewWorkList(props.route.params.WorkList);
+      setViewWorkList([]);
     } else {
       //소분류 찍혀있으면 소분류만 나오게 -> 한바퀴 둘러
       let newArr = [];
@@ -278,7 +283,7 @@ const CategoryDetailScreen = (props) => {
               ? '편의장치'
               : page == 'camping'
               ? '캠핑카'
-              : null
+              : '드레스업'
           }
           navigation={props.navigation}></Tabbar>
         <TabBarBottom

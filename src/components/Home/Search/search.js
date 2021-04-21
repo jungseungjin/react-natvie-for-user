@@ -11,6 +11,21 @@ import Width_convert from '../../Width_convert.js';
 import PropTypes from 'prop-types';
 import Fonts from '../../Fonts.js';
 import Font_normalize from '../../Font_normalize.js';
+const Search = (props) => {
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        props.navigation.navigate('Search');
+      }}
+      activeOpacity={1}
+      style={styles.touch}>
+      <View style={styles.view}>
+        <Text style={styles.text}>튜닝부품 or 작업,튜닝샵 검색</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   touch: {
     width: Width_convert(375),
@@ -41,19 +56,4 @@ const styles = StyleSheet.create({
     marginLeft: Width_convert(11),
   },
 });
-const Search = (props) => {
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        props.navigation.navigate('Search');
-      }}
-      activeOpacity={1}
-      style={styles.touch}>
-      <View style={styles.view}>
-        <Text style={styles.text}>튜닝부품 or 작업,튜닝샵 검색</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 export default memo(Search);

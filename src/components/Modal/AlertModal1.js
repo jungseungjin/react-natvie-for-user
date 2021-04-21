@@ -37,7 +37,9 @@ const styles = StyleSheet.create({
           ? Width_convert(158)
           : type === 2
           ? Width_convert(231)
-          : type === 3 && Width_convert(185),
+          : type === 3
+          ? Width_convert(185)
+          : null,
     };
   },
   viewNestedNested: (type) => {
@@ -52,7 +54,13 @@ const styles = StyleSheet.create({
       borderBottomColor: '#DBDBDB',
       borderBottomWidth: 1,
       height:
-        type === 1 ? Width_convert(102) : type === 2 && Width_convert(175),
+        type === 1
+          ? Width_convert(102)
+          : type === 2
+          ? Width_convert(175)
+          : type === '1-1'
+          ? Width_convert(102)
+          : null,
     };
   },
   viewNestedNestedText: (type) => {
@@ -61,7 +69,7 @@ const styles = StyleSheet.create({
       fontWeight: '400',
       fontSize: Font_normalize(16),
       color: '#000000',
-      textAlign: type === 1 && 'center',
+      textAlign: type === 1 ? 'center' : null,
       width:
         type === 2 || type === 3
           ? Width_convert(289)
@@ -181,4 +189,4 @@ const AlertModal1 = (props) => {
   );
 };
 
-export default memo(AlertModal1);
+export default AlertModal1;

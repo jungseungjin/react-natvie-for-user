@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StatusBar,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   useWindowDimensions,
+  FlatList,
 } from 'react-native';
 import HTML from 'react-native-render-html';
 import WebView from 'react-native-webview';
@@ -26,16 +27,28 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import Domain from '../../../../key/Domain.js';
 import NetInfo from '@react-native-community/netinfo';
 import axios from 'axios';
+import _ from 'lodash';
 
 const WorkVideoScreen = (props) => {
   const contentWidth = useWindowDimensions().width;
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [relatedVideoList, setRelatedVideoList] = React.useState([]);
-  const getData = (RelatedVideo) => {
+  const [relatedVideoList, setRelatedVideoList] = useState([]);
+  const [backendPage, setBackendPage] = useState(1);
+  const throttleGetData = _.throttle(
+    (Number) => getData(props.route.params.item.relatedVideo, true),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const getData = (relatedVideo, scrolling) => {
     try {
-      let result;
-      let url = Domain + 'relatedVideoList';
+      let page;
+      if (scrolling) page = backendPage;
+      else page = 0;
+      let url = Domain + 'api/home/get/related';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -43,13 +56,20 @@ const WorkVideoScreen = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              RelatedVideos: RelatedVideo,
+              relatedVideo: relatedVideo.join(','),
+              page: page,
             },
           });
-          if (result.data[0].message == 'ok') {
-            setRelatedVideoList(result.data[0].RelatedVideoList);
+          if (result.data.success === true) {
+            setRelatedVideoList([...relatedVideoList, ...result.data.result]);
+            if (scrolling) {
+              setBackendPage((prevState) => {
+                return prevState + 1;
+              });
+            }
           } else {
-            console.log(result.data[0]);
+            console.log(result.data);
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -59,11 +79,14 @@ const WorkVideoScreen = (props) => {
     } catch (err) {
       console.log(err);
       setIsLoadingAndModal(3);
+    } finally {
+      setIsLoadingAndModal(0);
     }
   };
-  React.useEffect(() => {
-    getData(props.route.params.item.RelatedVideo);
-  }, [props.route.params.item.ownersname]);
+  useEffect(() => {
+    getData(props.route.params.item.relatedVideo);
+    setRelatedVideoList([]);
+  }, [props.route.params.item._id]);
   return (
     <>
       <StatusBar
@@ -93,7 +116,7 @@ const WorkVideoScreen = (props) => {
               <HTML
                 renderers={renderers}
                 source={{
-                  html: props.route.params.item.videoUrl,
+                  html: props.route.params.item.video,
                 }}
                 contentWidth={contentWidth}
                 WebView={WebView}
@@ -125,7 +148,7 @@ const WorkVideoScreen = (props) => {
                   borderRadius: Width_convert(28),
                 }}
                 source={{
-                  uri: props.route.params.item.url,
+                  uri: props.route.params.item.owner.image,
                   headers: {Authorization: 'someAuthToken'},
                   priority: FastImage.priority.normal,
                 }}
@@ -155,33 +178,47 @@ const WorkVideoScreen = (props) => {
                     fontSize: Font_normalize(10),
                     color: '#6F6F6F',
                   }}>
-                  {props.route.params.item.ownersname}
+                  {props.route.params.item.owner.name}
                 </Text>
               </View>
             </View>
           </View>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text
-            style={{
-              marginLeft: Width_convert(13),
-              marginTop: Width_convert(27),
-              fontFamily: Fonts?.NanumSqureRegular || null,
-              fontSize: Font_normalize(14),
-              fontWeight: '700',
-              color: '#000000',
-            }}>
-            관련 추천 동영상
-          </Text>
-          {relatedVideoList.map((item) => (
-            <OwnersWork
-              key={item._id}
-              From={'workVideo'}
-              item={item}
-              navigation={props.navigation}
-              Index={relatedVideoList.indexOf(item)}></OwnersWork>
-          ))}
-        </ScrollView>
+        <View>
+          <FlatList
+            nestedScrollEnabled
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            data={relatedVideoList}
+            windowSize={2}
+            initialNumToRender={10}
+            onEndReached={throttleGetData}
+            onEndReachedThreshold={50}
+            keyExtractor={(item) => String(item._id)}
+            renderItem={({item}) => (
+              <>
+                {relatedVideoList.indexOf(item) === 0 && (
+                  <Text
+                    style={{
+                      marginLeft: Width_convert(13),
+                      marginTop: Width_convert(27),
+                      fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(14),
+                      fontWeight: '700',
+                      color: '#000000',
+                    }}>
+                    관련 추천 동영상
+                  </Text>
+                )}
+                <OwnersWork
+                  key={item._id}
+                  From={'workVideo'}
+                  item={item}
+                  navigation={props.navigation}
+                  Index={relatedVideoList.indexOf(item)}></OwnersWork>
+              </>
+            )}></FlatList>
+        </View>
       </SafeAreaView>
       {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
         <IsLoading></IsLoading>

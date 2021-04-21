@@ -78,6 +78,7 @@ const HomeScreen = (props) => {
   const [ownersWorkVideoList, setOwnersWorkVideoList] = useState([]);
   const [recentWorkList, setRecentWorkList] = useState([]);
   const [showInformation, setShowInformation] = useState(false);
+  const [asyncValue, setAsyncValue] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const scrollChange = useRef(0);
   const scrollRef = useRef();
@@ -91,77 +92,51 @@ const HomeScreen = (props) => {
     });
   }, [scrollChange.current]);
   //홈화면 상단 슬라이드 이미지, 사장님의 작업영상 가져오기
-  const get_homeData = () => {
+  const get_homeData = (type) => {
     try {
-      let result;
-      let url = Domain + 'home';
+      let url =
+        type === 1 ? `${Domain}api/home/get` : `${Domain}api/work/get/recent`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let result = await axios.get(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (result.data[0].message == 'ok') {
-            setTopSliderImageList(result.data[0].SliderImageList);
-            setOwnersWorkVideoList(result.data[0].RecommendVideoList);
-          } else {
-            console.log(result.data[0]);
-          }
-        } else {
-          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-          setIsLoadingAndModal(2);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoadingAndModal(0);
-    }
-  };
-  //홈화면 최근 본 작업 데이터 가져오기
-  const get_recentWorkList = () => {
-    try {
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
+          let new_str = '';
           let value = await AsyncStorage.getItem('recentWorkList');
-
-          if (value == null) {
+          if (value === null) {
+            if (type !== 1) return false;
             setRecentWorkList([]);
+          } else if (value === asyncValue) {
+            return false;
           } else {
+            setAsyncValue(value);
             let new_data = value.split(',');
             let new_arr = [];
-            let new_str = '';
-            for (var a = 0; a < 6; a++) {
-              //6개만 나온다.
-              if (new_data[a] == undefined) {
-                break;
-              }
+            for (var a = 0; a < 10; a++) {
+              //10개만 나온다.
+              if (new_data[a] == undefined) break;
               if (a == 0) {
                 new_str = new_data[a];
               } else {
                 new_str = new_str + ',' + new_data[a];
               }
             }
-            let result;
-            let url = Domain + 'recentWorkList';
-            if (new_str) {
-              let result = await axios.get(url, {
-                params: {
-                  workid: new_str,
-                },
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-              if (result.data[0].message == 'ok') {
-                setRecentWorkList(result.data[0].result);
-              } else {
-                setRecentWorkList([]);
-              }
+          }
+          let result = await axios.get(url, {
+            params: {
+              workId: new_str,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data.success === true) {
+            if (type === 1) {
+              setTopSliderImageList(result.data.results[0]);
+              setOwnersWorkVideoList(result.data.results[1]);
+              setRecentWorkList(result.data.results[2]);
             } else {
-              setRecentWorkList([]);
+              setRecentWorkList(result.data.result);
             }
+          } else {
+            setIsLoadingAndModal(3); //에러
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -170,6 +145,7 @@ const HomeScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3); //에러
     } finally {
       setIsLoadingAndModal(0);
     }
@@ -177,15 +153,13 @@ const HomeScreen = (props) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    get_homeData();
-    get_recentWorkList();
+    get_homeData(1);
     setRefreshing(false);
   }, []);
   useEffect(() => {
-    get_homeData();
-    get_recentWorkList();
+    get_homeData(1);
     props.navigation.addListener('focus', () => {
-      get_recentWorkList();
+      get_homeData();
     });
   }, []);
 
@@ -261,7 +235,7 @@ const HomeScreen = (props) => {
                   <SwiperImage
                     key={item._id}
                     from={'home'}
-                    image={item.url}></SwiperImage>
+                    image={item.image}></SwiperImage>
                 ))}
               </Swiper>
             ) : (
@@ -322,7 +296,7 @@ const HomeScreen = (props) => {
                 {ownersWorkVideoList.length > 0 &&
                   ownersWorkVideoList.map((item) => (
                     <OwnersWork
-                      key={item.url}
+                      key={item._id}
                       From={'home'}
                       item={item}
                       navigation={props.navigation}
@@ -346,7 +320,7 @@ const HomeScreen = (props) => {
                 style={styles.recentWorkListScroll}>
                 {recentWorkList.map((item) => (
                   <RecentWork
-                    key={item.store_thumbnail[0]}
+                    key={item._id}
                     item={item}
                     Index={recentWorkList.indexOf(item)}
                     navigation={props.navigation}></RecentWork>

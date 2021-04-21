@@ -89,7 +89,7 @@ const AnotherView = (props) => {
       <View style={styles.AnotherView}>
         <View style={styles.AnotherViewView}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {props.MiddleCategory.map((item) => (
+            {/* {props.MiddleCategory.map((item) => (
               <View
                 key={item._id}
                 style={[
@@ -134,7 +134,7 @@ const AnotherView = (props) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-            ))}
+            ))} */}
             {/*바디파츠 휠타이어캘리퍼 하단의 보라색 라인 */}
           </ScrollView>
         </View>
@@ -154,7 +154,7 @@ const AnotherView = (props) => {
               marginTop: Height_convert(4),
               marginBottom: Height_convert(4),
             }}>
-            {props.SmallCategory.map((item) =>
+            {/* {props.SmallCategory.map((item) =>
               item.work_sub_type_name === props.PickMiddle ? (
                 <View
                   key={item._id}
@@ -209,7 +209,7 @@ const AnotherView = (props) => {
                   </TouchableOpacity>
                 </View>
               ) : null,
-            )}
+            )} */}
           </ScrollView>
           <View
             style={{
