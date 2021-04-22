@@ -30,6 +30,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import _ from 'lodash';
+
 const CategoryDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -37,13 +38,17 @@ const CategoryDetailScreen = (props) => {
   const [page, setPage] = useState(props.route.params.Page.type || null);
   const PageChangeValue = (text) => setPage(text);
   const [backendPage, setBackendPage] = useState(1);
+  const [randomLocation, setRandomLocation] = useState({});
   const throttleGetData = _.throttle(
     (Number) =>
       getData(
         pickSecond,
         pickThird,
-        reduxState.loginDataCheck?.login?.location,
-        reduxState.loginDataCheck?.login.iu_car[0],
+        reduxState.loginDataCheck?.login?.location?.longitude ||
+          randomLocation.longitude,
+        reduxState.loginDataCheck?.login?.location?.latitude ||
+          randomLocation.latitude,
+        reduxState.loginDataCheck?.login.iu_car[0] || undefined,
         backendPage,
         pickSort,
       ),
@@ -88,8 +93,11 @@ const CategoryDetailScreen = (props) => {
         getData(
           item,
           false,
-          reduxState.loginDataCheck?.login?.location,
-          reduxState.loginDataCheck?.login.iu_car[0],
+          reduxState.loginDataCheck?.login?.location?.longitude ||
+            randomLocation.longitude,
+          reduxState.loginDataCheck?.login?.location?.latitude ||
+            randomLocation.latitude,
+          reduxState.loginDataCheck?.login.iu_car[0] || undefined,
           0,
           pickSort,
         );
@@ -106,8 +114,11 @@ const CategoryDetailScreen = (props) => {
         getData(
           pickSecond,
           item,
-          reduxState.loginDataCheck?.login?.location,
-          reduxState.loginDataCheck?.login.iu_car[0],
+          reduxState.loginDataCheck?.login?.location?.longitude ||
+            randomLocation.longitude,
+          reduxState.loginDataCheck?.login?.location?.latitude ||
+            randomLocation.latitude,
+          reduxState.loginDataCheck?.login.iu_car[0] || undefined,
           0,
           pickSort,
         );
@@ -121,8 +132,11 @@ const CategoryDetailScreen = (props) => {
     getData(
       pickSecond,
       pickThird,
-      reduxState.loginDataCheck?.login?.location,
-      reduxState.loginDataCheck?.login.iu_car[0],
+      reduxState.loginDataCheck?.login?.location?.longitude ||
+        randomLocation.longitude,
+      reduxState.loginDataCheck?.login?.location?.latitude ||
+        randomLocation.latitude,
+      reduxState.loginDataCheck?.login.iu_car[0] || undefined,
       0,
       text,
     );
@@ -135,7 +149,8 @@ const CategoryDetailScreen = (props) => {
   const getData = (
     SecondCategory,
     ThirdCategory,
-    Location,
+    Longitude,
+    Latitude,
     Car,
     Page,
     Sort,
@@ -155,12 +170,14 @@ const CategoryDetailScreen = (props) => {
       if (ThirdCategory) {
         third = ThirdCategory._id;
       }
-      if (Location) {
-        longitude = Location.longitude;
-        latitude = Location.latitude;
+      if (Longitude) {
+        longitude = Longitude;
+      }
+      if (Latitude) {
+        latitude = Latitude;
       }
       if (Car) {
-        car = Car.pickModelDetail._id;
+        car = Car?.pickModelDetail?._id;
       }
       if (Page) {
         page = Page;
@@ -205,6 +222,12 @@ const CategoryDetailScreen = (props) => {
               return prevData + 1;
             });
             setIsLoadingAndModal(0);
+            if (!randomLocation.longitude) {
+              setRandomLocation({
+                longitude: result.data.longitude,
+                latitude: result.data.latitude,
+              });
+            }
           } else {
             console.log(result.data.err);
             setIsLoadingAndModal(3);
@@ -223,8 +246,11 @@ const CategoryDetailScreen = (props) => {
     getData(
       props.route.params.pickSecondCategory,
       props.route.params.pickThirdCategory,
-      reduxState.loginDataCheck?.login?.location,
-      reduxState.loginDataCheck?.login.iu_car[0],
+      reduxState.loginDataCheck?.login?.location?.longitude ||
+        randomLocation.longitude,
+      reduxState.loginDataCheck?.login?.location?.latitude ||
+        randomLocation.latitude,
+      reduxState.loginDataCheck?.login.iu_car[0] || undefined,
       0,
       pickFilter,
     );

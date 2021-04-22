@@ -23,7 +23,7 @@ const WorkInformation = (props) => {
         <HTML
           renderers={renderers}
           source={{
-            html: props.item,
+            html: `<p>${props.item}</p>`,
           }}
           contentWidth={contentWidth}
           WebView={WebView}

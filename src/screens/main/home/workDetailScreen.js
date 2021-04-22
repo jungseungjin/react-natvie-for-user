@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   StatusBar,
   View,
@@ -48,21 +48,19 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const WorkDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   const offset = useRef(new Animated.Value(0)).current;
-  const [scrollValue, setScrollValue] = React.useState(0);
-  const [workConsultingModal, setWorkConsultingModal] = React.useState(false);
+  const [scrollValue, setScrollValue] = useState(0);
+  const [workConsultingModal, setWorkConsultingModal] = useState(false);
   const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [page, setPage] = React.useState('work');
-  const [pickCount, setPickCount] = React.useState(
-    props.route.params.item.userCount,
-  );
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(() => updateState({}), []);
+  const [page, setPage] = useState('work');
+  const [pickCount, setPickCount] = useState(props.route.params.item.userCount);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
   const handleClick = () => {
@@ -175,14 +173,68 @@ const WorkDetailScreen = (props) => {
       // something you want to do at close
     });
   };
-  const [toastShow, setToastShow] = React.useState(0);
-  React.useEffect(() => {
+  const [toastShow, setToastShow] = useState(0);
+  useEffect(() => {
     if (toastShow == 1) {
       showToast('찜한 작업에 추가', 700);
     } else if (toastShow != 0) {
       showToast('찜이 해제되었습니다.', 700);
     }
   }, [toastShow]);
+
+  /*
+  기본으로 있음  여기에 데이터 추가로 불러와서 사용하기  
+  id
+Image
+Name
+Store
+Grade
+Price
+reviewCount
+phoneNumber
+  */
+  const [workData, setWorkData] = useState({});
+  //작업아이디값, 평점,이미지,작업정보,경위도,작업이름, 찜한갯수,가격,리뷰갯수,가게위치 카카오톡 전화번호,가게아이디값, 작업소요시간
+  const [myPick, setMyPick] = useState(''); //null이면 픽안함 아이디값들어오면 픽함
+  const [storeData, setStoreData] = useState({}); //가게아이디값, 사업자정보, 오픈시간, 휴무일, 가게멤버
+  const getData = () => {
+    try {
+      let url = `${Domain}api/work/get/one`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setIsLoadingAndModal(1);
+          let result = await axios.get(url, {
+            params: {
+              workid: props.route.params.item._id,
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: props.route.params.item.storeId,
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data.success === true) {
+            setWorkData(result.data.results[0]);
+            setMyPick(result.data.results[1]);
+            setStoreData(result.data.results[2]);
+            setIsLoadingAndModal(0);
+          } else {
+            setWorkData({});
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <StatusBar
@@ -230,7 +282,7 @@ const WorkDetailScreen = (props) => {
               autoplay={false}
               dot={<Dot></Dot>}
               activeDot={<ActiveDot></ActiveDot>}>
-              {props.route.params.item.store_thumbnail.map((item) => (
+              {props.route.params.item.image.map((item) => (
                 <SwiperImage
                   from={'work'}
                   image={item}
@@ -259,7 +311,7 @@ const WorkDetailScreen = (props) => {
                   fontWeight: '700',
                   color: '#000000',
                 }}>
-                {props.route.params.item.store_work_name}
+                {props.route.params.item.name}
               </Text>
             </View>
             <View
@@ -272,6 +324,7 @@ const WorkDetailScreen = (props) => {
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
+                    //뒤에서 가져올거야
                     getDataAndNavigateFromWork(
                       'store',
                       props.route.params.item.info_store[0]._id,
@@ -285,7 +338,7 @@ const WorkDetailScreen = (props) => {
                       color: '#000000',
                       fontSize: Font_normalize(12),
                     }}>
-                    {props.route.params.item.info_store[0].store_name}
+                    {props.route.params.item.store.name}
                   </Text>
                 </TouchableOpacity>
                 <VerticalBar
@@ -294,6 +347,7 @@ const WorkDetailScreen = (props) => {
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
+                    //뒤에서 가져올거야
                     getDataAndNavigateFromWork(
                       'store',
                       props.route.params.item.info_store[0]._id,
@@ -312,6 +366,7 @@ const WorkDetailScreen = (props) => {
                   activeOpacity={1}
                   hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                   onPress={() => {
+                    //뒤에서 가져올거야 경위도
                     props.navigation.navigate('StoreLocation', {
                       item: props.route.params.item.info_store[0],
                     });
@@ -324,7 +379,7 @@ const WorkDetailScreen = (props) => {
                       color: '#000000',
                       fontSize: Font_normalize(12),
                     }}>
-                    {props.route.params.item.info_store[0].store_address}
+                    {props.route.params.item.store.address}
                   </Text>
                 </TouchableOpacity>
                 <VerticalBar
@@ -333,6 +388,7 @@ const WorkDetailScreen = (props) => {
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
+                    //뒤에서 가져올거야
                     props.navigation.navigate('StoreLocation', {
                       item: props.route.params.item.info_store[0],
                     });
@@ -362,17 +418,13 @@ const WorkDetailScreen = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   }}>
-                  {props.route.params.item.reviewCount > 0
-                    ? parseFloat(
-                        props.route.params.item.reviewTotal /
-                          props.route.params.item.reviewCount,
-                      ).toFixed(1)
-                    : '0.0'}
+                  {props.route.params.item.grade}
                 </Text>
                 <TouchableOpacity
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
+                    //뒤에서 가져올거야
                     props.navigation.navigate('ReviewView', {
                       item: props.route.params.item,
                       type: 'work',
@@ -409,6 +461,7 @@ const WorkDetailScreen = (props) => {
                     fontWeight: '700',
                     color: '#59A3D9',
                   }}>
+                  {/*//뒤에서 가져올거야 */}
                   작업소요 {props.route.params.item.store_work_time}
                 </Text>
               </View>
@@ -420,12 +473,11 @@ const WorkDetailScreen = (props) => {
                     fontWeight: '700',
                     color: '#000000',
                   }}>
-                  {props.route.params.item.store_work_total_cost != null &&
-                  props.route.params.item.store_work_total_cost != 0
-                    ? props.route.params.item.store_work_total_cost
+                  {props.route.params.item.price === 0
+                    ? '업체문의'
+                    : props.route.params.item.price
                         .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
-                    : '업체문의'}
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'}
                 </Text>
               </View>
             </View>
@@ -597,12 +649,11 @@ const WorkDetailScreen = (props) => {
             </View>
           </View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
+          {/*//뒤에서 가져올거야 */}
           {page == 'work' ? (
-            <WorkInformation
-              item={props.route.params.item.store_work_info}></WorkInformation>
+            <WorkInformation item={workData?.information}></WorkInformation>
           ) : page == 'store' ? (
-            <StoreInformation
-              item={props.route.params.item.info_store[0]}></StoreInformation>
+            <StoreInformation item={storeData}></StoreInformation>
           ) : page == 'labor' ? (
             <LaborInformation></LaborInformation>
           ) : null}
@@ -615,24 +666,26 @@ const WorkDetailScreen = (props) => {
             }}></View>
           {/*하단 버튼만큼의 공간 띄우기 끝 */}
         </ScrollView>
+        {/*//뒤에서 가져올거야 */}
         <AnimatedHeader
           Length={pickCount}
           Pick={
-            reduxState.loginDataCheck.login.login
-              ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
-                  JSON.stringify({
-                    _id: reduxState.loginDataCheck.login.data._id,
-                  }),
-                ) != -1
-                ? true
-                : false
-              : false
+            // reduxState.loginDataCheck.login.login
+            //   ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
+            //       JSON.stringify({
+            //         _id: reduxState.loginDataCheck.login.data._id,
+            //       }),
+            //     ) != -1
+            //     ? true
+            //     : false
+            //   :
+            false
           }
           PickChangeValue={Pick}
           page={'work'}
           ShowModalChangeValue={ShowModalChangeValue}
           redux={reduxState.loginDataCheck.login}
-          Title={props.route.params.item.info_store[0].store_name}
+          Title={props.route.params.item.store.name}
           navigation={props.navigation}
           animatedValue={offset}
           scrollValue={scrollValue}></AnimatedHeader>
@@ -640,7 +693,7 @@ const WorkDetailScreen = (props) => {
 
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         <BottomButton
-          Messenger={props.route.params.item.info_store[0].store_messenger}
+          Messenger={props.route.params.item.store.kakoTalk}
           WorkConsultingModalChangeValue={
             WorkConsultingModalChangeValue
           }></BottomButton>

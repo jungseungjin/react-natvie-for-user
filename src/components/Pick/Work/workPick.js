@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import IsLoading from '../../../components/ActivityIndicator';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
@@ -310,4 +310,4 @@ const WorkPick = (props) => {
     </TouchableOpacity>
   );
 };
-export default WorkPick;
+export default memo(WorkPick);

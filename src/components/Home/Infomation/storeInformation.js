@@ -12,69 +12,69 @@ const WorkInformation = (props) => {
   moment.locale('ko');
   const [closedDay, setClosedDay] = React.useState([]);
   const [operationTime, setOperationTime] = React.useState([]);
-  React.useEffect(() => {
-    let newArr = [];
-    let newArr2 = [];
-    if (props.item.store_closed_day.length > 0) {
-      for (items of props.item.store_closed_day) {
-        let A, B;
-        if (items.week === '1') {
-          A = '매달 첫번째 ';
-        } else if (items.week === '2') {
-          A = '매달 두번째 ';
-        } else if (items.week === '3') {
-          A = '매달 세번째 ';
-        } else if (items.week === '4') {
-          A = '매달 네번째 ';
-        } else if (items.week === '5') {
-          A = '매달 다섯번째 ';
-        } else if (items.week === '6') {
-          A = '매달 여섯번째 ';
-        }
-        if (items.day === 'mon') {
-          B = '월요일';
-        } else if (items.day === 'tue') {
-          B = '화요일';
-        } else if (items.day === 'wen') {
-          B = '수요일';
-        } else if (items.day === 'thu') {
-          B = '목요일';
-        } else if (items.day === 'fri') {
-          B = '금요일';
-        } else if (items.day === 'sat') {
-          B = '토요일';
-        } else if (items.day === 'sun') {
-          B = '일요일';
-        }
-        newArr.push(A + B);
-      }
-      setClosedDay(newArr);
-    }
-    if (props.item.store_operation_time.length > 0) {
-      for (items of props.item.store_operation_time) {
-        let A, B, C;
-        if (items.workday === 1) {
-          A = '월요일';
-        } else if (items.workday === 2) {
-          A = '화요일';
-        } else if (items.workday === 3) {
-          A = '수요일';
-        } else if (items.workday === 4) {
-          A = '목요일';
-        } else if (items.workday === 5) {
-          A = '금요일';
-        } else if (items.workday === 6) {
-          A = '토요일';
-        } else if (items.workday === 7) {
-          A = '일요일';
-        }
-        B = moment(items.startTime, 'HH:mm').format('A hh:mm');
-        C = moment(items.endTime, 'HH:mm').format('A hh:mm');
-        newArr2.push(A + B + '~' + C);
-      }
-      setOperationTime(newArr2);
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   let newArr = [];
+  //   let newArr2 = [];
+  //   if (props.item.store_closed_day.length > 0) {
+  //     for (items of props.item.store_closed_day) {
+  //       let A, B;
+  //       if (items.week === '1') {
+  //         A = '매달 첫번째 ';
+  //       } else if (items.week === '2') {
+  //         A = '매달 두번째 ';
+  //       } else if (items.week === '3') {
+  //         A = '매달 세번째 ';
+  //       } else if (items.week === '4') {
+  //         A = '매달 네번째 ';
+  //       } else if (items.week === '5') {
+  //         A = '매달 다섯번째 ';
+  //       } else if (items.week === '6') {
+  //         A = '매달 여섯번째 ';
+  //       }
+  //       if (items.day === 'mon') {
+  //         B = '월요일';
+  //       } else if (items.day === 'tue') {
+  //         B = '화요일';
+  //       } else if (items.day === 'wen') {
+  //         B = '수요일';
+  //       } else if (items.day === 'thu') {
+  //         B = '목요일';
+  //       } else if (items.day === 'fri') {
+  //         B = '금요일';
+  //       } else if (items.day === 'sat') {
+  //         B = '토요일';
+  //       } else if (items.day === 'sun') {
+  //         B = '일요일';
+  //       }
+  //       newArr.push(A + B);
+  //     }
+  //     setClosedDay(newArr);
+  //   }
+  //   if (props.item.store_operation_time.length > 0) {
+  //     for (items of props.item.store_operation_time) {
+  //       let A, B, C;
+  //       if (items.workday === 1) {
+  //         A = '월요일';
+  //       } else if (items.workday === 2) {
+  //         A = '화요일';
+  //       } else if (items.workday === 3) {
+  //         A = '수요일';
+  //       } else if (items.workday === 4) {
+  //         A = '목요일';
+  //       } else if (items.workday === 5) {
+  //         A = '금요일';
+  //       } else if (items.workday === 6) {
+  //         A = '토요일';
+  //       } else if (items.workday === 7) {
+  //         A = '일요일';
+  //       }
+  //       B = moment(items.startTime, 'HH:mm').format('A hh:mm');
+  //       C = moment(items.endTime, 'HH:mm').format('A hh:mm');
+  //       newArr2.push(A + B + '~' + C);
+  //     }
+  //     setOperationTime(newArr2);
+  //   }
+  // }, []);
   return (
     <View
       style={{
@@ -108,7 +108,7 @@ const WorkInformation = (props) => {
             fontSize: Font_normalize(11),
             color: '#000000',
           }}>
-          {props.item.store_info}
+          {props.item.information}
         </Text>
       </View>
       <View
@@ -154,7 +154,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_address + ' ' + props.item.store_address_detail}
+              {props.item.address.address}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -176,7 +176,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {operationTime.map((item) => `${item}\n`)}
+              {/* {operationTime.map((item) => `${item}\n`)} */}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -198,7 +198,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {closedDay.map((item) => `${item}\n`)}
+              {/* {closedDay.map((item) => `${item}\n`)} */}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -220,7 +220,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_number}
+              {props.item.address.number}
             </Text>
           </View>
         </View>
@@ -267,7 +267,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_ceo}
+              {props.item.businessInformation.owner}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -289,7 +289,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_name}
+              {props.item.businessInformation.name}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -311,7 +311,7 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_address + ' ' + props.item.store_address_detail}
+              {props.item.businessInformation.address}
             </Text>
           </View>
           <View style={{flexDirection: 'row', marginTop: Height_convert(14)}}>
@@ -333,13 +333,13 @@ const WorkInformation = (props) => {
                 fontSize: Font_normalize(11),
                 color: '#000000',
               }}>
-              {props.item.store_register}
+              {props.item.businessInformation.registerNumber}
             </Text>
           </View>
         </View>
       </View>
       {/*사업자정보 끝 */}
-      <MiniMap coordinates={props.item.store_location.coordinates}></MiniMap>
+      <MiniMap coordinates={props.item.location.coordinates}></MiniMap>
     </View>
   );
 };
