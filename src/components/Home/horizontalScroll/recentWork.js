@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import Height_convert from '../../Width_convert.js';
 import Width_convert from '../../Width_convert.js';
@@ -22,22 +22,16 @@ const RecentWork = (props) => {
       <FastImage
         style={styles.fastImage}
         source={{
-          uri: props.item.store_thumbnail[0],
+          uri: props.item.image[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>
-      <Text style={styles.text}>{props.item.store_work_name}</Text>
+      <Text style={styles.text}>{props.item.name}</Text>
       <View style={styles.view2}>
-        <Text style={styles.text2}>{props.item.info_store[0].store_name}</Text>
+        <Text style={styles.text2}>{props.item.store.name}</Text>
         <Star style={styles.star}></Star>
-        <Text style={styles.text3}>
-          {props.item.reviewCount > 0
-            ? parseFloat(
-                props.item.reviewTotal / props.item.reviewCount,
-              ).toFixed(1)
-            : '0.0'}
-        </Text>
+        <Text style={styles.text3}>{props.item.grade}</Text>
         <Text style={styles.text3}>
           후기
           {props.item.reviewCount
@@ -45,16 +39,14 @@ const RecentWork = (props) => {
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
         </Text>
       </View>
-      <Text style={styles.text4}>
-        주소 : {props.item.info_store[0].store_address}
-      </Text>
+      <Text style={styles.text4}>주소 : {props.item.store.address}</Text>
       <View style={styles.view3}>
         <Text style={styles.text5}>
-          {props.item.store_work_total_cost
-            ? props.item.store_work_total_cost
+          {props.item.price === 0
+            ? '업체문의'
+            : props.item.price
                 .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 원'
-            : '업체문의'}
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 원'}
         </Text>
       </View>
     </TouchableOpacity>
@@ -129,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 RecentWork.propTypes = {};
-export default RecentWork;
+export default memo(RecentWork);

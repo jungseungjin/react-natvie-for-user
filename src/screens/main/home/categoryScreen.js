@@ -43,8 +43,8 @@ const CategoryScreen = (props) => {
         //중분류 찍혀있음 넘어가도됨.
         props.navigation.navigate('CategoryDetail', {
           Page: pages[page],
-          SmallCategory: pickThirdCategory,
-          MiddleCategory: pickSecondCategory,
+          pickThirdCategory: pickThirdCategory,
+          pickSecondCategory: pickSecondCategory,
         });
       } else {
         setSearchModal(true);

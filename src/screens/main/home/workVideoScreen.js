@@ -61,7 +61,11 @@ const WorkVideoScreen = (props) => {
             },
           });
           if (result.data.success === true) {
-            setRelatedVideoList([...relatedVideoList, ...result.data.result]);
+            if (page) {
+              setRelatedVideoList([...relatedVideoList, ...result.data.result]);
+            } else {
+              setRelatedVideoList([...result.data.result]);
+            }
             if (scrolling) {
               setBackendPage((prevState) => {
                 return prevState + 1;

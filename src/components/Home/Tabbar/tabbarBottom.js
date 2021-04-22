@@ -89,7 +89,7 @@ const AnotherView = (props) => {
       <View style={styles.AnotherView}>
         <View style={styles.AnotherViewView}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {/* {props.MiddleCategory.map((item) => (
+            {props.SecondCategory.map((item) => (
               <View
                 key={item._id}
                 style={[
@@ -100,7 +100,7 @@ const AnotherView = (props) => {
                     height: Height_convert(48),
                     borderBottomWidth: 2,
                   },
-                  props.PickMiddle === item.work_sub_type_name
+                  props.PickSecond.name === item.name
                     ? {
                         borderBottomColor: '#946AEF',
                       }
@@ -111,7 +111,7 @@ const AnotherView = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.PickMiddleChangeValue(item.work_sub_type_name);
+                    props.PickSecondChangeValue(item._id);
                   }}>
                   <Text
                     style={[
@@ -121,7 +121,7 @@ const AnotherView = (props) => {
                         fontWeight: '700',
                         fontSize: Font_normalize(12),
                       },
-                      props.PickMiddle === item.work_sub_type_name
+                      props.PickSecond.name === item.name
                         ? {
                             color: '#946AEF',
                           }
@@ -129,12 +129,12 @@ const AnotherView = (props) => {
                             color: '#000000',
                           },
                     ]}>
-                    {item.work_sub_type_name}
+                    {item.name}
                     {item.chkNumber ? `(${item.chkNumber})` : null}
                   </Text>
                 </TouchableOpacity>
               </View>
-            ))} */}
+            ))}
             {/*바디파츠 휠타이어캘리퍼 하단의 보라색 라인 */}
           </ScrollView>
         </View>
@@ -154,62 +154,60 @@ const AnotherView = (props) => {
               marginTop: Height_convert(4),
               marginBottom: Height_convert(4),
             }}>
-            {/* {props.SmallCategory.map((item) =>
-              item.work_sub_type_name === props.PickMiddle ? (
-                <View
-                  key={item._id}
-                  style={[
-                    {
-                      justifyContent: 'center',
-                      marginRight: Width_convert(8),
-                    },
-                    props.SmallCategory.indexOf(item) == 0
-                      ? {
-                          marginLeft: Width_convert(17),
-                        }
-                      : {
-                          marginLeft: Width_convert(8),
-                        },
-                  ]}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      props.PickSmallChangeValue(item._id);
-                    }}
-                    activeOpacity={1}
-                    style={{
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={[
-                        {
-                          fontFamily: Fonts?.NanumSqureRegular || null,
-                          fontWeight: '700',
-                          fontSize: Font_normalize(10),
-                          paddingLeft: Width_convert(5),
-                          paddingRight: Width_convert(5),
-                          paddingTop: Height_convert(5),
-                          paddingBottom: Height_convert(5),
-                          borderRadius: Font_normalize(3),
-                          overflow: 'hidden',
-                        },
-                        props.PickSmall === item._id
-                          ? {
-                              color: '#FFFFFF',
-                              backgroundColor: '#946AEF',
-                            }
-                          : {
-                              color: '#000000',
-                              backgroundColor: '#FFFFFF',
-                            },
-                      ]}>
-                      {item.work_name}
-                      {item.chkNumber ? `(${item.chkNumber})` : null}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : null,
-            )} */}
+            {props.ThirdCategory.map((item) => (
+              <View
+                key={item._id}
+                style={[
+                  {
+                    justifyContent: 'center',
+                    marginRight: Width_convert(8),
+                  },
+                  props.ThirdCategory.indexOf(item) == 0
+                    ? {
+                        marginLeft: Width_convert(17),
+                      }
+                    : {
+                        marginLeft: Width_convert(8),
+                      },
+                ]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.PickThirdChangeValue(item._id);
+                  }}
+                  activeOpacity={1}
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      {
+                        fontFamily: Fonts?.NanumSqureRegular || null,
+                        fontWeight: '700',
+                        fontSize: Font_normalize(10),
+                        paddingLeft: Width_convert(5),
+                        paddingRight: Width_convert(5),
+                        paddingTop: Height_convert(5),
+                        paddingBottom: Height_convert(5),
+                        borderRadius: Font_normalize(3),
+                        overflow: 'hidden',
+                      },
+                      props.PickThird._id === item._id
+                        ? {
+                            color: '#FFFFFF',
+                            backgroundColor: '#946AEF',
+                          }
+                        : {
+                            color: '#000000',
+                            backgroundColor: '#FFFFFF',
+                          },
+                    ]}>
+                    {item.name}
+                    {item.chkNumber ? `(${item.chkNumber})` : null}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </ScrollView>
           <View
             style={{
@@ -239,7 +237,7 @@ const AnotherView = (props) => {
                     },
               ]}
               onPress={() => {
-                props.FtilerChangeValue(!props.FilterValue);
+                props.FilterChangeValue(!props.FilterValue);
               }}>
               <Filter
               // PickChangeValue={PickChangeValue}

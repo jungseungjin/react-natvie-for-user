@@ -29,9 +29,9 @@ const SettingScreen = (props) => {
   const unsubscribe = props.navigation.addListener('focus', async () => {
     if (props.route?.params?.PickLocation) {
       setPickLocation(props.route.params.PickLocation);
-      setPickBrand(props.route.params.PickBrandValue);
-      setPickModel(props.route.params.PickModelValue);
-      setPickModelDetail(props.route.params.PickModelDetail);
+      setBrandPick(props.route.params.PickBrandValue);
+      setModelPick(props.route.params.PickModelValue);
+      setModelDetailPick(props.route.params.PickModelDetail);
     }
   });
   useEffect(() => {

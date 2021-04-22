@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -29,227 +29,205 @@ import AlertModal2 from '../../../components/Modal/AlertModal2';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const CategoryDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [page, setPage] = React.useState(props.route.params.Page || null);
+  const [page, setPage] = useState(props.route.params.Page.type || null);
   const PageChangeValue = (text) => setPage(text);
-  const [middleList, setMiddleList] = React
-    .useState
-    //props.route.params.MiddleCategory,
-    ();
-  const [pickMiddle, setPickMiddle] = React
-    .useState
-    //props.route.params.PickMiddle,
-    ();
-  const [smallList, setSmallList] = React
-    .useState
-    //props.route.params.SmallCategory,
-    ();
-  const [pickSmall, setPickSmall] = React
-    .useState
-    //props.route.params.PickSmall,
-    ();
-  const [resultWorkList, setresultWorkList] = React
-    .useState
-    //props.route.params.WorkList,
-    ();
-  const [viewWorkList, setViewWorkList] = React.useState([]);
-  const [pickFilter, setPickFilter] = React.useState(false);
+  const [backendPage, setBackendPage] = useState(1);
+  const throttleGetData = _.throttle(
+    (Number) =>
+      getData(
+        pickSecond,
+        pickThird,
+        reduxState.loginDataCheck?.login?.location,
+        reduxState.loginDataCheck?.login.iu_car[0],
+        backendPage,
+        pickSort,
+      ),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const [secondList, setSecondList] = useState(
+    props.route.params.Page.category || [],
+  );
+  const [pickSecond, setPickSecond] = useState(
+    props.route.params.pickSecondCategory || {},
+  );
+  const [thirdList, setThirdList] = useState(
+    props.route.params.pickSecondCategory.category || [],
+  );
+  const [pickThird, setPickThird] = useState(
+    props.route.params.pickThirdCategory || {},
+  );
+  const [viewWorkList, setViewWorkList] = useState([]);
+  const [pickFilter, setPickFilter] = useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(
+  const [pickSort, setPickSort] = useState(
     reduxState.loginDataCheck?.login?.location?.legalcode
       ? '가까운 순 '
       : false,
   );
-  const [showModal, setShowModel] = React.useState(false);
+  const [showModal, setShowModel] = useState(false);
   const ShowModalChangeValue = (text) => setShowModel(text);
-  const [refreshing, setRefreshing] = React.useState(false);
-  ///중분류 새로 선택하면 그에 맞게 값 나오게 -> 뒤에서 데이터 가져오기
-  const PickMiddleChangeValue = (text) => {
-    setPickMiddle(text);
-    setPickFilter(false);
-    setPickSmall('');
-    getData(text);
-  };
-
-  const getData = (text) => {
-    //-> 작업분류값은 가져올필요 없음
-    try {
-      let sort;
-      if (pickSort == '가까운 순 ') {
-        sort = '1';
-      } else if (pickSort == '별점 순 ') {
-        sort = '2';
-      } else if (pickSort == '후기많은 순 ') {
-        sort = '3';
-      } else if (pickSort == '찜 많은 순 ') {
-        sort = '4';
-      } else if (pickSort == '우리가게공임표 공개 ') {
-        sort = '5';
-      } else {
-        sort = '0';
+  const [refreshing, setRefreshing] = useState(false);
+  ///중분류 새로 선택 -> 중분류선택시키기, 소분류리스트 변경하기, 선택한 소분류초기화, 결과리스트 초기화, 페이지초기화하고 데이터가져오기
+  const PickSecondChangeValue = (text) => {
+    props.route.params.Page.category.map((item, index) => {
+      if (item._id === text) {
+        setPickSecond(item);
+        setThirdList(item.category);
+        setPickThird(item.category[0]);
+        //setViewWorkList([]);
+        setBackendPage(0);
+        getData(
+          item,
+          false,
+          reduxState.loginDataCheck?.login?.location,
+          reduxState.loginDataCheck?.login.iu_car[0],
+          0,
+          pickSort,
+        );
       }
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          setIsLoadingAndModal(1);
-          let url = `${Domain}categoryworklist/second`;
-          let result = await axios.get(url, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            params: {
-              sort: sort,
-              middle: text,
-              iu_car:
-                reduxState.loginDataCheck?.login?.iu_car[0]?.pickModelDetail
-                  ?.info_car_id || undefined,
-              longitude:
-                reduxState.loginDataCheck?.login?.location?.longitude ||
-                undefined,
-              latitude:
-                reduxState.loginDataCheck?.login?.location?.latitude ||
-                undefined,
-              random: props.route.params.random,
-            },
-          });
-          if (result.data[0].status == 'ok') {
-            setresultWorkList(result.data[0].WorkList);
-            setViewWorkList(result.data[0].WorkList);
-          } else {
-          }
-          setIsLoadingAndModal(0);
-        } else {
-          setIsLoadingAndModal(2);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    });
   };
-  ///소분류 새로 선택하면 한바퀴 둘러
-  const PickSmallChangeValue = (text) => {
-    setPickSmall(text);
-    setPickFilter(false);
-    let newArr = [];
-    for (var a = 0; a < resultWorkList.length; a++) {
-      if (resultWorkList[a].store_info_work.includes(text)) {
-        newArr.push(resultWorkList[a]);
+  ///소분류 새로 선택 -> 소분류선택시키기, 결과리스트 초기화, 페이지초기화하고 데이터가져오기
+  const PickThirdChangeValue = (text) => {
+    pickSecond.category.map((item, index) => {
+      if (item._id === text) {
+        setPickThird(item);
+        //setViewWorkList([]);
+        setBackendPage(0);
+        getData(
+          pickSecond,
+          item,
+          reduxState.loginDataCheck?.login?.location,
+          reduxState.loginDataCheck?.login.iu_car[0],
+          0,
+          pickSort,
+        );
       }
-    }
-    if (pickSort !== false) {
-      if (pickSort === '가까운 순 ') {
-        //거리 가까운것부터
-        newArr.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-      } else if (pickSort === '별점 순 ') {
-        //별점 높은것부터
-        newArr.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '후기많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '찜 많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '우리가게공임표 공개 ') {
-        newArr.sort(function (a, b) {
-          return a.store_work_total_cost < b.store_work_total_cost
-            ? 1
-            : a.store_work_total_cost > b.store_work_total_cost
-            ? -1
-            : 0;
-        });
-      }
-    }
-    setViewWorkList(newArr);
+    });
   };
-  //필터로 정렬값 변경되면 -> 지금보여지는것 값도 변경시키고
+  //필터값 변경 -> 지금찍힌곳에서 결과리스트 초기화, 페이지초기화하고 데이터가져오기
   const SortChangeValue = (text) => {
     setPickSort(text);
-    let newArr = viewWorkList.slice() || [];
-    if (text !== false) {
-      if (text === '가까운 순 ') {
-        //거리 가까운것부터
-        newArr.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-      } else if (text === '별점 순 ') {
-        //별점 높은것부터
-        newArr.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-      } else if (text === '후기많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '찜 많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '우리가게공임표 공개 ') {
-        newArr.sort(function (a, b) {
-          return a.store_work_total_cost < b.store_work_total_cost
-            ? 1
-            : a.store_work_total_cost > b.store_work_total_cost
-            ? -1
-            : 0;
-        });
-      }
-    }
-    setViewWorkList(newArr);
+    setBackendPage(0);
+    getData(
+      pickSecond,
+      pickThird,
+      reduxState.loginDataCheck?.login?.location,
+      reduxState.loginDataCheck?.login.iu_car[0],
+      0,
+      text,
+    );
   };
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setRefreshing(false);
   }, []);
-  React.useEffect(() => {
-    //중분류만 찍혀있으면 찍힌 중분류 모두 나오게 -> 받은 값 모두 나옴
-    if (props.route.params.PickSmall === undefined) {
-      setViewWorkList([]);
-    } else {
-      //소분류 찍혀있으면 소분류만 나오게 -> 한바퀴 둘러
-      let newArr = [];
-      for (var a = 0; a < props.route.params.WorkList.length; a++) {
-        if (
-          props.route.params.WorkList[a].store_info_work.includes(
-            props.route.params.PickSmall,
-          )
-        ) {
-          newArr.push(props.route.params.WorkList[a]);
-        }
+
+  const getData = (
+    SecondCategory,
+    ThirdCategory,
+    Location,
+    Car,
+    Page,
+    Sort,
+  ) => {
+    try {
+      setIsLoadingAndModal(1);
+      let second;
+      let third;
+      let longitude;
+      let latitude;
+      let car;
+      let page;
+      let sort;
+      if (SecondCategory) {
+        second = SecondCategory._id;
       }
-      setViewWorkList(newArr);
+      if (ThirdCategory) {
+        third = ThirdCategory._id;
+      }
+      if (Location) {
+        longitude = Location.longitude;
+        latitude = Location.latitude;
+      }
+      if (Car) {
+        car = Car.pickModelDetail._id;
+      }
+      if (Page) {
+        page = Page;
+      }
+      if (Sort) {
+        let type = '';
+        if (Sort === '가까운 순 ') {
+          type = 'distance';
+        } else if (Sort === '별점 순 ') {
+          type = 'grade';
+        } else if (Sort === '후기많은 순 ') {
+          type = 'review';
+        } else if (Sort === '찜 많은 순 ') {
+          type = 'pick';
+        }
+        sort = type;
+      }
+      let url = `${Domain}api/work/get/category`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              second: second,
+              third: third,
+              longitude: longitude,
+              latitude: latitude,
+              car: car,
+              page: page,
+              sort: sort,
+            },
+          });
+          if (result.data.success === true) {
+            if (page) {
+              setViewWorkList([...viewWorkList, ...result.data.result]);
+            } else {
+              setViewWorkList([...result.data.result]);
+            }
+            setBackendPage((prevData) => {
+              return prevData + 1;
+            });
+            setIsLoadingAndModal(0);
+          } else {
+            console.log(result.data.err);
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
     }
+  };
+  React.useEffect(() => {
+    getData(
+      props.route.params.pickSecondCategory,
+      props.route.params.pickThirdCategory,
+      reduxState.loginDataCheck?.login?.location,
+      reduxState.loginDataCheck?.login.iu_car[0],
+      0,
+      pickFilter,
+    );
   }, []);
   return (
     <>
@@ -275,13 +253,13 @@ const CategoryDetailScreen = (props) => {
         <Tabbar
           left={'back'}
           Title={
-            page == 'dressup'
+            page === 1
               ? '드레스업'
-              : page == 'perfomance'
+              : page === 2
               ? '퍼포먼스'
-              : page == 'convenience'
+              : page === 3
               ? '편의장치'
-              : page == 'camping'
+              : page === 4
               ? '캠핑카'
               : '드레스업'
           }
@@ -294,14 +272,14 @@ const CategoryDetailScreen = (props) => {
             {title: '편의장치', value: 'convenience'},
             {title: '캠핑카', value: 'camping'},
           ]}
-          MiddleCategory={middleList}
-          PickMiddle={pickMiddle}
-          PickMiddleChangeValue={PickMiddleChangeValue}
-          SmallCategory={smallList}
-          PickSmall={pickSmall}
-          PickSmallChangeValue={PickSmallChangeValue}
+          SecondCategory={secondList}
+          PickSecond={pickSecond}
+          PickSecondChangeValue={PickSecondChangeValue}
+          ThirdCategory={thirdList}
+          PickThird={pickThird}
+          PickThirdChangeValue={PickThirdChangeValue}
           FilterValue={pickFilter}
-          FtilerChangeValue={PickChangeValue}></TabBarBottom>
+          FilterChangeValue={PickChangeValue}></TabBarBottom>
 
         {pickFilter ? (
           <View
@@ -389,6 +367,8 @@ const CategoryDetailScreen = (props) => {
               data={viewWorkList}
               windowSize={2}
               initialNumToRender={10}
+              onEndReached={throttleGetData}
+              onEndReachedThreshold={10}
               renderItem={({item}) => (
                 <>
                   <SearchWork

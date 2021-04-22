@@ -46,7 +46,11 @@ const WorkVideoListScreen = (props) => {
             },
           });
           if (result.data.success === true) {
-            setViewWorkList([...viewWorkList, ...result.data.result]);
+            if (page) {
+              setViewWorkList([...viewWorkList, ...result.data.result]);
+            } else {
+              setViewWorkList([...result.data.result]);
+            }
             if (scrolling) {
               setBackendPage((prevState) => {
                 return prevState + 1;
