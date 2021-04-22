@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Platform,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import Height from '../../../components/Height.js';
 import Width from '../../../components/Width.js';
@@ -23,7 +24,6 @@ import Tabbar from '../../../components/Home/Tabbar/tabBar.js';
 import TabBarBottom from '../../../components/Pick/Tabbar/tabbarBottom.js';
 import WorkPick from '../../../components/Pick/Work/workPick.js';
 import StorePick from '../../../components/Pick/Store/storePick.js';
-import {ScrollView} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import ActionCreator from '../../../actions';
@@ -38,6 +38,7 @@ import AlertModal2 from '../../../components/Modal/AlertModal2';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const RecentWork = (props) => {
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
@@ -55,9 +56,29 @@ const RecentWork = (props) => {
   const [deleteModal, setDeleteModal] = React.useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
 
+  const throttleGetDataWork = _.throttle(
+    (Number) => get_recentWorkList(true),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const throttleGetDataStore = _.throttle(
+    (Number) => get_recentStoreList(true),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+
   //최근 본 작업 - 작업 데이터 가져오기
-  const get_recentWorkList = async () => {
+  const [backendPageWork, setBackendPageWork] = useState(1);
+  const get_recentWorkList = async (Scrolling) => {
     try {
+      let page;
+      if (Scrolling) page = backendPageWork;
       let value = await AsyncStorage.getItem('recentWorkList');
       if (value == null) {
         setWorkList([]);
@@ -72,21 +93,29 @@ const RecentWork = (props) => {
             new_str = new_str + ',' + new_data[a];
           }
         }
-        let result;
-        let url = Domain + 'recentWorkList';
-
+        let url = `${Domain}api/work/get/recent/more`;
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             let result = await axios.get(url, {
               params: {
                 workid: new_str,
+                page: page,
               },
               headers: {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].message == 'ok') {
-              setWorkList(result.data[0].result);
+            if (result.data.success === true) {
+              if (Scrolling) {
+                setWorkList([...workList, ...result.data.result]);
+              } else {
+                setWorkList([...result.data.result]);
+              }
+              if (Scrolling) {
+                setBackendPageWork((prevState) => {
+                  return prevState + 1;
+                });
+              }
             } else {
               setWorkList([]);
             }
@@ -101,8 +130,11 @@ const RecentWork = (props) => {
     }
   };
   //최근 본 작업 - 가게 데이터 가져오기
-  const get_recentStoreList = async () => {
+  const [backendPageStore, setBackendPageStore] = useState(1);
+  const get_recentStoreList = async (Scrolling) => {
     try {
+      let page;
+      if (Scrolling) page = backendPageStore;
       let value = await AsyncStorage.getItem('recentStoreList');
       if (value == null) {
         setStoreList([]);
@@ -117,21 +149,29 @@ const RecentWork = (props) => {
             new_str = new_str + ',' + new_data[a];
           }
         }
-        let result;
-        let url = Domain + 'recentStoreList';
-
+        let url = `${Domain}api/store/get/recent/more`;
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             let result = await axios.get(url, {
               params: {
                 storeid: new_str,
+                page: page,
               },
               headers: {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].message == 'ok') {
-              setStoreList(result.data[0].result);
+            if (result.data.success === true) {
+              if (Scrolling) {
+                setStoreList([...storeList, ...result.data.result]);
+              } else {
+                setStoreList([...result.data.result]);
+              }
+              if (Scrolling) {
+                setBackendPageStore((prevState) => {
+                  return prevState + 1;
+                });
+              }
             } else {
               setStoreList([]);
             }
@@ -163,8 +203,17 @@ const RecentWork = (props) => {
         newStoreValue = newStoreValue.replace(',,', ',');
       }
       await AsyncStorage.setItem('recentStoreList', newStoreValue);
-      if (newValue != Workvalue || newStoreValue != Storevalue) {
-        onRefresh();
+      if (newValue != Workvalue) {
+        let newList = workList.filter((item, index) => {
+          if (!workListDel.includes(item._id)) return true;
+        });
+        setWorkList(newList);
+      }
+      if (newStoreValue != Storevalue) {
+        let newList = storeList.filter((item, index) => {
+          if (!storeListDel.includes(item._id)) return true;
+        });
+        setStoreList(newList);
       }
     } catch (err) {
       console.log(err);
@@ -173,12 +222,12 @@ const RecentWork = (props) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    get_recentWorkList();
-    get_recentStoreList();
-    setRefreshing(false);
-  }, []);
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   get_recentWorkList();
+  //   get_recentStoreList();
+  //   setRefreshing(false);
+  // }, []);
 
   React.useEffect(() => {
     get_recentWorkList();
@@ -210,11 +259,11 @@ const RecentWork = (props) => {
               ? false
               : page == 'store' && storeList.length == 0
               ? false
-              : true
+              : false
           }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
@@ -229,6 +278,14 @@ const RecentWork = (props) => {
               ? [{message: '최근 본 샵이 없습니다.'}]
               : null
           }
+          onEndReached={
+            page == 'work' && workList.length > 0
+              ? throttleGetDataWork
+              : page == 'store' && storeList.length > 0
+              ? throttleGetDataStore
+              : null
+          }
+          onEndReachedThreshold={50}
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>

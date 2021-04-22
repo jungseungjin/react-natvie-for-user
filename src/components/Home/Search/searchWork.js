@@ -172,7 +172,7 @@ const SearchWork = (props) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            {props.item?.store.name}
+            {props.item?.name}
           </Text>
         </View>
         <View
@@ -190,7 +190,7 @@ const SearchWork = (props) => {
               marginRight: Width_convert(8),
               color: '#000000',
             }}>
-            {props.item?.name}
+            {props.item?.store.name}
           </Text>
           <Star
             width={Width_convert(12)}

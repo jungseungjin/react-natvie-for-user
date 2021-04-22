@@ -53,7 +53,7 @@ const WorkPick = (props) => {
       <FastImage
         style={{width: Width_convert(375), height: Width_convert(240)}}
         source={{
-          uri: props?.item?.store_thumbnail[0],
+          uri: props?.item?.image[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
@@ -67,7 +67,7 @@ const WorkPick = (props) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}>
-        {props.item.info_store[0].store_badge?.indexOf('1') != -1 ? (
+        {props.item.badge?.indexOf('1') != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -92,7 +92,7 @@ const WorkPick = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.info_store[0].store_badge?.indexOf('2') != -1 ? (
+        {props.item.badge?.indexOf('2') != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -117,7 +117,7 @@ const WorkPick = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.info_store[0].store_badge?.indexOf('3') != -1 ? (
+        {props.item.badge?.indexOf('3') != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -142,7 +142,7 @@ const WorkPick = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.info_store[0].store_badge?.indexOf('4') != -1
+        {props.item.badge?.indexOf('4') != -1
           ? // <View
             //   style={{
             //  borderRadius: Font_normalize(3),
@@ -184,7 +184,7 @@ const WorkPick = (props) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            {props.item.store_work_name}
+            {props.item.name}
           </Text>
         </View>
         <View
@@ -202,7 +202,7 @@ const WorkPick = (props) => {
               marginRight: Width_convert(8),
               color: '#000000',
             }}>
-            {props.item.info_store[0].store_name}
+            {props.item.store.name}
           </Text>
           <Star
             width={Width_convert(12)}
@@ -216,11 +216,7 @@ const WorkPick = (props) => {
               marginRight: Width_convert(4),
               color: '#000000',
             }}>
-            {props.item?.reviewCount > 0
-              ? parseFloat(
-                  props.item?.reviewTotal / props.item?.reviewCount,
-                ).toFixed(1)
-              : '0.0'}
+            {props.item?.grade}
           </Text>
           <Text
             style={{
@@ -250,7 +246,7 @@ const WorkPick = (props) => {
               fontWeight: '400',
               color: '#000000',
             }}>
-            {props.item.info_store[0].store_address}
+            {props.item.store.address}
           </Text>
           {props.editMode ? (
             <TouchableOpacity
@@ -296,12 +292,11 @@ const WorkPick = (props) => {
               marginLeft: 'auto',
               marginRight: 0,
             }}>
-            {props.item?.store_work_total_cost != null &&
-            props.item?.store_work_total_cost != 0
-              ? props.item?.store_work_total_cost
+            {props.item?.price === 0
+              ? '업체문의'
+              : props.item?.price
                   .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'
-              : '업체문의'}
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'}
           </Text>
         </View>
         {props.getIndex === props.workListLength ? (

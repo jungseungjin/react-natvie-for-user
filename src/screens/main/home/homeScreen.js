@@ -121,7 +121,7 @@ const HomeScreen = (props) => {
           }
           let result = await axios.get(url, {
             params: {
-              workId: new_str,
+              workid: new_str,
             },
             headers: {
               'Content-Type': 'application/json',
