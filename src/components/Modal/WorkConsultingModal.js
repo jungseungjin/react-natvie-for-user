@@ -203,7 +203,7 @@ const WorkConsultingModal = (props) => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                let body = 'gdgd'; //${getSMSDivider()}body=${body}
+                let body = ''; //${getSMSDivider()}body=${body}
                 Linking.openURL(`sms:${props.storeNumber}`);
               }}
               style={{

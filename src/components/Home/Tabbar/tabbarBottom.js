@@ -111,7 +111,7 @@ const AnotherView = (props) => {
                 <TouchableOpacity
                   activeOpacity={1}
                   onPress={() => {
-                    props.PickSecondChangeValue(item._id);
+                    props.PickSecondChangeValue(item);
                   }}>
                   <Text
                     style={[
@@ -130,7 +130,7 @@ const AnotherView = (props) => {
                           },
                     ]}>
                     {item.name}
-                    {item.chkNumber ? `(${item.chkNumber})` : null}
+                    {item?.count ? `(${item.count})` : null}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -172,7 +172,7 @@ const AnotherView = (props) => {
                 ]}>
                 <TouchableOpacity
                   onPress={() => {
-                    props.PickThirdChangeValue(item._id);
+                    props.PickThirdChangeValue(item);
                   }}
                   activeOpacity={1}
                   style={{
@@ -203,7 +203,7 @@ const AnotherView = (props) => {
                           },
                     ]}>
                     {item.name}
-                    {item.chkNumber ? `(${item.chkNumber})` : null}
+                    {item?.count ? `(${item.count})` : null}
                   </Text>
                 </TouchableOpacity>
               </View>

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   StatusBar,
   View,
@@ -47,24 +47,20 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 
 const StoreDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
-  const [workConsultingModal, setWorkConsultingModal] = React.useState(false);
+  const [workConsultingModal, setWorkConsultingModal] = useState(false);
   const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
   const offset = useRef(new Animated.Value(0)).current;
-  const [scrollValue, setScrollValue] = React.useState(0);
-  const [page, setPage] = React.useState('store');
-  const [pickCount, setPickCount] = React.useState(
-    props.route.params.item.userCount,
-  );
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [scrollValue, setScrollValue] = useState(0);
+  const [page, setPage] = useState('store');
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
   const handleClick = () => {
@@ -75,92 +71,76 @@ const StoreDetailScreen = (props) => {
   };
   const ChangeScrollValue = (text) => setScrollValue(text);
 
-  const Pick = () => {
-    try {
-      let url = Domain + 'pickData_detail';
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          if (reduxState.loginDataCheck.login.data) {
-            let data = {
-              _id: reduxState.loginDataCheck.login.data._id,
-              type: 'store',
-              item_id: props.route.params.item._id,
-            };
-            let result = await axios.post(url, data, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (result.data[0].status == 'ok') {
-              let newArr = [];
-              for (
-                var a = 0;
-                a < props.route.params.item.info_user_id.length;
-                a++
-              ) {
-                newArr.push(
-                  props.route.params.item.info_user_id[a]._id.toString(),
-                );
-              }
-              if (
-                newArr.indexOf(reduxState.loginDataCheck.login.data._id) != -1
-              ) {
-                //있으니 제거
-                newArr.splice(
-                  newArr.indexOf(reduxState.loginDataCheck.login.data._id),
-                  1,
-                );
-                let newArr2 = [];
-                for (var a = 0; a < newArr.length; a++) {
-                  newArr2.push({_id: newArr[a]});
-                }
-                props.route.params.item.info_user_id = newArr2.slice();
-                props.route.params.item.userCount =
-                  props.route.params.item.userCount - 1;
-                setPickCount(pickCount - 1);
-                setToastShow(2);
-              } else {
-                //없으니 추가
-                props.route.params.item.info_user_id.push({
-                  _id: reduxState.loginDataCheck.login.data._id,
-                });
-                props.route.params.item.userCount =
-                  props.route.params.item.userCount + 1;
-                setPickCount(pickCount + 1);
-                setToastShow(1);
-              }
-              forceUpdate();
-            } else {
-            }
-          } else {
-            setShowModal(true);
-          }
-        } else {
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
   let toastRef;
   const showToast = (text, time) => {
     toastRef.show(text, time, () => {
       // something you want to do at close
     });
   };
-  const [toastShow, setToastShow] = React.useState(0);
-  React.useEffect(() => {
+  const [toastShow, setToastShow] = useState(0);
+  useEffect(() => {
     if (toastShow == 1) {
-      showToast('찜한 가게에 추가', 700);
+      showToast('찜한 가게에 추가', 1000);
     } else if (toastShow != 0) {
-      showToast('찜이 해제되었습니다.', 700);
+      showToast('찜이 해제되었습니다.', 1000);
     }
   }, [toastShow]);
 
-  const [reviewList, setReviewList] = React.useState([]);
+  const debouncePickChangeValue = _.debounce(
+    (Number) => PickChangeValue(),
+    3000,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const [pickCount, setPickCount] = useState(props.route.params.item.pickCount);
+  const [myPick, setMyPick] = useState(props.route.params.pick);
+  const PickChangeValue = () => {
+    try {
+      let type = myPick ? 'delete' : 'save';
+      let url = `${Domain}api/store/pick/${type}`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setIsLoadingAndModal(1);
+          let result = await axios.post(url, {
+            storeid: props.route.params.item._id,
+            userid: reduxState?.loginDataCheck?.login?._id,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data.success === true) {
+            if (type === 'delete') {
+              setPickCount((prevState) => {
+                return (prevState -= 1);
+              });
+              setMyPick(null);
+              setToastShow(2);
+            } else {
+              setPickCount((prevState) => {
+                return (prevState += 1);
+              });
+              setMyPick(true);
+              setToastShow(1);
+            }
+            setIsLoadingAndModal(0);
+          } else {
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  const [reviewList, setReviewList] = useState([]);
   const getData = () => {
     try {
-      let result;
       let url = Domain + 'reviewList/store';
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -185,8 +165,8 @@ const StoreDetailScreen = (props) => {
       console.log(err);
     }
   };
-  React.useEffect(() => {
-    getData();
+  useEffect(() => {
+    // getData();
   }, []);
   return (
     <>
@@ -233,7 +213,7 @@ const StoreDetailScreen = (props) => {
             <FastImage
               style={{height: Width_convert(240)}}
               source={{
-                uri: props.route.params.item.store_image,
+                uri: props.route.params.item.image[0],
                 //headers: {Authorization: 'someAuthToken'},
                 priority: FastImage.priority.normal,
               }}
@@ -267,7 +247,7 @@ const StoreDetailScreen = (props) => {
                       fontWeight: '700',
                       color: '#000000',
                     }}>
-                    {props.route.params.item.store_name}
+                    {props.route.params.item.name}
                   </Text>
                 </View>
                 <View
@@ -285,7 +265,8 @@ const StoreDetailScreen = (props) => {
                       hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                       onPress={() => {
                         props.navigation.navigate('StoreLocation', {
-                          item: props.route.params.item,
+                          item: props.route.params.item.location,
+                          title: props.route.params.item.name,
                         });
                       }}>
                       <Text
@@ -296,7 +277,7 @@ const StoreDetailScreen = (props) => {
                           color: '#000000',
                           fontSize: Font_normalize(12),
                         }}>
-                        {props.route.params.item.store_address}
+                        {props.route.params.item.address.address}
                       </Text>
                     </TouchableOpacity>
                     <VerticalBar
@@ -306,7 +287,8 @@ const StoreDetailScreen = (props) => {
                       hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                       onPress={() => {
                         props.navigation.navigate('StoreLocation', {
-                          item: props.route.params.item,
+                          item: props.route.params.item.location,
+                          title: props.route.params.item.name,
                         });
                       }}>
                       <LocationSVG></LocationSVG>
@@ -334,12 +316,7 @@ const StoreDetailScreen = (props) => {
                         fontWeight: '700',
                         color: '#000000',
                       }}>
-                      {props.route.params.item.reviewCount > 0
-                        ? parseFloat(
-                            props.route.params.item.reviewTotal /
-                              props.route.params.item.reviewCount,
-                          ).toFixed(1)
-                        : '0.0'}
+                      {props.route.params.item.grade}
                     </Text>
                     <TouchableOpacity
                       activeOpacity={1}
@@ -518,28 +495,18 @@ const StoreDetailScreen = (props) => {
         </ScrollView>
         <AnimatedHeader
           Length={pickCount}
-          Pick={
-            reduxState.loginDataCheck.login.login
-              ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
-                  JSON.stringify({
-                    _id: reduxState.loginDataCheck.login.data._id,
-                  }),
-                ) != -1
-                ? true
-                : false
-              : false
-          }
-          PickChangeValue={Pick}
+          Pick={myPick}
+          PickChangeValue={debouncePickChangeValue}
           page={'store'}
           ShowModalChangeValue={ShowModalChangeValue}
           redux={reduxState.loginDataCheck.login}
-          Title={props.route.params.item.store_name}
+          Title={props.route.params.item.name}
           navigation={props.navigation}
           animatedValue={offset}
           scrollValue={scrollValue}></AnimatedHeader>
         {/*하단 카카오채팅 전화예약버튼 시작*/}
         <BottomButton
-          Messenger={props.route.params.item.store_messenger}
+          Messenger={props.route.params.item.address.kakaoTalk}
           WorkConsultingModalChangeValue={
             WorkConsultingModalChangeValue
           }></BottomButton>
@@ -562,7 +529,7 @@ const StoreDetailScreen = (props) => {
       />
       {workConsultingModal ? (
         <WorkConsultingModal
-          storeNumber={props.route.params.item.store_number}
+          storeNumber={props.route.params.item.address.phoneNumber}
           WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
           name={reduxState.loginDataCheck.login?.data?.iu_name || null}
           navigation={props.navigation}></WorkConsultingModal>

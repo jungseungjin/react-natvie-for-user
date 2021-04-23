@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -82,9 +82,9 @@ const CategoryDetailScreen = (props) => {
   const ShowModalChangeValue = (text) => setShowModel(text);
   const [refreshing, setRefreshing] = useState(false);
   ///중분류 새로 선택 -> 중분류선택시키기, 소분류리스트 변경하기, 선택한 소분류초기화, 결과리스트 초기화, 페이지초기화하고 데이터가져오기
-  const PickSecondChangeValue = (text) => {
+  const PickSecondChangeValue = (object) => {
     props.route.params.Page.category.map((item, index) => {
-      if (item._id === text) {
+      if (item._id === object._id) {
         setPickSecond(item);
         setThirdList(item.category);
         setPickThird(item.category[0]);
@@ -105,9 +105,9 @@ const CategoryDetailScreen = (props) => {
     });
   };
   ///소분류 새로 선택 -> 소분류선택시키기, 결과리스트 초기화, 페이지초기화하고 데이터가져오기
-  const PickThirdChangeValue = (text) => {
+  const PickThirdChangeValue = (object) => {
     pickSecond.category.map((item, index) => {
-      if (item._id === text) {
+      if (item._id === object._id) {
         setPickThird(item);
         //setViewWorkList([]);
         setBackendPage(0);
@@ -141,7 +141,7 @@ const CategoryDetailScreen = (props) => {
       text,
     );
   };
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     setRefreshing(false);
   }, []);
@@ -242,7 +242,7 @@ const CategoryDetailScreen = (props) => {
       setIsLoadingAndModal(3);
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     getData(
       props.route.params.pickSecondCategory,
       props.route.params.pickThirdCategory,

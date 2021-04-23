@@ -46,6 +46,8 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import moment from 'moment';
+import _ from 'lodash';
 const WorkDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -57,10 +59,7 @@ const WorkDetailScreen = (props) => {
   const WorkConsultingModalChangeValue = (text) => setWorkConsultingModal(text);
   const [showModal, setShowModal] = useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [, updateState] = useState();
-  const forceUpdate = useCallback(() => updateState({}), []);
   const [page, setPage] = useState('work');
-  const [pickCount, setPickCount] = useState(props.route.params.item.userCount);
   const insets = useSafeAreaInsets();
   const scrollRef = useRef();
   const handleClick = () => {
@@ -70,78 +69,17 @@ const WorkDetailScreen = (props) => {
     });
   };
   const ChangeScrollValue = (text) => setScrollValue(text);
-  const Pick = () => {
+  const debounceToStore = _.debounce(
+    (type, item_id) => ToStore(type, item_id),
+    2000,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const ToStore = (type, item_id) => {
     try {
-      let url = Domain + 'pickData_detail';
-      NetInfo.addEventListener(async (state) => {
-        if (state.isConnected) {
-          if (reduxState.loginDataCheck.login.data) {
-            let data = {
-              _id: reduxState.loginDataCheck.login.data._id,
-              type: 'work',
-              item_id: props.route.params.item._id,
-            };
-            let result = await axios.post(url, data, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (result.data[0].status == 'ok') {
-              let newArr = [];
-              for (
-                var a = 0;
-                a < props.route.params.item.info_user_id.length;
-                a++
-              ) {
-                newArr.push(
-                  props.route.params.item.info_user_id[a]._id.toString(),
-                );
-              }
-              if (
-                newArr.indexOf(reduxState.loginDataCheck.login.data._id) != -1
-              ) {
-                //있으니 제거
-                newArr.splice(
-                  newArr.indexOf(reduxState.loginDataCheck.login.data._id),
-                  1,
-                );
-                let newArr2 = [];
-                for (var a = 0; a < newArr.length; a++) {
-                  newArr2.push({_id: newArr[a]});
-                }
-                props.route.params.item.info_user_id = newArr2.slice();
-                props.route.params.item.userCount =
-                  props.route.params.item.userCount - 1;
-                setPickCount(pickCount - 1);
-                setToastShow(2);
-              } else {
-                //없으니 추가
-                props.route.params.item.info_user_id.push({
-                  _id: reduxState.loginDataCheck.login.data._id,
-                });
-                props.route.params.item.userCount =
-                  props.route.params.item.userCount + 1;
-                setPickCount(pickCount + 1);
-                setToastShow(1);
-              }
-              forceUpdate();
-            } else {
-            }
-          } else {
-            setShowModal(true);
-          }
-        } else {
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getDataAndNavigateFromWork = (type, item_id) => {
-    try {
-      let result;
-      let url = Domain + 'detail/navigate/' + type;
+      let url = `${Domain}api/store/get/one`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -149,14 +87,17 @@ const WorkDetailScreen = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              item_id: item_id,
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: item_id,
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.navigate('StoreDetail', {
-              item: result.data[0].result[0],
+              item: result.data.results[1],
+              pick: result.data.results[0],
             });
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -165,6 +106,7 @@ const WorkDetailScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   let toastRef;
@@ -175,13 +117,62 @@ const WorkDetailScreen = (props) => {
   };
   const [toastShow, setToastShow] = useState(0);
   useEffect(() => {
-    if (toastShow == 1) {
-      showToast('찜한 작업에 추가', 700);
+    if (toastShow === 1) {
+      showToast('찜한 작업에 추가', 1000);
     } else if (toastShow != 0) {
-      showToast('찜이 해제되었습니다.', 700);
+      showToast('찜이 해제되었습니다.', 1000);
     }
   }, [toastShow]);
-
+  const debouncePickChangeValue = _.debounce(
+    (Number) => PickChangeValue(),
+    3000,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const PickChangeValue = () => {
+    try {
+      let type = myPick ? 'delete' : 'save';
+      let url = `${Domain}api/work/pick/${type}`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          setIsLoadingAndModal(1);
+          let result = await axios.post(url, {
+            workid: props.route.params.item._id,
+            userid: reduxState?.loginDataCheck?.login?._id,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (result.data.success === true) {
+            if (type === 'delete') {
+              setPickCount((prevState) => {
+                return (prevState -= 1);
+              });
+              setMyPick(null);
+              setToastShow(2);
+            } else {
+              setPickCount((prevState) => {
+                return (prevState += 1);
+              });
+              setMyPick(true);
+              setToastShow(1);
+            }
+            setIsLoadingAndModal(0);
+          } else {
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
   /*
   기본으로 있음  여기에 데이터 추가로 불러와서 사용하기  
   id
@@ -193,10 +184,12 @@ Price
 reviewCount
 phoneNumber
   */
+  const [pickCount, setPickCount] = useState(0);
   const [workData, setWorkData] = useState({});
   //작업아이디값, 평점,이미지,작업정보,경위도,작업이름, 찜한갯수,가격,리뷰갯수,가게위치 카카오톡 전화번호,가게아이디값, 작업소요시간
   const [myPick, setMyPick] = useState(''); //null이면 픽안함 아이디값들어오면 픽함
   const [storeData, setStoreData] = useState({}); //가게아이디값, 사업자정보, 오픈시간, 휴무일, 가게멤버
+
   const getData = () => {
     try {
       let url = `${Domain}api/work/get/one`;
@@ -215,6 +208,7 @@ phoneNumber
           });
           if (result.data.success === true) {
             setWorkData(result.data.results[0]);
+            setPickCount(result.data.results[0].pickCount);
             setMyPick(result.data.results[1]);
             setStoreData(result.data.results[2]);
             setIsLoadingAndModal(0);
@@ -324,11 +318,11 @@ phoneNumber
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
-                    //뒤에서 가져올거야
-                    getDataAndNavigateFromWork(
-                      'store',
-                      props.route.params.item.info_store[0]._id,
-                    );
+                    if (storeData._id) {
+                      debounceToStore('store', storeData._id);
+                    } else {
+                      setIsLoadingAndModal(3);
+                    }
                   }}>
                   <Text
                     style={{
@@ -347,11 +341,11 @@ phoneNumber
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
-                    //뒤에서 가져올거야
-                    getDataAndNavigateFromWork(
-                      'store',
-                      props.route.params.item.info_store[0]._id,
-                    );
+                    if (storeData._id) {
+                      debounceToStore('store', storeData._id);
+                    } else {
+                      setIsLoadingAndModal(3);
+                    }
                   }}>
                   <StoreSVG></StoreSVG>
                 </TouchableOpacity>
@@ -366,10 +360,14 @@ phoneNumber
                   activeOpacity={1}
                   hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                   onPress={() => {
-                    //뒤에서 가져올거야 경위도
-                    props.navigation.navigate('StoreLocation', {
-                      item: props.route.params.item.info_store[0],
-                    });
+                    if (workData.location) {
+                      props.navigation.navigate('StoreLocation', {
+                        item: workData.location,
+                        title: workData.store.name,
+                      });
+                    } else {
+                      setIsLoadingAndModal(3);
+                    }
                   }}>
                   <Text
                     style={{
@@ -388,10 +386,14 @@ phoneNumber
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
-                    //뒤에서 가져올거야
-                    props.navigation.navigate('StoreLocation', {
-                      item: props.route.params.item.info_store[0],
-                    });
+                    if (workData.location) {
+                      props.navigation.navigate('StoreLocation', {
+                        item: workData.location,
+                        title: workData.store.name,
+                      });
+                    } else {
+                      setIsLoadingAndModal(3);
+                    }
                   }}>
                   <LocationSVG></LocationSVG>
                 </TouchableOpacity>
@@ -424,7 +426,7 @@ phoneNumber
                   activeOpacity={1}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={() => {
-                    //뒤에서 가져올거야
+                    //뒤에서 가져올거야 ->ㅈㅏㄱ업아이디값넘겨서 리뷰가져오기
                     props.navigation.navigate('ReviewView', {
                       item: props.route.params.item,
                       type: 'work',
@@ -462,7 +464,9 @@ phoneNumber
                     color: '#59A3D9',
                   }}>
                   {/*//뒤에서 가져올거야 */}
-                  작업소요 {props.route.params.item.store_work_time}
+                  작업소요{' '}
+                  {workData?.workTime &&
+                    moment(workData?.workTime, 'HH:mm').format('HH시간 mm분')}
                 </Text>
               </View>
               <View style={{marginTop: Height_convert(4)}}>
@@ -669,19 +673,8 @@ phoneNumber
         {/*//뒤에서 가져올거야 */}
         <AnimatedHeader
           Length={pickCount}
-          Pick={
-            // reduxState.loginDataCheck.login.login
-            //   ? JSON.stringify(props.route.params.item.info_user_id).indexOf(
-            //       JSON.stringify({
-            //         _id: reduxState.loginDataCheck.login.data._id,
-            //       }),
-            //     ) != -1
-            //     ? true
-            //     : false
-            //   :
-            false
-          }
-          PickChangeValue={Pick}
+          Pick={myPick ? true : false}
+          PickChangeValue={debouncePickChangeValue}
           page={'work'}
           ShowModalChangeValue={ShowModalChangeValue}
           redux={reduxState.loginDataCheck.login}
@@ -693,7 +686,7 @@ phoneNumber
 
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         <BottomButton
-          Messenger={props.route.params.item.store.kakoTalk}
+          Messenger={props.route.params.item.store.kakaoTalk}
           WorkConsultingModalChangeValue={
             WorkConsultingModalChangeValue
           }></BottomButton>
@@ -715,7 +708,7 @@ phoneNumber
       />
       {workConsultingModal ? (
         <WorkConsultingModal
-          storeNumber={props.route.params.item.info_store[0].store_number}
+          storeNumber={workData?.store.phoneNumber}
           WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
           name={reduxState.loginDataCheck.login?.data?.iu_name || null}
           navigation={props.navigation}></WorkConsultingModal>

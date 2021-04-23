@@ -43,16 +43,12 @@ const StoreLocationScreen = (props) => {
   const [locationModal, setLocationModal] = React.useState(false);
   const LocationModalChangeValue = (text) => setLocationModal(text);
   const [P0, setP0] = React.useState({
-    latitude: parseFloat(props.route.params.item.store_location.coordinates[1]),
-    longitude: parseFloat(
-      props.route.params.item.store_location.coordinates[0],
-    ),
+    latitude: parseFloat(props.route.params.item.coordinates[1]),
+    longitude: parseFloat(props.route.params.item.coordinates[0]),
   });
   const [P1, setP1] = React.useState({
-    latitude: parseFloat(props.route.params.item.store_location.coordinates[1]),
-    longitude: parseFloat(
-      props.route.params.item.store_location.coordinates[0],
-    ),
+    latitude: parseFloat(props.route.params.item.coordinates[1]),
+    longitude: parseFloat(props.route.params.item.coordinates[0]),
     show: false,
   });
   //위치정보사용 퍼미션
@@ -121,8 +117,8 @@ const StoreLocationScreen = (props) => {
         />
         <Tabbar
           left={'back'}
-          Title={props.route.params.item.store_name}
-          StoreName={props.route.params.item.store_name}
+          Title={props.route.params.title}
+          StoreName={props.route.params.title}
           navigation={props.navigation}></Tabbar>
         <View
           style={{

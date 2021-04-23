@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -27,154 +27,116 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const StoreWorkList = (props) => {
   const reduxState = useSelector((state) => state);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [page, setPage] = React.useState('dressup');
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(() => updateState({}), []);
+  const [page, setPage] = useState('dressup');
   const PageChangeValue = (text) => {
     setPage(text);
-    setPickFilter(false);
+    setBackendPage(1);
+    getData(text, null, null, null, pickSort);
   };
 
-  const [middleList, setMiddleList] = React.useState([]);
-  const [pickMiddle, setPickMiddle] = React.useState('');
-  const PickMiddleChangeValue = (text) => {
-    setPickMiddle(text);
-    setPickFilter(false);
+  const [secondList, setSecondList] = useState([]);
+  const [pickSecond, setPickSecond] = useState({});
+  const PickSecondChangeValue = (object) => {
+    //중분류 변경 -> 데이터 다시 가져오기 페이지 초기화
+    //소분류 리스트 변경. 0번인덱스를 찍어놓지는 않음(아이디값)
+    secondList.map((item, index) => {
+      if (item._id === object._id) {
+        setThirdList(item.category);
+        //setPickThird(item.category[0]._id);
+      }
+    });
+    setPickSecond(object);
+    setPickThird({});
+    setBackendPage(1);
+    getData(page, object, null, null, pickSort);
   };
 
-  const [smallList, setSmallList] = React.useState([]);
-  const [pickSmall, setPickSmall] = React.useState('');
-  const PickSmallChangeValue = (text) => {
-    setPickSmall(text);
-    setPickFilter(false);
-    let newArr = [];
-    for (var a = 0; a < resultWorkList.length; a++) {
-      if (resultWorkList[a].store_info_work.includes(text)) {
-        newArr.push(resultWorkList[a]);
-      }
-    }
-    if (pickSort !== false) {
-      if (pickSort === '가까운 순 ') {
-        //거리 가까운것부터
-        newArr.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-      } else if (pickSort === '별점 순 ') {
-        //별점 높은것부터
-        newArr.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '후기많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '찜 많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-      } else if (pickSort === '우리가게공임표 공개 ') {
-        newArr.sort(function (a, b) {
-          return a.store_work_total_cost < b.store_work_total_cost
-            ? 1
-            : a.store_work_total_cost > b.store_work_total_cost
-            ? -1
-            : 0;
-        });
-      }
-    }
-    setViewWorkList(newArr);
+  const [thirdList, setThirdList] = useState([]);
+  const [pickThird, setPickThird] = useState({});
+  const PickThirdChangeValue = (object) => {
+    setPickThird(object);
+    setBackendPage(1);
+    getData(page, pickSecond, object, null, pickSort);
   };
-  const [resultWorkList, setresultWorkList] = React.useState([]);
-  const [viewWorkList, setViewWorkList] = React.useState([]);
-  const [pickFilter, setPickFilter] = React.useState(false);
+  const [resultWorkList, setResultWorkList] = useState([]);
+  const [pickFilter, setPickFilter] = useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(false);
+  const [pickSort, setPickSort] = useState(false);
   const SortChangeValue = (text) => {
     setPickSort(text);
-    let newArr = viewWorkList.slice() || [];
-    if (text !== false) {
-      if (text === '가까운 순 ') {
-        //거리 가까운것부터
-        newArr.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-      } else if (text === '별점 순 ') {
-        //별점 높은것부터
-        newArr.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-      } else if (text === '후기많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '찜 많은 순 ') {
-        newArr.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '우리가게공임표 공개 ') {
-        newArr.sort(function (a, b) {
-          return a.store_work_total_cost < b.store_work_total_cost
-            ? 1
-            : a.store_work_total_cost > b.store_work_total_cost
-            ? -1
-            : 0;
-        });
-      }
-    }
-    setViewWorkList(newArr);
+    getData(page, pickSecond, pickThird, null, text);
   };
-  const [showModal, setShowModel] = React.useState(true);
+  const [showModal, setShowModel] = useState(true);
   const ShowModalChangeValue = (text) => setShowModel(text);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  //page값. 대분류값이 변경될때만 뒤에서 데이터 가져오고
-  //중분류 소분류값이 변경될때는 대분류값에서 가져온 데이터를 가지고 논다
-  //-> 데이터 가져올때 작업분류에 대한 데이터도 가져와야함
-  // 각 작업의 length를 어떻게 처리하나
-  const getData = (page, sort) => {
+  const throttleGetData = _.throttle(
+    (Number) => getData(page, pickSecond, pickThird, backendPage, pickSort),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  //처음 들어가면 드레스업이 찍혀있다.
+  //백엔드에서 카테고리 메뉴와 함께 드레스업 작업데이터를 불러온다. 백엔드에서 중분류,소분류값에 숫자 넣어준다.
+  //대분류의 값을 변경하면 백엔드에서 카테고리 메뉴와 함께 드레스업 작업데이터를 불러온다. 백엔드에서 중분류,소분류값에 숫자 넣어준다.
+
+  //중분류 값 변경하면
+  //1. 대분류에서 백엔드 값을 모조리 가져와서 중분류 아이디값에 맞게 보여준다
+  //2. 대분류에서 백엔드에서 데이터 갯수는 확인하고 중분류 찍으면
+  //SecondCategory
+  //ThirdCategory
+  const [pages, setPages] = useState([]);
+  const [backendPage, setBackendPage] = useState(1);
+  //대분류 중분류 소분류 페이지 정렬이 필요함
+  const getData = (
+    FirstCategory,
+    SecondCategory,
+    ThirdCategory,
+    Page,
+    Sort,
+  ) => {
     try {
-      if (sort == '가까운 순 ') {
-        sort = '1';
-      } else if (sort == '별점 순 ') {
-        sort = '2';
-      } else if (sort == '후기많은 순 ') {
-        sort = '3';
-      } else if (sort == '찜 많은 순 ') {
-        sort = '4';
-      } else if (sort == '우리가게공임표 공개 ') {
-        sort = '5';
-      } else {
-        sort = '0';
+      //가게 아이디값 카테고리메뉴 페이지 정렬값
+      let first = '';
+      let second = '';
+      let third = '';
+      let page = '';
+      let sort = '';
+      if (FirstCategory) {
+        first = FirstCategory;
       }
-      let url = `${Domain}storeworklist`;
+      if (SecondCategory) {
+        second = SecondCategory._id;
+      }
+      if (ThirdCategory) {
+        third = ThirdCategory._id;
+      }
+      if (Page) {
+        page = Page;
+      }
+      if (Sort) {
+        let type = '';
+        if (Sort === '가까운 순 ') {
+          type = 'distance';
+        } else if (Sort === '별점 순 ') {
+          type = 'grade';
+        } else if (Sort === '후기많은 순 ') {
+          type = 'review';
+        } else if (Sort === '찜 많은 순 ') {
+          type = 'pick';
+        }
+        sort = type;
+      }
+      let url = `${Domain}api/work/get/store`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -182,20 +144,39 @@ const StoreWorkList = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              item_id: props.route.params.item._id,
+              storeid: props.route.params.item._id,
+              first: first,
+              second: second,
+              third: third,
               page: page,
               sort: sort,
             },
           });
-          if (result.data[0].message == 'ok') {
-            setresultWorkList(result.data[0].WorkList);
-            setMiddleList(result.data[0].MiddleCategory);
-            setSmallList(result.data[0].SmallCategory);
-            setPickMiddle(result.data[0].MiddleCategory[0].work_sub_type_name);
-            setPickSmall(result.data[0].SmallCategory[0]._id);
-            forceUpdate();
+          if (result.data.success === true) {
+            if (!second) {
+              //대분류찍은거면 카테고리를 리스트에 넣고, 중분류1번째 찍고, 넘어온 결과작업을 넣으면됨
+
+              setSecondList(result.data.category);
+              setPickSecond(result.data.category[0]);
+              setThirdList(result.data.category[0].category);
+              //setPickThird(result.data.category[0].category[0]);//소분류 1번째 찍기.  안함
+              if (Page) {
+                setResultWorkList([...resultWorkList, ...result.data.result]);
+              } else {
+                setResultWorkList(result.data.result);
+              }
+            } else {
+              //중분류 찍은거면 중분류,소분류는 찍혀서 넘어왔으니 넘어온 결과작업을 넣으면 됨 페이지를 사용했으면 페이지에 1추가
+              if (Page) {
+                setResultWorkList([...resultWorkList, ...result.data.result]);
+                setBackendPage((prevData) => {
+                  return prevData + 1;
+                });
+              } else {
+                setResultWorkList(result.data.result);
+              }
+            }
           } else {
-            console.log(result.data[0]);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -204,30 +185,16 @@ const StoreWorkList = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setRefreshing(false);
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   setRefreshing(false);
+  // }, []);
+  useEffect(() => {
+    getData(page); //처음은 드레스업에 중분류없고 소분류없고 페이지없고 정렬없음
   }, []);
-  React.useEffect(() => {
-    getData(page, pickSort);
-  }, []);
-  React.useEffect(() => {
-    getData(page, pickSort);
-  }, [page]);
-  React.useEffect(() => {
-    //처음 화면에서 찍혀있는 바디킷 및 패지키에 대한 작업을 나타내기 위함
-    // 다른페이지 찍고 다시 돌아오면 비어있음.... resultWorkList가 안들어간거로 보여서 그런듯
-    let newArr = [];
-    forceUpdate();
-    for (var a = 0; a < resultWorkList.length; a++) {
-      if (resultWorkList[a].store_info_work.includes(pickSmall)) {
-        newArr.push(resultWorkList[a]);
-      }
-    }
-    setViewWorkList(newArr);
-  }, [resultWorkList]);
   return (
     <>
       <StatusBar
@@ -262,7 +229,7 @@ const StoreWorkList = (props) => {
           ]}></View>
         <Tabbar
           left={'back'}
-          Title={props.route.params.item.store_name}
+          Title={props.route.params.item.name}
           navigation={props.navigation}></Tabbar>
         <View
           style={{
@@ -461,14 +428,14 @@ const StoreWorkList = (props) => {
             {title: '편의장치', value: 'convenience'},
             {title: '캠핑카', value: 'camping'},
           ]}
-          MiddleCategory={middleList}
-          PickMiddle={pickMiddle}
-          PickMiddleChangeValue={PickMiddleChangeValue}
-          SmallCategory={smallList}
-          PickSmall={pickSmall}
-          PickSmallChangeValue={PickSmallChangeValue}
+          SecondCategory={secondList}
+          PickSecond={pickSecond}
+          PickSecondChangeValue={PickSecondChangeValue}
+          ThirdCategory={thirdList}
+          PickThird={pickThird}
+          PickThirdChangeValue={PickThirdChangeValue}
           FilterValue={pickFilter}
-          FtilerChangeValue={PickChangeValue}></TabBarBottom>
+          FilterChangeValue={PickChangeValue}></TabBarBottom>
 
         {pickFilter ? (
           <View
@@ -545,29 +512,31 @@ const StoreWorkList = (props) => {
             </View>
           </View>
         ) : null}
-        {viewWorkList.length > 0 ? (
+        {resultWorkList.length > 0 ? (
           <View
             style={{
               width: Width_convert(375),
               height: Height_convert(812 - 184),
             }}>
             <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              // refreshControl={
+              //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              // }
               style={{minHeight: Height_convert(812)}}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
-              data={viewWorkList}
+              data={resultWorkList}
               windowSize={2}
               initialNumToRender={10}
+              onEndReached={throttleGetData}
+              onEndReachedThreshold={1}
               renderItem={({item}) => (
                 <>
                   <SearchWork
                     key={item._id}
                     item={item}
                     navigation={props.navigation}></SearchWork>
-                  {viewWorkList.indexOf(item) == viewWorkList.length - 1 ? (
+                  {resultWorkList.indexOf(item) == resultWorkList.length - 1 ? (
                     <View style={{height: Height_convert(390)}}></View>
                   ) : null}
                 </>
