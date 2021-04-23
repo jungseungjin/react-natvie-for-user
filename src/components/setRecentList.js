@@ -3,15 +3,15 @@ import AsyncStorage from '@react-native-community/async-storage';
 const SetRecentList = async (type, id) => {
   try {
     let value;
-    if (type == 'work') {
+    if (type === 'work') {
       value = await AsyncStorage.getItem('recentWorkList');
-    } else if (type == 'store') {
+    } else if (type === 'store') {
       value = await AsyncStorage.getItem('recentStoreList');
     }
-    if (value == null) {
-      if (type == 'work') {
+    if (value === null) {
+      if (type === 'work') {
         value = await AsyncStorage.setItem('recentWorkList', id);
-      } else if (type == 'store') {
+      } else if (type === 'store') {
         value = await AsyncStorage.setItem('recentStoreList', id);
       }
     } else {
@@ -34,9 +34,9 @@ const SetRecentList = async (type, id) => {
           break;
         }
       }
-      if (type == 'work') {
+      if (type === 'work') {
         value = await AsyncStorage.setItem('recentWorkList', new_str);
-      } else if (type == 'store') {
+      } else if (type === 'store') {
         value = await AsyncStorage.setItem('recentStoreList', new_str);
       }
     }

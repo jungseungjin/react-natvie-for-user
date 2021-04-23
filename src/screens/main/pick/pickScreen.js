@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -39,57 +39,132 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 
 import Forfunction from './forFunction.js';
+import _ from 'lodash';
+import SetRecentList from '../../../components/setRecentList.js';
 const PickScreen = (props) => {
   const reduxState = useSelector((state) => state);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   const insets = useSafeAreaInsets();
-  const [showModal, setShowModal] = React.useState(true);
+  const [showModal, setShowModal] = useState(true);
   const ShowModalChangeValue = (text) => setShowModal(text);
-  const [page, setPage] = React.useState('work');
-  const [workList, setWorkList] = React.useState([]);
-  const [workListDel, setWorkListDel] = React.useState([]);
+  const [page, setPage] = useState('work');
+  const [workList, setWorkList] = useState([]);
+  const [workListDel, setWorkListDel] = useState([]);
   const WorkListDelChangeValue = (text) => setWorkListDel(text);
-  const [storeList, setStoreList] = React.useState([]);
-  const [storeListDel, setStoreListDel] = React.useState([]);
+  const [storeList, setStoreList] = useState([]);
+  const [storeListDel, setStoreListDel] = useState([]);
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
   const PageChangeValue = (text) => setPage(text);
   //로그인 되어 있으면 찜한데이터 가져오기
-  const [deleteModal, setDeleteModal] = React.useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
-
-  const get_pickData = () => {
+  const ToStore = (item_id) => {
     try {
+      let url = `${Domain}api/store/get/one`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: item_id,
+            },
+          });
+          if (result.data.success === true) {
+            SetRecentList('store', result.data.results[1]._id);
+            props.navigation.navigate('StoreDetail', {
+              item: result.data.results[1],
+              pick: result.data.results[0],
+            });
+          } else {
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
+  const throttleGetDataWork = _.throttle(
+    (Number) => get_pickData(true, 'work'),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const throttleGetDataStore = _.throttle(
+    (Number) => get_pickData(true, 'store'),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const [backendPageStore, setBackendPageStore] = useState(1);
+  const [backendPageWork, setBackendPageWork] = useState(1);
+  const get_pickData = (Scrolling, type) => {
+    try {
+      let page;
+      if (type === 'work') {
+        if (Scrolling) page = backendPageWork;
+      } else if (type === 'store') {
+        if (Scrolling) page = backendPageStore;
+      }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           if (!reduxState.loginDataCheck.login._id) {
             return false;
           }
-          let url = `${Domain}pickData`;
+          let url = `${Domain}api/work/get/pick`;
+          let work = 'ok';
+          let store = 'ok';
+          if (Scrolling) {
+            if (type === 'work') store = '';
+            else if (type === 'store') work = '';
+          }
           let result = await axios.get(url, {
             params: {
-              _id: reduxState.loginDataCheck.login._id,
+              userid: reduxState.loginDataCheck?.login?._id,
+              work: work,
+              store: store,
+              page: page,
             },
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
-            if (result.data[0].workList != 0 && result.data[0].workList) {
-              setWorkList(result.data[0].workList);
+          if (result.data.success === true) {
+            if (Scrolling) {
+              if (type === 'work') {
+                setWorkList([...workList, ...result.data.results[0]]);
+                setBackendPageWork((prevState) => {
+                  return prevState + 1;
+                });
+              } else if (type === 'store') {
+                setStoreList([...storeList, ...result.data.results[1]]);
+                setBackendPageStore((prevState) => {
+                  return prevState + 1;
+                });
+              }
             } else {
-              setWorkList([]);
-            }
-            if (result.data[0].storeList != 0 && result.data[0].storeList) {
-              setStoreList(result.data[0].storeList);
-            } else {
-              setStoreList([]);
+              setWorkList(result.data.results[0]);
+              setStoreList(result.data.results[1]);
+              // setBackendPageStore(1);
+              // setBackendPageWork(1);
             }
           } else {
-            //setRecentWorkList([]);
             setWorkList([]);
             setStoreList([]);
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -97,6 +172,7 @@ const PickScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   const delete_data = () => {
@@ -105,21 +181,23 @@ const PickScreen = (props) => {
       if (reduxState.loginDataCheck.login._id != '') {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            let url = Domain + 'pickData';
+            let url = `${Domain}api/work//delete/pick`;
             let data = {
-              _id: reduxState.loginDataCheck.login._id,
-              workListDel: workListDel,
-              storeListDel: storeListDel,
+              userid: reduxState.loginDataCheck.login._id,
+              workid: workListDel,
+              storeid: storeListDel,
             };
             let result = await axios.post(url, data, {
               headers: {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].message == 'ok') {
-              onRefresh();
+            if (result.data.success === true) {
               setWorkListDel();
               setStoreListDel();
+              setBackendPageStore(1);
+              setBackendPageWork(1);
+              get_pickData();
             } else {
               //setRecentWorkList([]);
             }
@@ -140,22 +218,27 @@ const PickScreen = (props) => {
     }
   };
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    get_pickData();
-    setRefreshing(false);
-  }, []);
-  const [forFunctionBoo, setForFunctionBoo] = React.useState(true);
-  React.useEffect(() => {
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   get_pickData();
+  //   setRefreshing(false);
+  // }, []);
+  const [forFunctionBoo, setForFunctionBoo] = useState(true);
+  useEffect(() => {
     props.navigation.addListener('focus', () => {
       let m = Math.random();
-      setForFunctionBoo(m);
+      //setForFunctionBoo(m);
       setShowModal(true);
+      get_pickData();
     });
     props.navigation.addListener('blur', () => {
       setShowModal(false);
+      // setWorkList([]);
+      // setStoreList([]);
+      setBackendPageStore(1);
+      setBackendPageWork(1);
     });
   }, []);
   return (
@@ -178,31 +261,37 @@ const PickScreen = (props) => {
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <FlatList
           alwaysBounceVertical={
-            page == 'work' && workList.length == 0
+            page === 'work' && workList.length == 0
               ? false
-              : page == 'store' && storeList.length == 0
+              : page === 'store' && storeList.length == 0
               ? false
               : true
           }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
           data={
             reduxState.loginDataCheck.login.login == false
               ? [{message: '로그인이 필요합니다.'}]
-              : page == 'work' && workList.length > 0
+              : page === 'work' && workList.length > 0
               ? workList
-              : page == 'store' && storeList.length > 0
+              : page === 'store' && storeList.length > 0
               ? storeList
-              : page == 'work'
+              : page === 'work'
               ? [{message: '찜한 작업이 없습니다.'}]
-              : page == 'store'
+              : page === 'store'
               ? [{message: '찜한 샵이 없습니다.'}]
               : null
           }
+          onEndReached={
+            page === 'work' && workList.length > 0
+              ? throttleGetDataWork
+              : page === 'store' && storeList.length > 0 && throttleGetDataStore
+          }
+          onEndReachedThreshold={50}
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>
@@ -224,7 +313,7 @@ const PickScreen = (props) => {
                   {item.message}
                 </Text>
               </View>
-            ) : page == 'work' && workList.length > 0 ? (
+            ) : page === 'work' && workList.length > 0 ? (
               <WorkPick
                 navigation={props.navigation}
                 getIndex={workList.indexOf(item) + 1}
@@ -234,11 +323,12 @@ const PickScreen = (props) => {
                 key={item._id}
                 item={item}
                 editMode={reduxState.editModeCheck.editMode}></WorkPick>
-            ) : page == 'store' && storeList.length > 0 ? (
+            ) : page === 'store' && storeList.length > 0 ? (
               <StorePick
                 navigation={props.navigation}
                 getIndex={storeList.indexOf(item) + 1}
                 storeListLength={storeList.length}
+                ToStore={ToStore}
                 StoreListDelChangeValue={StoreListDelChangeValue}
                 storeListDel={storeListDel}
                 key={item._id}

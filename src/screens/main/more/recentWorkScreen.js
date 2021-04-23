@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -39,25 +39,58 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import _ from 'lodash';
+import SetRecentList from '../../../components/setRecentList.js';
 const RecentWork = (props) => {
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const reduxState = useSelector((state) => state);
   const insets = useSafeAreaInsets();
-  const [page, setPage] = React.useState('work');
+  const [page, setPage] = useState('work');
   const PageChangeValue = (text) => setPage(text);
 
-  const [workList, setWorkList] = React.useState([]);
-  const [workListDel, setWorkListDel] = React.useState([]);
+  const [workList, setWorkList] = useState([]);
+  const [workListDel, setWorkListDel] = useState([]);
   const WorkListDelChangeValue = (text) => setWorkListDel(text);
-  const [storeList, setStoreList] = React.useState([]);
-  const [storeListDel, setStoreListDel] = React.useState([]);
+  const [storeList, setStoreList] = useState([]);
+  const [storeListDel, setStoreListDel] = useState([]);
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
-  const [deleteModal, setDeleteModal] = React.useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
-
+  const ToStore = (item_id) => {
+    try {
+      let url = `${Domain}api/store/get/one`;
+      NetInfo.addEventListener(async (state) => {
+        if (state.isConnected) {
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            params: {
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: item_id,
+            },
+          });
+          if (result.data.success === true) {
+            SetRecentList('store', result.data.results[1]._id);
+            props.navigation.navigate('StoreDetail', {
+              item: result.data.results[1],
+              pick: result.data.results[0],
+            });
+          } else {
+            setIsLoadingAndModal(3);
+          }
+        } else {
+          //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
+          setIsLoadingAndModal(2);
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      setIsLoadingAndModal(3);
+    }
+  };
   const throttleGetDataWork = _.throttle(
-    (Number) => get_recentWorkList(true),
+    (Number) => get_recentList(true, 'work'),
     300,
     {
       leading: true,
@@ -65,7 +98,7 @@ const RecentWork = (props) => {
     },
   );
   const throttleGetDataStore = _.throttle(
-    (Number) => get_recentStoreList(true),
+    (Number) => get_recentList(true, 'store'),
     300,
     {
       leading: true,
@@ -73,32 +106,48 @@ const RecentWork = (props) => {
     },
   );
 
-  //최근 본 작업 - 작업 데이터 가져오기
+  //최근 본 작업 - 작업 데이터&&가게 데이터 가져오기
+  //쿼리값이랑 페이지만 잘 조절하면 됨.
+  const [backendPageStore, setBackendPageStore] = useState(1);
   const [backendPageWork, setBackendPageWork] = useState(1);
-  const get_recentWorkList = async (Scrolling) => {
+  const get_recentList = async (Scrolling, type) => {
     try {
       let page;
-      if (Scrolling) page = backendPageWork;
-      let value = await AsyncStorage.getItem('recentWorkList');
-      if (value == null) {
+      if (type === 'work') {
+        if (Scrolling) page = backendPageWork;
+      } else if (type === 'store') {
+        if (Scrolling) page = backendPageStore;
+      }
+      let workValue = await AsyncStorage.getItem('recentWorkList');
+      let storeValue = await AsyncStorage.getItem('recentStoreList');
+      if (workValue === null && storeValue === null) {
         setWorkList([]);
+        setStoreList([]);
       } else {
-        let new_data = value.split(',');
+        let new_data = workValue?.split(',');
         let new_arr = [];
         let new_str = '';
-        for (var a = 0; a < new_data.length; a++) {
-          if (a == 0) {
-            new_str = new_data[a];
-          } else {
-            new_str = new_str + ',' + new_data[a];
-          }
-        }
+        let new_data2 = storeValue?.split(',');
+        let new_arr2 = [];
+        let new_str2 = '';
+        new_data?.map((item, index) => {
+          if (new_str === '') new_str = item;
+          else new_str = new_str + ',' + item;
+        });
+        new_data2?.map((item, index) => {
+          if (new_str2 === '') new_str2 = item;
+          else new_str2 = new_str2 + ',' + item;
+        });
+
+        if (type === 'work') new_str2 = '';
+        else if (type === 'store') new_str = '';
         let url = `${Domain}api/work/get/recent/more`;
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
             let result = await axios.get(url, {
               params: {
                 workid: new_str,
+                storeid: new_str2,
                 page: page,
               },
               headers: {
@@ -106,74 +155,37 @@ const RecentWork = (props) => {
               },
             });
             if (result.data.success === true) {
-              if (Scrolling) {
-                setWorkList([...workList, ...result.data.result]);
+              if (type === 'work') {
+                console.log('gdgd');
+                if (Scrolling) {
+                  setWorkList([...workList, ...result.data.results[0]]);
+                  setBackendPageWork((prevState) => {
+                    return prevState + 1;
+                  });
+                } else {
+                  setWorkList([...result.data.results[0]]);
+                }
+              } else if (type === 'store') {
+                if (Scrolling) {
+                  setStoreList([...storeList, ...result.data.results[1]]);
+                  setBackendPageStore((prevState) => {
+                    return prevState + 1;
+                  });
+                } else {
+                  setStoreList([...result.data.results[1]]);
+                }
               } else {
-                setWorkList([...result.data.result]);
-              }
-              if (Scrolling) {
-                setBackendPageWork((prevState) => {
-                  return prevState + 1;
-                });
+                //둘다있음
+                setWorkList(result.data.results[0]);
+                setStoreList(result.data.results[1]);
               }
             } else {
-              setWorkList([]);
-            }
-          } else {
-            //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
-            setIsLoadingAndModal(2);
-          }
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  //최근 본 작업 - 가게 데이터 가져오기
-  const [backendPageStore, setBackendPageStore] = useState(1);
-  const get_recentStoreList = async (Scrolling) => {
-    try {
-      let page;
-      if (Scrolling) page = backendPageStore;
-      let value = await AsyncStorage.getItem('recentStoreList');
-      if (value == null) {
-        setStoreList([]);
-      } else {
-        let new_data = value.split(',');
-        let new_arr = [];
-        let new_str = '';
-        for (var a = 0; a < new_data.length; a++) {
-          if (a == 0) {
-            new_str = new_data[a];
-          } else {
-            new_str = new_str + ',' + new_data[a];
-          }
-        }
-        let url = `${Domain}api/store/get/recent/more`;
-        NetInfo.addEventListener(async (state) => {
-          if (state.isConnected) {
-            let result = await axios.get(url, {
-              params: {
-                storeid: new_str,
-                page: page,
-              },
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (result.data.success === true) {
-              if (Scrolling) {
-                setStoreList([...storeList, ...result.data.result]);
-              } else {
-                setStoreList([...result.data.result]);
+              if (type === 'work') setWorkList([]);
+              else if (type === 'store') setStoreList([]);
+              else {
+                setWorkList([]);
+                setStoreList([]);
               }
-              if (Scrolling) {
-                setBackendPageStore((prevState) => {
-                  return prevState + 1;
-                });
-              }
-            } else {
-              setStoreList([]);
             }
           } else {
             //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -215,23 +227,24 @@ const RecentWork = (props) => {
         });
         setStoreList(newList);
       }
+      setWorkListDel([]);
+      setStoreListDel([]);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // const onRefresh = React.useCallback(() => {
+  // const onRefresh = useCallback(() => {
   //   setRefreshing(true);
-  //   get_recentWorkList();
+  //   get_recentList();
   //   get_recentStoreList();
   //   setRefreshing(false);
   // }, []);
 
-  React.useEffect(() => {
-    get_recentWorkList();
-    get_recentStoreList();
+  useEffect(() => {
+    get_recentList();
   }, []);
   return (
     <>
@@ -268,22 +281,20 @@ const RecentWork = (props) => {
           showsHorizontalScrollIndicator={false}
           style={{flex: 1}}
           data={
-            page == 'work' && workList.length > 0
+            page === 'work' && workList.length > 0
               ? workList
-              : page == 'store' && storeList.length > 0
+              : page === 'store' && storeList.length > 0
               ? storeList
-              : page == 'work'
+              : page === 'work'
               ? [{message: '최근 본 작업이 없습니다.'}]
-              : page == 'store'
+              : page === 'store'
               ? [{message: '최근 본 샵이 없습니다.'}]
               : null
           }
           onEndReached={
-            page == 'work' && workList.length > 0
+            page === 'work' && workList.length > 0
               ? throttleGetDataWork
-              : page == 'store' && storeList.length > 0
-              ? throttleGetDataStore
-              : null
+              : page === 'store' && storeList.length > 0 && throttleGetDataStore
           }
           onEndReachedThreshold={50}
           windowSize={2}
@@ -304,6 +315,7 @@ const RecentWork = (props) => {
                 navigation={props.navigation}
                 getIndex={storeList.indexOf(item) + 1}
                 storeListLength={storeList.length}
+                ToStore={ToStore}
                 StoreListDelChangeValue={StoreListDelChangeValue}
                 storeListDel={storeListDel}
                 key={item._id}

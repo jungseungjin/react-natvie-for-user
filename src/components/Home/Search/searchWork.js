@@ -29,7 +29,7 @@ const SearchWork = (props) => {
       onPress={() => {
         //최근 본 작업에 넣기
         SetRecentList('work', props.item._id);
-        props.navigation.navigate('WorkDetail', {item: props.item});
+        props.navigation.navigate('WorkDetail2', {item: props.item});
       }}
       style={{
         width: Width_convert(375),

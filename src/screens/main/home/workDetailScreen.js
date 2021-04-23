@@ -48,6 +48,7 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import moment from 'moment';
 import _ from 'lodash';
+import SetRecentList from '../../../components/setRecentList.js';
 const WorkDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -92,6 +93,7 @@ const WorkDetailScreen = (props) => {
             },
           });
           if (result.data.success === true) {
+            SetRecentList('store', result.data.results[1]._id);
             props.navigation.navigate('StoreDetail', {
               item: result.data.results[1],
               pick: result.data.results[0],

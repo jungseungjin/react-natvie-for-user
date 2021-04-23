@@ -35,7 +35,7 @@ const SearchStore = (props) => {
       <FastImage
         style={{width: Width_convert(375), height: Height_convert(240)}}
         source={{
-          uri: props.item.store_image,
+          uri: props.item.image[0],
           //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
