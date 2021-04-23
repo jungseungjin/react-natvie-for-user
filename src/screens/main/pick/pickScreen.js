@@ -181,16 +181,14 @@ const PickScreen = (props) => {
       if (reduxState.loginDataCheck.login._id != '') {
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
-            let url = `${Domain}api/work//delete/pick`;
+            let url = `${Domain}api/work/delete/pick`;
             let data = {
               userid: reduxState.loginDataCheck.login._id,
               workid: workListDel,
               storeid: storeListDel,
             };
             let result = await axios.post(url, data, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: {},
             });
             if (result.data.success === true) {
               setWorkListDel();
