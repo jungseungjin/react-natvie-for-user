@@ -31,6 +31,7 @@ const setTabBarVisible = (route, reduxState) => {
     'Map',
     'MapSearch',
     'WorkDetail',
+    'WorkDetail2',
     'StoreLocation',
     'StoreDetail',
     'ReviewView',

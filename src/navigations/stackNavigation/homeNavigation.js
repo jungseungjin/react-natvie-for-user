@@ -8,6 +8,7 @@ import CategoryDetail from '../../screens/main/home/categoryDetailScreen.js';
 import Map from '../../screens/main/home/mapScreen.js';
 import MapSearch from '../../screens/main/home/mapSearchScreen.js';
 import WorkDetail from '../../screens/main/home/workDetailScreen.js';
+import WorkDetail2 from '../../screens/main/home/workDetailScreen.js';
 import StoreLocation from '../../screens/main/home/storeLocationScreen.js';
 import StoreDetail from '../../screens/main/home/storeDetailScreen.js';
 import StoreWorkList from '../../screens/main/home/storeWorkListScreen.js';
@@ -96,6 +97,12 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="WorkDetail"
         component={WorkDetail}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="WorkDetail2"
+        component={WorkDetail2}
         initialParams={{}}
         options={{}}
       />
