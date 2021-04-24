@@ -214,13 +214,15 @@ const CategoryDetailScreen = (props) => {
           });
           if (result.data.success === true) {
             if (page) {
-              setViewWorkList([...viewWorkList, ...result.data.result]);
+              if (result.data.result.length > 0) {
+                setViewWorkList([...viewWorkList, ...result.data.result]);
+                setBackendPage((prevData) => {
+                  return prevData + 1;
+                });
+              }
             } else {
               setViewWorkList([...result.data.result]);
             }
-            setBackendPage((prevData) => {
-              return prevData + 1;
-            });
             setIsLoadingAndModal(0);
             if (!randomLocation.longitude) {
               setRandomLocation({

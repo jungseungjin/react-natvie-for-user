@@ -145,15 +145,19 @@ const PickScreen = (props) => {
           if (result.data.success === true) {
             if (Scrolling) {
               if (type === 'work') {
-                setWorkList([...workList, ...result.data.results[0]]);
-                setBackendPageWork((prevState) => {
-                  return prevState + 1;
-                });
+                if (result.data.results[0].length > 0) {
+                  setWorkList([...workList, ...result.data.results[0]]);
+                  setBackendPageWork((prevState) => {
+                    return prevState + 1;
+                  });
+                }
               } else if (type === 'store') {
-                setStoreList([...storeList, ...result.data.results[1]]);
-                setBackendPageStore((prevState) => {
-                  return prevState + 1;
-                });
+                if (result.data.results[1].length > 0) {
+                  setStoreList([...storeList, ...result.data.results[1]]);
+                  setBackendPageStore((prevState) => {
+                    return prevState + 1;
+                  });
+                }
               }
             } else {
               setWorkList(result.data.results[0]);

@@ -156,21 +156,24 @@ const RecentWork = (props) => {
             });
             if (result.data.success === true) {
               if (type === 'work') {
-                console.log('gdgd');
                 if (Scrolling) {
-                  setWorkList([...workList, ...result.data.results[0]]);
-                  setBackendPageWork((prevState) => {
-                    return prevState + 1;
-                  });
+                  if (result.data.results[0].length > 0) {
+                    setWorkList([...workList, ...result.data.results[0]]);
+                    setBackendPageWork((prevState) => {
+                      return prevState + 1;
+                    });
+                  }
                 } else {
                   setWorkList([...result.data.results[0]]);
                 }
               } else if (type === 'store') {
                 if (Scrolling) {
-                  setStoreList([...storeList, ...result.data.results[1]]);
-                  setBackendPageStore((prevState) => {
-                    return prevState + 1;
-                  });
+                  if (result.data.results[1].length > 0) {
+                    setStoreList([...storeList, ...result.data.results[1]]);
+                    setBackendPageStore((prevState) => {
+                      return prevState + 1;
+                    });
+                  }
                 } else {
                   setStoreList([...result.data.results[1]]);
                 }

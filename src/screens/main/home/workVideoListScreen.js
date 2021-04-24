@@ -46,15 +46,15 @@ const WorkVideoListScreen = (props) => {
             },
           });
           if (result.data.success === true) {
-            if (page) {
-              setViewWorkList([...viewWorkList, ...result.data.result]);
+            if (scrolling) {
+              if (result.data.result.length > 0) {
+                setViewWorkList([...viewWorkList, ...result.data.result]);
+                setBackendPage((prevState) => {
+                  return prevState + 1;
+                });
+              }
             } else {
               setViewWorkList([...result.data.result]);
-            }
-            if (scrolling) {
-              setBackendPage((prevState) => {
-                return prevState + 1;
-              });
             }
           } else {
             console.log(result.data);

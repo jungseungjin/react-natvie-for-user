@@ -61,15 +61,18 @@ const WorkVideoScreen = (props) => {
             },
           });
           if (result.data.success === true) {
-            if (page) {
-              setRelatedVideoList([...relatedVideoList, ...result.data.result]);
+            if (scrolling) {
+              if (result.data.result.length > 0) {
+                setRelatedVideoList([
+                  ...relatedVideoList,
+                  ...result.data.result,
+                ]);
+                setBackendPage((prevState) => {
+                  return prevState + 1;
+                });
+              }
             } else {
               setRelatedVideoList([...result.data.result]);
-            }
-            if (scrolling) {
-              setBackendPage((prevState) => {
-                return prevState + 1;
-              });
             }
           } else {
             console.log(result.data);
