@@ -63,7 +63,7 @@ const BottomButton = (props) => {
               fontWeight: '700',
               color: '#391B1B',
             }}>
-            카카오 채팅
+            카카오 상담
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
