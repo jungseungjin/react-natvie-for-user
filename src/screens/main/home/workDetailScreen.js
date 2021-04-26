@@ -49,6 +49,8 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import moment from 'moment';
 import _ from 'lodash';
 import SetRecentList from '../../../components/setRecentList.js';
+import ImageView from 'react-native-image-viewing';
+
 const WorkDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -231,6 +233,9 @@ phoneNumber
   useEffect(() => {
     getData();
   }, []);
+
+  const [visible, setIsVisible] = React.useState(false);
+  const [visibleIndex, setVisibleIndex] = React.useState(0);
   return (
     <>
       <StatusBar
@@ -278,11 +283,27 @@ phoneNumber
               autoplay={false}
               dot={<Dot></Dot>}
               activeDot={<ActiveDot></ActiveDot>}>
-              {props.route.params.item.image.map((item) => (
-                <SwiperImage
-                  from={'work'}
-                  image={item}
-                  key={item}></SwiperImage>
+              {props.route.params.item.image.map((item, index) => (
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#FFFFFF',
+                    width: Width_convert(375),
+                    height: Width_convert(240),
+                  }}
+                  key={item}
+                  activeOpacity={1}
+                  onPress={() => {
+                    setIsVisible(true);
+                    setVisibleIndex(index);
+                  }}>
+                  <SwiperImage
+                    from={'work'}
+                    image={item}
+                    key={item}></SwiperImage>
+                </TouchableOpacity>
               ))}
             </Swiper>
           </View>
@@ -735,7 +756,29 @@ phoneNumber
         <NormalErrModal
           ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
+
+      <ImageView
+        doubleTapToZoomEnabled
+        animationType={'slide'}
+        images={getImageSource(props.route.params.item.image)}
+        imageIndex={visibleIndex}
+        presentationStyle="overFullScreen"
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}></ImageView>
     </>
   );
+};
+const getImageSource = (image) => {
+  let newArr = [];
+  image.map((item) => {
+    if (typeof item == 'number') {
+    } else {
+      newArr.push({
+        uri: item.toString(),
+        source: item,
+      });
+    }
+  });
+  return newArr;
 };
 export default WorkDetailScreen;

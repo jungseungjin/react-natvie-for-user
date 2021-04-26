@@ -103,7 +103,9 @@ const WorkInformation = (props) => {
             <View style={{flexDirection: 'row', marginTop: Width_convert(14)}}>
               {props.item.member.map((item) => (
                 <>
-                  <View style={{marginLeft: Width_convert(21)}}>
+                  <View
+                    style={{marginLeft: Width_convert(21)}}
+                    key={item.image}>
                     <FastImage
                       style={{
                         width: Width_convert(59),
