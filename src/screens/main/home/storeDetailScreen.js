@@ -33,7 +33,7 @@ import WorkMenu from '../../../../assets/home/work_menu.svg';
 import {useSelector} from 'react-redux';
 import AnimatedHeader from '../../../components/Home/Animate/animatedHeader.js';
 import StoreInformation from '../../../components/Home/Infomation/storeInformation.js';
-import ReviewInformation from '../../../components/Home/Infomation/reviewInformation.js';
+import StoreInformation2 from '../../../components/Home/Infomation/storeInformation2.js';
 import BottomButton from '../../../components/Home/Bottom/bottomButton.js';
 import StatusBarHeight from '../../../components/StatusBarHeight.js';
 import LoginModal from '../../../components/Modal/LoginModal.js';
@@ -468,21 +468,18 @@ const StoreDetailScreen = (props) => {
                         }
                       : {color: '#AAAAAA'},
                   ]}>
-                  후기
+                  가게정보
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*작업설명 -> HTML로 불러오기 */}
-          {page == 'store' ? (
+          {page === 'store' ? (
             <StoreInformation item={props.route.params.item}></StoreInformation>
-          ) : page == 'labor' ? (
-            <ReviewInformation
-              item={reviewList}
-              reviewGrade={
-                props.route.params.item.reviewGrade
-              }></ReviewInformation>
+          ) : page === 'labor' ? (
+            <StoreInformation2
+              item={props.route.params.item}></StoreInformation2>
           ) : null}
 
           {/*하단 버튼만큼의 공간 띄우기 시작 */}

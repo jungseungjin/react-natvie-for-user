@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useCallback, useEffect} from 'react';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
 import Font_normalize from '../../../components/Font_normalize.js';
@@ -31,9 +31,9 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 const SearchScreen = ({navigation, route}) => {
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  React.useEffect(
+  useEffect(
     () =>
       navigation.addListener('focus', async () => {
         let list = await AsyncStorage.getItem('resentSearch');
@@ -43,7 +43,7 @@ const SearchScreen = ({navigation, route}) => {
       }),
     [],
   );
-  const [resentSearch, setResentSearch] = React.useState([]);
+  const [resentSearch, setResentSearch] = useState([]);
   const addData = async (searchValue) => {
     try {
       if (resentSearch.indexOf(searchValue) != -1) {
@@ -86,7 +86,7 @@ const SearchScreen = ({navigation, route}) => {
       console.log(err);
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     getData();
   }, []);
   let toastRef;
@@ -95,7 +95,7 @@ const SearchScreen = ({navigation, route}) => {
       // something you want to do at close
     });
   };
-  const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = useState('');
   return (
     <>
       <StatusBar

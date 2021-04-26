@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useCallback, useState, useEffect} from 'react';
 import Width_convert from '../../../components/Width_convert.js';
 import Height_convert from '../../../components/Width_convert.js';
 import Height_convert_real from '../../../components/Height_convert.js';
@@ -53,140 +53,132 @@ import IsLoading from '../../../components/ActivityIndicator';
 import Lottie from '../../../components/Lottie';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 
 const SearchScreenDetail = (props) => {
   const reduxState = useSelector((state) => state);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [showModal, setShowModel] = React.useState(false);
+  const [showModal, setShowModel] = useState(false);
   const ShowModalChangeValue = (text) => setShowModel(text);
-  const [searchText, setSearchText] = React.useState(
+  const [searchText, setSearchText] = useState(
     props.route?.params?.searchText || null,
   );
-  const [resentSearch, setResentSearch] = React.useState(
+  const [resentSearch, setResentSearch] = useState(
     props.route?.params?.resentSearch || null,
   );
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [statusBar, setStatusBar] = React.useState(0);
-  const [statusBarSafeAreaView, setStatusBarSafeAreaView] = React.useState(0);
-  const [resultWorkList, setresultWorkList] = React.useState([]);
-  const [resultStoreList, setresultStoreList] = React.useState([]);
-  const [pickButton, setPickButton] = React.useState('work');
+  const [statusBar, setStatusBar] = useState(0);
+  const [statusBarSafeAreaView, setStatusBarSafeAreaView] = useState(0);
+  const [resultWorkList, setResultWorkList] = useState([]);
+  const [workCount, setWorkCount] = useState(0);
+  const [resultStoreList, setResultStoreList] = useState([]);
+  const [storeCount, setStoreCount] = useState(0);
+  const [pickButton, setPickButton] = useState('work');
   const ButtonChangeValue = (text) => {
+    scrollToTop();
     setPickButton(text);
-    setPickFilter(false);
   };
-  const [pickFilter, setPickFilter] = React.useState(false);
+  const scrollRef = useRef();
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollToOffset({animated: false, offset: 0});
+  }, [resultWorkList, resultStoreList]);
+  const [pickFilter, setPickFilter] = useState(false);
   const PickChangeValue = () => setPickFilter(!pickFilter);
-  const [pickSort, setPickSort] = React.useState(
+  const [pickSort, setPickSort] = useState(
     reduxState.loginDataCheck?.login?.location?.legalcode
       ? '가까운 순 '
       : false,
   );
   //정렬
   const SortChangeValue = (text) => {
-    //
     setPickSort(text);
-    if (text !== false) {
-      let ArrayList = resultWorkList.slice();
-      let ArrayList2 = resultStoreList.slice();
-      if (text === '가까운 순 ') {
-        //거리 가까운것부터
-        ArrayList.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-        ArrayList2.sort(function (a, b) {
-          return a.distance < b.distance ? -1 : a.distance > b.distance ? 1 : 0;
-        });
-      } else if (text === '별점 순 ') {
-        //별점 높은것부터
-        ArrayList.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-        ArrayList2.sort(function (a, b) {
-          return a.reviewGrade < b.reviewGrade
-            ? 1
-            : a.reviewGrade > b.reviewGrade
-            ? -1
-            : 0;
-        });
-      } else if (text === '후기많은 순 ') {
-        ArrayList.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-        ArrayList2.sort(function (a, b) {
-          return a.reviewCount < b.reviewCount
-            ? 1
-            : a.reviewCount > b.reviewCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '찜 많은 순 ') {
-        ArrayList.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-        ArrayList2.sort(function (a, b) {
-          return a.userCount < b.userCount
-            ? 1
-            : a.userCount > b.userCount
-            ? -1
-            : 0;
-        });
-      } else if (text === '우리가게공임표 공개 ') {
-        ArrayList.sort(function (a, b) {
-          return a.store_work_total_cost < b.store_work_total_cost
-            ? 1
-            : a.store_work_total_cost > b.store_work_total_cost
-            ? -1
-            : 0;
-        });
-        ArrayList2.sort(function (a, b) {
-          return a.store_badge.indexOf('4') != -1 &&
-            b.store_badge.indexOf('4') == -1
-            ? -1
-            : a.store_badge.indexOf('4') == -1 &&
-              b.store_badge.indexOf('4') != -1
-            ? 1
-            : 0;
-        });
-      }
-      setresultWorkList(ArrayList);
-      setresultStoreList(ArrayList2);
-    }
+    setBackendWorkPage(1);
+    setBackendStorePage(1);
+    scrollToTop();
+    getData(
+      searchText,
+      reduxState.loginDataCheck?.login?.location?.longitude ||
+        randomLocation?.longitude,
+      reduxState.loginDataCheck?.login?.location?.latitude ||
+        randomLocation?.latitude,
+      0,
+      text,
+    );
   };
   //검색한 값으로 데이터 가져오기
-  const [searchRandomNumber, setSearchRandomNumber] = React.useState(0);
-  const getData = (searchText, sort, randomNumber) => {
+  const [backendWorkPage, setBackendWorkPage] = useState(1);
+  const [backendStorePage, setBackendStorePage] = useState(1);
+  const [randomLocation, setRandomLocation] = useState({});
+  const throttleGetDataWork = _.throttle(
+    (Number) =>
+      getData(
+        searchText,
+        reduxState.loginDataCheck?.login?.location?.longitude ||
+          randomLocation?.longitude,
+        reduxState.loginDataCheck?.login?.location?.latitude ||
+          randomLocation?.latitude,
+        backendWorkPage,
+        pickSort,
+        'work',
+      ),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const throttleGetDataStore = _.throttle(
+    (Number) =>
+      getData(
+        searchText,
+        reduxState.loginDataCheck?.login?.location?.longitude ||
+          randomLocation?.longitude,
+        reduxState.loginDataCheck?.login?.location?.latitude ||
+          randomLocation?.latitude,
+        backendStorePage,
+        pickSort,
+        'store',
+      ),
+    300,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
+  const getData = (Search, Longitude, Latitude, Page, Sort, type) => {
     try {
-      setPickFilter(false);
-      let result;
-      if (sort == '가까운 순 ') {
-        sort = '1';
-      } else if (sort == '별점 순 ') {
-        sort = '2';
-      } else if (sort == '후기많은 순 ') {
-        sort = '3';
-      } else if (sort == '찜 많은 순 ') {
-        sort = '4';
-      } else if (sort == '우리가게공임표 공개 ') {
-        sort = '5';
-      } else {
-        sort = '0';
+      //검색어, 페이지 ,필터값, 지역
+      let search;
+      let longitude;
+      let latitude;
+      let page;
+      let sort;
+      if (Search) {
+        search = Search;
       }
-      let url = `${Domain}searchlist/?searchText=${searchText}&longitude=${reduxState?.loginDataCheck?.login?.location?.location?.longitude}&latitude=${reduxState?.loginDataCheck?.login?.location?.location?.latitude}&sort=${sort}&random=${randomNumber}`;
+      if (Longitude) {
+        longitude = Longitude;
+      }
+      if (Latitude) {
+        latitude = Latitude;
+      }
+      if (Page) {
+        page = Page;
+      }
+      if (Sort) {
+        let type = '';
+        if (Sort === '가까운 순 ') {
+          type = 'distance';
+        } else if (Sort === '별점 순 ') {
+          type = 'grade';
+        } else if (Sort === '후기많은 순 ') {
+          type = 'review';
+        } else if (Sort === '찜 많은 순 ') {
+          type = 'pick';
+        }
+        sort = type;
+      }
+      let url = `${Domain}api/work/get/search`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           setIsLoadingAndModal(1);
@@ -194,15 +186,80 @@ const SearchScreenDetail = (props) => {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              search: search,
+              longitude: longitude,
+              latitude: latitude,
+              page: page,
+              sort: sort,
+              type: type,
+            },
           });
-          if (result.data[0].message == 'ok') {
-            setresultWorkList(result.data[0].WorkList);
-            setresultStoreList(result.data[0].StoreList);
-            setSearchRandomNumber(result.data[0].randomNumber);
+          if (result.data.success === true) {
+            if (type === 'work') {
+              if (Page) {
+                if (result.data.result[0][0]?.totalData.length > 0) {
+                  let newArr = [];
+                  let prevArr = [];
+                  resultWorkList.map((item) => {
+                    prevArr.push(item._id);
+                  });
+                  result.data.result[0][0]?.totalData.map((item) => {
+                    if (prevArr.includes(item._id) === false) {
+                      newArr.push(item);
+                    }
+                  });
+                  setResultWorkList([...resultWorkList, ...newArr]);
+                  setBackendWorkPage((prevData) => {
+                    return prevData + 1;
+                  });
+                }
+              } else {
+                setWorkCount(
+                  result.data.result[0][0]?.totalCount[0]?.count || 0,
+                );
+                setResultWorkList(result.data.result[0][0]?.totalData || []);
+              }
+            } else if (type === 'store') {
+              if (Page) {
+                if (result.data.result[1][0]?.totalData.length > 0) {
+                  let newArr = [];
+                  let prevArr = [];
+                  resultStoreList.map((item) => {
+                    prevArr.push(item._id);
+                  });
+                  result.data.result[1][0]?.totalData.map((item) => {
+                    if (prevArr.includes(item._id) === false) {
+                      newArr.push(item);
+                    }
+                  });
+                  setResultStoreList([...resultStoreList, ...newArr]);
+                  setBackendStorePage((prevData) => {
+                    return prevData + 1;
+                  });
+                }
+              } else {
+                setStoreCount(
+                  result.data.result[1][0]?.totalCount[0]?.count || 0,
+                );
+                setResultStoreList(result.data.result[1][0]?.totalData || []);
+              }
+            } else {
+              setWorkCount(result.data.result[0][0]?.totalCount[0]?.count || 0);
+              setStoreCount(
+                result.data.result[1][0]?.totalCount[0]?.count || 0,
+              );
+              setResultStoreList(result.data.result[1][0]?.totalData || []);
+              setResultWorkList(result.data.result[0][0]?.totalData || []);
+              setRandomLocation({
+                longitude: result.data.longitude,
+                latitude: result.data.latitude,
+              });
+            }
+            setIsLoadingAndModal(0);
           } else {
-            console.log(result.data[0]);
+            setIsLoadingAndModal(3);
           }
-          setIsLoadingAndModal(0);
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
           setIsLoadingAndModal(2);
@@ -210,9 +267,10 @@ const SearchScreenDetail = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
-  //검색한 값 저장
+  //검색한 값 저장 및 데이터 새로불러오기
   const addData = async (searchValue) => {
     try {
       if (resentSearch.indexOf(searchValue) != -1) {
@@ -221,43 +279,43 @@ const SearchScreenDetail = (props) => {
         setResentSearch(list);
         await AsyncStorage.setItem('resentSearch', JSON.stringify(list));
       }
+      setBackendWorkPage(1);
+      setBackendStorePage(1);
+      scrollToTop();
+      getData(
+        searchValue,
+        reduxState.loginDataCheck?.login?.location?.longitude ||
+          randomLocation?.longitude,
+        reduxState.loginDataCheck?.login?.location?.latitude ||
+          randomLocation?.latitude,
+        0,
+        pickSort,
+        false,
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
-  React.useEffect(
-    () =>
-      props.navigation.addListener('focus', () => {
-        if (pickSort != false) {
-          getData(searchText, pickSort, searchRandomNumber);
-        }
-      }),
-    [pickSort],
-  );
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = (text, randomNumber) => {
-    setRefreshing(true);
-    setPickSort(
-      reduxState.loginDataCheck?.login?.location?.legalcode
-        ? '가까운 순 '
-        : false,
+  useEffect(() => {
+    //검색어, longitude, latitude, page,sort
+    getData(
+      props.route?.params?.searchText,
+      reduxState.loginDataCheck?.login?.location?.longitude ||
+        randomLocation?.longitude,
+      reduxState.loginDataCheck?.login?.location?.latitude ||
+        randomLocation?.latitude,
+      0,
+      pickSort,
+      false,
     );
-    if (text) {
-      getData(text, false, randomNumber || searchRandomNumber);
-    } else {
-      getData(searchText.trim(), false, randomNumber || searchRandomNumber);
-    }
-    setRefreshing(false);
-  };
+  }, []);
+  const [refreshing, setRefreshing] = useState(false);
+
   const textInputRef = useRef();
   const handleClick = () => {
     textInputRef.current.focus();
   };
-  React.useEffect(() => {
-    getData(props.route?.params?.searchText, pickSort, searchRandomNumber);
-  }, []);
   let toastRef;
   const showToast = (text, time) => {
     toastRef.show(text, time, () => {
@@ -316,7 +374,7 @@ const SearchScreenDetail = (props) => {
                 let text = searchText.trim();
                 if (text.length > 1) {
                   addData(text);
-                  onRefresh(text, searchRandomNumber);
+                  //onRefresh(text, searchRandomNumber);
                 } else {
                   showToast('검색어를 두 글자 이상 입력해주세요.', 500);
                 }
@@ -364,7 +422,7 @@ const SearchScreenDetail = (props) => {
                 let text = searchText.trim();
                 if (text.length > 1) {
                   addData(text);
-                  onRefresh(text, searchRandomNumber);
+                  //onRefresh(text, searchRandomNumber);
                 } else {
                   showToast('검색어를 두 글자 이상 입력해주세요.', 500);
                 }
@@ -381,12 +439,12 @@ const SearchScreenDetail = (props) => {
             }}>
             <PickButton
               Title={'튜닝작업'}
-              Length={resultWorkList.length}
+              Length={workCount}
               nowValue={pickButton}
               ButtonChangeValue={ButtonChangeValue}></PickButton>
             <PickButton
               Title={'튜닝샵'}
-              Length={resultStoreList.length}
+              Length={storeCount}
               nowValue={pickButton}
               ButtonChangeValue={ButtonChangeValue}></PickButton>
             <FilterIcon
@@ -465,21 +523,30 @@ const SearchScreenDetail = (props) => {
             <SearchNull></SearchNull>
           ) : (
             <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              // refreshControl={
+              //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              // }
+              ref={scrollRef}
               style={{minHeight: Height_convert(812)}}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
               data={
-                pickButton == 'work'
+                pickButton === 'work'
                   ? resultWorkList
-                  : pickButton == 'store'
+                  : pickButton === 'store'
                   ? resultStoreList
                   : null
               }
               windowSize={2}
               initialNumToRender={10}
+              onEndReached={
+                pickButton === 'work'
+                  ? throttleGetDataWork
+                  : pickButton === 'store'
+                  ? throttleGetDataStore
+                  : null
+              }
+              onEndReachedThreshold={1}
               renderItem={({item}) =>
                 pickButton == 'work' ? (
                   <>

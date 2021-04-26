@@ -7,7 +7,7 @@ import Fonts from '../../Fonts';
 import Font_normalize from '../../Font_normalize';
 
 import PropTypes from 'prop-types';
-const FilterView = ({
+const PickButton = ({
   navigation,
   route,
   Title,
@@ -19,17 +19,17 @@ const FilterView = ({
     <TouchableOpacity
       onPress={() => {
         //setPickButton('store');
-        if (nowValue == 'work') {
+        if (nowValue === 'work') {
           ButtonChangeValue('store');
-        } else {
+        } else if (nowValue === 'store') {
           ButtonChangeValue('work');
         }
       }}
       activeOpacity={1}
       style={[
         styles.touchableOpacity,
-        (nowValue == 'work' && Title == '튜닝작업') ||
-        (nowValue == 'store' && Title == '튜닝샵')
+        (nowValue === 'work' && Title === '튜닝작업') ||
+        (nowValue === 'store' && Title === '튜닝샵')
           ? styles.pick
           : styles.unPick,
         Title == '튜닝작업' ? styles.first : styles.second,
@@ -37,8 +37,8 @@ const FilterView = ({
       <Text
         style={[
           styles.text,
-          (nowValue == 'work' && Title == '튜닝작업') ||
-          (nowValue == 'store' && Title == '튜닝샵')
+          (nowValue === 'work' && Title === '튜닝작업') ||
+          (nowValue === 'store' && Title === '튜닝샵')
             ? styles.pickText
             : styles.unPickText,
         ]}>
@@ -47,7 +47,7 @@ const FilterView = ({
     </TouchableOpacity>
   );
 };
-FilterView.propsType = {};
+PickButton.propsType = {};
 const styles = StyleSheet.create({
   //찍혔을때 안찍혔을때, 첫버튼일때 아닐때
   touchableOpacity: {
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
 });
-export default FilterView;
+export default PickButton;

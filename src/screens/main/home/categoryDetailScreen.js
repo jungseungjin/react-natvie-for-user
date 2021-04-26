@@ -45,9 +45,9 @@ const CategoryDetailScreen = (props) => {
         pickSecond,
         pickThird,
         reduxState.loginDataCheck?.login?.location?.longitude ||
-          randomLocation.longitude,
+          randomLocation?.longitude,
         reduxState.loginDataCheck?.login?.location?.latitude ||
-          randomLocation.latitude,
+          randomLocation?.latitude,
         reduxState.loginDataCheck?.login.iu_car[0] || undefined,
         backendPage,
         pickSort,
@@ -94,9 +94,9 @@ const CategoryDetailScreen = (props) => {
           item,
           false,
           reduxState.loginDataCheck?.login?.location?.longitude ||
-            randomLocation.longitude,
+            randomLocation?.longitude,
           reduxState.loginDataCheck?.login?.location?.latitude ||
-            randomLocation.latitude,
+            randomLocation?.latitude,
           reduxState.loginDataCheck?.login.iu_car[0] || undefined,
           0,
           pickSort,
@@ -133,9 +133,9 @@ const CategoryDetailScreen = (props) => {
       pickSecond,
       pickThird,
       reduxState.loginDataCheck?.login?.location?.longitude ||
-        randomLocation.longitude,
+        randomLocation?.longitude,
       reduxState.loginDataCheck?.login?.location?.latitude ||
-        randomLocation.latitude,
+        randomLocation?.latitude,
       reduxState.loginDataCheck?.login.iu_car[0] || undefined,
       0,
       text,
@@ -249,9 +249,9 @@ const CategoryDetailScreen = (props) => {
       props.route.params.pickSecondCategory,
       props.route.params.pickThirdCategory,
       reduxState.loginDataCheck?.login?.location?.longitude ||
-        randomLocation.longitude,
+        randomLocation?.longitude,
       reduxState.loginDataCheck?.login?.location?.latitude ||
-        randomLocation.latitude,
+        randomLocation?.latitude,
       reduxState.loginDataCheck?.login.iu_car[0] || undefined,
       0,
       pickFilter,

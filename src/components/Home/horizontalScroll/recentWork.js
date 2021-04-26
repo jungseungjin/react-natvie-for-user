@@ -15,7 +15,7 @@ const RecentWork = (props) => {
       activeOpacity={1}
       onPress={() => {
         //최근 본 작업에 넣기
-        SetRecentList('store', props.item._id);
+        SetRecentList('work', props.item._id);
         props.navigation.navigate('WorkDetail', {item: props.item});
       }}
       style={props.Index == 0 ? styles.view_index0 : styles.view}>

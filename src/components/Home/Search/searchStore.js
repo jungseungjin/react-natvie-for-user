@@ -69,25 +69,25 @@ const SearchStore = (props) => {
               fontFamily: Fonts?.NanumSquareBold || null,
               color: '#ffffff',
             }}>
-            {props.item.store_category.indexOf('1') != -1 ? '드레스업' : null}
-            {props.item.store_category.indexOf('1') != -1 &&
-            (props.item.store_category.indexOf('2') != -1 ||
-              props.item.store_category.indexOf('3') != -1 ||
-              props.item.store_category.indexOf('4') != -1)
+            {props.item.category.indexOf('1') != -1 ? '드레스업' : null}
+            {props.item.category.indexOf('1') != -1 &&
+            (props.item.category.indexOf('2') != -1 ||
+              props.item.category.indexOf('3') != -1 ||
+              props.item.category.indexOf('4') != -1)
               ? ' / '
               : null}
-            {props.item.store_category.indexOf('2') != -1 ? '퍼포먼스' : null}
-            {props.item.store_category.indexOf('2') != -1 &&
-            (props.item.store_category.indexOf('3') != -1 ||
-              props.item.store_category.indexOf('4') != -1)
+            {props.item.category.indexOf('2') != -1 ? '퍼포먼스' : null}
+            {props.item.category.indexOf('2') != -1 &&
+            (props.item.category.indexOf('3') != -1 ||
+              props.item.category.indexOf('4') != -1)
               ? ' / '
               : null}
-            {props.item.store_category.indexOf('3') != -1 ? '편의장치' : null}
-            {props.item.store_category.indexOf('3') != -1 &&
-            props.item.store_category.indexOf('4') != -1
+            {props.item.category.indexOf('3') != -1 ? '편의장치' : null}
+            {props.item.category.indexOf('3') != -1 &&
+            props.item.category.indexOf('4') != -1
               ? ' / '
               : null}
-            {props.item.store_category.indexOf('4') != -1 ? '캠핑카' : null}
+            {props.item.category.indexOf('4') != -1 ? '캠핑카' : null}
           </Text>
         </View>
       </View>
@@ -108,10 +108,10 @@ const SearchStore = (props) => {
               fontWeight: '700',
               color: '#000000',
             }}>
-            {props.item.store_name}
+            {props.item.name}
           </Text>
         </View>
-        {props.item.store_badge.indexOf(1) != -1 ? (
+        {props.item.badge.indexOf(1) != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -136,7 +136,7 @@ const SearchStore = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.store_badge.indexOf(2) != -1 ? (
+        {props.item.badge.indexOf(2) != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -161,7 +161,7 @@ const SearchStore = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.store_badge.indexOf(3) != -1 ? (
+        {props.item.badge.indexOf(3) != -1 ? (
           <View
             style={{
               borderRadius: Font_normalize(3),
@@ -186,7 +186,7 @@ const SearchStore = (props) => {
             </Text>
           </View>
         ) : null}
-        {props.item.store_badge.indexOf(4) != -1
+        {props.item.badge.indexOf(4) != -1
           ? // <View
             //   style={{
             //  borderRadius: Font_normalize(3),
@@ -228,7 +228,7 @@ const SearchStore = (props) => {
             fontSize: Font_normalize(12),
             color: '#000000',
           }}>
-          {props.item.store_address}
+          {props.item.address.address}
         </Text>
       </View>
       <View
@@ -249,11 +249,7 @@ const SearchStore = (props) => {
             fontSize: Font_normalize(12),
             color: '#000000',
           }}>
-          {props.item.reviewCount > 0
-            ? parseFloat(
-                props.item.reviewTotal / props.item.reviewCount,
-              ).toFixed(1)
-            : '0.0'}
+          {props.item.grade}
         </Text>
         <Text
           style={{
@@ -273,4 +269,4 @@ const SearchStore = (props) => {
   );
 };
 
-export default SearchStore;
+export default memo(SearchStore);
