@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Text, ScrollView, FlatList, TouchableOpacity} from 'react-native';
 import Height_convert from '../../../components/Height_convert.js';
 import Width_convert from '../../../components/Width_convert.js';
@@ -57,7 +57,11 @@ const Review = (props) => {
           activeOpacity={1}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
           onPress={() => {
-            props.getDataAndNavigate('store', props.item._id);
+            props.getDataAndNavigate(
+              'store',
+              props.item.work,
+              props.item.store,
+            );
           }}
           style={{
             flexDirection: 'row',
@@ -71,7 +75,7 @@ const Review = (props) => {
               color: '#000000',
               marginRight: Width_convert(3),
             }}>
-            {props.item.info_store[0].store_name}
+            {props.item.storeName}
           </Text>
           <Store
           //가게정보로 이동
@@ -105,7 +109,11 @@ const Review = (props) => {
             activeOpacity={1}
             hitSlop={{top: 10, bottom: 10}}
             onPress={() => {
-              props.getDataAndNavigate('work', props.item._id);
+              props.getDataAndNavigate(
+                'work',
+                props.item.work,
+                props.item.store,
+              );
             }}
             style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text
@@ -116,13 +124,13 @@ const Review = (props) => {
                 color: '#A1A1A1',
                 marginRight: Width_convert(4),
               }}>
-              {props.item.store_work[0].store_work_name}
+              {props.item.workName}
             </Text>
             <BraketRight></BraketRight>
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row', marginTop: Height_convert(4)}}>
-          {StarRender(props.item.review_reply_grade)}
+          {StarRender(props.item.grade)}
         </View>
       </View>
       <View
@@ -138,7 +146,7 @@ const Review = (props) => {
             color: '#000000',
             fontWeight: '400',
           }}>
-          {props.item.review_reply_contents}
+          {props.item.comment}
         </Text>
       </View>
       <View style={{marginTop: Height_convert(21)}}>
@@ -147,7 +155,7 @@ const Review = (props) => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{width: Width_convert(375)}}
-          data={props.item.review_reply_image}
+          data={props.item.image}
           windowSize={2}
           initialNumToRender={10}
           renderItem={({item}) =>
@@ -157,17 +165,13 @@ const Review = (props) => {
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => {
                   props.VisibleChangeValue(true);
-                  props.VisibleImageChangeValue(props.item.review_reply_image);
-                  props.VisibleIndexChangeValue(
-                    props.item.review_reply_image.indexOf(item),
-                  );
+                  props.VisibleImageChangeValue(props.item.image);
+                  props.VisibleIndexChangeValue(props.item.image.indexOf(item));
                 }}>
                 <ReviewImage
                   key={item}
                   item={item}
-                  index={props.item.review_reply_image.indexOf(
-                    item,
-                  )}></ReviewImage>
+                  index={props.item.image.indexOf(item)}></ReviewImage>
               </TouchableOpacity>
             )
           }
@@ -177,4 +181,4 @@ const Review = (props) => {
   );
 };
 
-export default React.memo(Review);
+export default memo(Review);

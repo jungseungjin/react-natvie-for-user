@@ -101,11 +101,11 @@ const WorkInformation = (props) => {
               가게 구성원
             </Text>
             <View style={{flexDirection: 'row', marginTop: Width_convert(14)}}>
-              {props.item.member.map((item) => (
+              {props.item.member.map((item, index) => (
                 <>
                   <View
                     style={{marginLeft: Width_convert(21)}}
-                    key={item.image}>
+                    key={item.image + index}>
                     <FastImage
                       style={{
                         width: Width_convert(59),

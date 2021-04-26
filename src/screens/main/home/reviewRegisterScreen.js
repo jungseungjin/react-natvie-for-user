@@ -124,29 +124,35 @@ const ReviewRegister = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let data = {};
-          let url = Domain + 'review/register';
-          if (reduxState.loginDataCheck.login.login == true) {
+          let url = `${Domain}api/review/save`;
+          if (reduxState.loginDataCheck.login.login === true) {
             let starValue = 0;
             for (var a = 0; a < starCount.length; a++) {
               if (starCount[a].value == 1) {
                 starValue++;
               }
             }
-            if (starValue == 0) {
+            if (starValue === 0) {
               setShowModalTitle('평점을 평가해주세요.');
               setShowModal(true);
               return false;
-            } else if (contents == '') {
+            } else if (contents === '') {
               setShowModalTitle('후기 내용을 입력해주세요.');
               setShowModal(true);
               return false;
             }
             data = {
-              item_id: props.route.params.item._id,
-              _id: reduxState.loginDataCheck.login.data._id,
-              contents: contents,
-              starCount: starValue,
-              imageList: imageList,
+              workid: props.route.params.item._id,
+              workname: props.route.params.item.name,
+              storeid: props.route.params.item.storeId,
+              storename: props.route.params.item.store.name,
+              userid: reduxState.loginDataCheck.login.data._id,
+              usernickname: reduxState.loginDataCheck.login.data.iu_nickname,
+              userimage:
+                reduxState.loginDataCheck.login?.data?.review_user_iu_image,
+              comment: contents,
+              grade: starValue,
+              imagelist: imageList,
             };
           } else {
             return false;
@@ -156,10 +162,11 @@ const ReviewRegister = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.goBack();
             props.navigation.goBack();
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -167,6 +174,7 @@ const ReviewRegister = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   return (
@@ -196,7 +204,7 @@ const ReviewRegister = (props) => {
                 fontSize: Font_normalize(16),
                 color: '#000000',
               }}>
-              {props.route.params.item.store_work_name}
+              {props.route.params.item.name}
             </Text>
             <Text
               style={{
@@ -207,7 +215,7 @@ const ReviewRegister = (props) => {
                 fontSize: Font_normalize(10),
                 color: '#000000',
               }}>
-              {props.route.params.item.info_store[0].store_name}
+              {props.route.params.item.store.name}
             </Text>
           </View>
           <View

@@ -193,7 +193,6 @@ phoneNumber
   //작업아이디값, 평점,이미지,작업정보,경위도,작업이름, 찜한갯수,가격,리뷰갯수,가게위치 카카오톡 전화번호,가게아이디값, 작업소요시간
   const [myPick, setMyPick] = useState(''); //null이면 픽안함 아이디값들어오면 픽함
   const [storeData, setStoreData] = useState({}); //가게아이디값, 사업자정보, 오픈시간, 휴무일, 가게멤버
-
   const getData = () => {
     try {
       let url = `${Domain}api/work/get/one`;

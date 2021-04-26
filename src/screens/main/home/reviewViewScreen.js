@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StatusBar,
   View,
@@ -36,38 +36,40 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
   const reduxState = useSelector((state) => state);
-  const [loginModal, setLoginModal] = React.useState(false);
+  const [loginModal, setLoginModal] = useState(false);
   const LoginModalChangeValue = (text) => setLoginModal(text);
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [reviewList, setReviewList] = React.useState([]);
-  const [reviewCount, setReviewCount] = React.useState(
+  const [refreshing, setRefreshing] = useState(false);
+  const [reviewList, setReviewList] = useState([]);
+  const [reviewCount, setReviewCount] = useState(
     props.route.params.item.reviewCount,
   );
 
   //작업에 대한 리뷰 기준.  가게에 대한 리뷰기준이면 가게기준으로 변경필요
-  const [reviewGrade, setReviewGrade] = React.useState(
-    props.route.params.item.reviewCount > 0
-      ? parseFloat(
-          props.route.params.item.reviewTotal /
-            props.route.params.item.reviewCount,
-        )
-      : '0',
-  );
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getData();
-    setRefreshing(false);
-  }, []);
-  const getData = () => {
+  const [reviewGrade, setReviewGrade] = useState(props.route.params.item.grade);
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   getData();
+  //   setRefreshing(false);
+  // }, []);
+
+  const throttleGetData = _.throttle((Number) => getData(backendPage), 300, {
+    leading: true,
+    trailing: false,
+  });
+  const [backendPage, setBackendPage] = useState(1);
+  const getData = (Page) => {
     try {
-      let result;
-      let url = Domain + 'reviewList/' + props.route.params.type;
+      let page;
+      if (Page) page = backendPage;
+      let url = `${Domain}api/review/get/${props.route.params.type}`;
+
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -75,12 +77,19 @@ const ReviewView = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              item_id: props.route.params.item._id,
+              id: props.route.params.item._id,
+              page: page,
             },
           });
-          if (result.data[0].message == 'ok') {
-            setReviewList(result.data[0].result);
-            setReviewCount(result.data[0].result.length);
+          if (result.data.success === true) {
+            if (Page) {
+              setReviewList([...reviewList, ...result.data.result]);
+              setBackendPage((prevState) => {
+                return (prevState += 1);
+              });
+            } else {
+              setReviewList(result.data.result);
+            }
           } else {
           }
         } else {
@@ -92,7 +101,7 @@ const ReviewView = (props) => {
       console.log(err);
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     getData();
   }, []);
   const StarRender = (grade) => {
@@ -120,10 +129,9 @@ const ReviewView = (props) => {
       ),
     );
   };
-  const getDataAndNavigate = (type, item_id) => {
+  const getDataAndNavigate = (type, workid, storeid) => {
     try {
-      let result;
-      let url = Domain + 'reviewList/navigate/' + type;
+      let url = `${Domain}api/${type}/get/one`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -131,12 +139,14 @@ const ReviewView = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              item_id: item_id,
+              workid: workid,
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: storeid,
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.navigate('WorkDetail', {
-              item: result.data[0].result[0],
+              item: result.data.results[0],
             });
           } else {
           }
@@ -150,20 +160,6 @@ const ReviewView = (props) => {
     }
   };
 
-  const getImageSource = (image) => {
-    let newArr = [];
-    image.map((item) => {
-      if (typeof item == 'number') {
-      } else {
-        newArr.push({
-          uri: item.toString(),
-          source:
-            'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4',
-        });
-      }
-    });
-    return newArr;
-  };
   const [visible, setIsVisible] = React.useState(false);
   const [visibleImage, setVisibleImage] = React.useState([]);
   const [visibleIndex, setVisibleIndex] = React.useState(0);
@@ -181,9 +177,9 @@ const ReviewView = (props) => {
           left={'back'}
           Title={
             props.route.params.type == 'work'
-              ? props.route.params.item?.info_store[0]?.store_name
+              ? props.route.params.item?.name
               : props.route.params.type == 'store'
-              ? props.route.params.item?.store_name
+              ? props.route.params.item?.name
               : null
           }
           navigation={props.navigation}></Tabbar>
@@ -232,23 +228,25 @@ const ReviewView = (props) => {
               }}>
               {reviewGrade
                 ? reviewGrade % 1 === 0
-                  ? reviewGrade + '.0'
-                  : parseFloat(reviewGrade.toFixed(1))
-                : '0.0'}
+                  ? reviewGrade + '.00'
+                  : parseFloat(reviewGrade.toFixed(2))
+                : '0.00'}
             </Text>
           </View>
         </View>
 
         <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
           style={{width: Width_convert(375)}}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           data={reviewList}
           windowSize={2}
           initialNumToRender={10}
+          onEndReached={throttleGetData}
+          onEndReachedThreshold={10}
           renderItem={({item}) => (
             <View
               key={item._id}
@@ -277,7 +275,7 @@ const ReviewView = (props) => {
                       borderRadius: Width_convert(34),
                     }}
                     source={{
-                      uri: item.info_user[0].review_user_iu_image,
+                      uri: item.writerImage,
                       //headers: {Authorization: 'someAuthToken'},
                       priority: FastImage.priority.normal,
                     }}
@@ -292,7 +290,7 @@ const ReviewView = (props) => {
                         fontWeight: '700',
                         color: '#000000',
                       }}>
-                      {item.info_user[0].iu_nickname}
+                      {item.writerNickname}
                     </Text>
                   </View>
                   <View
@@ -300,7 +298,7 @@ const ReviewView = (props) => {
                       flexDirection: 'row',
                       marginTop: Height_convert(4),
                     }}>
-                    {StarRender(item.review_reply_grade)}
+                    {StarRender(item.grade)}
                     <Text
                       style={{
                         fontFamily: Fonts?.NanumGothicRegular || null,
@@ -308,7 +306,7 @@ const ReviewView = (props) => {
                         fontSize: Font_normalize(9),
                         color: '#8D8D8D',
                       }}>
-                      {moment(item.review_work_regdate, 'YYYY-MM-DD HH:mm:ss')
+                      {moment(item.createdAt, 'YYYY-MM-DD HH:mm:ss')
                         .add(9, 'h')
                         .fromNow()}
                     </Text>
@@ -317,7 +315,7 @@ const ReviewView = (props) => {
                     activeOpacity={1}
                     hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                     onPress={() => {
-                      getDataAndNavigate('work', item._id);
+                      getDataAndNavigate('work', item.work, item.store);
                     }}
                     style={{marginTop: Height_convert(8)}}>
                     <Text
@@ -327,7 +325,7 @@ const ReviewView = (props) => {
                         fontWeight: '700',
                         color: '#A1A1A1',
                       }}>
-                      {item.store_work[0].store_work_name}
+                      {item.workName}
                     </Text>
                   </TouchableOpacity>
                   <View
@@ -342,7 +340,7 @@ const ReviewView = (props) => {
                         fontWeight: '400',
                         color: '#000000',
                       }}>
-                      {item.review_reply_contents}
+                      {item.comment}
                     </Text>
                   </View>
                   <ScrollView
@@ -352,17 +350,15 @@ const ReviewView = (props) => {
                     }}
                     horizontal
                     showsHorizontalScrollIndicator={false}>
-                    {item.review_reply_image.map((imageItem) =>
+                    {item.image.map((imageItem) =>
                       typeof imageItem == 'number' ? null : (
                         <TouchableOpacity
                           activeOpacity={1}
                           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                           onPress={() => {
                             setIsVisible(true);
-                            setVisibleImage(item.review_reply_image);
-                            setVisibleIndex(
-                              item.review_reply_image.indexOf(imageItem),
-                            );
+                            setVisibleImage(item.image);
+                            setVisibleIndex(item.image.indexOf(imageItem));
                           }}
                           key={imageItem}
                           style={{marginRight: Width_convert(7)}}>
@@ -467,4 +463,17 @@ const ReviewView = (props) => {
   );
 };
 
+const getImageSource = (image) => {
+  let newArr = [];
+  image.map((item) => {
+    if (typeof item == 'number') {
+    } else {
+      newArr.push({
+        uri: item.toString(),
+        source: item,
+      });
+    }
+  });
+  return newArr;
+};
 export default ReviewView;

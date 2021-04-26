@@ -44,7 +44,7 @@ const ReviewRegister = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [starCount, setStarCount] = React.useState([]); //평점 받기
   const [imageList, setImageList] = React.useState(
-    props.route.params.item.review_reply_image,
+    props.route.params.item.image || [1, 2, 3, 4],
   );
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
@@ -52,12 +52,12 @@ const ReviewRegister = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [contents, setContents] = React.useState(
-    props.route.params.item.review_reply_contents,
+    props.route.params.item.comment,
   );
   React.useEffect(() => {
     let newArr = [];
     for (var a = 1; a < 6; a++) {
-      if (a <= props.route.params.item.review_reply_grade) {
+      if (a <= props.route.params.item.grade) {
         newArr.push({value: 1, index: a - 1});
       } else {
         newArr.push({value: 0, index: a - 1});
@@ -133,8 +133,8 @@ const ReviewRegister = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let data = {};
-          let url = Domain + 'review/revise';
-          if (reduxState.loginDataCheck.login.login == true) {
+          let url = `${Domain}api/review/revise`;
+          if (reduxState.loginDataCheck.login.login === true) {
             let starValue = 0;
             for (var a = 0; a < starCount.length; a++) {
               if (starCount[a].value == 1) {
@@ -151,13 +151,13 @@ const ReviewRegister = (props) => {
               return false;
             }
             data = {
-              prev_data_id: props.route.params.item._id,
-              item_id: props.route.params.item.store_work[0]._id,
-              _id: reduxState.loginDataCheck.login.data._id,
-              contents: contents,
-              starCount: starValue,
-              prevStarCount: props.route.params.item.review_reply_grade,
-              imageList: imageList,
+              reviewid: props.route.params.item._id,
+              workid: props.route.params.item.work,
+              storeid: props.route.params.item.store,
+              comment: contents,
+              nowgrade: starValue,
+              prevgrade: props.route.params.item.grade,
+              imagelist: imageList,
             };
           } else {
             return false;
@@ -167,9 +167,10 @@ const ReviewRegister = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.goBack();
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -177,6 +178,7 @@ const ReviewRegister = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   return (
@@ -200,7 +202,7 @@ const ReviewRegister = (props) => {
                   fontSize: Font_normalize(16),
                   color: '#000000',
                 }}>
-                {props.route.params.item.store_work[0].store_work_name}
+                {props.route.params.item.workName}
               </Text>
               <Text
                 style={{
@@ -211,7 +213,7 @@ const ReviewRegister = (props) => {
                   fontSize: Font_normalize(10),
                   color: '#000000',
                 }}>
-                {props.route.params.item.info_store[0].store_name}
+                {props.route.params.item.storeName}
               </Text>
             </View>
             <View

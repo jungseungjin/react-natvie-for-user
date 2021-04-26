@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   StatusBar,
   View,
@@ -35,30 +35,38 @@ import ImageView from 'react-native-image-viewing';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const ReviewManage = (props) => {
   moment.locale('ko');
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const reduxState = useSelector((state) => state);
-  const [loginModal, setLoginModal] = React.useState(false);
+  const [loginModal, setLoginModal] = useState(false);
   const LoginModalChangeValue = (text) => setLoginModal(text);
-  const [deleteModal, setDeleteModal] = React.useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
-  const [deleteItem, setDeleteItem] = React.useState('');
+  const [deleteItem, setDeleteItem] = useState('');
   const DeleteItemChangeValue = (Object) => setDeleteItem(Object);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [reviewList, setReviewList] = React.useState([]);
-  const [reviewCount, setReviewCount] = React.useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [reviewList, setReviewList] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getData();
-    setRefreshing(false);
-  }, []);
-  const getData = () => {
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   getData();
+  //   setRefreshing(false);
+  // }, []);
+
+  const throttleGetData = _.throttle((Number) => getData(backendPage), 300, {
+    leading: true,
+    trailing: false,
+  });
+  const [backendPage, setBackendPage] = useState(1);
+  const getData = (Page) => {
     try {
-      let result;
-      let url = Domain + 'reviewList/user';
+      let page;
+      if (Page) page = backendPage;
+      let url = `${Domain}api/review/get/user`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -66,13 +74,27 @@ const ReviewManage = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              _id: reduxState.loginDataCheck.login.data._id,
+              id: reduxState.loginDataCheck.login.data._id,
+              page: page,
             },
           });
-          if (result.data[0].message == 'ok') {
-            setReviewList(result.data[0].result);
-            setReviewCount(result.data[0].result.length);
+          if (result.data.success === true) {
+            if (Page) {
+              if (result.data.results[0].totalData.length > 0) {
+                setReviewList([
+                  ...reviewList,
+                  ...result.data.results[0].totalData,
+                ]);
+                setBackendPage((prevState) => {
+                  return (prevState += 1);
+                });
+              }
+            } else {
+              setReviewList(result.data.results[0].totalData);
+              setReviewCount(result.data.results[0].totalCount[0].count);
+            }
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -81,23 +103,33 @@ const ReviewManage = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
+  const scrollRef = useRef();
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollToOffset({animated: false, offset: 0});
+  }, []);
   const DeleteReview = () => {
     try {
-      let url = Domain + 'review/delete';
+      let url = `${Domain}api/review/delete`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let data = {
-            item_id: deleteItem._id,
+            reviewid: deleteItem._id,
+            workid: deleteItem.work,
+            storeid: deleteItem.store,
+            reviewgrade: deleteItem.grade,
           };
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
-            onRefresh();
+          if (result.data.success === true) {
+            setBackendPage(1);
+            scrollToTop();
+            getData();
           } else {
           }
         } else {
@@ -109,10 +141,9 @@ const ReviewManage = (props) => {
       console.log(err);
     }
   };
-  const getDataAndNavigate = (type, item_id) => {
+  const getDataAndNavigate = (type, workid, storeid) => {
     try {
-      let result;
-      let url = Domain + 'reviewList/navigate/' + type;
+      let url = `${Domain}api/${type}/get/one`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.get(url, {
@@ -120,20 +151,24 @@ const ReviewManage = (props) => {
               'Content-Type': 'application/json',
             },
             params: {
-              item_id: item_id,
+              workid: workid,
+              userid: reduxState?.loginDataCheck?.login?._id,
+              storeid: storeid,
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             if (type === 'work') {
               props.navigation.navigate('WorkDetail', {
-                item: result.data[0].result[0],
+                item: result.data.results[0],
               });
             } else if (type === 'store') {
               props.navigation.navigate('StoreDetail', {
-                item: result.data[0].result[0],
+                item: result.data.results[1],
+                pick: result.data.results[0],
               });
             }
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -142,14 +177,17 @@ const ReviewManage = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     props.navigation.addListener('focus', async () => {
-      onRefresh();
+      getData();
     });
   }, []);
-
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   const getImageSource = (image) => {
     let newArr = [];
     image.map((item) => {
@@ -157,18 +195,17 @@ const ReviewManage = (props) => {
       } else {
         newArr.push({
           uri: item.toString(),
-          source:
-            'https://images.unsplash.com/photo-1571501679680-de32f1e7aad4',
+          source: item,
         });
       }
     });
     return newArr;
   };
-  const [visible, setIsVisible] = React.useState(false);
+  const [visible, setIsVisible] = useState(false);
   const VisibleChangeValue = (text) => setIsVisible(text);
-  const [visibleImage, setVisibleImage] = React.useState([]);
+  const [visibleImage, setVisibleImage] = useState([]);
   const VisibleImageChangeValue = (text) => setVisibleImage(text);
-  const [visibleIndex, setVisibleIndex] = React.useState(0);
+  const [visibleIndex, setVisibleIndex] = useState(0);
   const VisibleIndexChangeValue = (text) => setVisibleIndex(text);
   return (
     <>
@@ -206,15 +243,18 @@ const ReviewManage = (props) => {
           </View>
         </View>
         <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
+          ref={scrollRef}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{width: Width_convert(375)}}
           data={reviewList}
           windowSize={2}
           initialNumToRender={10}
+          onEndReached={throttleGetData}
+          onEndReachedThreshold={10}
           renderItem={({item}) => (
             <Review
               key={item}

@@ -11,9 +11,9 @@ const ReviewButton = (props) => {
       activeOpacity={1}
       hitSlop={{top: 10, bottom: 10, left: 5, right: 5}}
       onPress={() => {
-        if (props.Title == '수정') {
+        if (props.Title === '수정') {
           props.navigation.navigate('ReviewRevise', {item: props.item});
-        } else if (props.Title == '삭제') {
+        } else if (props.Title === '삭제') {
           props.DeleteItemChangeValue(props.item);
           props.DeleteModalChangeValue(true);
         }
@@ -25,11 +25,11 @@ const ReviewButton = (props) => {
           alignItems: 'center',
           justifyContent: 'center',
         },
-        props.Title == '수정'
+        props.Title === '수정'
           ? {
               backgroundColor: '#946AEF',
             }
-          : props.Title == '삭제'
+          : props.Title === '삭제'
           ? {
               backgroundColor: '#EF6666',
             }
