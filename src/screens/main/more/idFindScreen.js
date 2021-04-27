@@ -64,8 +64,7 @@ const IdFindScreen = (props) => {
   }, [minutes, seconds]);
   async function idFindBack() {
     try {
-      let result;
-      let url = Domain + 'signUp/idFind/?phoneNumber=' + phoneNumber;
+      let url = `${Domain}api/user/find/id`;
       if (phoneNumber) {
       } else {
         alert('빈칸을 모두 입력해 주세요');
@@ -73,23 +72,25 @@ const IdFindScreen = (props) => {
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoading(true);
+          setIsLoadingAndModal(1);
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              phonenumber: phoneNumber,
+            },
           });
-          if (result.data[0].status == 'ok') {
-            setIsLoading(false);
-
+          if (result.data.success === true && result.data.result !== null) {
+            setIsLoadingAndModal(0);
             props.navigation.navigate('IdFindComplete', {
-              idText: result.data[0].iu_id,
-              idRegdate: result.data[0].iu_regDate,
+              idText: result.data.result.email,
+              idRegdate: result.data.result.createdAt,
               fromNav: props.route.params.fromNav,
             });
           } else {
-            setIsLoading(false);
+            setIsLoadingAndModal(3);
             //없어
             setResultModal(true);
           }
@@ -132,7 +133,7 @@ const IdFindScreen = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain + 'sendMessage';
+      let url = `${Domain}api/user/sendmessage`;
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -149,7 +150,7 @@ const IdFindScreen = (props) => {
               },
             },
           );
-          if (result.data[0].statusCode === '202') {
+          if (result.data.success === true) {
             //전송 성공 시간초 흐르기
             setSmsCode(random);
             setMinutes(parseInt(3));
@@ -172,6 +173,7 @@ const IdFindScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
 

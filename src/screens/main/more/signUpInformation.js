@@ -85,7 +85,7 @@ const SignUpInformation = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain + 'sendMessage';
+      let url = `${Domain}api/user/sendmessage`;
 
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -102,7 +102,7 @@ const SignUpInformation = (props) => {
               },
             },
           );
-          if (result.data[0].statusCode === '202') {
+          if (result.data.success === true) {
             //전송 성공 시간초 흐르기
             setSmsCode(random);
             setMinutes(parseInt(3));
@@ -125,27 +125,23 @@ const SignUpInformation = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   const PhoneNumberChk = (Number) => {
     try {
-      let url = Domain + 'info/phonechk';
+      let url = `${Domain}api/user/chk/reduplication`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           Keyboard.dismiss();
-          let result = await axios.post(
-            url,
-            {
-              Phone: Number,
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
             },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          );
-          if (result.data[0].status == 'ok') {
-            if (result.data[0].message == 'ok') {
+            phonenumber: Number,
+          });
+          if (result.data.success === true) {
+            if (result.data.result === null) {
               //인증번호받기로진행
               NaverSMSMessageSend(Number);
             } else {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -26,15 +26,12 @@ import moment from 'moment';
 import 'moment/locale/ko';
 const SignUpTerms2 = (props) => {
   moment.locale('ko');
-  const [termsText, setTermsText] = React.useState({agreeText: ''});
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [termsText, setTermsText] = useState({agreeText: ''});
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  React.useEffect(() => {
+  useEffect(() => {
     try {
-      let result;
-      let url =
-        Domain + 'signUp/terms?agreeNumber=' + props.route.params.agreeNumber;
-
+      let url = `${Domain}api/user/get/terms`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
@@ -42,12 +39,15 @@ const SignUpTerms2 = (props) => {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              number: props.route.params.agreeNumber,
+            },
           });
-          if (result.data[0].status == 'ok') {
-            if (result.data[0].result?.agreeText) {
+          if (result.data.success === true) {
+            if (result.data.result?.agreeText) {
               setTermsText({
-                agreeText: result.data[0].result.agreeText,
-                regDate: result.data[0].result.regDate,
+                agreeText: result.data.result.agreeText,
+                regDate: result.data.result.regDate,
               });
             } else {
               setTermsText({agreeText: ''});
@@ -79,6 +79,7 @@ const SignUpTerms2 = (props) => {
         navigation={props.navigation}></Tabbar>
 
       <ScrollView
+        bounces={false}
         showsVerticalScrollIndicator={false}
         style={{width: Width_convert(375)}}>
         <View
@@ -151,7 +152,9 @@ const SignUpTerms2 = (props) => {
               color: '#000000',
               fontSize: Font_normalize(13),
             }}>
-            {moment(termsText.regDate).format('YYYY년 MM월 DD일')}
+            {termsText.regDate
+              ? moment(termsText.regDate).format('YYYY년 MM월 DD일')
+              : '2021년 03월 10일'}
           </Text>
         </View>
         <Text

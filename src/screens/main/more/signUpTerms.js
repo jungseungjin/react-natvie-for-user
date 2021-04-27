@@ -31,9 +31,7 @@ const SignUpTerms = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   React.useEffect(() => {
     try {
-      let result;
-      let url =
-        Domain + 'signUp/terms?agreeNumber=' + props.route.params.agreeNumber;
+      let url = `${Domain}api/user/get/terms`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
@@ -41,23 +39,37 @@ const SignUpTerms = (props) => {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              number: props.route.params.agreeNumber,
+            },
           });
-          if (result.data[0].status == 'ok') {
-            if (result.data[0].result?.agreeText) {
+          if (result.data.success === true) {
+            if (props.route.params.agreeNumber === 1) {
               setPages([
                 {
-                  _id: result.data[0].result._id,
-                  agreeText: result.data[0].result.agreeText,
-                  regDate: result.data[0].result.regDate,
+                  _id: result.data.result._id,
+                  agreeText: result.data.result.agreeText,
+                  regDate: result.data.result.regDate,
                 },
                 {
-                  _id: result.data[0].result2._id,
-                  agreeText: result.data[0].result2.agreeText,
-                  regDate: result.data[0].result2.regDate,
+                  _id: result.data.result2._id,
+                  agreeText: result.data.result2.agreeText,
+                  regDate: result.data.result2.regDate,
                 },
               ]);
-            } else {
-              setIsLoadingAndModal(3);
+            } else if (props.route.params.agreeNumber === 4) {
+              setPages([
+                {
+                  _id: result.data.result2._id,
+                  agreeText: result.data.result2.agreeText,
+                  regDate: result.data.result2.regDate,
+                },
+                {
+                  _id: result.data.result._id,
+                  agreeText: result.data.result.agreeText,
+                  regDate: result.data.result.regDate,
+                },
+              ]);
             }
           } else {
             setIsLoadingAndModal(3);
@@ -100,6 +112,7 @@ const SignUpTerms = (props) => {
           height: '100%',
         }}>
         <ScrollView
+          bounces={false}
           showsVerticalScrollIndicator={false}
           alwaysBounceVertical={false}>
           <View
@@ -142,7 +155,9 @@ const SignUpTerms = (props) => {
                 color: '#000000',
                 fontSize: Font_normalize(13),
               }}>
-              {moment(item.item?.regDate).format('YYYY년 MM월 DD일')}
+              {item.item?.regDate
+                ? moment(item.item?.regDate).format('YYYY년 MM월 DD일')
+                : '2021년 03월 10일'}
             </Text>
           </View>
           <Text
@@ -269,6 +284,7 @@ const SignUpTerms = (props) => {
       </View>
       <View>
         <FlatList
+          bounces={false}
           ref={scrollRef}
           style={{height: '100%', width: '100%'}}
           automaticallyAdjustContentInsets={false}

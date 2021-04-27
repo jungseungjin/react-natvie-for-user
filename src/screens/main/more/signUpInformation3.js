@@ -57,7 +57,7 @@ const SignUpInformation = (props) => {
   const EmailChk = async (text) => {
     try {
       let result;
-      let url = Domain + 'signUp/emailchk';
+      let url = `${Domain}api/user/chk/reduplication`;
       let data = {
         name: name,
         email: email,
@@ -66,14 +66,20 @@ const SignUpInformation = (props) => {
         if (state.isConnected) {
           setIsLoadingAndModal(1);
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
-          let result = await axios.post(url, data, {
+          let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: data,
           });
-          if (result.data[0].status == 'ok') {
-            setIsLoadingAndModal(0);
-            setEmailChk(true);
+          if (result.data.success === true) {
+            if (result.data.result === null) {
+              setIsLoadingAndModal(0);
+              setEmailChk(true);
+            } else {
+              setIsLoadingAndModal(0);
+              setShowModal(true);
+            }
           } else {
             setIsLoadingAndModal(0);
             setShowModal(true);

@@ -102,19 +102,20 @@ const SignUpInformation = (props) => {
   const NicknameChk = async (text) => {
     try {
       let result;
-      let url = Domain + 'signUp/nicknamechk';
+      let url = `${Domain}api/user/chk/reduplication`;
       let data = {
-        nickName: text,
+        nickname: text,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
-          let result = await axios.post(url, data, {
+          let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: data,
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true && result.data.result === null) {
             setNickNameChk2(true);
           } else {
             setNickNameChk2(false);
@@ -260,7 +261,7 @@ const SignUpInformation = (props) => {
   const SignUpBack = () => {
     try {
       let result;
-      let url = Domain + 'signUp/complete';
+      let url = `${Domain}api/user/save`;
       if (
         phoneNumber &&
         pickBrand &&
@@ -282,20 +283,20 @@ const SignUpInformation = (props) => {
         return false;
       }
       let data = {
-        phoneNumber: phoneNumber,
-        pickBrand: pickBrand,
-        pickModel: pickModel,
-        pickModelDetail: pickModelDetail,
+        phonenumber: phoneNumber,
+        pickbrand: pickBrand,
+        pickmodel: pickModel,
+        pickmodeldetail: pickModelDetail,
         name: name,
         email: email,
-        nickName: nickName,
+        nickname: nickName,
         password: password,
-        birthDay: birthDay,
-        locationView: locationView,
+        birthday: birthDay,
+        locationview: locationView,
         location: location,
         agree: agree,
         device: device,
-        fcmToken: fcmToken,
+        fcmtoken: fcmToken,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -316,15 +317,14 @@ const SignUpInformation = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].status == 'ok') {
+          if (result.data.success === true) {
             setIsLoadingAndModal(0);
             props.navigation.navigate('SignUpComplete', {
               fromNav: props.route.params.fromNav,
             });
           } else {
-            setIsLoadingAndModal(0);
             //가입이 안됐어
-            alert(result.data[0].message);
+            setIsLoadingAndModal(3);
           }
         } else {
           //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
