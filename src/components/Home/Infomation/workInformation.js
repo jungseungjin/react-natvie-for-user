@@ -20,10 +20,17 @@ const WorkInformation = (props) => {
         minHeight: Height_convert(812),
       }}>
       <ScrollView alwaysBounceVertical={false} style={{flex: 1}}>
+        <View style={{height: Width_convert(40)}}></View>
         <HTML
           renderers={renderers}
           source={{
-            html: `<p>${props.item}</p>`,
+            html: props.item || `<p></p>`,
+          }}
+          tagsStyles={{
+            p: {marginLeft: Width_convert(20), marginRight: Width_convert(20)},
+            img: {
+              marginBottom: -Width_convert(10),
+            },
           }}
           contentWidth={contentWidth}
           WebView={WebView}

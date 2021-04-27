@@ -59,13 +59,13 @@ const NoticeBoardViewScreen = (props) => {
                 fontWeight: '400',
                 color: '#000000',
               }}>
-              {moment(props.route.params.item.regDate).format(
+              {moment(props.route.params.item.createdAt).format(
                 'YYYY년 MM월 DD일',
               )}
             </Text>
           </TouchableOpacity>
         </View>
-        <ScrollView style={{minHeight: Height_convert(812)}}>
+        <ScrollView style={{minHeight: Height_convert(812)}} bounces={false}>
           <View
             style={{
               width: Width_convert(327),

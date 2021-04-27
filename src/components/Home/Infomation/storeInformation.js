@@ -90,6 +90,7 @@ const WorkInformation = (props) => {
         {props.item.member?.length > 0 && (
           <>
             <Text
+              key={1}
               style={{
                 marginTop: Height_convert(21),
                 marginLeft: Width_convert(21),
@@ -102,31 +103,29 @@ const WorkInformation = (props) => {
             </Text>
             <View style={{flexDirection: 'row', marginTop: Width_convert(14)}}>
               {props.item.member.map((item, index) => (
-                <>
-                  <View
-                    style={{marginLeft: Width_convert(21)}}
-                    key={item.image + index}>
-                    <FastImage
-                      style={{
-                        width: Width_convert(59),
-                        height: Width_convert(59),
-                        borderRadius: Width_convert(59),
-                      }}
-                      source={{
-                        uri: item.image,
-                        //headers: {Authorization: 'someAuthToken'},
-                        priority: FastImage.priority.normal,
-                      }}
-                      resizeMode={FastImage.resizeMode.stretch}></FastImage>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        marginTop: Width_convert(8),
-                      }}>
-                      {item.name}
-                    </Text>
-                  </View>
-                </>
+                <View
+                  style={{marginLeft: Width_convert(21)}}
+                  key={item.image + index}>
+                  <FastImage
+                    style={{
+                      width: Width_convert(59),
+                      height: Width_convert(59),
+                      borderRadius: Width_convert(59),
+                    }}
+                    source={{
+                      uri: item.image,
+                      //headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}></FastImage>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      marginTop: Width_convert(8),
+                    }}>
+                    {item.name}
+                  </Text>
+                </View>
               ))}
             </View>
           </>

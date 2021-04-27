@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StatusBar,
@@ -22,22 +22,43 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const NoticeBoardScreen = (props) => {
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const getData = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [backendPage, setBackendPage] = useState(1);
+
+  const throttleGetData = _.throttle((Number) => getData(backendPage), 300, {
+    leading: true,
+    trailing: false,
+  });
+  const getData = (Page) => {
     try {
+      let page;
+      if (Page) page = backendPage;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = `${Domain}noticelist`;
+          let url = `${Domain}api/notice/get`;
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              page: page,
+            },
           });
-          if (result.data[0].message == 'ok') {
-            setBoardList(result.data[0].result);
+          if (result.data.success === true) {
+            if (Page) {
+              if (result.data.result.length > 0) {
+                setBoardList([...boardList, ...result.data.result]);
+                setBackendPage((prevState) => {
+                  return (prevState += 1);
+                });
+              }
+            } else {
+              setBoardList(result.data.result);
+            }
           } else {
           }
         } else {
@@ -48,13 +69,13 @@ const NoticeBoardScreen = (props) => {
       console.log(err);
     }
   };
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getData();
-    setRefreshing(false);
-  }, []);
-  const [boardList, setBoardList] = React.useState([]);
-  React.useEffect(() => {
+  // const onRefresh = useCallback(() => {
+  //   setRefreshing(true);
+  //   getData();
+  //   setRefreshing(false);
+  // }, []);
+  const [boardList, setBoardList] = useState([]);
+  useEffect(() => {
     getData();
   }, []);
   return (
@@ -74,16 +95,20 @@ const NoticeBoardScreen = (props) => {
             backgroundColor: '#FFFFFF',
           }}>
           <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+            // refreshControl={
+            //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            // }
             style={{minHeight: Height_convert(812)}}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
+            alwaysBounceVertical={false}
+            bounces={false}
             style={{flex: 1}}
             data={boardList}
             windowSize={2}
             initialNumToRender={10}
+            onEndReached={throttleGetData}
+            onEndReachedThreshold={1}
             renderItem={({item}) => (
               <View
                 key={item._id}
@@ -118,7 +143,7 @@ const NoticeBoardScreen = (props) => {
                       fontWeight: '400',
                       color: '#000000',
                     }}>
-                    {moment(item.regDate).format('YYYY년 MM월 DD일')}
+                    {moment(item.createdAt).format('YYYY년 MM월 DD일')}
                   </Text>
                 </TouchableOpacity>
               </View>

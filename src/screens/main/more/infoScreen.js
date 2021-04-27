@@ -907,6 +907,7 @@ const InfoScreen = (props) => {
             keyboardVerticalOffset={30}>
             <DismissKeyboard>
               <ScrollView
+                bounces={false}
                 showsVerticalScrollIndicator={false}
                 style={{
                   flexGrow: 1,

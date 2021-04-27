@@ -246,6 +246,7 @@ const ReviewManage = (props) => {
           // refreshControl={
           //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           // }
+          bounces={false}
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}

@@ -113,81 +113,80 @@ const FrequentlyQuestionScreen = (props) => {
         </View>
         {/*상단 TOP5~기타 버튼 끝 */}
         <ScrollView
+          bounces={false}
           style={{
             marginTop: Height_convert(20),
           }}>
           {dataList[pageIndex].map((item, index) => (
-            <>
-              <View
-                style={{
-                  paddingTop: Width_convert(20),
-                  paddingBottom:
-                    index === openIndex ? Width_convert(0) : Width_convert(20),
-                  width: Width_convert(375),
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#EEEEEE',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+            <View
+              key={item.q + index}
+              style={{
+                paddingTop: Width_convert(20),
+                paddingBottom:
+                  index === openIndex ? Width_convert(0) : Width_convert(20),
+                width: Width_convert(375),
+                borderBottomWidth: 1,
+                borderBottomColor: '#EEEEEE',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  if (index === openIndex) {
+                    setOpenIndex('');
+                  } else {
+                    setOpenIndex(index);
+                  }
                 }}
-                key={item.q + index}>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={() => {
-                    if (index === openIndex) {
-                      setOpenIndex('');
-                    } else {
-                      setOpenIndex(index);
-                    }
-                  }}
+                style={{
+                  width: Width_convert(340),
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text
                   style={{
-                    width: Width_convert(340),
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    textAlignVertical: 'center',
+                    fontFamily: Fonts?.NanumSqureRegular || null,
+                    fontWeight: '700',
+                    fontSize: Font_normalize(16),
+                    color: '#000000',
+                  }}>
+                  {item.q}
+                </Text>
+                <BracketDown
+                  width={Width_convert(21)}
+                  height={Width_convert(10)}></BracketDown>
+              </TouchableOpacity>
+              {index === openIndex && (
+                <View
+                  style={{
                     alignItems: 'center',
+                    width: Width_convert(345),
+                    paddingTop: Height_convert(15),
+                    paddingBottom: Height_convert(15),
+                    paddingLeft: Width_convert(10),
+                    paddingRight: Width_convert(10),
+                    backgroundColor: '#F0F0F0',
+                    marginBottom: Height_convert(24),
+                    marginTop: Height_convert(24),
                   }}>
                   <Text
                     style={{
-                      textAlignVertical: 'center',
+                      width: Width_convert(323),
                       fontFamily: Fonts?.NanumSqureRegular || null,
+                      fontSize: Font_normalize(12),
                       fontWeight: '700',
-                      fontSize: Font_normalize(16),
                       color: '#000000',
+                      textAlign: 'justify',
+                      lineHeight: Font_normalize(15),
                     }}>
-                    {item.q}
+                    {item.a}
                   </Text>
-                  <BracketDown
-                    width={Width_convert(21)}
-                    height={Width_convert(10)}></BracketDown>
-                </TouchableOpacity>
-                {index === openIndex && (
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      width: Width_convert(345),
-                      paddingTop: Height_convert(15),
-                      paddingBottom: Height_convert(15),
-                      paddingLeft: Width_convert(10),
-                      paddingRight: Width_convert(10),
-                      backgroundColor: '#F0F0F0',
-                      marginBottom: Height_convert(24),
-                      marginTop: Height_convert(24),
-                    }}>
-                    <Text
-                      style={{
-                        width: Width_convert(323),
-                        fontFamily: Fonts?.NanumSqureRegular || null,
-                        fontSize: Font_normalize(12),
-                        fontWeight: '700',
-                        color: '#000000',
-                        textAlign: 'justify',
-                        lineHeight: Font_normalize(15),
-                      }}>
-                      {item.a}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </>
+                </View>
+              )}
+            </View>
           ))}
         </ScrollView>
         {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음

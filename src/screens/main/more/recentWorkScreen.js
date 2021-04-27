@@ -270,13 +270,8 @@ const RecentWork = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <FlatList
-          alwaysBounceVertical={
-            page == 'work' && workList.length == 0
-              ? false
-              : page == 'store' && storeList.length == 0
-              ? false
-              : false
-          }
+          bounces={false}
+          alwaysBounceVertical={false}
           // refreshControl={
           //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           // }

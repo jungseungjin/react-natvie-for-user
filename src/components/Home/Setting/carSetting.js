@@ -169,6 +169,7 @@ const CarSetting = (props) => {
           {/*국산 수입 전체 선택하기 끝*/}
           {/*브랜드 나열 시작 */}
           <FlatList
+            bounces={false}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             style={{flex: 1}}
@@ -199,6 +200,7 @@ const CarSetting = (props) => {
         {/*왼쪽 뷰 끝 */}
         {/*오른쪽 뷰 시작 */}
         <FlatList
+          bounces={false}
           style={{width: Width_convert(275)}}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}

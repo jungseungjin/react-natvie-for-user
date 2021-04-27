@@ -239,6 +239,7 @@ const ReviewView = (props) => {
           // refreshControl={
           //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           // }
+          bounces={false}
           style={{width: Width_convert(375)}}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}

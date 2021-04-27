@@ -526,6 +526,8 @@ const SearchScreenDetail = (props) => {
               // refreshControl={
               //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               // }
+              alwaysBounceVertical={false}
+              bounces={false}
               ref={scrollRef}
               style={{minHeight: Height_convert(812)}}
               showsVerticalScrollIndicator={false}

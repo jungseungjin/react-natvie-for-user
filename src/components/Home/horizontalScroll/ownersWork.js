@@ -20,7 +20,7 @@ const OwnersWork = (props) => {
         style={FastImageStyle(props.From, 1)}
         source={{
           uri: props.item.image,
-          headers: {Authorization: 'someAuthToken'},
+          //headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.stretch}></FastImage>

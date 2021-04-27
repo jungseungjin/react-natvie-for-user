@@ -289,6 +289,7 @@ const ReviewRegister = (props) => {
                 borderRightColor: '#BFBFBF',
               }}>
               <ScrollView
+                bounces={false}
                 showsVerticalScrollIndicator={false}
                 style={{
                   width: Width_convert(339),

@@ -262,13 +262,8 @@ const PickScreen = (props) => {
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
         <FlatList
-          alwaysBounceVertical={
-            page === 'work' && workList.length == 0
-              ? false
-              : page === 'store' && storeList.length == 0
-              ? false
-              : true
-          }
+          bounces={false}
+          alwaysBounceVertical={false}
           // refreshControl={
           //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           // }

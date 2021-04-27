@@ -193,6 +193,7 @@ const WorkVideoScreen = (props) => {
         </View>
         <View>
           <FlatList
+            bounces={false}
             nestedScrollEnabled
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}

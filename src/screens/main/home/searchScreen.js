@@ -190,7 +190,7 @@ const SearchScreen = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
           {resentSearch.length > 0 ? (
-            <ScrollView style={{flex: 1}}>
+            <ScrollView style={{flex: 1}} alwaysBounceVertical={false}>
               <View
                 style={{
                   width: Width_convert(375),
