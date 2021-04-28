@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -32,31 +32,25 @@ import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import _ from 'lodash';
 const PasswordFindScreen = (props) => {
-  const [idText, setIdText] = React.useState(''); //아이디
-  const [phoneNumber, setPhoneNumber] = React.useState(''); //휴대폰번호
-  const [authButtonClick, setAuthButtonClick] = React.useState(false); //인증번호받기 버튼을 눌렀는지 여부
-  const [authNumber, setAuthNumber] = React.useState(''); //코드넘버
-  const [confirm, setConfirm] = React.useState(null); //인증함수
-  const [confirmChk, setConfirmChk] = React.useState(''); //인증함수를 거쳐서 인증이 되었는지 여부
-  const [next, setNext] = React.useState(''); //다음버튼의 상태
-  const [minutes, setMinutes] = React.useState(parseInt(0)); //시간초 타이머
-  const [seconds, setSeconds] = React.useState(parseInt(0));
-  const [visible, setVisible] = React.useState(false); //1분이내 재발송 안됨 메시지 출력여부
-  const [resultModal, setResultModal] = React.useState(false);
+  const [idText, setIdText] = useState(''); //아이디
+  const [phoneNumber, setPhoneNumber] = useState(''); //휴대폰번호
+  const [authButtonClick, setAuthButtonClick] = useState(false); //인증번호받기 버튼을 눌렀는지 여부
+  const [authNumber, setAuthNumber] = useState(''); //코드넘버
+  const [confirm, setConfirm] = useState(null); //인증함수
+  const [confirmChk, setConfirmChk] = useState(''); //인증함수를 거쳐서 인증이 되었는지 여부
+  const [next, setNext] = useState(''); //다음버튼의 상태
+  const [minutes, setMinutes] = useState(parseInt(0)); //시간초 타이머
+  const [seconds, setSeconds] = useState(parseInt(0));
+  const [visible, setVisible] = useState(false); //1분이내 재발송 안됨 메시지 출력여부
+  const [resultModal, setResultModal] = useState(false);
   const ResultModalChangeValue = (text) => setResultModal(text);
 
-  const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
+  const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
 
   const idChkBack = async () => {
     try {
-      let result;
-      let url =
-        Domain +
-        'signUp/passwordFind/idchk?phoneNumber=' +
-        phoneNumber +
-        '&idText=' +
-        idText;
+      let url = `${Domain}api/user/find/password`;
       if (phoneNumber && idText) {
       } else {
         alert('빈칸을 모두 입력해 주세요');
@@ -70,8 +64,12 @@ const PasswordFindScreen = (props) => {
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              phonenumber: phoneNumber,
+              email: idText,
+            },
           });
-          if (result.data[0].status == 'ok') {
+          if (result.data.success === true && result.data.result !== null) {
             setIsLoadingAndModal(0);
             props.navigation.navigate('PasswordFind2', {
               phoneNumber: phoneNumber,
@@ -94,7 +92,7 @@ const PasswordFindScreen = (props) => {
       alert(err);
     }
   };
-  React.useEffect(() => {
+  useEffect(() => {
     const countdown = BackgroundTimer.setTimeout(() => {
       if (parseInt(seconds) > 0) {
         setSeconds(parseInt(seconds) - 1);
@@ -134,13 +132,12 @@ const PasswordFindScreen = (props) => {
       setNext(false);
     }
   };
-  const [smsCode, setSmsCode] = React.useState(0);
+  const [smsCode, setSmsCode] = useState(0);
   const NaverSMSMessageSend = (Number) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain + 'sendMessage';
-
+      let url = `${Domain}api/user/sendmessage`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.post(
@@ -156,7 +153,7 @@ const PasswordFindScreen = (props) => {
               },
             },
           );
-          if (result.data[0].statusCode === '202') {
+          if (result.data.success === true) {
             //전송 성공 시간초 흐르기
             setSmsCode(random);
             setMinutes(parseInt(3));
@@ -182,7 +179,7 @@ const PasswordFindScreen = (props) => {
     }
   };
 
-  const debouncePhoneNumber = React.useCallback(
+  const debouncePhoneNumber = useCallback(
     _.debounce((Number) => NaverSMSMessageSend(Number), 2000, {
       leading: true,
       trailing: false,

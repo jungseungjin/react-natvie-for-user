@@ -124,7 +124,7 @@ const InfoScreen = (props) => {
       return false;
     }
   }
-  //마케팅정보수신동의수정
+  //마케팅정보수신동의수정 -> 클릭하면 바로 값 변경
   const ChangeMarkettting = (type) => {
     try {
       if (reduxState.loginDataCheck.login.login == false) {
@@ -133,26 +133,23 @@ const InfoScreen = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let marketting;
-          if (type == 'kakaotalk') {
+          if (type === 'kakao') {
             marketting = {
-              kakaotalk: !reduxState.loginDataCheck.login.data.marketting
-                .kakaotalk,
-              mail: reduxState.loginDataCheck.login.data.marketting.mail,
-              sms: reduxState.loginDataCheck.login.data.marketting.sms,
+              kakao: !reduxState.loginDataCheck.login.data.alarm.kakao,
+              mail: reduxState.loginDataCheck.login.data.alarm.mail,
+              sms: reduxState.loginDataCheck.login.data.alarm.sms,
             };
-          } else if (type == 'mail') {
+          } else if (type === 'mail') {
             marketting = {
-              kakaotalk:
-                reduxState.loginDataCheck.login.data.marketting.kakaotalk,
-              mail: !reduxState.loginDataCheck.login.data.marketting.mail,
-              sms: reduxState.loginDataCheck.login.data.marketting.sms,
+              kakao: reduxState.loginDataCheck.login.data.alarm.kakao,
+              mail: !reduxState.loginDataCheck.login.data.alarm.mail,
+              sms: reduxState.loginDataCheck.login.data.alarm.sms,
             };
-          } else if (type == 'sms') {
+          } else if (type === 'sms') {
             marketting = {
-              kakaotalk:
-                reduxState.loginDataCheck.login.data.marketting.kakaotalk,
-              mail: reduxState.loginDataCheck.login.data.marketting.mail,
-              sms: !reduxState.loginDataCheck.login.data.marketting.sms,
+              kakao: reduxState.loginDataCheck.login.data.alarm.kakao,
+              mail: reduxState.loginDataCheck.login.data.alarm.mail,
+              sms: !reduxState.loginDataCheck.login.data.alarm.sms,
             };
           } else {
             return;
@@ -241,15 +238,16 @@ const InfoScreen = (props) => {
   const [showModal, setShowModal] = React.useState(false);
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [nickname, setNickname] = React.useState(
-    reduxState.loginDataCheck.login.data.iu_nickname,
+    reduxState.loginDataCheck.login.data.nickname,
   );
   //저장눌러서 뒷단 다녀오고 1이면 동일한닉네임 2는 닉네임 형식이 안맞음   2번은 미리 검사하자
   const [nicknameChk, setNicknameChk] = React.useState(0);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [location, setLocation] = React.useState({});
   const LocationChangeValue = (Object) => setLocation(Object);
+  console.log(reduxState.loginDataCheck?.login?.data);
   const [car, setCar] = React.useState(
-    reduxState.loginDataCheck?.login?.data?.iu_car,
+    reduxState.loginDataCheck?.login?.data?.car || [],
   );
   const [carModal, setCarModal] = React.useState(false);
   const CarModalChangeValue = (text) => setCarModal(text);
@@ -323,22 +321,23 @@ const InfoScreen = (props) => {
     // 변경성공 -
     //  비밀번호가 변경되었으면 모달띄우고 로그아웃시키고 로그인화면으로 / 비밀번호가 변경되지 않았으면 뒤로가기에 정보변경안내토스트
     try {
-      if (reduxState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login === false) {
         //로그아웃상태면 아무것도 하지 않음.
         return false;
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
+          //setIsLoadingAndModal(1);
           //수정된 데이터를 구분해서 값 넣어주기
           let data = {
             //차량데이터는 초기값이 redux에 저장된 로그인데이터값이니 그대로 이용
-            iu_car: car,
+            car: car,
             _id: reduxState.loginDataCheck.login.data._id,
-            userImage: userImage,
+            image: userImage,
           };
           if (nickname.length > 0) {
             //닉네임에 값이 들어가있으면
-            data.iu_nickname = nickname.trim();
+            data.nickname = nickname.trim();
             let chkNinkname = isNickName(nickname.trim());
             if (!chkNinkname) {
               setNicknameChk(2);
@@ -346,14 +345,14 @@ const InfoScreen = (props) => {
             }
           } else {
             //값이 없으면 원래값
-            data.iu_nickname = reduxState.loginDataCheck.login.data.iu_nickname.trim();
+            data.nickname = reduxState.loginDataCheck.login.data.nickname.trim();
           }
-          if (location?.legalcode) {
+          if (location?.legalCode) {
             //지역에 값이 들어가 있으면
-            if (location?.legalcode != '요청한 데이타의 결과가 없습니다.') {
+            if (location?.legalCode !== '요청한 데이타의 결과가 없습니다.') {
               data.location = location;
             } else {
-              return false;
+              data.location = reduxState.loginDataCheck.login.data.location;
             }
           } else {
             //값이 없으면 원래값
@@ -361,10 +360,10 @@ const InfoScreen = (props) => {
           }
           if (confirmChk) {
             //휴대폰 인증이 된거면 변호 변경
-            data.iu_phone = phoneNumber.trim();
+            data.phonenumber = phoneNumber.trim();
           } else {
             //원래값
-            data.iu_phone = reduxState.loginDataCheck.login.data.iu_phone.trim();
+            data.phonenumber = reduxState.loginDataCheck.login.data.phoneNumber.trim();
           }
           if (passwordChk === '') {
             //비밀번호 변경시키지않음
@@ -382,14 +381,14 @@ const InfoScreen = (props) => {
           } else if (passwordChk === false) {
             //비밀번호 변경할수없음 -> 비밀번호 변경시키지않음
           }
-
-          let url = Domain + 'info/changedata';
+          //라우터만들어야함.
+          let url = `${Domain}api/user/change/info`;
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].status == 'ok' && data.password) {
+          if (result.data.success === true && data.password) {
             //모달창
             //비밀번호 변경 ->로그아웃, 모달창 띄우기 모달창에서 로그인으로 이동시키기
             await Keychain.resetGenericPassword();
@@ -398,12 +397,13 @@ const InfoScreen = (props) => {
             props.updateLocation({});
             props.update_id('');
             props.updateData({}); //디바이스정보라도 넣어줘야??
-          } else if (result.data[0].status == 'ok') {
+            setIsLoadingAndModal(0);
+          } else if (result.data.success === true) {
             //뒤로가서 토스트 해야됨
             //페이지 뒤로가서 토스트메시지 띄우기-> 리덕스 사용??
-            props.updateIuCar(result.data[0].result.iu_car);
-            props.updateLocation(result.data[0].result.location);
-            props.updateData(result.data[0].result);
+            props.updateIuCar(result.data.result.car);
+            props.updateLocation(result.data.result.location);
+            props.updateData(result.data.result);
             props.route.params.toastRef.show('내정보가 저장되었습니다.', 1000);
             props.navigation.goBack();
             props.navigation.navigate('Home');
@@ -411,14 +411,16 @@ const InfoScreen = (props) => {
             //props.navigation.goBack();
             //props.navigation.navigate('Home');
             //showToast('내정보가 저장되었습니다.', 1000);
+            setIsLoadingAndModal(0);
           } else if (
-            result.data[0].status == 'no' &&
-            result.data[0].message == '동일한 닉네임이 존재합니다.'
+            result.data.success === false &&
+            result.data.message === '동일한 닉네임이 존재합니다.'
           ) {
             //ok
             setNicknameChk(1);
-            return false;
+            setIsLoadingAndModal(0);
           } else {
+            setIsLoadingAndModal(0);
             let newClick = saveDataClick + 1;
             setSaveDataClick(newClick);
             forceUpdate();
@@ -429,6 +431,7 @@ const InfoScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
 
@@ -492,9 +495,8 @@ const InfoScreen = (props) => {
     props.navigation.navigate('Login2', {from: 'infoScreen'});
   };
   const [userImage, setUserImage] = React.useState(
-    reduxState.loginDataCheck.login?.data?.review_user_iu_image || null,
+    reduxState.loginDataCheck.login?.data?.image || null,
   );
-
   React.useEffect(() => {
     //초기화
     props.navigation.addListener('focus', async () => {
@@ -549,23 +551,19 @@ const InfoScreen = (props) => {
   const [smsCode, setSmsCode] = React.useState(0);
   const PhoneNumberChk = (Number) => {
     try {
-      let url = Domain + 'info/phonechk';
+      let url = `${Domain}api/user/chk/reduplication`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let result = await axios.post(
-            url,
-            {
-              _id: reduxState.loginDataCheck.login.data._id,
-              Phone: Number,
+          let result = await axios.get(url, {
+            headers: {
+              'Content-Type': 'application/json',
             },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
+            params: {
+              phonenumber: Number,
             },
-          );
-          if (result.data[0].status == 'ok') {
-            if (result.data[0].message == 'ok') {
+          });
+          if (result.data.success === true) {
+            if (result.data.result === null) {
               //인증번호받기로진행
               NaverSMSMessageSend(Number);
               setPhoneNumberChk(0);
@@ -590,8 +588,7 @@ const InfoScreen = (props) => {
     try {
       let timestamp = moment().valueOf();
       let random = parseInt(Math.random() * 899999 + 100000);
-      let url = Domain + 'sendMessage';
-
+      let url = `${Domain}api/user/sendmessage`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           let result = await axios.post(
@@ -607,7 +604,7 @@ const InfoScreen = (props) => {
               },
             },
           );
-          if (result.data[0].statusCode === '202') {
+          if (result.data.success === true) {
             //전송 성공 시간초 흐르기
             setSmsCode(random);
             setMinutes(parseInt(3));
@@ -655,39 +652,48 @@ const InfoScreen = (props) => {
   }, [minutes, seconds]);
   const logout = async () => {
     try {
-      if (reduxState.loginDataCheck.login.login == false) {
+      if (reduxState.loginDataCheck.login.login === false) {
         await Keychain.resetGenericPassword();
         props.updateIuCar([]);
         props.updateLocation({});
         props.update_id('');
-        props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+        //props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
         props.navigation.goBack();
         props.navigation.navigate('Home');
         props.updateLoginStatus(false);
       }
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'user/logout';
+          let url = `${Domain}api/user/logout`;
           let data = {
-            getUniqueId: DeviceInfo.getUniqueId(),
-            getDeviceId: DeviceInfo.getDeviceId(),
-            getModel: DeviceInfo.getModel(),
+            _id: reduxState.loginDataCheck.login.data._id,
+            getuniqueid: DeviceInfo.getUniqueId(),
+            getdeviceid: DeviceInfo.getDeviceId(),
+            getmodel: DeviceInfo.getModel(),
           };
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             await Keychain.resetGenericPassword();
             props.updateIuCar([]);
             props.updateLocation({});
             props.update_id('');
-            props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+            props.updateData(result.data.result); //디바이스정보라도 넣어줘야??
             props.updateLoginStatus(false);
             props.navigation.goBack();
             props.navigation.navigate('Home');
           } else {
+            await Keychain.resetGenericPassword();
+            props.updateIuCar([]);
+            props.updateLocation({});
+            props.update_id('');
+            //props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+            props.navigation.goBack();
+            props.navigation.navigate('Home');
+            props.updateLoginStatus(false);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -695,6 +701,7 @@ const InfoScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   //위치정보를 눌렀을 때 1 퍼미션 확인  2 퍼미션 허용되면 gps켜져있는지 확인해서 위치 가져오기 // gps꺼져있으면 gps켜달라고 하기. 끝 3 퍼미션이 허용되지 않았으면 퍼미션 허용해달라고 하기
@@ -785,7 +792,7 @@ const InfoScreen = (props) => {
             longitude: position.coords.longitude,
             latitude: position.coords.latitude,
           },
-          legalcode:
+          legalCode:
             result.data.results[0].region.area1.name +
             ' ' +
             result.data.results[0].region.area2.name +
@@ -1010,7 +1017,7 @@ const InfoScreen = (props) => {
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}>
-                        {reduxState.loginDataCheck?.login?.data?.iu_name}
+                        {reduxState.loginDataCheck?.login?.data?.name}
                       </Text>
                     </View>
                   </View>
@@ -1121,7 +1128,7 @@ const InfoScreen = (props) => {
                       <TextInput
                         editable={authButtonClick ? false : true}
                         placeholder={
-                          reduxState.loginDataCheck?.login?.data?.iu_phone
+                          reduxState.loginDataCheck?.login?.data?.phoneNumber
                         }
                         placeholderTextColor="#CCCCCC"
                         value={phoneNumber}
@@ -1135,7 +1142,7 @@ const InfoScreen = (props) => {
                           }
                         }}
                         onSubmitEditing={() => {
-                          if (phoneNumber.length == 13) {
+                          if (phoneNumber.length === 13) {
                             if (confirmChk) {
                             } else {
                               if (minutes >= 2) {
@@ -1427,9 +1434,9 @@ const InfoScreen = (props) => {
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}>
-                        {location.legalcode ||
+                        {location.legalCode ||
                           reduxState.loginDataCheck?.login?.data?.location
-                            ?.legalcode ||
+                            ?.legalCode ||
                           null}
                       </Text>
                       <TouchableOpacity
@@ -1688,7 +1695,7 @@ const InfoScreen = (props) => {
                           fontSize: Font_normalize(16),
                           color: '#000000',
                         }}>
-                        {reduxState.loginDataCheck?.login?.data?.iu_id}
+                        {reduxState.loginDataCheck?.login?.data?.email}
                       </Text>
                     </View>
                   </View>
@@ -1869,10 +1876,10 @@ const InfoScreen = (props) => {
                           activeOpacity={1}
                           hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}
                           onPress={() => {
-                            ChangeMarkettting('kakaotalk');
+                            ChangeMarkettting('kakao');
                           }}>
-                          {reduxState.loginDataCheck?.login?.data?.marketting
-                            ?.kakaotalk ? (
+                          {reduxState.loginDataCheck?.login?.data?.alarm
+                            ?.kakao ? (
                             <CheckedBox
                               width={Width_convert(14)}
                               height={Width_convert(14)}></CheckedBox>
@@ -1907,7 +1914,7 @@ const InfoScreen = (props) => {
                           onPress={() => {
                             ChangeMarkettting('mail');
                           }}>
-                          {reduxState.loginDataCheck?.login?.data?.marketting
+                          {reduxState.loginDataCheck?.login?.data?.alarm
                             ?.mail ? (
                             <CheckedBox
                               width={Width_convert(14)}
@@ -1942,7 +1949,7 @@ const InfoScreen = (props) => {
                           onPress={() => {
                             ChangeMarkettting('sms');
                           }}>
-                          {reduxState.loginDataCheck?.login?.data?.marketting
+                          {reduxState.loginDataCheck?.login?.data?.alarm
                             ?.sms ? (
                             <CheckedBox
                               width={Width_convert(14)}
@@ -2189,7 +2196,7 @@ const InfoScreen = (props) => {
                         latitude: parseFloat(item.y),
                       });
                       setLocation({
-                        legalcode: item.jibunAddress || item.roadAddress,
+                        legalCode: item.jibunAddress || item.roadAddress,
                         location: {
                           longitude: parseFloat(item.x),
                           latitude: parseFloat(item.y),
@@ -2357,7 +2364,7 @@ const InfoScreen = (props) => {
                     fontWeight: '700',
                     color: '#946AEF',
                   }}>
-                  {location?.legalcode}
+                  {location?.legalCode}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -91,7 +91,7 @@ const ReviewManage = (props) => {
               }
             } else {
               setReviewList(result.data.results[0].totalData);
-              setReviewCount(result.data.results[0].totalCount[0].count);
+              setReviewCount(result.data.results[0].totalCount[0]?.count || 0);
             }
           } else {
             setIsLoadingAndModal(3);

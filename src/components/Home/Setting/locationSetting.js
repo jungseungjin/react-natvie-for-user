@@ -69,11 +69,11 @@ const LocationSetting = (props) => {
               color: '#000000',
               lineHeight: Font_normalize(40),
             }}>
-            {props.pickLocation?.legalcode}
+            {props.pickLocation?.legalCode}
           </Text>
           {/*<TextInput
             editable={false}
-            value={props.pickLocation?.legalcode}
+            value={props.pickLocation?.legalCode}
             onChangeText={(value) => {}}
             placeholderStyle={{
               paddingLeft: Width_convert(10),

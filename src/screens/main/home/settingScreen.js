@@ -60,7 +60,7 @@ const SettingScreen = (props) => {
           );
         }
       }
-      if (reduxState.loginDataCheck.login.location?.legalcode) {
+      if (reduxState.loginDataCheck.login.location?.legalCode) {
         setPickLocation(reduxState.loginDataCheck.login.location);
       }
     } catch (err) {
@@ -77,10 +77,10 @@ const SettingScreen = (props) => {
           modelPick?.model &&
           modelDetailPick?.modelDetail) ||
           categoryPick == 'all') &&
-        pickLocation.legalcode
+        pickLocation.legalCode
       ) {
         if (
-          pickLocation.legalcode ==
+          pickLocation.legalCode ==
           '요청한 데이터의 결과가 없습니다. 지역을 직접 입력해주세요.'
         ) {
           setShowModal(true);
@@ -188,7 +188,7 @@ const SettingScreen = (props) => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
-          legalcode:
+          legalCode:
             result.data.results[0].region.area1.name +
             ' ' +
             result.data.results[0].region.area2.name +
@@ -202,7 +202,7 @@ const SettingScreen = (props) => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
-          legalcode:
+          legalCode:
             '요청한 데이터의 결과가 없습니다. 지역을 직접 입력해주세요.',
         });
         //네이버 맵에 없음
@@ -219,7 +219,7 @@ const SettingScreen = (props) => {
     reduxState.loginDataCheck.login.iu_car.length > 0
       ? reduxState.loginDataCheck.login.iu_car[0].pickBrand === 'all'
         ? 'all'
-        : reduxState.loginDataCheck.login.iu_car[0].pickBrand.brand_type == 1
+        : reduxState.loginDataCheck.login.iu_car[0].pickBrand.type == 1
         ? 'domestic'
         : 'import'
       : 'domestic',

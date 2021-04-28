@@ -230,6 +230,7 @@ const PickScreen = (props) => {
   const [forFunctionBoo, setForFunctionBoo] = useState(true);
   useEffect(() => {
     props.navigation.addListener('focus', () => {
+      console.log('찜한페이지');
       let m = Math.random();
       //setForFunctionBoo(m);
       setShowModal(true);

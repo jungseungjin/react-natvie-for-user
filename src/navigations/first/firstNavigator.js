@@ -63,23 +63,22 @@ const FirstNavigator = (props) => {
       if (credentials) {
         //로그인해서 리덕스에 정보 넣기,
         //로그인이 실패하면? 디바이스정보로 가져와보자
-        let result;
-        let url = `${Domain}login`;
+        let url = `${Domain}api/user/token`;
         let data = {};
         if (credentials.username && credentials.password) {
           data = {
-            idText: credentials.username,
-            passwordText: credentials.password,
-            getUniqueId: DeviceInfo.getUniqueId(),
-            getDeviceId: DeviceInfo.getDeviceId(),
-            getModel: DeviceInfo.getModel(),
+            id: credentials.username,
+            token: credentials.password,
+            getuniqueid: DeviceInfo.getUniqueId(),
+            getdeviceid: DeviceInfo.getDeviceId(),
+            getmodel: DeviceInfo.getModel(),
           };
         } else {
-          url = `${Domain}deviceLogin`;
+          url = `${Domain}api/user/device`;
           data = {
-            getUniqueId: DeviceInfo.getUniqueId(),
-            getDeviceId: DeviceInfo.getDeviceId(),
-            getModel: DeviceInfo.getModel(),
+            getuniqueid: DeviceInfo.getUniqueId(),
+            getdeviceid: DeviceInfo.getDeviceId(),
+            getmodel: DeviceInfo.getModel(),
           };
         }
         NetInfo.addEventListener(async (state) => {
@@ -89,42 +88,27 @@ const FirstNavigator = (props) => {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].status === 'ok') {
-              if (data?.idText) {
+            if (result.data.success === true) {
+              if (data?.id) {
                 //아이디로 로그인했으면
+                await Keychain.setGenericPassword(
+                  result.data.user._id,
+                  result.data.user.accessToken,
+                );
                 props.updateLoginStatus(true);
-                props.updateIuCar(result.data[0].loginData.iu_car);
-                props.updateLocation(result.data[0].loginData.location);
-                props.update_id(result.data[0].loginData._id);
-                props.updateData(result.data[0].loginData);
+                props.updateIuCar(result.data.user.car);
+                props.updateLocation(result.data.user.location);
+                props.update_id(result.data.user._id);
+                props.updateData(result.data.user);
               } else {
                 //디바이스로 로그인했으면
                 console.log('디바이스로 로그인');
                 props.updateLoginStatus(false);
-                props.updateData(result.data[0].deviceData);
+                props.updateData(result.data.result);
               }
             } else {
               //로그인이 안됐어
-              await Keychain.resetGenericPassword();
-
-              url = `${Domain}deviceLogin`;
-              data = {
-                getUniqueId: DeviceInfo.getUniqueId(),
-                getDeviceId: DeviceInfo.getDeviceId(),
-                getModel: DeviceInfo.getModel(),
-              };
-              result = await axios.post(url, data, {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-              if (result.data[0].status == 'ok') {
-                props.updateLoginStatus(false);
-                props.updateData(result.data[0].deviceData);
-              } else {
-                //기존로그인 실패-디바이스로 로그인하는것도 실패
-                setIsLoadingAndModal(3);
-              }
+              console.log('로그인안됨 그냥넘어가???????면 안될텐디');
             }
           } else {
             //인터넷 연결이 안되어있으면 인터넷 연결을 해주세요
@@ -135,11 +119,11 @@ const FirstNavigator = (props) => {
         //   RNSplashScreen.hide();
         // }, 1000);
       } else {
-        let url = `${Domain}deviceLogin`;
+        let url = `${Domain}api/user/device`;
         let data = {
-          getUniqueId: DeviceInfo.getUniqueId(),
-          getDeviceId: DeviceInfo.getDeviceId(),
-          getModel: DeviceInfo.getModel(),
+          getuniqueid: DeviceInfo.getUniqueId(),
+          getdeviceid: DeviceInfo.getDeviceId(),
+          getmodel: DeviceInfo.getModel(),
         };
         NetInfo.addEventListener(async (state) => {
           if (state.isConnected) {
@@ -148,9 +132,9 @@ const FirstNavigator = (props) => {
                 'Content-Type': 'application/json',
               },
             });
-            if (result.data[0].status == 'ok') {
+            if (result.data.success === true) {
               props.updateLoginStatus(false);
-              props.updateData(result.data[0].deviceData);
+              props.updateData(result.data.deviceData);
             } else {
               //로그인이 안됐어
               //디바이스로 로그인하는것도 실패
@@ -166,15 +150,14 @@ const FirstNavigator = (props) => {
           'No credentials stored 저장된 아이디 비밀번호 정보가 없으면 여기로나옴.',
         ); //저장된 정보가 없으면 여기로나옴. 디바이스아이디로 조회해서 알림값 물고있어라
         console.log(reduxState.loginDataCheck.login);
-        // setTimeout(() => {
-        //   RNSplashScreen.hide();
-        // }, 1000);
       }
     } catch (error) {
       console.log("Keychain couldn't be accessed!", error);
     } finally {
       setIsLoadingAndModal(0);
-      RNSplashScreen.hide();
+      setTimeout(() => {
+        RNSplashScreen.hide();
+      }, 1000);
     }
   };
   //토큰값 가져오기 및 저장.  알림이 허용된 상태면 디바이스정보도 저장함. 알림이 거절되면 디바이스정보,토큰값이 저장되지 않음
@@ -188,16 +171,16 @@ const FirstNavigator = (props) => {
           if (fcmToken == TokenValue) {
             //저장된 토큰의 값이 같으니 디바이스에는 저장하지 않는다.
             //업데이트는 해줘야함
-            TokenDB(fcmToken);
+            //TokenDB(fcmToken);
           } else {
             //토큰이 변경되었으니 저장한다.
             await AsyncStorage.setItem('fcmToken', fcmToken);
-            TokenDB(fcmToken);
+            //TokenDB(fcmToken);
           }
         } else {
           //처음 한번 저장한다
           await AsyncStorage.setItem('fcmToken', fcmToken);
-          TokenDB(fcmToken);
+          //TokenDB(fcmToken);
         }
       }
     } else {

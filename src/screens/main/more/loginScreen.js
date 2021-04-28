@@ -30,6 +30,7 @@ import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import DeviceInfo from 'react-native-device-info';
+import messaging from '@react-native-firebase/messaging';
 const LoginScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = React.useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -37,6 +38,17 @@ const LoginScreen = (props) => {
   const insets = useSafeAreaInsets();
   const [idText, setIdText] = React.useState('');
   const [passwordText, setPasswordText] = React.useState('');
+
+  const [fcmToken, setFcmToken] = React.useState('');
+
+  //토큰값 가져오기
+  const handlePushToken = React.useCallback(async () => {
+    const enabled = await messaging().hasPermission();
+    if (enabled) {
+      const getToken = await messaging().getToken();
+      setFcmToken(getToken);
+    }
+  });
   const [messageShow, setMessageShow] = React.useState(false);
   const MessageShowChangeValue = () => {
     setMessageShow(true);
@@ -47,18 +59,19 @@ const LoginScreen = (props) => {
   const LoginBack = () => {
     try {
       let result;
-      let url = Domain + 'login';
+      let url = `${Domain}api/user/login`;
       if (idText && passwordText) {
       } else {
         MessageShowChangeValue();
         return false;
       }
       let data = {
-        idText: idText,
-        passwordText: passwordText,
-        getUniqueId: DeviceInfo.getUniqueId(),
-        getDeviceId: DeviceInfo.getDeviceId(),
-        getModel: DeviceInfo.getModel(),
+        email: idText,
+        password: passwordText,
+        getuniqueid: DeviceInfo.getUniqueId(),
+        getdeviceid: DeviceInfo.getDeviceId(),
+        getmodel: DeviceInfo.getModel(),
+        fcmtoken: fcmToken,
       };
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
@@ -69,14 +82,17 @@ const LoginScreen = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].status == 'ok') {
+          if (result.data.success === true) {
             setIsLoadingAndModal(0);
-            await Keychain.setGenericPassword(idText, passwordText);
+            await Keychain.setGenericPassword(
+              result.data.user._id,
+              result.data.user.accessToken,
+            );
             props.updateLoginStatus(true);
-            props.updateIuCar(result.data[0].loginData.iu_car);
-            props.updateLocation(result.data[0].loginData.location);
-            props.update_id(result.data[0].loginData._id);
-            props.updateData(result.data[0].loginData);
+            props.updateIuCar(result.data.user.car);
+            props.updateLocation(result.data.user.location);
+            props.update_id(result.data.user._id);
+            props.updateData(result.data.user);
             if (props?.route?.params?.from === 'infoScreen') {
               props.navigation.goBack();
               props.navigation.goBack();
@@ -102,6 +118,7 @@ const LoginScreen = (props) => {
   };
   //
   React.useEffect(() => {
+    handlePushToken();
     if (props?.route?.params?.from === 'infoScreen') {
       BackHandler.addEventListener('hardwareBackPress', () => {
         return true;

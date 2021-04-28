@@ -178,10 +178,10 @@ const HomeScreen = (props) => {
     const {iu_car, location} = reduxState.loginDataCheck.login;
     if (
       iu_car.length > 0 &&
-      location.legalcode &&
+      location.legalCode &&
       iu_car[0]?.pickModelDetail?.modelDetail != undefined
     ) {
-      return `${iu_car[0]?.pickBrand?.brand} ${iu_car[0]?.pickModelDetail?.modelDetail} / ${location.legalcode}`;
+      return `${iu_car[0]?.pickBrand?.brand} ${iu_car[0]?.pickModelDetail?.modelDetail} / ${location.legalCode}`;
     } else if (
       iu_car.length > 0 &&
       iu_car[0]?.pickModelDetail?.modelDetail != undefined
@@ -190,13 +190,13 @@ const HomeScreen = (props) => {
     } else if (
       iu_car.length > 0 &&
       iu_car[0]?.pickModelDetail === 'all' &&
-      location.legalcode
+      location.legalCode
     ) {
-      return `모든 차종 / ${location.legalcode}`;
+      return `모든 차종 / ${location.legalCode}`;
     } else if (iu_car.length > 0 && iu_car[0]?.pickModelDetail === 'all') {
       return `모든 차종 / 지역`;
-    } else if (location.legalcode) {
-      return `차종 / ${location.legalcode}`;
+    } else if (location.legalCode) {
+      return `차종 / ${location.legalCode}`;
     } else {
       return `차종 / 지역`;
     }

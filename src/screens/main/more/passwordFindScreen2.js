@@ -54,11 +54,10 @@ const PasswordFindScreen2 = (props) => {
   }
   async function PasswordChange() {
     try {
-      let result;
-      let url = Domain + 'signUp/passwordFind/passworkchange';
+      let url = `${Domain}api/user/change/password`;
       let data = {
-        phoneNumber: phoneNumber,
-        idText: idText,
+        phonenumber: phoneNumber,
+        email: idText,
         password: password,
       };
       if (phoneNumber && idText && password && passwordChk && passwordReChk) {
@@ -68,13 +67,12 @@ const PasswordFindScreen2 = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           setIsLoadingAndModal(1);
-          //인터넷 연결이 확인되면 뒤에서 이메일 중복검사 진행
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].status == 'ok') {
+          if (result.data.success === true && result.data.result !== null) {
             setIsLoadingAndModal(0);
             props.navigation.navigate('Login', {
               fromNav: props.route.params.fromNav,
