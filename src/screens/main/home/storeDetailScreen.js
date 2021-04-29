@@ -528,7 +528,7 @@ const StoreDetailScreen = (props) => {
         <WorkConsultingModal
           storeNumber={props.route.params.item.address.phoneNumber}
           WorkConsultingModalChangeValue={WorkConsultingModalChangeValue}
-          name={reduxState.loginDataCheck.login?.data?.iu_name || null}
+          name={reduxState.loginDataCheck.login?.data?.name || null}
           navigation={props.navigation}></WorkConsultingModal>
       ) : null}
       {showModal ? (

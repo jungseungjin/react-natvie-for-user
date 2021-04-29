@@ -32,30 +32,31 @@ const Withdrawal = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'user/delete';
+          let url = `${Domain}api/user/withdrawal`;
           let data = {
             _id: reduxState.loginDataCheck.login.data._id,
-            getUniqueId: DeviceInfo.getUniqueId(),
-            getDeviceId: DeviceInfo.getDeviceId(),
-            getModel: DeviceInfo.getModel(),
+            getuniqueid: DeviceInfo.getUniqueId(),
+            getdeviceid: DeviceInfo.getDeviceId(),
+            getmodel: DeviceInfo.getModel(),
           };
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             console.log('gdgd');
             await Keychain.resetGenericPassword();
             props.updateLoginStatus(false);
             props.updateIuCar([]);
             props.updateLocation({});
             props.update_id('');
-            props.updateData(result.data[0].result); //디바이스정보라도 넣어줘야??
+            props.updateData(result.data.result); //디바이스정보라도 넣어줘야??
             props.navigation.navigate('More');
             props.navigation.navigate('Home');
           } else {
             console.log('dddd');
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -63,6 +64,7 @@ const Withdrawal = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   const [sendDataModal, setSendDataModal] = React.useState(false);

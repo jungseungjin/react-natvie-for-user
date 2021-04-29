@@ -136,7 +136,8 @@ const WorkConsultingModal = (props) => {
                     fontSize: Font_normalize(14),
                     color: '#000000',
                   }}>
-                  작업비용이 내려갈 수도 올라갈 수도 있습니다.
+                  변동될 수 있으므로 꼭 사장님과 작업에 대한 상담을
+                  진행해보세요.
                 </Text>
               </Text>
             </View>

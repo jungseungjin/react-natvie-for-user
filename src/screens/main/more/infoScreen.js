@@ -138,23 +138,29 @@ const InfoScreen = (props) => {
               kakao: !reduxState.loginDataCheck.login.data.alarm.kakao,
               mail: reduxState.loginDataCheck.login.data.alarm.mail,
               sms: reduxState.loginDataCheck.login.data.alarm.sms,
+              notice: reduxState.loginDataCheck.login.data.alarm.notice,
+              review: reduxState.loginDataCheck.login.data.alarm.review,
             };
           } else if (type === 'mail') {
             marketting = {
               kakao: reduxState.loginDataCheck.login.data.alarm.kakao,
               mail: !reduxState.loginDataCheck.login.data.alarm.mail,
               sms: reduxState.loginDataCheck.login.data.alarm.sms,
+              notice: reduxState.loginDataCheck.login.data.alarm.notice,
+              review: reduxState.loginDataCheck.login.data.alarm.review,
             };
           } else if (type === 'sms') {
             marketting = {
               kakao: reduxState.loginDataCheck.login.data.alarm.kakao,
               mail: reduxState.loginDataCheck.login.data.alarm.mail,
               sms: !reduxState.loginDataCheck.login.data.alarm.sms,
+              notice: reduxState.loginDataCheck.login.data.alarm.notice,
+              review: reduxState.loginDataCheck.login.data.alarm.review,
             };
           } else {
             return;
           }
-          let url = Domain + 'setting/info/marketting';
+          let url = `${Domain}api/user/change/alarm`;
           let data = {
             _id: reduxState.loginDataCheck.login.data._id,
             marketting: marketting,
@@ -164,9 +170,9 @@ const InfoScreen = (props) => {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             let prevData = reduxState.loginDataCheck.login.data;
-            prevData.marketting = marketting;
+            prevData.alarm = marketting;
             props.updateData(prevData); //디바이스정보라도 넣어줘야??
           }
         } else {
@@ -175,6 +181,7 @@ const InfoScreen = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
 
@@ -245,7 +252,6 @@ const InfoScreen = (props) => {
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [location, setLocation] = React.useState({});
   const LocationChangeValue = (Object) => setLocation(Object);
-  console.log(reduxState.loginDataCheck?.login?.data);
   const [car, setCar] = React.useState(
     reduxState.loginDataCheck?.login?.data?.car || [],
   );

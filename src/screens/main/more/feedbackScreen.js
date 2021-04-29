@@ -42,32 +42,46 @@ const Feedback = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'feedback/register';
+          let url = `${Domain}api/customer/save/feedback`;
           let data = {};
+          let newTitle = title;
+          let newContents = contents;
+          newTitle = newTitle.replace(/</gi, '');
+          newTitle = newTitle.replace(/>/gi, '');
+          newContents = newContents.replace(/</gi, '');
+          newContents = newContents.replace(/>/gi, '');
           if (reduxState.loginDataCheck.login.login == true) {
             data = {
-              _id: reduxState.loginDataCheck.login.data._id,
-              title: title,
-              contents: contents,
+              writer: reduxState.loginDataCheck.login.data._id,
+              device: {
+                getUniqueId: DeviceInfo.getUniqueId(),
+                getDeviceId: DeviceInfo.getDeviceId(),
+                getModel: DeviceInfo.getModel(),
+              },
+              title: newTitle,
+              contents: newContents,
             };
           } else {
             data = {
-              _id: 'no',
-              title: title,
-              contents: contents,
+              writer: null,
+              device: {
+                getUniqueId: DeviceInfo.getUniqueId(),
+                getDeviceId: DeviceInfo.getDeviceId(),
+                getModel: DeviceInfo.getModel(),
+              },
+              title: newTitle,
+              contents: newContents,
             };
           }
-          data.getUniqueId = DeviceInfo.getUniqueId();
-          data.getDeviceId = DeviceInfo.getDeviceId();
-          data.getModel = DeviceInfo.getModel();
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             setFeedBackCompleteModel(true);
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -75,6 +89,7 @@ const Feedback = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   return (
@@ -162,7 +177,7 @@ const Feedback = (props) => {
                 paddingTop: Height_convert(15),
                 paddingLeft: Width_convert(10),
                 paddingRight: Width_convert(10),
-                width: Width_convert(305),
+                width: contents ? Width_convert(305) : Width_convert(375),
                 minHeight: '100%',
                 fontFamily: Fonts?.NanumSqureRegular || null,
                 fontWeight: '700',

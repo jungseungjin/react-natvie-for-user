@@ -44,23 +44,30 @@ const OneOnOneRevise = (props) => {
         setContentsLengthModal(true);
         return false;
       }
+      let newTitle = title;
+      let newContents = contents;
+      newTitle = newTitle.replace(/</gi, '');
+      newTitle = newTitle.replace(/>/gi, '');
+      newContents = newContents.replace(/</gi, '');
+      newContents = newContents.replace(/>/gi, '');
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'question/revise';
+          let url = `${Domain}api/customer/revise/question`;
           let data = {
-            _id: reduxState.loginDataCheck.login.data._id,
-            question_id: props.route.params.item._id,
-            title: title,
-            contents: contents,
+            writer: reduxState.loginDataCheck.login.data._id,
+            _id: props.route.params.item._id,
+            title: newTitle,
+            contents: newContents,
           };
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.navigate('OneOnOne');
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -68,6 +75,7 @@ const OneOnOneRevise = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   return (

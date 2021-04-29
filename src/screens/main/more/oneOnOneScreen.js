@@ -28,10 +28,14 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import _ from 'lodash';
 const OneOnOne = (props) => {
   moment.locale('ko');
   React.useEffect(
-    () => props.navigation.addListener('focus', () => onRefresh()),
+    () =>
+      props.navigation.addListener('focus', () => {
+        getData(), setBackendPage(1);
+      }),
     [],
   );
   const reduxState = useSelector((state) => state);
@@ -40,8 +44,16 @@ const OneOnOne = (props) => {
   const IsLoadingAndModalChangeValue = (text) => setIsLoadingAndModal(text);
   const [chkTime, setChkTime] = React.useState(moment().valueOf());
   const [chkReload, setChkReload] = React.useState(0);
-  const getData = () => {
+
+  const throttleGetData = _.throttle((Number) => getData(true), 300, {
+    leading: true,
+    trailing: false,
+  });
+  const [backendPage, setBackendPage] = React.useState(1);
+  const getData = (Page) => {
     try {
+      let page;
+      if (Page) page = backendPage;
       if (chkReload != 0) {
         if (parseInt(chkTime) > parseInt(moment().valueOf()) - 10000) {
           return false;
@@ -51,18 +63,27 @@ const OneOnOne = (props) => {
       setChkReload(parseInt(chkReload) + 1);
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'question_list';
+          let url = `${Domain}api/customer/get/question`;
           let result = await axios.get(url, {
-            params: {
-              _id: reduxState.loginDataCheck.login.data._id,
-            },
             headers: {
               'Content-Type': 'application/json',
             },
+            params: {
+              writer: reduxState.loginDataCheck.login.data._id,
+              page: page,
+            },
           });
-          if (result.data[0].message == 'ok') {
-            setDataList(result.data[0].result);
+          if (result.data.success === true) {
+            if (Page && result.data.result.length > 0) {
+              setDataList([...dataList, ...result.data.result]);
+              setBackendPage((prevState) => {
+                return (prevState += 1);
+              });
+            } else {
+              setDataList(result.data.result);
+            }
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -70,6 +91,7 @@ const OneOnOne = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
 
@@ -105,8 +127,11 @@ const OneOnOne = (props) => {
           data={dataList}
           windowSize={2}
           initialNumToRender={10}
-          renderItem={({item}) => (
+          onEndReached={throttleGetData}
+          onEndReachedThreshold={10}
+          renderItem={({item, index}) => (
             <TouchableOpacity
+              key={item._id + index}
               activeOpacity={1}
               onPress={() => {
                 props.navigation.navigate('OneOnOneView', {item: item});
@@ -143,7 +168,7 @@ const OneOnOne = (props) => {
                       fontWeight: '400',
                       color: '#393939',
                     }}>
-                    {moment(item.regDate).format('YYYY년 MM월 DD일')}
+                    {moment(item.createdAt).format('YYYY년 MM월 DD일')}
                   </Text>
                 </View>
                 <View style={{width: Width_convert(100)}}>

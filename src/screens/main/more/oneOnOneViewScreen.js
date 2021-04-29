@@ -35,21 +35,20 @@ const OneOnOneView = (props) => {
     try {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          let url = Domain + 'question/delete';
+          let url = `${Domain}api/customer/delete/question`;
           let data = {
-            _id: reduxState.loginDataCheck.login.data._id,
-            question_id: props.route.params.item._id,
-            title: props.route.params.item.title,
-            contents: props.route.params.item.contents,
+            writer: reduxState.loginDataCheck.login.data._id,
+            _id: props.route.params.item._id,
           };
           let result = await axios.post(url, data, {
             headers: {
               'Content-Type': 'application/json',
             },
           });
-          if (result.data[0].message == 'ok') {
+          if (result.data.success === true) {
             props.navigation.navigate('OneOnOne');
           } else {
+            setIsLoadingAndModal(3);
           }
         } else {
           setIsLoadingAndModal(2);
@@ -57,6 +56,7 @@ const OneOnOneView = (props) => {
       });
     } catch (err) {
       console.log(err);
+      setIsLoadingAndModal(3);
     }
   };
   return (
@@ -111,7 +111,7 @@ const OneOnOneView = (props) => {
                     lineHeight: Font_normalize(10),
                     color: '#9F9F9F',
                   }}>
-                  {moment(props.route.params.item.regDate).format(
+                  {moment(props.route.params.item.createdAt).format(
                     'YYYY년 MM월 DD일',
                   )}
                 </Text>
