@@ -134,11 +134,14 @@ const SignUpInformation = (props) => {
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
           Keyboard.dismiss();
+          console.log(Number);
           let result = await axios.get(url, {
             headers: {
               'Content-Type': 'application/json',
             },
-            phonenumber: Number,
+            params: {
+              phonenumber: Number,
+            },
           });
           if (result.data.success === true) {
             if (result.data.result === null) {

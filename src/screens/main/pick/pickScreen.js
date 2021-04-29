@@ -232,8 +232,10 @@ const PickScreen = (props) => {
     props.navigation.addListener('focus', () => {
       console.log('찜한페이지');
       let m = Math.random();
-      //setForFunctionBoo(m);
+      setForFunctionBoo(m);
       setShowModal(true);
+      setBackendPageStore(1);
+      setBackendPageWork(1);
       get_pickData();
     });
     props.navigation.addListener('blur', () => {

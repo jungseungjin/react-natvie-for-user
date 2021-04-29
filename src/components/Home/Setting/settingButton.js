@@ -28,8 +28,8 @@ const SettingButton = (props) => {
           return false;
         } else if (props.Type == 'workDetail') {
           if (
-            reduxState.loginDataCheck.login?.iu_car?.length == 0 ||
-            !reduxState.loginDataCheck.login?.location?.legalcode
+            reduxState.loginDataCheck.login?.car?.length == 0 ||
+            !reduxState.loginDataCheck.login?.location?.legalCode
           ) {
             props.PickButtonTitleChangeValue(props.Title);
             props.ShowModalChangeValue(true);
