@@ -232,10 +232,22 @@ const HomeScreen = (props) => {
                 dot={<Dot></Dot>}
                 activeDot={<ActiveDot></ActiveDot>}>
                 {topSliderImageList.map((item) => (
-                  <SwiperImage
+                  <TouchableOpacity
+                    style={{
+                      height: Height_convert(211),
+                    }}
+                    activeOpacity={1}
                     key={item._id}
-                    from={'home'}
-                    image={item.image}></SwiperImage>
+                    onPress={() => {
+                      //페이지 만들어서 슝슝
+                      if (item.image.includes('banner1')) {
+                        props.navigation.navigate('Banner1');
+                      } else if (item.image.includes('banner2')) {
+                        props.navigation.navigate('Banner2');
+                      }
+                    }}>
+                    <SwiperImage from={'home'} image={item.image}></SwiperImage>
+                  </TouchableOpacity>
                 ))}
               </Swiper>
             ) : (

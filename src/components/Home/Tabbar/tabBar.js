@@ -20,9 +20,30 @@ import {useSelector, connect} from 'react-redux';
 const TabBar = (props) => {
   return (
     <View style={styles.mainView}>
-      <View style={styles.leftView}>{leftViewNested(props)}</View>
-      <View style={styles.centerView}>{centerViewNested(props)}</View>
-      <View style={styles.rightView}>{rightViewNested(props)}</View>
+      <View
+        style={
+          props.Title === '튜닝문화 성장을 위한 후기'
+            ? styles.leftViewSub
+            : styles.leftView
+        }>
+        {leftViewNested(props)}
+      </View>
+      <View
+        style={
+          props.Title === '튜닝문화 성장을 위한 후기'
+            ? styles.centerViewSub
+            : styles.centerView
+        }>
+        {centerViewNested(props)}
+      </View>
+      <View
+        style={
+          props.Title === '튜닝문화 성장을 위한 후기'
+            ? styles.rightViewSub
+            : styles.rightView
+        }>
+        {rightViewNested(props)}
+      </View>
     </View>
   );
 };
@@ -375,13 +396,24 @@ const styles = StyleSheet.create({
   leftView: {
     width: '30%',
   },
+  leftViewSub: {
+    width: '25%',
+  },
   centerView: {
     width: '40%',
+    alignItems: 'center',
+  },
+  centerViewSub: {
+    width: '50%',
     alignItems: 'center',
   },
   rightView: {
     alignItems: 'flex-end',
     width: '30%',
+  },
+  rightViewSub: {
+    alignItems: 'flex-end',
+    width: '25%',
   },
   text: {
     color: '#000000',

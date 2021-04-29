@@ -71,6 +71,8 @@ const setTabBarVisible = (route, reduxState) => {
     'Map_more',
     'MapSearch_more',
     'CostChangeScreen',
+    'Banner1',
+    'Banner2',
   ];
   if (hideOnScreens.indexOf(routeName) > -1) return false;
   return true;

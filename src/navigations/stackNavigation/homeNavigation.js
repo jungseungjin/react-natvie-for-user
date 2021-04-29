@@ -1,5 +1,7 @@
 import React from 'react';
 import Home from '../../screens/main/home/homeScreen.js';
+import Banner1 from '../../screens/main/home/banner1';
+import Banner2 from '../../screens/main/home/banner2';
 import Search from '../../screens/main/home/searchScreen.js';
 import SearchDetail from '../../screens/main/home/searchDetailScreen.js';
 import Setting from '../../screens/main/home/settingScreen.js';
@@ -49,6 +51,18 @@ const HomeNavigator = (props) => {
       <Stack.Screen
         name="Home"
         component={Home}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="Banner1"
+        component={Banner1}
+        initialParams={{}}
+        options={{}}
+      />
+      <Stack.Screen
+        name="Banner2"
+        component={Banner2}
         initialParams={{}}
         options={{}}
       />
