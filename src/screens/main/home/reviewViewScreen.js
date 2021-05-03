@@ -30,13 +30,13 @@ import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
 import 'moment/locale/ko';
-import ImageView from 'react-native-image-viewing';
 import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import _ from 'lodash';
+import ImageModal from '../../../components/Modal/ImageModal.js';
 const ReviewView = (props) => {
   moment.locale('ko');
   //해당 작업 후기 불러오기
@@ -429,12 +429,11 @@ const ReviewView = (props) => {
             </TouchableOpacity>
           </View>
         ) : null}
-        <ImageView
-          images={getImageSource(visibleImage)}
-          imageIndex={visibleIndex}
-          presentationStyle="overFullScreen"
+        <ImageModal
           visible={visible}
-          onRequestClose={() => setIsVisible(false)}></ImageView>
+          setIsVisible={setIsVisible}
+          visibleIndex={visibleIndex}
+          imageUrls={visibleImage}></ImageModal>
         {isLoadingAndModal === 0 ? null : isLoadingAndModal === 1 ? ( //0 없음 1이면IsLoading 2는 NetworkErrModal 3은 NormalErrModal 4부터는 없음
           <IsLoading></IsLoading>
         ) : isLoadingAndModal === 2 ? (
@@ -464,17 +463,4 @@ const ReviewView = (props) => {
   );
 };
 
-const getImageSource = (image) => {
-  let newArr = [];
-  image.map((item) => {
-    if (typeof item == 'number') {
-    } else {
-      newArr.push({
-        uri: item.toString(),
-        source: item,
-      });
-    }
-  });
-  return newArr;
-};
 export default ReviewView;

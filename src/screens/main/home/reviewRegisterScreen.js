@@ -38,6 +38,7 @@ import AlertModal1 from '../../../components/Modal/AlertModal1.js';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
+import {openSettings} from 'react-native-permissions';
 const ReviewRegister = (props) => {
   const reduxState = useSelector((state) => state);
   const [page, setPage] = React.useState('');
@@ -72,6 +73,7 @@ const ReviewRegister = (props) => {
         })
         .catch((e) => {
           console.log('err pickWithCamera: ', e);
+          //openSettings();
         });
     } catch (err) {
       console.log(err);

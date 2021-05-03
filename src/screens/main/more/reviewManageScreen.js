@@ -31,11 +31,12 @@ import {useSelector} from 'react-redux';
 import LoginModal from '../../../components/Modal/LoginModal.js';
 import moment from 'moment';
 import 'moment/locale/ko';
-import ImageView from 'react-native-image-viewing';
 import IsLoading from '../../../components/ActivityIndicator';
 import NetworkErrModal from '../../../components/Modal/NetworkErrModal';
 import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import _ from 'lodash';
+import ImageModal from '../../../components/Modal/ImageModal.js';
+
 const ReviewManage = (props) => {
   moment.locale('ko');
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -269,12 +270,11 @@ const ReviewManage = (props) => {
               navigation={props.navigation}></Review>
           )}
           keyExtractor={(item) => String(item._id)}></FlatList>
-        <ImageView
-          images={getImageSource(visibleImage)}
-          imageIndex={visibleIndex}
-          presentationStyle="overFullScreen"
+        <ImageModal
           visible={visible}
-          onRequestClose={() => setIsVisible(false)}></ImageView>
+          setIsVisible={setIsVisible}
+          visibleIndex={visibleIndex}
+          imageUrls={visibleImage}></ImageModal>
         {deleteModal ? (
           <AlertModal2
             type={1}

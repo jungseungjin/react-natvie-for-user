@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Modal,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -49,8 +50,7 @@ import NormalErrModal from '../../../components/Modal/NormalErrModal';
 import moment from 'moment';
 import _ from 'lodash';
 import SetRecentList from '../../../components/setRecentList.js';
-import ImageView from 'react-native-image-viewing';
-
+import ImageModal from '../../../components/Modal/ImageModal.js';
 const WorkDetailScreen = (props) => {
   const reduxState = useSelector((state) => state);
   const [isLoadingAndModal, setIsLoadingAndModal] = useState(0); //0은 null 1은 IsLoading 2는 NetWorkErrModal 3은 NormalErrModal
@@ -755,29 +755,12 @@ phoneNumber
         <NormalErrModal
           ShowModalChangeValue={IsLoadingAndModalChangeValue}></NormalErrModal>
       ) : null}
-
-      <ImageView
-        doubleTapToZoomEnabled
-        animationType={'slide'}
-        images={getImageSource(props.route.params.item.image)}
-        imageIndex={visibleIndex}
-        presentationStyle="overFullScreen"
+      <ImageModal
         visible={visible}
-        onRequestClose={() => setIsVisible(false)}></ImageView>
+        setIsVisible={setIsVisible}
+        visibleIndex={visibleIndex}
+        imageUrls={props.route.params.item.image}></ImageModal>
     </>
   );
-};
-const getImageSource = (image) => {
-  let newArr = [];
-  image.map((item) => {
-    if (typeof item == 'number') {
-    } else {
-      newArr.push({
-        uri: item.toString(),
-        source: item,
-      });
-    }
-  });
-  return newArr;
 };
 export default WorkDetailScreen;
