@@ -1,22 +1,28 @@
 import React from 'react';
-import {Modal, View, TouchableOpacity} from 'react-native';
+import {Modal, View, TouchableOpacity, StatusBar} from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import X from '../../../assets/home/x.svg';
+import Width_convert from '../Width_convert.js';
+import Height_convert from '../Width_convert.js';
+import StatusBarHeight from '../StatusBarHeight.js';
 const ImageModal = (props) => {
   return (
     <Modal
+      style={{flex: 1, backgroundColor: 'black'}}
       visible={props.visible}
-      presentationStyle={'fullScreen'}
+      presentationStyle={'overFullScreen'}
+      transparent={true}
       statusBarTranslucent={true}>
       <View
         style={{
+          flex: 1,
           position: 'absolute',
           left: 20,
           right: 0,
           top: 40,
           zIndex: 13,
           justifyContent: 'center',
-          backgroundColor: 'transparent',
+          backgroundColor: 'black',
         }}>
         <TouchableOpacity
           activeOpacity={1}
@@ -39,6 +45,18 @@ const ImageModal = (props) => {
         index={props.visibleIndex}
         imageUrls={getImageSource(props.imageUrls)}
       />
+      <View
+        style={{
+          width: Width_convert(375),
+          height: 50,
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1,
+          justifyContent: 'center',
+          backgroundColor: 'black',
+        }}></View>
     </Modal>
   );
 };
@@ -49,9 +67,6 @@ const getImageSource = (image) => {
     } else {
       newArr.push({
         url: item.toString(),
-        props: {
-          // headers: ...
-        },
       });
     }
   });

@@ -455,7 +455,9 @@ const SearchScreenDetail = (props) => {
             <View
               style={[
                 Platform.OS === 'android'
-                  ? {top: Height_convert(138) - 2 * StatusBarHeight}
+                  ? StatusBarHeight < 40
+                    ? {top: Height_convert(138) - 44}
+                    : {top: Height_convert(138) - StatusBarHeight}
                   : {top: Height_convert(138)},
                 {
                   width: Width_convert(375),
