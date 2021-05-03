@@ -5,7 +5,7 @@ import Width_convert from '../../../components/Width_convert.js';
 import Fonts from '../../../components/Fonts.js';
 import Font_normalize from '../../../components/Font_normalize.js';
 
-import HTML from 'react-native-render-html';
+import HTML, {IGNORED_TAGS} from 'react-native-render-html';
 import WebView from 'react-native-webview';
 import IframeRenderer from '@native-html/iframe-plugin';
 const renderers = {
@@ -22,25 +22,28 @@ const WorkInformation = (props) => {
       <ScrollView alwaysBounceVertical={false} style={{flex: 1}}>
         <View style={{height: Width_convert(40)}}></View>
         <HTML
+          ignoredTags={[...IGNORED_TAGS, 'script']}
           renderers={renderers}
           source={{
-            html: props.item || `<p></p>`,
+            html:
+              `<div style="color: #000000">${props.item}</div>` || `<p></p>`,
           }}
           tagsStyles={{
-            p: {marginLeft: Width_convert(20), marginRight: Width_convert(20)},
+            p: {
+              marginLeft: Width_convert(20),
+              marginRight: Width_convert(20),
+            },
             img: {
               marginBottom: -Width_convert(10),
             },
           }}
+          onLoadEnd={(e) => console.log('Loading EndedHTML')}
           contentWidth={contentWidth}
           WebView={WebView}
-          defaultWebViewProps={
-            {
-              /* Any prop you want to pass to all WebViews */
-            }
-          }
+          defaultWebViewProps={{}}
           renderersProps={{iframe: {scalesPageToFit: true}}}
         />
+        {/* uri: 'https://github.com/facebook/react-native' */}
       </ScrollView>
     </View>
   );

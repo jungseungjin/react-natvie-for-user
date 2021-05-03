@@ -271,7 +271,7 @@ const CategoryDetailScreen = (props) => {
               borderTopWidth: 2,
               borderTopColor: '#DBDBDB',
             },
-            Platform.OS == 'ios'
+            Platform.OS === 'ios'
               ? {top: Height_convert(94) + Height_convert(48)}
               : {
                   top:
@@ -318,7 +318,7 @@ const CategoryDetailScreen = (props) => {
                 position: 'absolute',
                 zIndex: 1,
               },
-              Platform.OS == 'ios'
+              Platform.OS === 'ios'
                 ? {top: Height_convert(140 + 48)}
                 : {
                     top: Height_convert(139 + 48) - StatusBarHeight,

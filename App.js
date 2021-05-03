@@ -96,6 +96,7 @@ function App(props) {
   }, []);
   Text.defaultProps = Text.defaultProps || {};
   Text.defaultProps.allowFontScaling = false;
+  Text.defaultProps.color = '#000000';
   return (
     <Provider store={store}>
       <View style={{flex: 1}}>

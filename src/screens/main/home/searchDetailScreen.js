@@ -454,8 +454,8 @@ const SearchScreenDetail = (props) => {
           {pickFilter ? (
             <View
               style={[
-                Platform.OS == 'android'
-                  ? {top: Height_convert(138) - StatusBarHeight}
+                Platform.OS === 'android'
+                  ? {top: Height_convert(138) - 2 * StatusBarHeight}
                   : {top: Height_convert(138)},
                 {
                   width: Width_convert(375),
