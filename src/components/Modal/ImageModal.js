@@ -15,14 +15,13 @@ const ImageModal = (props) => {
       statusBarTranslucent={true}>
       <View
         style={{
-          flex: 1,
           position: 'absolute',
           left: 20,
           right: 0,
           top: 40,
           zIndex: 13,
           justifyContent: 'center',
-          backgroundColor: 'black',
+          backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
           activeOpacity={1}
