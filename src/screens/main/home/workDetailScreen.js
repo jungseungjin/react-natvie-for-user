@@ -251,6 +251,19 @@ phoneNumber
 
   const [visible, setIsVisible] = React.useState(false);
   const [visibleIndex, setVisibleIndex] = React.useState(0);
+
+  useEffect(() => {
+    props.navigation.addListener('focus', () => {
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(true);
+      }
+    });
+    props.navigation.addListener('blur', () => {
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(false);
+      }
+    });
+  }, [props.navigation]);
   return (
     <>
       <StatusBar
@@ -259,13 +272,13 @@ phoneNumber
       <View style={{backgroundColor: '#FFFFFF'}}>
         {scrollValue > Width_convert(240) - 2 * StatusBarHeight ? (
           <StatusBar
-            translucent
-            backgroundColor="transparent"
+            //translucent
+            backgroundColor={'transparent'}
             barStyle="dark-content"
           />
         ) : (
           <StatusBar
-            translucent
+            //translucent
             backgroundColor="transparent"
             barStyle="light-content" //dark-content
           />

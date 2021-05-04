@@ -183,8 +183,17 @@ const StoreDetailScreen = (props) => {
     }
   };
   useEffect(() => {
-    // getData();
-  }, []);
+    props.navigation.addListener('focus', () => {
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(true);
+      }
+    });
+    props.navigation.addListener('blur', () => {
+      if (Platform.OS === 'android') {
+        StatusBar.setTranslucent(false);
+      }
+    });
+  }, [props.navigation]);
   return (
     <>
       <StatusBar
