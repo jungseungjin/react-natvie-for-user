@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  FlatList,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -62,6 +63,22 @@ const StoreDetailScreen = (props) => {
   const [scrollValue, setScrollValue] = useState(0);
   const [page, setPage] = useState('store');
   const insets = useSafeAreaInsets();
+  const scrollHorizontalRef = useRef();
+  const onScroll = (e) => {
+    const newPage = Math.round(
+      e.nativeEvent.contentOffset.x / Width_convert(375),
+    );
+    if (newPage === 0) setPage('store');
+    else setPage('labor');
+  };
+
+  const PageChangeValue = (Number) => {
+    scrollHorizontalRef.current?.scrollToIndex({
+      animated: false,
+      index: Number,
+    });
+  };
+
   const scrollRef = useRef();
   const handleClick = () => {
     scrollRef.current.scrollTo({
@@ -400,6 +417,7 @@ const StoreDetailScreen = (props) => {
                 onPress={() => {
                   handleClick();
                   setPage('store');
+                  PageChangeValue(0);
                   //PageChangeValue(item.value);
                 }}
                 style={[
@@ -439,6 +457,7 @@ const StoreDetailScreen = (props) => {
                 onPress={() => {
                   handleClick();
                   setPage('labor');
+                  PageChangeValue(1);
                   //PageChangeValue(item.value);
                 }}
                 style={[
@@ -475,13 +494,41 @@ const StoreDetailScreen = (props) => {
           </View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*작업설명 -> HTML로 불러오기 */}
-          {page === 'store' ? (
-            <StoreInformation item={props.route.params.item}></StoreInformation>
-          ) : page === 'labor' ? (
-            <StoreInformation2
-              item={props.route.params.item}></StoreInformation2>
-          ) : null}
 
+          <FlatList
+            ref={scrollHorizontalRef}
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            data={[
+              {id: '1', item: props.route.params.item},
+              {id: '2', item: props.route.params.item},
+            ]}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment="start"
+            getItemLayout={(data, index) => ({
+              length: Width_convert(375),
+              offset: Width_convert(375) * index,
+              index,
+            })}
+            onScroll={onScroll}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={(item, index) => {
+              return (
+                <>
+                  {item.item.id === '1' ? (
+                    <StoreInformation item={item.item.item}></StoreInformation>
+                  ) : (
+                    <StoreInformation2
+                      item={item.item.item}></StoreInformation2>
+                  )}
+                </>
+              );
+            }}
+            initialScrollIndex={0}></FlatList>
           {/*하단 버튼만큼의 공간 띄우기 시작 */}
           <View
             style={{
