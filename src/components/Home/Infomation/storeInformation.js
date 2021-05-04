@@ -87,7 +87,7 @@ const WorkInformation = (props) => {
           // borderBottomWidth: 3,
           // borderBottomColor: '#DBDBDB',
         }}>
-        {props.item.member?.length > 0 && (
+        {props.item?.member?.length > 0 && (
           <>
             <Text
               key={1}
@@ -102,10 +102,10 @@ const WorkInformation = (props) => {
               가게 구성원
             </Text>
             <View style={{flexDirection: 'row', marginTop: Width_convert(14)}}>
-              {props.item.member.map((item, index) => (
+              {props.item?.member.map((item, index) => (
                 <View
                   style={{marginLeft: Width_convert(21)}}
-                  key={item.image + index}>
+                  key={item?.image + index}>
                   <FastImage
                     style={{
                       width: Width_convert(59),
@@ -113,7 +113,7 @@ const WorkInformation = (props) => {
                       borderRadius: Width_convert(59),
                     }}
                     source={{
-                      uri: item.image,
+                      uri: item?.image,
                       //headers: {Authorization: 'someAuthToken'},
                       priority: FastImage.priority.normal,
                     }}
@@ -123,7 +123,7 @@ const WorkInformation = (props) => {
                       textAlign: 'center',
                       marginTop: Width_convert(8),
                     }}>
-                    {item.name}
+                    {item?.name}
                   </Text>
                 </View>
               ))}
@@ -133,7 +133,7 @@ const WorkInformation = (props) => {
         <Text
           style={{
             marginTop:
-              props.item.member?.length > 0
+              props.item?.member?.length > 0
                 ? Height_convert(29)
                 : Height_convert(21),
             marginLeft: Width_convert(21),
@@ -155,7 +155,7 @@ const WorkInformation = (props) => {
             fontSize: Font_normalize(11),
             color: '#000000',
           }}>
-          {props.item.information}
+          {props.item?.information}
         </Text>
       </View>
     </View>

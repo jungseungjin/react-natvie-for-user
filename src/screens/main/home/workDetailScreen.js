@@ -10,6 +10,7 @@ import {
   Animated,
   Dimensions,
   Modal,
+  FlatList,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -64,6 +65,21 @@ const WorkDetailScreen = (props) => {
   const ShowModalChangeValue = (text) => setShowModal(text);
   const [page, setPage] = useState('work');
   const insets = useSafeAreaInsets();
+  const scrollHorizontalRef = useRef();
+  const onScroll = (e) => {
+    const newPage = Math.round(
+      e.nativeEvent.contentOffset.x / Width_convert(375),
+    );
+    if (newPage === 0) setPage('work');
+    else setPage('store');
+  };
+
+  const PageChangeValue = (Number) => {
+    scrollHorizontalRef.current?.scrollToIndex({
+      animated: false,
+      index: Number,
+    });
+  };
   const scrollRef = useRef();
   const handleClick = () => {
     scrollRef.current.scrollTo({
@@ -554,6 +570,7 @@ phoneNumber
                 onPress={() => {
                   handleClick();
                   setPage('work');
+                  PageChangeValue(0);
                 }}
                 style={[
                   {
@@ -596,6 +613,7 @@ phoneNumber
                 onPress={() => {
                   handleClick();
                   setPage('store');
+                  PageChangeValue(1);
                 }}
                 style={[
                   {
@@ -676,13 +694,39 @@ phoneNumber
           </View>
           {/*작업설명 사장님가게소개 우리가게공임표 버튼 끝 */}
           {/*//뒤에서 가져올거야 */}
-          {page == 'work' ? (
-            <WorkInformation item={workData?.information}></WorkInformation>
-          ) : page == 'store' ? (
-            <StoreInformation item={storeData}></StoreInformation>
-          ) : page == 'labor' ? (
-            <LaborInformation></LaborInformation>
-          ) : null}
+          <FlatList
+            ref={scrollHorizontalRef}
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            data={[
+              {id: '1', item: workData?.information},
+              {id: '2', item: storeData},
+            ]}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            snapToAlignment="start"
+            getItemLayout={(data, index) => ({
+              length: Width_convert(375),
+              offset: Width_convert(375) * index,
+              index,
+            })}
+            onScroll={onScroll}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={(item, index) => {
+              return (
+                <>
+                  {item.item.id === '1' ? (
+                    <WorkInformation item={item.item.item}></WorkInformation>
+                  ) : (
+                    <StoreInformation item={item.item.item}></StoreInformation>
+                  )}
+                </>
+              );
+            }}
+            initialScrollIndex={0}></FlatList>
           {/*작업설명 -> HTML로 불러오기 */}
           {/*하단 버튼만큼의 공간 띄우기 시작 */}
           <View

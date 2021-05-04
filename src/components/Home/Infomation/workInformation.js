@@ -17,6 +17,8 @@ const WorkInformation = (props) => {
   return (
     <View
       style={{
+        minWidth: Width_convert(375),
+        maxWidth: Width_convert(375),
         minHeight: Height_convert(812),
       }}>
       <ScrollView alwaysBounceVertical={false} style={{flex: 1}}>
@@ -26,7 +28,8 @@ const WorkInformation = (props) => {
           renderers={renderers}
           source={{
             html:
-              `<div style="color: #000000">${props.item}</div>` || `<p></p>`,
+              `<div style="color: #000000"><p>${props.item}</p></div>` ||
+              `<p></p>`,
           }}
           tagsStyles={{
             p: {
