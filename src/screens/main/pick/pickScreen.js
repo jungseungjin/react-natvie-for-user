@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {
   RefreshControl,
   SafeAreaView,
@@ -56,7 +56,20 @@ const PickScreen = (props) => {
   const [storeList, setStoreList] = useState([]);
   const [storeListDel, setStoreListDel] = useState([]);
   const StoreListDelChangeValue = (text) => setStoreListDel(text);
-  const PageChangeValue = (text) => setPage(text);
+  const PageChangeValue = (text) => {
+    if (text === 'work') {
+      scrollRef.current?.scrollToIndex({
+        animated: false,
+        index: 0,
+      });
+    } else {
+      scrollRef.current?.scrollToIndex({
+        animated: false,
+        index: 1,
+      });
+    }
+    setPage(text);
+  };
   //로그인 되어 있으면 찜한데이터 가져오기
   const [deleteModal, setDeleteModal] = useState(false);
   const DeleteModalChangeValue = (text) => setDeleteModal(text);
@@ -246,6 +259,92 @@ const PickScreen = (props) => {
       setBackendPageWork(1);
     });
   }, []);
+  const scrollRef = useRef();
+
+  const onScroll = (e) => {
+    const newPage = Math.round(
+      e.nativeEvent.contentOffset.x / Width_convert(375),
+    );
+    if (newPage === 0) setPage('work');
+    else setPage('store');
+  };
+  const renderItem = (id, itemList, delList) => {
+    return (
+      <FlatList
+        bounces={false}
+        alwaysBounceVertical={false}
+        // refreshControl={
+        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        // }
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={{flex: 1}}
+        data={
+          reduxState.loginDataCheck.login.login == false
+            ? [{message: '로그인이 필요합니다.'}]
+            : id === '1' && itemList.length > 0
+            ? itemList
+            : id === '2' && itemList.length > 0
+            ? itemList
+            : id === '1'
+            ? [{message: '찜한 작업이 없습니다.'}]
+            : id === '2'
+            ? [{message: '찜한 샵이 없습니다.'}]
+            : null
+        }
+        onEndReached={
+          id === '1' && itemList.length > 0
+            ? throttleGetDataWork
+            : id === '2' && itemList.length > 0 && throttleGetDataStore
+        }
+        onEndReachedThreshold={50}
+        windowSize={2}
+        initialNumToRender={10}
+        renderItem={({item}) =>
+          item.message ? (
+            <View
+              style={{
+                width: Width_convert(375),
+                height: Height_convert(812) - Height_convert(94 + 48),
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontFamily: Fonts?.NanumSqureRegular || null,
+                  fontSize: Font_normalize(16),
+                  fontWeight: '700',
+                  color: '#000000',
+                }}>
+                {item.message}
+              </Text>
+            </View>
+          ) : id === '1' && itemList.length > 0 ? (
+            <WorkPick
+              navigation={props.navigation}
+              getIndex={itemList.indexOf(item) + 1}
+              workListLength={itemList.length}
+              WorkListDelChangeValue={WorkListDelChangeValue}
+              workListDel={delList}
+              key={item._id}
+              item={item}
+              editMode={reduxState.editModeCheck.editMode}></WorkPick>
+          ) : id === '2' && itemList.length > 0 ? (
+            <StorePick
+              navigation={props.navigation}
+              getIndex={itemList.indexOf(item) + 1}
+              storeListLength={itemList.length}
+              ToStore={ToStore}
+              StoreListDelChangeValue={StoreListDelChangeValue}
+              storeListDel={delList}
+              key={item._id}
+              item={item}
+              editMode={reduxState.editModeCheck.editMode}></StorePick>
+          ) : null
+        }
+        keyExtractor={(item) => String(item._id)}></FlatList>
+    );
+  };
   return (
     <>
       <StatusBar
@@ -264,79 +363,47 @@ const PickScreen = (props) => {
           ]}
           nowValue={page}
           PageChangeValue={PageChangeValue}></TabBarBottom>
+
         <FlatList
           bounces={false}
-          alwaysBounceVertical={false}
-          // refreshControl={
-          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          // }
-          showsVerticalScrollIndicator={false}
+          ref={scrollRef}
+          style={{
+            height: '100%',
+            width: '100%',
+          }}
+          automaticallyAdjustContentInsets={false}
+          data={[
+            {id: '1', dataItem: workList, delItem: workListDel},
+            {id: '2', dataItem: storeList, delItem: storeListDel},
+          ]}
+          decelerationRate="fast"
+          horizontal
+          keyExtractor={(item) => String(item.id)}
+          onScroll={onScroll}
+          pagingEnabled
+          renderItem={(item, index) => {
+            return (
+              <>
+                <View key={item.item.id}>
+                  {renderItem(
+                    item.item.id,
+                    item.item.dataItem,
+                    item.item.delItem,
+                  )}
+                </View>
+              </>
+            );
+          }}
+          snapToAlignment="start"
           showsHorizontalScrollIndicator={false}
-          style={{flex: 1}}
-          data={
-            reduxState.loginDataCheck.login.login == false
-              ? [{message: '로그인이 필요합니다.'}]
-              : page === 'work' && workList.length > 0
-              ? workList
-              : page === 'store' && storeList.length > 0
-              ? storeList
-              : page === 'work'
-              ? [{message: '찜한 작업이 없습니다.'}]
-              : page === 'store'
-              ? [{message: '찜한 샵이 없습니다.'}]
-              : null
-          }
-          onEndReached={
-            page === 'work' && workList.length > 0
-              ? throttleGetDataWork
-              : page === 'store' && storeList.length > 0 && throttleGetDataStore
-          }
-          onEndReachedThreshold={50}
-          windowSize={2}
-          initialNumToRender={10}
-          renderItem={({item}) =>
-            item.message ? (
-              <View
-                style={{
-                  width: Width_convert(375),
-                  height: Height_convert(812) - Height_convert(94 + 48),
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: Fonts?.NanumSqureRegular || null,
-                    fontSize: Font_normalize(16),
-                    fontWeight: '700',
-                    color: '#000000',
-                  }}>
-                  {item.message}
-                </Text>
-              </View>
-            ) : page === 'work' && workList.length > 0 ? (
-              <WorkPick
-                navigation={props.navigation}
-                getIndex={workList.indexOf(item) + 1}
-                workListLength={workList.length}
-                WorkListDelChangeValue={WorkListDelChangeValue}
-                workListDel={workListDel}
-                key={item._id}
-                item={item}
-                editMode={reduxState.editModeCheck.editMode}></WorkPick>
-            ) : page === 'store' && storeList.length > 0 ? (
-              <StorePick
-                navigation={props.navigation}
-                getIndex={storeList.indexOf(item) + 1}
-                storeListLength={storeList.length}
-                ToStore={ToStore}
-                StoreListDelChangeValue={StoreListDelChangeValue}
-                storeListDel={storeListDel}
-                key={item._id}
-                item={item}
-                editMode={reduxState.editModeCheck.editMode}></StorePick>
-            ) : null
-          }
-          keyExtractor={(item) => String(item._id)}></FlatList>
+          getItemLayout={(data, index) => ({
+            length: Width_convert(375),
+            offset: Width_convert(375) * index,
+            index,
+          })}
+          initialScrollIndex={0}
+        />
+
         {/*하단 초기화 삭제하기버튼 시작*/}
         {/*SafeAreaView안쓸때 bottom:0 이랑 쓸때 bottom:0의 위치가 다를거야. */}
         {reduxState.editModeCheck.editMode ? (
