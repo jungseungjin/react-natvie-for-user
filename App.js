@@ -40,9 +40,9 @@ const store = initStore();
 
 function App(props) {
   const [locationGranted, setLocationGranted] = React.useState(false);
-  //알림에 대한 퍼미션
+  //알림에 대한 퍼미션 요청
   const handleNotificationPermission = async (Type) => {
-    if (Type == 'ios') {
+    if (Type === 'ios') {
       const result = requestNotifications([
         'alert',
         'sound',
@@ -52,7 +52,7 @@ function App(props) {
   };
   //위치정보사용 퍼미션
   const handleLocationPermission = async (Type) => {
-    if (Type == 'ios') {
+    if (Type === 'ios') {
       const res = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
 
       if (res === RESULTS.GRANTED) {
@@ -87,7 +87,7 @@ function App(props) {
       //권한에 따라서 메시지 보여주고 말고해야됨?? 아니면 앱 켜져있을때는 알림을 어떻게 츠리하나
       checkNotifications().then(({status, settings}) => {
         console.log(status); //blocked
-        if (status == 'granted') {
+        if (status === 'granted') {
           alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
         }
       });

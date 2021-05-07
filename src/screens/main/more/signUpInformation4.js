@@ -304,7 +304,7 @@ const SignUpInformation = (props) => {
           let alarm = false;
           alarm = await checkNotifications().then(({status, settings}) => {
             //console.log(status); //blocked
-            if (status == 'granted') {
+            if (status === 'granted') {
               return true;
             } else {
               return false;

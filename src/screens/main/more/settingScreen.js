@@ -40,6 +40,7 @@ const Setting = (props) => {
     try {
       checkNotifications().then(({status, settings}) => {
         //console.log(status); //blocked
+        console.log(`status = ${status}`);
         if (status == 'granted') {
           setNotificationPermission(true);
         } else {
@@ -71,7 +72,7 @@ const Setting = (props) => {
       checkNotifications().then(({status, settings}) => {
         //console.log(status); //blocked
         if (status == 'granted') {
-          let url = Domain + 'setting/more';
+          let url = `${Domain}api/setting/more`;
           NetInfo.addEventListener(async (state) => {
             if (state.isConnected) {
               let prevData = reduxState.loginDataCheck.login.data;
@@ -85,6 +86,9 @@ const Setting = (props) => {
                 data.notice = !typeState;
                 prevData.alarm.notice = !typeState;
               }
+              data.sms = reduxState.loginDataCheck.login?.data?.alarm?.sms;
+              data.kakao = reduxState.loginDataCheck.login?.data?.alarm?.kakao;
+              data.mail = reduxState.loginDataCheck.login?.data?.alarm?.mail;
               if (reduxState.loginDataCheck.login.login == true) {
                 //로그인된상태 -> 로그인정보로 조회해서 설정값 가져오기
                 data._id = reduxState.loginDataCheck.login._id;
@@ -99,7 +103,7 @@ const Setting = (props) => {
                   'Content-Type': 'application/json',
                 },
               });
-              if (result.data[0].message == 'ok') {
+              if (result.data.result === true) {
                 props.updateData(prevData);
               } else {
               }
