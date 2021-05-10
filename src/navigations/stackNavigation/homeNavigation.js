@@ -41,6 +41,18 @@ import CostChangeScreen from '../../screens/main/more/costChangeScreen.js';
 enableScreens();
 const Stack = createStackNavigator();
 import {View, Text} from 'react-native';
+import {Easing, Animated} from 'react-native';
+const options = {
+  headerBackTitleVisible: false,
+  mode: 'modal',
+  cardStyleInterpolator: ({current: {progress}}) => {
+    return {
+      cardStyle: {
+        opacity: progress,
+      },
+    };
+  },
+};
 const HomeNavigator = (props) => {
   return (
     <Stack.Navigator
@@ -112,19 +124,19 @@ const HomeNavigator = (props) => {
         name="WorkDetail"
         component={WorkDetail}
         initialParams={{}}
-        options={{}}
+        options={() => options}
       />
       <Stack.Screen
         name="WorkDetail2"
         component={WorkDetail2}
         initialParams={{}}
-        options={{}}
+        options={() => options}
       />
       <Stack.Screen
         name="StoreDetail"
         component={StoreDetail}
         initialParams={{}}
-        options={{}}
+        options={() => options}
       />
       <Stack.Screen
         name="StoreWorkList"
@@ -290,5 +302,11 @@ const HomeNavigator = (props) => {
     </Stack.Navigator>
   );
 };
-
+const fadeConfig = ({current}) => {
+  return {
+    cardStyle: {
+      opacity: current.progress,
+    },
+  };
+};
 export default HomeNavigator;
