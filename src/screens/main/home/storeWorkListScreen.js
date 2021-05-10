@@ -201,10 +201,14 @@ const StoreWorkList = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        {Platform.OS == 'android' ? (
+        {/* {Platform.OS == 'android' ? (
           <View
-            style={{width: Width_convert(375), height: StatusBarHeight}}></View>
-        ) : null}
+            style={{
+              width: Width_convert(375),
+              height: StatusBarHeight,
+              backgroundColor: '#000000',
+            }}></View>
+        ) : null} */}
         <View
           style={[
             {
@@ -224,7 +228,8 @@ const StoreWorkList = (props) => {
                   top:
                     Height_convert(94) +
                     Height_convert(48) +
-                    Height_convert(41),
+                    Height_convert(41) -
+                    StatusBarHeight,
                 },
           ]}></View>
         <Tabbar
@@ -459,7 +464,8 @@ const StoreWorkList = (props) => {
                       Height_convert(94) +
                       Height_convert(48) +
                       Height_convert(41) +
-                      Height_convert(41),
+                      Height_convert(41) -
+                      StatusBarHeight,
                   },
             ]}>
             <View
