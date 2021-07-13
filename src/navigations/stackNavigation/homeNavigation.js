@@ -124,19 +124,19 @@ const HomeNavigator = (props) => {
         name="WorkDetail"
         component={WorkDetail}
         initialParams={{}}
-        options={() => options}
+        options={{}}
       />
       <Stack.Screen
         name="WorkDetail2"
         component={WorkDetail2}
         initialParams={{}}
-        options={() => options}
+        options={{}}
       />
       <Stack.Screen
         name="StoreDetail"
         component={StoreDetail}
         initialParams={{}}
-        options={() => options}
+        options={{}}
       />
       <Stack.Screen
         name="StoreWorkList"

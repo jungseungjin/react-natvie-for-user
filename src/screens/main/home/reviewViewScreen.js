@@ -169,10 +169,10 @@ const ReviewView = (props) => {
         barStyle="dark-content"
         backgroundColor={'#FFFFFF'}></StatusBar>
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-        {Platform.OS == 'android' ? (
+        {/* {Platform.OS == 'android' ? (
           <View
             style={{width: Width_convert(375), height: StatusBarHeight}}></View>
-        ) : null}
+        ) : null} */}
         <Tabbar
           left={'back'}
           Title={

@@ -25,9 +25,6 @@ import SetRecentList from '../../../components/setRecentList.js';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 const SearchWork = (props) => {
   const [loading, IsLoading] = useState(true);
-  React.useEffect(() => {
-    // IsLoading(false);
-  }, []);
   return (
     <>
       <TouchableOpacity

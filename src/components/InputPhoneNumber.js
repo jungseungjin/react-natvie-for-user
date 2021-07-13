@@ -18,7 +18,7 @@ function inputPhoneNumber(text) {
     phone += '-';
     phone += number.substr(3, 4);
     phone += '-';
-    phone += number.substr(7);
+    phone += number.substr(7, 4);
   }
   text = phone;
   return text;

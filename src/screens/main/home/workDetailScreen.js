@@ -214,7 +214,7 @@ phoneNumber
       let url = `${Domain}api/work/get/one`;
       NetInfo.addEventListener(async (state) => {
         if (state.isConnected) {
-          setIsLoadingAndModal(1);
+          //setIsLoadingAndModal(1);
           let result = await axios.get(url, {
             params: {
               workid: props.route.params.item._id,
@@ -255,12 +255,12 @@ phoneNumber
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       if (Platform.OS === 'android') {
-        StatusBar.setTranslucent(true);
+        //StatusBar.setTranslucent(true);
       }
     });
     props.navigation.addListener('blur', () => {
       if (Platform.OS === 'android') {
-        StatusBar.setTranslucent(false);
+        //StatusBar.setTranslucent(false);
       }
     });
   }, [props.navigation]);
@@ -279,7 +279,8 @@ phoneNumber
         ) : (
           <StatusBar
             //translucent
-            backgroundColor="transparent"
+            //translucent={Platform.OS === 'android' ? true : false}
+            backgroundColor={'transparent'}
             barStyle="light-content" //dark-content
           />
         )}
