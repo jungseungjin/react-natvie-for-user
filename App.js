@@ -36,6 +36,8 @@ import {
 import FirstNavigator from './src/navigations/first/firstNavigator.js';
 import {Provider} from 'react-redux';
 import initStore from './src/store';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification from 'react-native-push-notification';
 const store = initStore();
 
 function App(props) {
@@ -81,6 +83,30 @@ function App(props) {
     handleLocationPermission(Platform.OS);
     handleNotificationPermission(Platform.OS);
   }, []);
+
+  React.useEffect(() => {
+    PushNotification.configure({
+      onRegister: function (token) {},
+      onNotification: function (notification) {
+        console.log(notification);
+        const {data} = notification;
+
+        //NavigationService.navigate('Screen', {notificationData: data});
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+      onAction: function (notification) {},
+      onRegistrationError: function (err) {
+        console.error(err.message, err);
+      },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+  }, []);
   //알림 받았을 때 처리
   React.useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
@@ -88,11 +114,36 @@ function App(props) {
       checkNotifications().then(({status, settings}) => {
         console.log(status); //blocked
         if (status === 'granted') {
-          alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+          if (Platform.OS === 'ios') {
+            try {
+              PushNotification.localNotification({
+                title: remoteMessage.notification.title, // (optional)
+                message: remoteMessage.notification.body, // (required)
+              });
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            PushNotification.localNotification({
+              /* Android Only Properties */
+              largeIcon: 'ic_launcher_round',
+              smallIcon: 'ic_launcher_round',
+              bigLargeIcon: 'ic_launcher_round',
+              channelId: 'channel-id', // (required) channelId, if the channel doesn't exist, notification will not trigger.
+              title: remoteMessage.notification.title, // (optional)
+              message: remoteMessage.notification.body, // (required)
+            });
+          }
         }
       });
     });
     return unsubscribe;
+  }, []);
+  React.useEffect(() => {
+    PushNotification.createChannel({
+      channelId: 'channel-id', // (required)
+      channelName: 'My channel', // (required)
+    });
   }, []);
   Text.defaultProps = Text.defaultProps || {};
   Text.defaultProps.allowFontScaling = false;
